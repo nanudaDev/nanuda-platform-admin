@@ -18,4 +18,5 @@ export class CompanyDistrictUpdateDto extends BaseDto<CompanyDistrictUpdateDto>
   lon?: string;
   image?: FileAttachmentDto[];
   // example for review
+  // git review
 }

@@ -8,11 +8,7 @@
       <b-form-row>
         <b-col sm="12" lg="1" class="mb-3">
           <label for="district_id">지점 ID</label>
-          <b-form-input
-            type="text"
-            id="district_id"
-            v-model="companyDistrictSearchDto.no"
-          ></b-form-input>
+          <b-form-input type="text" id="district_id" v-model="companyDistrictSearchDto.no"></b-form-input>
         </b-col>
         <b-col sm="12" lg="2" class="mb-3">
           <label for="district_company">업체명</label>
@@ -26,17 +22,12 @@
               v-for="company in companySelect"
               :key="company.no"
               :value="company.no"
-              >{{ company.nameKr }}</option
-            >
+            >{{ company.nameKr }}</option>
           </select>
         </b-col>
         <b-col sm="12" lg="2" class="mb-3">
           <label for="district_name_kr">지점명</label>
-          <b-form-input
-            type="text"
-            id="district_name_kr"
-            v-model="companyDistrictSearchDto.nameKr"
-          ></b-form-input>
+          <b-form-input type="text" id="district_name_kr" v-model="companyDistrictSearchDto.nameKr"></b-form-input>
         </b-col>
         <b-col sm="12" lg="4" class="mb-3">
           <label for="district_address">주소</label>
@@ -57,8 +48,7 @@
               v-for="status in approvalStatus"
               :key="status"
               :value="status"
-              >{{ status | enumTransformer }}</b-form-select-option
-            >
+            >{{ status | enumTransformer }}</b-form-select-option>
           </b-form-select>
         </b-col>
       </b-form-row>
@@ -76,11 +66,9 @@
           <strong class="text-primary">{{ companyDistrictListCount }}</strong>
         </h5>
       </div>
-      <b-button variant="primary" v-b-modal.add_company_district
-        >업체 지점 추가</b-button
-      >
+      <b-button variant="primary" v-b-modal.add_company_district>업체 지점 추가</b-button>
     </div>
-    <div v-if="!dataLoading" class="table-bordered table-responsive ">
+    <div v-if="!dataLoading" class="table-bordered table-responsive">
       <table class="table table-sm table-hover" v-if="companyDistrictListCount">
         <thead>
           <tr>
@@ -89,49 +77,37 @@
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.no,
               }"
-            >
-              ID
-            </th>
+            >ID</th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.companyNo,
               }"
-            >
-              COMPANY
-            </th>
+            >COMPANY</th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.nameKr,
               }"
-            >
-              DISTRICT
-            </th>
+            >DISTRICT</th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.address,
               }"
-            >
-              ADDRESS
-            </th>
+            >ADDRESS</th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.createdAt,
               }"
-            >
-              CREATED
-            </th>
+            >CREATED</th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.companyDistrictStatus,
               }"
-            >
-              STATUS
-            </th>
+            >STATUS</th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -146,7 +122,7 @@
               <!-- <br />
             <span class="text-primary"
               >수정일 : {{ district.updatedAt | dateTransformer }}</span
-            > -->
+              >-->
             </td>
             <td>
               <b-badge
@@ -166,16 +142,12 @@
                     id: district.no,
                   },
                 }"
-              >
-                상세보기
-              </router-link>
+              >상세보기</router-link>
             </td>
           </tr>
         </tbody>
       </table>
-      <div v-else class="empty-data border">
-        검색결과가 없습니다.
-      </div>
+      <div v-else class="empty-data border">검색결과가 없습니다.</div>
     </div>
     <b-pagination
       v-model="pagination.page"
@@ -250,8 +222,7 @@
               v-for="status in approvalStatus"
               :key="status"
               :value="status"
-              >{{ status | enumTransformer }}</option
-            >
+            >{{ status | enumTransformer }}</option>
           </select>
         </div>
         <div class="col-12 col-md-12 mt-2">
@@ -265,8 +236,7 @@
               v-for="amenity in commonAmenityList"
               :key="amenity.no"
               :value="amenity.no"
-              >{{ amenity.amenityName }}</b-form-checkbox
-            >
+            >{{ amenity.amenityName }}</b-form-checkbox>
           </b-form-checkbox-group>
         </div>
         <div class="col-12 col-md-6 mt-2">
@@ -280,12 +250,11 @@
               v-for="company in companySelect"
               :key="company.no"
               :value="company.no"
-              >{{ company.nameKr }}</option
-            >
+            >{{ company.nameKr }}</option>
           </select>
         </div>
         <div class="col-12 col-md-6 mt-2">
-          <label for="">파일첨부</label>
+          <label for>파일첨부</label>
           <div class="custom-file">
             <input
               type="file"
@@ -295,19 +264,14 @@
               v-on:change="upload($event.target.files)"
               multiple
             />
-            <label class="custom-file-label" for="customFileLang"
-              >파일 첨부</label
-            >
+            <label class="custom-file-label" for="customFileLang">파일 첨부</label>
           </div>
         </div>
       </div>
     </b-modal>
 
     <b-modal id="postcode" title="주소 검색" hide-footer>
-      <vue-daum-postcode
-        style="height:500px; overflow-y:auto;"
-        @complete="setAddress($event)"
-      />
+      <vue-daum-postcode style="height:500px; overflow-y:auto;" @complete="setAddress($event)" />
     </b-modal>
   </section>
 </template>
@@ -358,7 +322,7 @@ export default class CompanyDistrictList extends BaseComponent {
   private commonAmenityList = [];
   private attachments = [];
 
-  getStatusColor(status) {
+  getStatusColor(status: APPROVAL_STATUS) {
     return getStatusColor(status);
   }
 

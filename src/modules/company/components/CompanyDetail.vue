@@ -6,9 +6,7 @@
       divider
     >
       <template v-slot:rightArea>
-        <router-link to="/company" class="btn btn-secondary text-center"
-          >목록으로</router-link
-        >
+        <router-link to="/company" class="btn btn-secondary text-center">목록으로</router-link>
       </template>
     </SectionTitle>
     <div class="row d-flex align-items-stretch">
@@ -16,16 +14,13 @@
         <BaseCard title="업체 정보">
           <template v-slot:head>
             <div>
-              <b-button variant="danger" v-b-modal.delete_company
-                >삭제하기</b-button
-              >
+              <b-button variant="danger" v-b-modal.delete_company>삭제하기</b-button>
               <b-button
                 variant="primary"
                 v-b-modal.company_info
                 @click="showUpdateModal()"
                 v-if="companyDto.companyStatus === 'APPROVAL'"
-                >수정하기</b-button
-              >
+              >수정하기</b-button>
             </div>
           </template>
           <template v-slot:body>
@@ -47,9 +42,7 @@
                 <li v-if="companyDto.nameKr">
                   업체명 :
                   <b>{{ companyDto.nameKr }}</b>
-                  <span v-if="companyDto.nameEng"
-                    >({{ companyDto.nameEng }})</span
-                  >
+                  <span v-if="companyDto.nameEng">({{ companyDto.nameEng }})</span>
                 </li>
                 <li v-if="companyDto.businessNo">
                   사업자 번호 :
@@ -58,13 +51,9 @@
                 <li v-if="companyDto.ceoKr">
                   대표명 :
                   <b>{{ companyDto.ceoKr }}</b>
-                  <span v-if="companyDto.ceoEng"
-                    >({{ companyDto.ceoEng }})</span
-                  >
+                  <span v-if="companyDto.ceoEng">({{ companyDto.ceoEng }})</span>
                 </li>
-                <li v-if="companyDto.phone">
-                  전화번호 : {{ companyDto.phone | phoneTransformer }}
-                </li>
+                <li v-if="companyDto.phone">전화번호 : {{ companyDto.phone | phoneTransformer }}</li>
                 <li v-if="companyDto.email">
                   이메일 :
                   <a
@@ -72,34 +61,29 @@
                       `https://mail.google.com/mail/?view=cm&fs=1&to=${companyDto.email}`
                     "
                     target="_blank"
-                    >{{ companyDto.email }}</a
-                  >
+                  >{{ companyDto.email }}</a>
                 </li>
-                <li v-if="companyDto.fax">
-                  팩스 : {{ companyDto.fax | phoneTransformer }}
-                </li>
-                <li v-if="companyDto.address">
-                  주소 : {{ companyDto.address }}
-                </li>
+                <li v-if="companyDto.fax">팩스 : {{ companyDto.fax | phoneTransformer }}</li>
+                <li v-if="companyDto.address">주소 : {{ companyDto.address }}</li>
                 <li v-if="companyDto.website">
                   웹사이트 :
-                  <a :href="companyDto.website" target="_blank">{{
+                  <a :href="companyDto.website" target="_blank">
+                    {{
                     companyDto.website
-                  }}</a>
+                    }}
+                  </a>
                 </li>
-                <li v-if="companyDto.createdAt">
-                  등록일 : {{ companyDto.createdAt | dateTransformer }}
-                </li>
+                <li v-if="companyDto.createdAt">등록일 : {{ companyDto.createdAt | dateTransformer }}</li>
                 <li v-if="companyDto.createdAt">
                   승인 상태 :
                   <b-badge
                     :variant="getStatusColor(companyDto.companyStatus)"
                     class="badge-pill p-2 mr-2"
-                    >{{ companyDto.companyStatus | enumTransformer }}</b-badge
-                  >
-                  <span v-if="companyDto.updatedAt" class="d-inline-block"
-                    >({{ companyDto.updatedAt | dateTransformer }})</span
-                  >
+                  >{{ companyDto.companyStatus | enumTransformer }}</b-badge>
+                  <span
+                    v-if="companyDto.updatedAt"
+                    class="d-inline-block"
+                  >({{ companyDto.updatedAt | dateTransformer }})</span>
                 </li>
               </ul>
             </div>
@@ -120,12 +104,7 @@
         <BaseCard title="관리자 정보">
           <template v-slot:head>
             <div>
-              <b-button
-                variant="primary"
-                v-b-modal.admin_list
-                @click="findAdmin()"
-                >수정하기</b-button
-              >
+              <b-button variant="primary" v-b-modal.admin_list @click="findAdmin()">수정하기</b-button>
             </div>
           </template>
           <template v-slot:body>
@@ -158,9 +137,7 @@
       <div class="my-3 col-12 col-lg-6" v-if="companyDto">
         <BaseCard title="업체 지점 정보" no-body>
           <template v-slot:head>
-            <b-button variant="outline-info" @click="findAllDistrict()"
-              >전체보기</b-button
-            >
+            <b-button variant="outline-info" @click="findAllDistrict()">전체보기</b-button>
           </template>
           <CompanyDetailDistrictList />
         </BaseCard>
@@ -168,9 +145,7 @@
       <div class="my-3 col-12 col-lg-6" v-if="companyDto">
         <BaseCard title="업체 사용자 정보" no-body>
           <template v-slot:head>
-            <b-button variant="outline-info" @click="findAllCompanyUser()"
-              >전체보기</b-button
-            >
+            <b-button variant="outline-info" @click="findAllCompanyUser()">전체보기</b-button>
           </template>
           <CompanyDetailCompanyUserList />
         </BaseCard>
@@ -223,18 +198,12 @@
             <td>{{ admin.name }}</td>
             <td>{{ admin.phone }}</td>
             <td class="text-center">
-              <button class="btn btn-primary" @click="selectAdmin(admin)">
-                선택
-              </button>
+              <button class="btn btn-primary" @click="selectAdmin(admin)">선택</button>
             </td>
           </tr>
         </tbody>
       </table>
-      <div
-        v-if="selectedAdmin.name"
-        class="py-2 px-4 rounded"
-        style="background-color:#f1f1f1"
-      >
+      <div v-if="selectedAdmin.name" class="py-2 px-4 rounded" style="background-color:#f1f1f1">
         선택한 관리자 :
         <b>{{ selectedAdmin.name }}</b>
       </div>
@@ -248,16 +217,8 @@
         class="mt-4 justify-content-center"
       ></b-pagination>
     </b-modal>
-    <b-modal
-      id="company_info"
-      title="업체 정보 수정"
-      @ok="updateCompany()"
-      @cancel="cancelSelection()"
-    >
-      <div
-        v-if="companyDto.logo && companyDto.logo.length > 0 && !logoChanged"
-        class="mb-4"
-      >
+    <b-modal id="company_info" title="업체 정보 수정" @ok="updateCompany()" @cancel="cancelSelection()">
+      <div v-if="companyDto.logo && companyDto.logo.length > 0 && !logoChanged" class="mb-4">
         <div v-for="logo in companyDto.logo" :key="logo.endpoint">
           <b-img-lazy
             :src="logo.endpoint"
@@ -275,91 +236,49 @@
           />
         </div>
         <div class="text-center mt-2">
-          <b-button variant="danger" @click="removeCompanyLogo()"
-            >로고 제거</b-button
-          >
+          <b-button variant="danger" @click="removeCompanyLogo()">로고 제거</b-button>
         </div>
       </div>
       <div class="form-row">
         <div class="col-12 col-md-6 mt-2">
           <label>업체명</label>
-          <input
-            type="text"
-            v-model="companyUpdateDto.nameKr"
-            class="form-control"
-          />
+          <input type="text" v-model="companyUpdateDto.nameKr" class="form-control" />
         </div>
         <div class="col-12 col-md-6 mt-2">
           <label>업체명(영문)</label>
-          <input
-            type="text"
-            v-model="companyUpdateDto.nameEng"
-            class="form-control"
-          />
+          <input type="text" v-model="companyUpdateDto.nameEng" class="form-control" />
         </div>
         <div class="col-12 col-md-6 mt-2">
           <label>대표명</label>
-          <input
-            type="text"
-            v-model="companyUpdateDto.ceoKr"
-            class="form-control"
-          />
+          <input type="text" v-model="companyUpdateDto.ceoKr" class="form-control" />
         </div>
         <div class="col-12 col-md-6 mt-2">
           <label>대표명(영문)</label>
-          <input
-            type="text"
-            v-model="companyUpdateDto.ceoEng"
-            class="form-control"
-          />
+          <input type="text" v-model="companyUpdateDto.ceoEng" class="form-control" />
         </div>
         <div class="col-12 col-md-6 mt-2">
           <label>사업자 번호</label>
-          <input
-            type="text"
-            v-model="companyUpdateDto.businessNo"
-            class="form-control"
-          />
+          <input type="text" v-model="companyUpdateDto.businessNo" class="form-control" />
         </div>
         <div class="col-12 col-md-6 mt-2">
           <label>이메일</label>
-          <input
-            type="text"
-            v-model="companyUpdateDto.email"
-            class="form-control"
-          />
+          <input type="text" v-model="companyUpdateDto.email" class="form-control" />
         </div>
         <div class="col-12 col-md-6 mt-2">
           <label>전화번호</label>
-          <input
-            type="text"
-            v-model="companyUpdateDto.phone"
-            class="form-control"
-          />
+          <input type="text" v-model="companyUpdateDto.phone" class="form-control" />
         </div>
         <div class="col-12 col-md-6 mt-2">
           <label>팩스</label>
-          <input
-            type="text"
-            v-model="companyUpdateDto.fax"
-            class="form-control"
-          />
+          <input type="text" v-model="companyUpdateDto.fax" class="form-control" />
         </div>
         <div class="col-12 col-md-12 mt-2">
           <label>주소</label>
-          <input
-            type="text"
-            v-model="companyUpdateDto.address"
-            class="form-control"
-          />
+          <input type="text" v-model="companyUpdateDto.address" class="form-control" />
         </div>
         <div class="col-12 col-md-6 mt-2">
           <label>웹사이트</label>
-          <input
-            type="text"
-            v-model="companyUpdateDto.website"
-            class="form-control"
-          />
+          <input type="text" v-model="companyUpdateDto.website" class="form-control" />
         </div>
         <div class="col-12 col-md-6 mt-2">
           <label>업체 로고</label>
@@ -372,9 +291,7 @@
               v-on:change="upload($event.target.files)"
               multiple
             />
-            <label class="custom-file-label" for="customFileLang"
-              >로고 변경</label
-            >
+            <label class="custom-file-label" for="customFileLang">로고 변경</label>
           </div>
         </div>
       </div>
@@ -443,7 +360,7 @@ export default class CompanyDetail extends BaseComponent {
   private deleteCompanyName = '';
 
   // get status color
-  getStatusColor(status) {
+  getStatusColor(status: APPROVAL_STATUS) {
     return getStatusColor(status);
   }
 

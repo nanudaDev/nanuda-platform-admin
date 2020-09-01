@@ -273,7 +273,7 @@
                     신청 상태 :
                     <b-badge
                       :variant="
-                        getStatusColor(founderConsult.codeManagement.key)
+                        getStatusColor(founderConsult.status)
                       "
                       class="badge-pill p-2 mr-2"
                     >{{ founderConsult.codeManagement.value }}</b-badge>
@@ -585,7 +585,7 @@ export default class FounderConsultDetail extends BaseComponent {
   private adminSendMessageDto = new AdminSendMessageDto();
 
   // get status color
-  getStatusColor(status) {
+  getStatusColor(status: FOUNDER_CONSULT) {
     return getStatusColor(status);
   }
 

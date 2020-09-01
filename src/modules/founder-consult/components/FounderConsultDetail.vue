@@ -447,7 +447,12 @@
           }}
         </b>
       </p>
-      <b-form-input placeholder="제목을 입력해주세요" id="title" v-model="adminSendMessageDto.title"></b-form-input>
+      <b-form-input
+        placeholder="제목을 입력해주세요"
+        id="title"
+        v-model="adminSendMessageDto.title"
+        class="mb-2"
+      ></b-form-input>
       <b-form-textarea
         id="message"
         placeholder="메세지를 입력해주세요.."
@@ -596,7 +601,12 @@ export default class FounderConsultDetail extends BaseComponent {
   sendMessage() {
     this.adminSendMessageDto.phone = this.founderConsult.nanudaUser.phone;
     SmsService.sendMessage(this.adminSendMessageDto).subscribe(res => {
-      toast.success('문자가 발송 되었습니다.');
+      if (res) {
+        this.adminSendMessageDto = new AdminSendMessageDto();
+        toast.success('문자가 발송 되었습니다.');
+      } else {
+        return;
+      }
     });
   }
 

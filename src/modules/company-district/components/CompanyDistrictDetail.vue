@@ -22,11 +22,18 @@
       <div class="col col-12 col-lg-5 my-3">
         <BaseCard title="지점 정보">
           <template v-slot:head>
-            <div v-if="companyDistrictDto.companyDistrictStatus === 'APPROVAL'">
+            <div>
+              <b-button
+                variant="outline-info"
+                v-b-modal.update_map
+                @click="showMapUpdateModal()"
+                >지도 수정</b-button
+              >
               <b-button
                 variant="primary"
                 v-b-modal.update_district
                 @click="findDistrictInfo()"
+                v-if="companyDistrictDto.companyDistrictStatus === 'APPROVAL'"
                 >수정하기</b-button
               >
             </div>
@@ -261,14 +268,33 @@
       </div>
     </b-modal>
     <!-- 주소 검색 모달 -->
-    <b-modal id="postcode" title="주소 검색" hide-footer>
+    <!-- <b-modal id="postcode" title="주소 검색" hide-footer>
       <vue-daum-postcode
         style="height:500px; overflow-y:auto;"
         @complete="setAddress($event, companyDistrictUpdateDto)"
       />
-    </b-modal>
+    </b-modal> -->
     <!-- 지점 타입 추가 모달 -->
     <DeliverySpaceCreate />
+    <b-modal id="update_map" title="지도수정" @ok="updateMap()">
+      <p class="text-center">
+        <b>지도를 수정하시겠습니까?</b>
+      </p>
+      <!-- <b-form-row>
+        <b-col cols="6">
+          <label for="">lat</label>
+          <b-form-input
+            v-model="companyDistrictMapUpdateDto.lat"
+          ></b-form-input>
+        </b-col>
+        <b-col cols="6">
+          <label for="">lon</label>
+          <b-form-input
+            v-model="companyDistrictMapUpdateDto.lon"
+          ></b-form-input>
+        </b-col>
+      </b-form-row> -->
+    </b-modal>
   </section>
 </template>
 <script lang="ts">
@@ -298,6 +324,7 @@ import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { getStatusColor } from '../../../core/utils/status-color.util';
+import { CompanyDistrictMapUpdateDto } from '@/dto/company-district/company-district-map-update.dto';
 
 @Component({
   name: 'ComapanyDistrictDetail',
@@ -313,7 +340,7 @@ export default class CompanyDistrictDetail extends BaseComponent {
   private companyDistrictUpdateDto = new CompanyDistrictUpdateDto();
   private companyDistrictUpdateRefusalDto = new CompanyDistrictUpdateRefusalDto();
   private companyDistrictUpdateRefusalReasonDto = (this.companyDistrictUpdateRefusalDto.refusalReasons = new CompanyDistrictUpdateRefusalReasonDto());
-
+  private companyDistrictMapUpdateDto = new CompanyDistrictMapUpdateDto();
   private amenityList = [];
   private selectedAmenities: AmenityDto[] = [];
   private selectedAmenityIds: number[] = [];
@@ -383,8 +410,8 @@ export default class CompanyDistrictDetail extends BaseComponent {
       this.companyDistrictUpdateDto,
     ).subscribe(res => {
       if (res) {
-        toast.success('수정완료');
         this.findOne(this.$route.params.id);
+        toast.success('수정완료');
       }
     });
   }
@@ -447,19 +474,34 @@ export default class CompanyDistrictDetail extends BaseComponent {
   }
 
   setAddress(res) {
-    this.addressData = res;
-    this.companyDistrictUpdateDto.address = this.addressData.address;
+    this.addressData.address = res;
 
     const geocoder = new window.kakao.maps.services.Geocoder();
     const callback = (results, status) => {
       if (status === window.kakao.maps.services.Status.OK) {
-        this.companyDistrictUpdateDto.lon = results[0].x;
-        this.companyDistrictUpdateDto.lat = results[0].y;
+        this.companyDistrictMapUpdateDto.lon = results[0].x;
+        this.companyDistrictMapUpdateDto.lat = results[0].y;
       }
+      console.log(results);
     };
-    geocoder.addressSearch(this.companyDistrictUpdateDto.address, callback);
+    geocoder.addressSearch(this.companyDistrictDto.address, callback);
+    // this.$bvModal.hide('postcode');
+  }
 
-    this.$bvModal.hide('postcode');
+  showMapUpdateModal() {
+    this.setAddress(this.companyDistrictDto.address);
+  }
+
+  updateMap() {
+    CompanyDistrictService.updateMap(
+      this.$route.params.id,
+      this.companyDistrictMapUpdateDto,
+    ).subscribe(res => {
+      if (res) {
+        this.findOne(this.$route.params.id);
+        toast.success('수정완료');
+      }
+    });
   }
 
   // 지점 타입 추가

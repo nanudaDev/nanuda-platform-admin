@@ -6,6 +6,7 @@ import {
   CompanyDistrictUpdateRefusalDto,
   CompanyDistrictUpdateDto,
 } from '@/dto';
+import { CompanyDistrictMapUpdateDto } from '@/dto/company-district/company-district-map-update.dto';
 
 class CompanyDistrictService extends BaseService {
   /**
@@ -83,6 +84,21 @@ class CompanyDistrictService extends BaseService {
     return super.get<CompanyDistrictDto[]>(
       'admin/company-district',
       companyDistrict,
+    );
+  }
+
+  /**
+   *
+   * @param companyDistrictNo
+   * @param companyDistrictMapUpdateDto
+   */
+  updateMap(
+    companyDistrictNo,
+    companyDistrictMapUpdateDto: CompanyDistrictMapUpdateDto,
+  ) {
+    return super.patch<CompanyDistrictMapUpdateDto>(
+      `admin/company-district/${companyDistrictNo}/lat-lon`,
+      companyDistrictMapUpdateDto,
     );
   }
 }

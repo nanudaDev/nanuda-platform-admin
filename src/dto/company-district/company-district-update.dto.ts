@@ -17,4 +17,6 @@ export class CompanyDistrictUpdateDto extends BaseDto<CompanyDistrictUpdateDto>
   lat?: string;
   lon?: string;
   image?: FileAttachmentDto[];
+  // example for review
+  // git review
 }

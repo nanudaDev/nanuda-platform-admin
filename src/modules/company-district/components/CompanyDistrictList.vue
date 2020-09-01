@@ -76,10 +76,7 @@
           <strong class="text-primary">{{ companyDistrictListCount }}</strong>
         </h5>
       </div>
-      <b-button
-        variant="primary"
-        v-b-modal.add_company_district
-        @click="clearOutCompanyDistrictDto()"
+      <b-button variant="primary" v-b-modal.add_company_district
         >업체 지점 추가</b-button
       >
     </div>
@@ -198,6 +195,8 @@
       id="add_company_district"
       title="업체 지점 추가하기"
       size="xl"
+      @hide="clearOutCreateDto()"
+      @cancel="clearOutCreateDto()"
       @ok="createCompanyDidstrict()"
     >
       <div v-if="attachments && attachments.length > 0" class="mb-4">
@@ -425,7 +424,8 @@ export default class CompanyDistrictList extends BaseComponent {
     });
   }
 
-  clearOutCompanyDistrictDto() {
+  clearOutCreateDto() {
+    this.attachments = [];
     this.companyDistrictCreateDto = new CompanyDistrictDto();
     this.getAmenities();
   }

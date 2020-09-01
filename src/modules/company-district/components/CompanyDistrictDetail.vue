@@ -22,7 +22,7 @@
       <div class="col col-12 col-lg-5 my-3">
         <BaseCard title="지점 정보">
           <template v-slot:head>
-            <div v-if="companyDistrictDto.companyDistrictStatus === 'APPROVAL'">
+            <div>
               <b-button
                 variant="outline-info"
                 v-b-modal.update_map
@@ -33,6 +33,7 @@
                 variant="primary"
                 v-b-modal.update_district
                 @click="findDistrictInfo()"
+                v-if="companyDistrictDto.companyDistrictStatus === 'APPROVAL'"
                 >수정하기</b-button
               >
             </div>
@@ -275,8 +276,11 @@
     </b-modal> -->
     <!-- 지점 타입 추가 모달 -->
     <DeliverySpaceCreate />
-    <b-modal id="update_map" @ok="updateMap()">
-      <b-form-row>
+    <b-modal id="update_map" title="지도수정" @ok="updateMap()">
+      <p class="text-center">
+        <b>지도를 수정하시겠습니까?</b>
+      </p>
+      <!-- <b-form-row>
         <b-col cols="6">
           <label for="">lat</label>
           <b-form-input
@@ -289,7 +293,7 @@
             v-model="companyDistrictMapUpdateDto.lon"
           ></b-form-input>
         </b-col>
-      </b-form-row>
+      </b-form-row> -->
     </b-modal>
   </section>
 </template>
@@ -406,8 +410,8 @@ export default class CompanyDistrictDetail extends BaseComponent {
       this.companyDistrictUpdateDto,
     ).subscribe(res => {
       if (res) {
-        toast.success('수정완료');
         this.findOne(this.$route.params.id);
+        toast.success('수정완료');
       }
     });
   }
@@ -470,9 +474,7 @@ export default class CompanyDistrictDetail extends BaseComponent {
   }
 
   setAddress(res) {
-    console.log(res);
-    this.addressData = res;
-    this.companyDistrictUpdateDto.address = this.addressData.address;
+    this.addressData.address = res;
 
     const geocoder = new window.kakao.maps.services.Geocoder();
     const callback = (results, status) => {
@@ -482,9 +484,8 @@ export default class CompanyDistrictDetail extends BaseComponent {
       }
       console.log(results);
     };
-    geocoder.addressSearch(this.companyDistrictUpdateDto.address, callback);
-
-    this.$bvModal.hide('postcode');
+    geocoder.addressSearch(this.companyDistrictDto.address, callback);
+    // this.$bvModal.hide('postcode');
   }
 
   showMapUpdateModal() {
@@ -492,7 +493,15 @@ export default class CompanyDistrictDetail extends BaseComponent {
   }
 
   updateMap() {
-    console.log('맵 업데이트');
+    CompanyDistrictService.updateMap(
+      this.$route.params.id,
+      this.companyDistrictMapUpdateDto,
+    ).subscribe(res => {
+      if (res) {
+        this.findOne(this.$route.params.id);
+        toast.success('수정완료');
+      }
+    });
   }
 
   // 지점 타입 추가

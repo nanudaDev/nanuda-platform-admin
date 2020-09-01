@@ -17,20 +17,15 @@
           @click="findOne(company.no)"
           style="cursor:pointer"
         >
-          <th scope="row">
-            {{ company.no }}
-          </th>
-          <td>
-            {{ company.nameKr }}
-          </td>
+          <th scope="row">{{ company.no }}</th>
+          <td>{{ company.nameKr }}</td>
           <td>{{ company.ceoKr }}</td>
           <td>{{ company.phone | phoneTransformer }}</td>
           <td>
             <b-badge
               :variant="getStatusColor(company.codeManagement.key)"
               class="badge-pill p-2 mr-2"
-              >{{ company.codeManagement.value }}</b-badge
-            >
+            >{{ company.codeManagement.value }}</b-badge>
           </td>
         </tr>
       </tbody>
@@ -63,7 +58,7 @@ export default class DashboardCompanyList extends BaseComponent {
   private dataLoading = false;
 
   // get status color
-  getStatusColor(status) {
+  getStatusColor(status: APPROVAL_STATUS) {
     return getStatusColor(status);
   }
 

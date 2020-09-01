@@ -3,18 +3,10 @@
     <table class="table table-hover">
       <thead>
         <tr>
-          <th scope="col">
-            NO
-          </th>
-          <th scope="col">
-            NAME
-          </th>
-          <th scope="col">
-            ADDRESS
-          </th>
-          <th scope="col">
-            STATUS
-          </th>
+          <th scope="col">NO</th>
+          <th scope="col">NAME</th>
+          <th scope="col">ADDRESS</th>
+          <th scope="col">STATUS</th>
         </tr>
       </thead>
       <tbody>
@@ -24,20 +16,14 @@
           @click="findOne(district.no)"
           style="cursor:pointer"
         >
-          <th scope="row">
-            {{ district.no }}
-          </th>
-          <td>
-            {{ district.nameKr }}
-          </td>
+          <th scope="row">{{ district.no }}</th>
+          <td>{{ district.nameKr }}</td>
           <td>{{ district.address }}</td>
           <td>
             <b-badge
               :variant="getStatusColor(district.companyDistrictStatus)"
               class="badge-pill p-2 mr-2"
-            >
-              {{ district.companyDistrictStatus | enumTransformer }}
-            </b-badge>
+            >{{ district.companyDistrictStatus | enumTransformer }}</b-badge>
           </td>
         </tr>
       </tbody>
@@ -52,9 +38,7 @@
       class="mt-4 justify-content-center"
     ></b-pagination>
   </div>
-  <div v-else class="empty-data">
-    지점 없음
-  </div>
+  <div v-else class="empty-data">지점 없음</div>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
@@ -64,6 +48,7 @@ import CompanyDistrictService from '../../../services/company-district.service';
 import { Pagination } from '@/common';
 
 import { getStatusColor } from '../../../core/utils/status-color.util';
+import { APPROVAL_STATUS } from '@/services/shared';
 
 @Component({
   name: 'CompanyDetailDistrictList',
@@ -75,7 +60,7 @@ export default class CompanyDetailDistrictList extends BaseComponent {
   private companyDistrictListCount = 0;
 
   // get status color
-  getStatusColor(status) {
+  getStatusColor(status: APPROVAL_STATUS) {
     return getStatusColor(status);
   }
 

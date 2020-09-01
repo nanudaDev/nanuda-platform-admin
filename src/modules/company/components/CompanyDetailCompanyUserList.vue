@@ -3,21 +3,11 @@
     <table class="table table-hover">
       <thead>
         <tr>
-          <th scope="col">
-            NO
-          </th>
-          <th scope="col">
-            NAME
-          </th>
-          <th scope="col">
-            PHONE
-          </th>
-          <th scope="col">
-            EMAIL
-          </th>
-          <th scope="col">
-            STATUS
-          </th>
+          <th scope="col">NO</th>
+          <th scope="col">NAME</th>
+          <th scope="col">PHONE</th>
+          <th scope="col">EMAIL</th>
+          <th scope="col">STATUS</th>
         </tr>
       </thead>
       <tbody>
@@ -27,15 +17,9 @@
           @click="findOne(companyUser.no)"
           style="cursor:pointer"
         >
-          <th scope="row">
-            {{ companyUser.no }}
-          </th>
+          <th scope="row">{{ companyUser.no }}</th>
           <td>
-            <strong
-              class="text-danger"
-              v-if="companyUser.authCode === 'ADMIN_COMPANY_USER'"
-              >M</strong
-            >
+            <strong class="text-danger" v-if="companyUser.authCode === 'ADMIN_COMPANY_USER'">M</strong>
             {{ companyUser.name }}
           </td>
           <td>{{ companyUser.phone }}</td>
@@ -44,9 +28,7 @@
             <b-badge
               :variant="getStatusColor(companyUser.companyUserStatus)"
               class="badge-pill p-2 mr-2"
-            >
-              {{ companyUser.companyUserStatus | enumTransformer }}
-            </b-badge>
+            >{{ companyUser.companyUserStatus | enumTransformer }}</b-badge>
           </td>
         </tr>
       </tbody>
@@ -61,9 +43,7 @@
       class="mt-4 justify-content-center"
     ></b-pagination>
   </div>
-  <div v-else class="empty-data">
-    사용자 없음
-  </div>
+  <div v-else class="empty-data">사용자 없음</div>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
@@ -71,7 +51,11 @@ import BaseComponent from '../../../core/base.component';
 import { CompanyUserListDto, CompanyUserDto } from '../../../dto';
 import CompanyUserService from '../../../services/company-user.service';
 import { Pagination } from '@/common';
-import { COMPANY_USER, CONST_COMPANY_USER } from '../../../services/shared';
+import {
+  COMPANY_USER,
+  CONST_COMPANY_USER,
+  APPROVAL_STATUS,
+} from '../../../services/shared';
 
 import { getStatusColor } from '../../../core/utils/status-color.util';
 
@@ -86,7 +70,7 @@ export default class CompanyDetailCompanyUserList extends BaseComponent {
   private companyUserAdminRole: COMPANY_USER[] = [...CONST_COMPANY_USER];
 
   // get status color
-  getStatusColor(status) {
+  getStatusColor(status: APPROVAL_STATUS) {
     return getStatusColor(status);
   }
 

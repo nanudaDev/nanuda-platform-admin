@@ -567,7 +567,19 @@
           class="text-primary"
         >{{ deliveryFounderConsult.nanudaUser.phone | phoneTransformer }}</b>
       </p>
-      <b-form-textarea id="message" placeholder="메세지를 입력해주세요.." rows="3" max-rows="6"></b-form-textarea>
+      <b-form-input
+        placeholder="제목을 입력해주세요"
+        id="title"
+        v-model="adminSendMessageDto.title"
+        class="mb-2"
+      ></b-form-input>
+      <b-form-textarea
+        id="message"
+        placeholder="메세지를 입력해주세요.."
+        rows="3"
+        max-rows="6"
+        v-model="adminSendMessageDto.message"
+      ></b-form-textarea>
     </b-modal>
 
     <!-- 열람 상태 미열람 모달 -->
@@ -646,6 +658,7 @@ import {
   DeliveryFounderConsultDto,
   DeliveryFounderConsultUpdateDto,
   FounderConsultManagementDto,
+  AdminSendMessageDto,
 } from '../../../dto';
 import {
   FoodCategoryDto,
@@ -660,7 +673,7 @@ import {
   FOUNDER_CONSULT,
   CONST_FOUNDER_CONSULT,
 } from '../../../services/shared';
-
+import SmsService from '../../../services/sms.service';
 import { getStatusColor } from '../../../core/utils/status-color.util';
 
 @Component({
@@ -689,6 +702,7 @@ export default class FounderConsultDetail extends BaseComponent {
   private elapsedTime = null;
   private deliveredTime = new Date();
   private createdTime = new Date();
+  private adminSendMessageDto = new AdminSendMessageDto();
 
   // get status color
   getStatusColor(status) {
@@ -717,6 +731,19 @@ export default class FounderConsultDetail extends BaseComponent {
       this.$route.params.id,
     ).subscribe(res => {
       this.findOne(this.$route.params.id);
+    });
+  }
+
+  // send message to user
+  sendMessage() {
+    this.adminSendMessageDto.phone = this.deliveryFounderConsult.nanudaUser.phone;
+    SmsService.sendMessage(this.adminSendMessageDto).subscribe(res => {
+      if (res) {
+        this.adminSendMessageDto = new AdminSendMessageDto();
+        toast.success('문자가 발송 되었습니다.');
+      } else {
+        return;
+      }
     });
   }
 

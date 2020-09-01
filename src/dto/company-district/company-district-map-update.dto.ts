@@ -1,6 +1,4 @@
-import { CompanyDistrictDto } from './company-district.dto';
-
-export class CompanyDistrictMapUpdateDto extends CompanyDistrictDto {
+export class CompanyDistrictMapUpdateDto {
   lat?: string;
   lon?: string;
 }

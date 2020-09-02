@@ -32,8 +32,11 @@
             v-if="admin"
             >{{ admin.name }}</a
           >
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#">마이 프로필</a>
+          <div
+            class="dropdown-menu dropdown-menu-right"
+            aria-labelledby="navbarDropdown"
+          >
+            <a class="dropdown-item" href="/my-page">마이 프로필</a>
 
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click="logout()">로그아웃</a>

@@ -1,22 +1,10 @@
 <template>
   <section>
-    <b-row
-      no-gutters
-      align-h="between"
-      align-v="end"
-      class="title mb-3"
-      v-if="companyDistrictDto"
-    >
+    <b-row no-gutters align-h="between" align-v="end" class="title mb-3" v-if="companyDistrictDto">
       <h3>
-        <span v-if="companyDistrictDto.nameKr"
-          >{{ companyDistrictDto.nameKr }} - 업체 지점 정보</span
-        >
+        <span v-if="companyDistrictDto.nameKr">{{ companyDistrictDto.nameKr }} - 업체 지점 정보</span>
       </h3>
-      <router-link
-        to="/company/company-district"
-        class="btn btn-secondary text-center"
-        >목록으로</router-link
-      >
+      <router-link to="/company/company-district" class="btn btn-secondary text-center">목록으로</router-link>
     </b-row>
     <div class="row d-flex align-items-stretch">
       <div class="col col-12 col-lg-5 my-3">
@@ -27,15 +15,13 @@
                 variant="outline-info"
                 v-b-modal.update_map
                 @click="showMapUpdateModal()"
-                >지도 수정</b-button
-              >
+              >지도 수정</b-button>
               <b-button
                 variant="primary"
                 v-b-modal.update_district
                 @click="findDistrictInfo()"
                 v-if="companyDistrictDto.companyDistrictStatus === 'APPROVAL'"
-                >수정하기</b-button
-              >
+              >수정하기</b-button>
             </div>
           </template>
           <template v-slot:body>
@@ -47,10 +33,7 @@
                 "
                 class="mb-4"
               >
-                <div
-                  v-for="image in companyDistrictDto.image"
-                  :key="image.endpoint"
-                >
+                <div v-for="image in companyDistrictDto.image" :key="image.endpoint">
                   <b-img-lazy
                     :src="image.endpoint"
                     class="rounded mx-auto d-block company-logo"
@@ -61,15 +44,19 @@
               <div>
                 <ul class="u-list">
                   <li v-if="companyDistrictDto.no">
-                    지점 ID : <b>{{ companyDistrictDto.no }}</b>
+                    지점 ID :
+                    <b>{{ companyDistrictDto.no }}</b>
                   </li>
                   <li v-if="companyDistrictDto.nameKr">
-                    지점명 : <b>{{ companyDistrictDto.nameKr }}</b> ({{
-                      companyDistrictDto.nameEng
+                    지점명 :
+                    <b>{{ companyDistrictDto.nameKr }}</b>
+                    ({{
+                    companyDistrictDto.nameEng
                     }})
                   </li>
                   <li v-if="companyDistrictDto.address">
-                    지점 주소 : <b>{{ companyDistrictDto.address }}</b>
+                    지점 주소 :
+                    <b>{{ companyDistrictDto.address }}</b>
                   </li>
                   <li v-if="companyDistrictDto.company">
                     업체명 :
@@ -91,9 +78,7 @@
                       v-for="amenity in companyDistrictDto.amenities"
                       :key="amenity.no"
                       class="m-1"
-                    >
-                      {{ amenity.amenityName }}
-                    </b-badge>
+                    >{{ amenity.amenityName }}</b-badge>
                   </li>
                   <li v-if="companyDistrictDto.createdAt">
                     등록일 :
@@ -108,17 +93,15 @@
                       class="badge-pill p-2 mr-2"
                     >
                       {{
-                        companyDistrictDto.companyDistrictStatus
-                          | enumTransformer
+                      companyDistrictDto.companyDistrictStatus
+                      | enumTransformer
                       }}
                     </b-badge>
-                    <span
-                      v-if="companyDistrictDto.updatedAt"
-                      class="d-inline-block"
-                      >({{
-                        companyDistrictDto.updatedAt | dateTransformer
-                      }})</span
-                    >
+                    <span v-if="companyDistrictDto.updatedAt" class="d-inline-block">
+                      ({{
+                      companyDistrictDto.updatedAt | dateTransformer
+                      }})
+                    </span>
                   </li>
                 </ul>
               </div>
@@ -131,8 +114,7 @@
                     "
                     target="_blank"
                     class="btn btn-sm btn-outline-info"
-                    >크게보기</a
-                  >
+                  >크게보기</a>
                 </div>
               </div>
             </div>
@@ -151,9 +133,7 @@
       <div class="col col-12 col-lg-7 my-3">
         <BaseCard title="타입 정보">
           <template v-slot:head>
-            <b-button variant="primary" v-b-modal.add_delivery_space
-              >추가하기</b-button
-            >
+            <b-button variant="primary" v-b-modal.add_delivery_space>추가하기</b-button>
           </template>
           <template v-slot:body>
             <!-- 타입 리스트 -->
@@ -196,27 +176,17 @@
           />
         </div>
         <div class="text-center mt-2">
-          <b-button variant="danger" @click="removeDistrcitImage()"
-            >대표 이미지 삭제</b-button
-          >
+          <b-button variant="danger" @click="removeDistrcitImage()">대표 이미지 삭제</b-button>
         </div>
       </div>
       <div class="form-row">
         <div class="col-5 col-md-6 mb-3">
           <label>지점명</label>
-          <input
-            type="text"
-            v-model="companyDistrictUpdateDto.nameKr"
-            class="form-control"
-          />
+          <input type="text" v-model="companyDistrictUpdateDto.nameKr" class="form-control" />
         </div>
         <div class="col-5 col-md-6 mb-3">
           <label>지점명(영문)</label>
-          <input
-            type="text"
-            v-model="companyDistrictUpdateDto.nameEng"
-            class="form-control"
-          />
+          <input type="text" v-model="companyDistrictUpdateDto.nameEng" class="form-control" />
         </div>
         <div class="col-12 col-md-6 mb-3">
           <label>지점 주소</label>
@@ -232,7 +202,7 @@
             v-b-modal.postcode
             v-on:keyup.tab="showAddressModal()"
             class="form-control"
-          /> -->
+          />-->
         </div>
         <div class="col-12 col-md-6 mb-3">
           <label>공통 시설</label>
@@ -245,12 +215,11 @@
               v-for="amenity in amenityList"
               :key="amenity.no"
               :value="amenity.no"
-              >{{ amenity.amenityName }}</b-form-checkbox
-            >
+            >{{ amenity.amenityName }}</b-form-checkbox>
           </b-form-checkbox-group>
         </div>
         <div class="col-12 col-md-6 mt-2">
-          <label for="">파일첨부</label>
+          <label for>파일첨부</label>
           <div class="custom-file">
             <input
               type="file"
@@ -260,9 +229,7 @@
               v-on:change="upload($event.target.files)"
               multiple
             />
-            <label class="custom-file-label" for="customFileLang"
-              >파일 첨부</label
-            >
+            <label class="custom-file-label" for="customFileLang">파일 첨부</label>
           </div>
         </div>
       </div>
@@ -273,7 +240,7 @@
         style="height:500px; overflow-y:auto;"
         @complete="setAddress($event, companyDistrictUpdateDto)"
       />
-    </b-modal> -->
+    </b-modal>-->
     <!-- 지점 타입 추가 모달 -->
     <DeliverySpaceCreate />
     <b-modal id="update_map" title="지도수정" @ok="updateMap()">
@@ -293,7 +260,7 @@
             v-model="companyDistrictMapUpdateDto.lon"
           ></b-form-input>
         </b-col>
-      </b-form-row> -->
+      </b-form-row>-->
     </b-modal>
   </section>
 </template>
@@ -325,6 +292,7 @@ import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { getStatusColor } from '../../../core/utils/status-color.util';
 import { CompanyDistrictMapUpdateDto } from '@/dto/company-district/company-district-map-update.dto';
+import { APPROVAL_STATUS } from '@/services/shared';
 
 @Component({
   name: 'ComapanyDistrictDetail',
@@ -351,7 +319,7 @@ export default class CompanyDistrictDetail extends BaseComponent {
   private imageChanged = false;
   private newImage: FileAttachmentDto[] = [];
 
-  getStatusColor(status) {
+  getStatusColor(status: APPROVAL_STATUS) {
     return getStatusColor(status);
   }
 

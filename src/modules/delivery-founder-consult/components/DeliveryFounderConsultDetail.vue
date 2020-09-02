@@ -385,7 +385,7 @@
                     <b-badge
                       :variant="
                         getStatusColor(
-                          deliveryFounderConsult.codeManagement.key,
+                          deliveryFounderConsult.status,
                         )
                       "
                       class="badge-pill p-2 mr-2"
@@ -429,7 +429,7 @@
                     <b-badge
                       :variant="
                         getStatusColor(
-                          deliveryFounderConsult.companyDecisionStatusCode.key,
+                          deliveryFounderConsult.companyDecisionStatus,
                         )
                       "
                       class="badge-pill p-2 mr-2"
@@ -645,7 +645,12 @@
 import { Component, Vue } from 'vue-property-decorator';
 import BaseComponent from '../../../core/base.component';
 import { CodeManagementDto } from '../../../services/init/dto';
-import { GENDER, CONST_GENDER } from '../../../services/shared';
+import {
+  GENDER,
+  CONST_GENDER,
+  APPROVAL_STATUS,
+  B2B_FOUNDER_CONSULT,
+} from '../../../services/shared';
 import CodeManagementService from '../../../services/code-management.service';
 import FounderConsultService from '../../../services/founder-consult.service';
 import DeliveryFounderConsultService from '../../../services/delivery-founder-consult.service';
@@ -705,7 +710,9 @@ export default class FounderConsultDetail extends BaseComponent {
   private adminSendMessageDto = new AdminSendMessageDto();
 
   // get status color
-  getStatusColor(status) {
+  getStatusColor(
+    status: APPROVAL_STATUS | B2B_FOUNDER_CONSULT | FOUNDER_CONSULT,
+  ) {
     return getStatusColor(status);
   }
 

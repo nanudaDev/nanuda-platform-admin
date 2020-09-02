@@ -17,23 +17,16 @@
           @click="findOne(companyUser.no)"
           style="cursor:pointer"
         >
-          <th scope="row">
-            {{ companyUser.no }}
-          </th>
-          <td>
-            {{ companyUser.name }}
-          </td>
-          <td>
-            {{ companyUser.company.nameKr }}
-          </td>
+          <th scope="row">{{ companyUser.no }}</th>
+          <td>{{ companyUser.name }}</td>
+          <td>{{ companyUser.company.nameKr }}</td>
           <td>{{ companyUser.phone | phoneTransformer }}</td>
 
           <td>
             <b-badge
-              :variant="getStatusColor(companyUser.codeManagement.key)"
+              :variant="getStatusColor(companyUser.companyUserStatus)"
               class="badge-pill p-2 mr-2"
-              >{{ companyUser.codeManagement.value }}</b-badge
-            >
+            >{{ companyUser.codeManagement.value }}</b-badge>
           </td>
         </tr>
       </tbody>
@@ -72,7 +65,7 @@ export default class DashboardCompanyUserList extends BaseComponent {
   private dataLoading = false;
 
   // get status color
-  getStatusColor(status) {
+  getStatusColor(status: APPROVAL_STATUS) {
     return getStatusColor(status);
   }
 

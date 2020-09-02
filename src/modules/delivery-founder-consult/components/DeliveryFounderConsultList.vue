@@ -63,20 +63,20 @@
           </select>
         </div>
         <div class="col-6 col-lg-2 mb-3">
-          <label for="company">업체명</label>
-          <select
-            class="custom-select"
-            id="company"
-            v-model="deliveryFounderConsultSearchDto.companyNo"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="company in companySelect"
-              :key="company.no"
-              :value="company.no"
-              >{{ company.nameKr }}</option
-            >
-          </select>
+          <b-form-group label="업체명">
+            <b-form-input
+              list="company_lsit"
+              v-model="deliveryFounderConsultSearchDto.companyNameKr"
+            ></b-form-input>
+            <datalist id="company_lsit">
+              <option
+                v-for="compay in companySelect"
+                :key="compay.no"
+                :value="compay.nameKr"
+                >{{ compay.nameKr }}</option
+              >
+            </datalist>
+          </b-form-group>
         </div>
         <div class="col-12 col-lg-2 mb-3">
           <label for="company_district">업체 지점</label>
@@ -95,7 +95,7 @@
             <b-form-input
               list="admin_list"
               id="admin_user"
-              v-model="deliveryFounderConsultSearchDto.adminName"
+              v-model="deliveryFounderConsultSearchDto.adminUserName"
             ></b-form-input>
             <datalist id="admin_list">
               <option
@@ -129,7 +129,7 @@
           <select
             class="custom-select"
             id="status"
-            v-model="deliveryFounderConsultSearchDto.companyDecisionStatus"
+            v-model="deliveryFounderConsultSearchDto.status"
           >
             <option value selected>전체</option>
             <option
@@ -217,7 +217,7 @@
             <th
               scope="col"
               v-bind:class="{
-                highlighted: deliveryFounderConsultSearchDto.companyNo,
+                highlighted: deliveryFounderConsultSearchDto.companyNameKr,
               }"
             >
               COMPANY

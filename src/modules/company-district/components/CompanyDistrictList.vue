@@ -6,29 +6,29 @@
     <div class="divider"></div>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <b-col sm="12" lg="1" class="mb-3">
+        <!-- <b-col sm="12" lg="1" class="mb-3">
           <label for="district_id">지점 ID</label>
           <b-form-input
             type="text"
             id="district_id"
             v-model="companyDistrictSearchDto.no"
           ></b-form-input>
-        </b-col>
+        </b-col> -->
         <b-col sm="12" lg="2" class="mb-3">
-          <label for="district_company">업체명</label>
-          <select
-            class="custom-select"
-            id="district_company"
-            v-model="companyDistrictSearchDto.companyNo"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="company in companySelect"
-              :key="company.no"
-              :value="company.no"
-              >{{ company.nameKr }}</option
-            >
-          </select>
+          <b-form-group label="업체명">
+            <b-form-input
+              list="company_lsit"
+              v-model="companyDistrictSearchDto.companyNameKr"
+            ></b-form-input>
+            <datalist id="company_lsit">
+              <option
+                v-for="compay in companySelect"
+                :key="compay.no"
+                :value="compay.nameKr"
+                >{{ compay.nameKr }}</option
+              >
+            </datalist>
+          </b-form-group>
         </b-col>
         <b-col sm="12" lg="2" class="mb-3">
           <label for="district_name_kr">지점명</label>
@@ -38,7 +38,7 @@
             v-model="companyDistrictSearchDto.nameKr"
           ></b-form-input>
         </b-col>
-        <b-col sm="12" lg="4" class="mb-3">
+        <b-col sm="12" lg="6" class="mb-3">
           <label for="district_address">주소</label>
           <b-form-input
             type="text"
@@ -46,8 +46,8 @@
             v-model="companyDistrictSearchDto.address"
           ></b-form-input>
         </b-col>
-        <b-col sm="12" lg="3" class="mb-3">
-          <label for="district_status">지점 승인 상태</label>
+        <b-col sm="12" lg="2" class="mb-3">
+          <label for="district_status">승인 상태</label>
           <b-form-select
             id="district_status"
             v-model="companyDistrictSearchDto.companyDistrictStatus"
@@ -95,7 +95,7 @@
             <th
               scope="col"
               v-bind:class="{
-                highlighted: companyDistrictSearchDto.companyNo,
+                highlighted: companyDistrictSearchDto.companyNameKr,
               }"
             >
               COMPANY

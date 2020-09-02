@@ -9,6 +9,8 @@ import { FileAttachmentDto } from '@/services/shared/file-upload';
 export class CompanyDistrictDto extends BaseDto<CompanyDistrictDto> {
   no?: number;
   companyNo?: number;
+  companyNameKr?: string;
+  companyNameEng?: string;
   nameKr?: string;
   nameEng?: string;
   address?: string;

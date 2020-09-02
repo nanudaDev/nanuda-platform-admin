@@ -117,6 +117,7 @@ import {
 import DeliveryFounderConsultContractService from '../../../services/delivery-founder-consult-contarct.service';
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { Pagination } from '@/common';
+import deliverySpaceService from '@/services/delivery-space.service';
 
 @Component({
   name: 'DeliverySpaceDetailContractList',
@@ -152,6 +153,7 @@ export default class DeliverySpaceDetailContractList extends BaseComponent {
 
   // 계약 삭제
   selectContract(contract: DeliveryFounderConsultContractDto) {
+    this.deleteConfirmMsg = '';
     this.selectedContract = contract;
   }
 
@@ -162,9 +164,10 @@ export default class DeliverySpaceDetailContractList extends BaseComponent {
         contractNo,
       ).subscribe(res => {
         if (res) {
-          toast.success('삭제완료');
-          this.$bvModal.hide('delete_contarct');
           this.search();
+          this.$bvModal.hide('delete_contarct');
+          this.$root.$emit('delete_contract_list');
+          toast.success('삭제완료');
         }
       });
     }

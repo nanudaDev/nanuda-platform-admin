@@ -7,6 +7,8 @@ export class CompanyDistrictListDto extends BaseDto<CompanyDistrictListDto>
   implements Partial<CompanyDistrictDto> {
   no: number;
   companyNo?: number;
+  companyNameKr?: string;
+  companyNameEng?: string;
   nameKr?: string;
   nameEng?: string;
   address?: string;

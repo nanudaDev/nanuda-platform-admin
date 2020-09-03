@@ -11,6 +11,7 @@ const toast = {
       title: title,
       message: message,
       position: 'topRight',
+      timeout: 1500,
     });
   },
 
@@ -19,6 +20,7 @@ const toast = {
       title: title,
       message: message,
       position: 'topRight',
+      timeout: 1500,
     });
   },
 };

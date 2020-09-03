@@ -18,6 +18,7 @@ export class DeliveryFounderConsultListDto
   changUpExpYn?: YN;
   spaceOwnYn?: YN;
   companyNo?: number;
+  companyNameKr?: string;
   companyDistrictNameKr?: string;
   companyDistrictNameEng?: string;
   nanudaUserName?: string;

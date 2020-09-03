@@ -5,7 +5,12 @@
       <b-form-row>
         <b-col cols="6" md="1" class="mb-2">
           <label for="username">사용자 ID</label>
-          <input type="text" class="form-control" id="username" v-model="companyUserSearchDto.no" />
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            v-model="companyUserSearchDto.no"
+          />
         </b-col>
         <b-col cols="6" md="2" class="mb-3">
           <b-form-group label="업체명">
@@ -17,7 +22,7 @@
               <option
                 v-for="company in companySelect"
                 :key="company.no"
-                :value="compay.nameKr"
+                :value="company.nameKr"
                 >{{ company.nameKr }}</option
               >
             </datalist>
@@ -25,25 +30,41 @@
         </b-col>
         <b-col cols="6" md="2" class="mb-3">
           <label>이름</label>
-          <input type="text" class="form-control" v-model="companyUserSearchDto.name" />
+          <input
+            type="text"
+            class="form-control" 
+            v-model="companyUserSearchDto.name"
+          />
         </b-col>
         <b-col cols="6" md="2" class="mb-3">
           <label>휴대폰 번호</label>
-          <input type="text" class="form-control" v-model="companyUserSearchDto.phone" />
+          <input
+            type="text"
+            class="form-control"
+            v-model="companyUserSearchDto.phone"
+          />
         </b-col>
         <b-col cols="6" md="3" class="mb-3">
           <label>이메일</label>
-          <input type="text" class="form-control" v-model="companyUserSearchDto.email" />
+          <input
+            type="text"
+            class="form-control"
+            v-model="companyUserSearchDto.email"
+          />
         </b-col>
         <b-col cols="6" md="2" class="mb-3">
           <label>승인 상태</label>
-          <select class="custom-select" v-model="companyUserSearchDto.companyUserStatus">
+          <select
+            class="custom-select"
+            v-model="companyUserSearchDto.companyUserStatus"
+          >
             <option value>전체</option>
             <option
               v-for="status in approvalStatus"
               :key="status"
               :value="status"
-            >{{ status | enumTransformer }}</option>
+              >{{ status | enumTransformer }}</option
+            >
           </select>
         </b-col>
       </b-form-row>
@@ -65,34 +86,59 @@
         variant="primary"
         v-b-modal.add_company_user
         @click="clearOutCompanyUserDto()"
-      >업체 사용자 추가</b-button>
+        >업체 사용자 추가</b-button
+      >
     </div>
     <div v-if="!dataLoading" class="table-bordered table-responsive">
-      <table class="table table-hover table-sm text-center" v-if="companyUserListTotalCount">
+      <table
+        class="table table-hover table-sm text-center"
+        v-if="companyUserListTotalCount"
+      >
         <thead>
           <tr>
-            <th scope="col" v-bind:class="{ highlighted: companyUserSearchDto.no }">ID</th>
+            <th
+              scope="col"
+              v-bind:class="{ highlighted: companyUserSearchDto.no }"
+            >
+              ID
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyUserSearchDto.companyNo,
               }"
-            >업체명</th>
+            >
+              업체명
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyUserSearchDto.name,
               }"
-            >이름</th>
-            <th scope="col" v-bind:class="{ highlighted: companyUserSearchDto.phone }">휴대폰 번호</th>
-            <th scope="col" v-bind:class="{ highlighted: companyUserSearchDto.email }">이메일</th>
+            >
+              이름
+            </th>
+            <th
+              scope="col"
+              v-bind:class="{ highlighted: companyUserSearchDto.phone }"
+            >
+              휴대폰 번호
+            </th>
+            <th
+              scope="col"
+              v-bind:class="{ highlighted: companyUserSearchDto.email }"
+            >
+              이메일
+            </th>
             <th scope="col">등록일</th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyUserSearchDto.companyUserStatus,
               }"
-            >승인 상태</th>
+            >
+              승인 상태
+            </th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -101,17 +147,24 @@
             <th scope="row">{{ companyUser.no }}</th>
             <td class="text-nowrap">{{ companyUser.company.nameKr }}</td>
             <td class="text-nowrap">
-              <strong class="text-danger" v-if="companyUser.authCode === companyUserAdminRole[0]">M</strong>
+              <strong
+                class="text-danger"
+                v-if="companyUser.authCode === companyUserAdminRole[0]"
+                >M</strong
+              >
               {{ companyUser.name }}
             </td>
-            <td class="text-nowrap">{{ companyUser.phone | phoneTransformer }}</td>
+            <td class="text-nowrap">
+              {{ companyUser.phone | phoneTransformer }}
+            </td>
             <td>{{ companyUser.email }}</td>
             <td>{{ companyUser.createdAt | dateTransformer }}</td>
             <td>
               <b-badge
                 :variant="getStatusColor(companyUser.companyUserStatus)"
                 class="badge-pill p-2 mr-2"
-              >{{ companyUser.codeManagement.value }}</b-badge>
+                >{{ companyUser.codeManagement.value }}</b-badge
+              >
             </td>
             <td class="text-nowrap">
               <router-link
@@ -123,7 +176,8 @@
                     id: companyUser.no,
                   },
                 }"
-              >상세보기</router-link>
+                >상세보기</router-link
+              >
             </td>
           </tr>
         </tbody>
@@ -157,14 +211,22 @@
             사용자명
             <span class="red-text">*</span>
           </label>
-          <input type="text" v-model="companyUserCreateDto.name" class="form-control" />
+          <input
+            type="text"
+            v-model="companyUserCreateDto.name"
+            class="form-control"
+          />
         </div>
         <div class="col-12 col-md-6">
           <label>
             휴대폰 번호
             <span class="red-text">*</span>
           </label>
-          <input type="text" v-model="companyUserCreateDto.phone" class="form-control" />
+          <input
+            type="text"
+            v-model="companyUserCreateDto.phone"
+            class="form-control"
+          />
         </div>
       </div>
       <div class="form-row mt-3">
@@ -173,7 +235,11 @@
             비밀번호
             <span class="red-text">*</span>
           </label>
-          <input type="password" class="form-control" v-model="companyUserCreateDto.password" />
+          <input
+            type="password"
+            class="form-control"
+            v-model="companyUserCreateDto.password"
+          />
         </div>
         <div class="col-12 col-md-6">
           <label for="password">
@@ -193,19 +259,27 @@
             이메일
             <span class="red-text">*</span>
           </label>
-          <input type="text" v-model="companyUserCreateDto.email" class="form-control" />
+          <input
+            type="text"
+            v-model="companyUserCreateDto.email"
+            class="form-control"
+          />
         </div>
         <div class="col-12 col-md-6">
           <label>
             업체명
             <span class="red-text">*</span>
           </label>
-          <select class="custom-select" v-model="companyUserCreateDto.companyNo">
+          <select
+            class="custom-select"
+            v-model="companyUserCreateDto.companyNo"
+          >
             <option
               v-for="company in companySelect"
               :key="company.no"
               :value="company.no"
-            >{{ company.nameKr }}</option>
+              >{{ company.nameKr }}</option
+            >
           </select>
         </div>
       </div>
@@ -220,7 +294,8 @@
               v-for="role in companyUserAdminRole"
               :key="role"
               :value="role"
-            >{{ role | enumTransformer }}</option>
+              >{{ role | enumTransformer }}</option
+            >
           </select>
         </div>
         <div class="col-12 col-md-6">
@@ -228,13 +303,17 @@
             승인 상태
             <span class="red-text">*</span>
           </label>
-          <select class="custom-select" v-model="companyUserCreateDto.companyUserStatus">
+          <select
+            class="custom-select"
+            v-model="companyUserCreateDto.companyUserStatus"
+          >
             <option value>전체</option>
             <option
               v-for="status in approvalStatus"
               :key="status"
               :value="status"
-            >{{ status | enumTransformer }}</option>
+              >{{ status | enumTransformer }}</option
+            >
           </select>
         </div>
       </div>

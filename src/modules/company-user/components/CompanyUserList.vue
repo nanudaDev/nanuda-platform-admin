@@ -8,15 +8,20 @@
           <input type="text" class="form-control" id="username" v-model="companyUserSearchDto.no" />
         </b-col>
         <b-col cols="6" md="2" class="mb-3">
-          <label>업체명</label>
-          <select class="custom-select" v-model="companyUserSearchDto.companyNo">
-            <option value selected>전체</option>
-            <option
-              v-for="company in companySelect"
-              :key="company.no"
-              :value="company.no"
-            >{{ company.nameKr }}</option>
-          </select>
+          <b-form-group label="업체명">
+            <b-form-input
+              list="company_lsit"
+              v-model="companyUserSearchDto.companyNameKr"
+            ></b-form-input>
+            <datalist id="company_lsit">
+              <option
+                v-for="company in companySelect"
+                :key="company.no"
+                :value="compay.nameKr"
+                >{{ company.nameKr }}</option
+              >
+            </datalist>
+          </b-form-group>
         </b-col>
         <b-col cols="6" md="2" class="mb-3">
           <label>이름</label>

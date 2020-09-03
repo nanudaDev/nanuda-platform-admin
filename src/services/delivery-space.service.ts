@@ -30,6 +30,44 @@ class DeliverySpaceService extends BaseService {
 
   /**
    *
+   * @param spaceNo
+   */
+  findOnePrevious(spaceNo) {
+    return super.get<DeliverySpaceDto>(
+      `admin/delivery-space/${spaceNo}/previous`,
+    );
+  }
+
+  /**
+   *
+   * @param spaceNo
+   */
+  findOneNext(spaceNo) {
+    return super.get<DeliverySpaceDto>(`admin/delivery-space/${spaceNo}/next`);
+  }
+
+  /**
+   *
+   * @param spaceNo
+   */
+  findModalPrevious(spaceNo) {
+    return super.get<DeliverySpaceDto>(
+      `admin/company-district/delivery-space/${spaceNo}/previous`,
+    );
+  }
+
+  /**
+   *
+   * @param spaceNo
+   */
+  findModalNext(spaceNo) {
+    return super.get<DeliverySpaceDto>(
+      `admin/company-district/delivery-space/${spaceNo}/next`,
+    );
+  }
+
+  /**
+   *
    * @param deliverySpaceDto
    */
   create(deliverySpaceDto: DeliverySpaceDto) {

@@ -7,6 +7,24 @@
         >
       </template>
     </SectionTitle>
+    <div class="clearfix  mb-4">
+      <b-button
+        variant="outline-secondary"
+        @click="findOne(prevNo)"
+        v-if="prevNo"
+        class="float-left"
+      >
+        <b-icon icon="arrow-left"></b-icon> 이전
+      </b-button>
+      <b-button
+        variant="outline-secondary"
+        @click="findOne(nextNo)"
+        v-if="nextNo"
+        class="float-right"
+      >
+        다음 <b-icon icon="arrow-right"></b-icon>
+      </b-button>
+    </div>
     <b-row>
       <b-col cols="12" md="4">
         <b-carousel
@@ -169,12 +187,38 @@ import toast from '../../../../resources/assets/js/services/toast.js';
 export default class DeliverySpaceList extends BaseComponent {
   private deliverySpaceDto = new DeliverySpaceDto();
 
+  private prevNo = null;
+  private nextNo = null;
+
   // 타입 상세 보기
   findOne(id) {
+    this.findOnePrevious(id);
+    this.findOneNext(id);
+    if (id !== this.$route.params.id) {
+      this.$router.push(`/company/delivery-space/${id}`);
+    }
     DeliverySpaceService.findOne(id).subscribe(res => {
       if (res) {
         this.deliverySpaceDto = res.data;
         this.$root.$emit('find_contract_list', id);
+      }
+    });
+  }
+
+  // 이전 타입 보기
+  findOnePrevious(id) {
+    DeliverySpaceService.findOnePrevious(id).subscribe(res => {
+      if (res) {
+        this.prevNo = res.data;
+      }
+    });
+  }
+
+  // 다음 타입 보기
+  findOneNext(id) {
+    DeliverySpaceService.findOneNext(id).subscribe(res => {
+      if (res) {
+        this.nextNo = res.data;
       }
     });
   }

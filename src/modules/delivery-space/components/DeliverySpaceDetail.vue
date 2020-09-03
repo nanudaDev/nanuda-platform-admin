@@ -10,7 +10,7 @@
     <div class="clearfix  mb-4">
       <b-button
         variant="outline-secondary"
-        @click="$router.push(`/company/delivery-space/${prevNo}`)"
+        @click="findOne(prevNo)"
         v-if="prevNo"
         class="float-left"
       >
@@ -192,29 +192,31 @@ export default class DeliverySpaceList extends BaseComponent {
 
   // 타입 상세 보기
   findOne(id) {
+    this.findOnePrevious(id);
+    this.findOneNext(id);
+    if (id !== this.$route.params.id) {
+      this.$router.push(`/company/delivery-space/${id}`);
+    }
     DeliverySpaceService.findOne(id).subscribe(res => {
       if (res) {
         this.deliverySpaceDto = res.data;
-        this.findOnePrevious(id);
-        this.findOneNext(id);
         this.$root.$emit('find_contract_list', id);
       }
     });
   }
 
   // 이전 타입 보기
-  findOnePrevious(typeNo: number) {
-    DeliverySpaceService.findOnePrevious(typeNo).subscribe(res => {
+  findOnePrevious(id) {
+    DeliverySpaceService.findOnePrevious(id).subscribe(res => {
       if (res) {
         this.prevNo = res.data;
-        this.findOne(this.prevNo);
       }
     });
   }
 
   // 다음 타입 보기
-  findOneNext(typeNo: number) {
-    DeliverySpaceService.findOneNext(typeNo).subscribe(res => {
+  findOneNext(id) {
+    DeliverySpaceService.findOneNext(id).subscribe(res => {
       if (res) {
         this.nextNo = res.data;
       }

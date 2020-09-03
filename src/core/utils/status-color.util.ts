@@ -11,7 +11,8 @@ export const getStatusColor = (status: string): string => {
 
   if (
     status === APPROVAL_STATUS.APPROVAL ||
-    status === FOUNDER_CONSULT.F_CONTACT_FIN
+    status === FOUNDER_CONSULT.F_CONTACT_FIN ||
+    status === B2B_FOUNDER_CONSULT.B2B_F_CONTRACT_COMPLETE
   ) {
     return 'success';
   }

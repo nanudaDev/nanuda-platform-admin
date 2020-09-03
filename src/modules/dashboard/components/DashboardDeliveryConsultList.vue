@@ -27,13 +27,11 @@
           <td>{{ founderConsult.nanudaUser.name }}</td>
           <td>{{ founderConsult.nanudaUser.phone | phoneTransformer }}</td>
 
-          <td v-if="founderConsult.deliverySpaces.companyDistrict">
-            {{ founderConsult.deliverySpaces.companyDistrict.company.nameKr }}
-          </td>
+          <td
+            v-if="founderConsult.deliverySpaces.companyDistrict"
+          >{{ founderConsult.deliverySpaces.companyDistrict.company.nameKr }}</td>
           <td>
-            <div v-if="founderConsult.availableTime">
-              {{ founderConsult.availableTime.value }}
-            </div>
+            <div v-if="founderConsult.availableTime">{{ founderConsult.availableTime.value }}</div>
           </td>
           <td
             v-if="
@@ -42,17 +40,16 @@
             "
           >
             {{
-              founderConsult.deliverySpaces.quantity -
-                founderConsult.deliverySpaces.contracts.length
+            founderConsult.deliverySpaces.quantity -
+            founderConsult.deliverySpaces.contracts.length
             }}/{{ founderConsult.deliverySpaces.quantity }}
           </td>
           <td>{{ founderConsult.createdAt | dateTransformer }}</td>
           <td>
             <b-badge
-              :variant="getStatusColor(founderConsult.codeManagement.key)"
+              :variant="getStatusColor(founderConsult.status)"
               class="badge-pill p-2 mr-2"
-              >{{ founderConsult.codeManagement.value }}</b-badge
-            >
+            >{{ founderConsult.codeManagement.value }}</b-badge>
           </td>
         </tr>
       </tbody>
@@ -73,7 +70,7 @@ import {
   DeliveryFounderConsultListDto,
   DeliveryFounderConsultDto,
 } from '../../../dto/delivery-founder-consult';
-import { SPACE_TYPE } from '@/services/shared';
+import { SPACE_TYPE, FOUNDER_CONSULT } from '@/services/shared';
 
 import { getStatusColor } from '../../../core/utils/status-color.util';
 
@@ -88,7 +85,7 @@ export default class DashboardFounderConsultList extends BaseComponent {
   private dataLoading = false;
 
   // get status color
-  getStatusColor(status) {
+  getStatusColor(status: FOUNDER_CONSULT) {
     return getStatusColor(status);
   }
 

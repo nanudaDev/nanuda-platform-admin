@@ -2,7 +2,9 @@
   <section>
     <SectionTitle :title="`${deliverySpaceDto.typeName} - 타입 정보`" divider>
       <template v-slot:rightArea>
-        <router-link class="btn btn-secondary" to="/company/delivery-space">목록보기</router-link>
+        <router-link class="btn btn-secondary" to="/company/delivery-space"
+          >목록보기</router-link
+        >
       </template>
     </SectionTitle>
     <b-row>
@@ -30,26 +32,31 @@
       </b-col>
       <b-col cols="12" md="8">
         <div v-if="deliverySpaceDto && deliverySpaceDto.companyDistrict">
-          <h4
-            v-if="deliverySpaceDto.typeName"
-            class="mb-3"
-          >[{{ deliverySpaceDto.no }}] {{ deliverySpaceDto.typeName }}</h4>
+          <h4 v-if="deliverySpaceDto.typeName" class="mb-3">
+            [{{ deliverySpaceDto.no }}] {{ deliverySpaceDto.typeName }}
+          </h4>
           <ul class="u-list">
-            <li
-              v-if="deliverySpaceDto.companyDistrict.company.nameKr"
-            >업체명 : {{ deliverySpaceDto.companyDistrict.company.nameKr }}</li>
-            <li
-              v-if="deliverySpaceDto.companyDistrict.company.nameKr"
-            >지점명 : {{ deliverySpaceDto.companyDistrict.nameKr }}</li>
-            <li v-if="deliverySpaceDto.buildingName">건물명 : {{ deliverySpaceDto.buildingName }}</li>
-            <li v-if="deliverySpaceDto.size">평수 : {{ deliverySpaceDto.size }} 평</li>
-            <li v-if="deliverySpaceDto.deposit">보증금 : {{ deliverySpaceDto.deposit }} 만원</li>
-            <li
-              v-if="deliverySpaceDto.monthlyRentFee"
-            >월 임대료 : {{ deliverySpaceDto.monthlyRentFee }} 만원</li>
-            <li
-              v-if="deliverySpaceDto.monthlyUtilityFee"
-            >월 관리비 : {{ deliverySpaceDto.monthlyUtilityFee }} 만원</li>
+            <li v-if="deliverySpaceDto.companyDistrict.company.nameKr">
+              업체명 : {{ deliverySpaceDto.companyDistrict.company.nameKr }}
+            </li>
+            <li v-if="deliverySpaceDto.companyDistrict.company.nameKr">
+              지점명 : {{ deliverySpaceDto.companyDistrict.nameKr }}
+            </li>
+            <li v-if="deliverySpaceDto.buildingName">
+              건물명 : {{ deliverySpaceDto.buildingName }}
+            </li>
+            <li v-if="deliverySpaceDto.size">
+              평수 : {{ deliverySpaceDto.size }} 평
+            </li>
+            <li v-if="deliverySpaceDto.deposit">
+              보증금 : {{ deliverySpaceDto.deposit }} 만원
+            </li>
+            <li v-if="deliverySpaceDto.monthlyRentFee">
+              월 임대료 : {{ deliverySpaceDto.monthlyRentFee }} 만원
+            </li>
+            <li v-if="deliverySpaceDto.monthlyUtilityFee">
+              월 관리비 : {{ deliverySpaceDto.monthlyUtilityFee }} 만원
+            </li>
             <li
               v-if="
                 deliverySpaceDto.deliverySpaceOptions &&
@@ -62,7 +69,8 @@
                 v-for="option in deliverySpaceDto.deliverySpaceOptions"
                 :key="option.no"
                 class="m-1"
-              >{{ option.deliverySpaceOptionName }}</b-badge>
+                >{{ option.deliverySpaceOptionName }}</b-badge
+              >
             </li>
             <li
               v-if="
@@ -76,10 +84,13 @@
                 v-for="amenity in deliverySpaceDto.amenities"
                 :key="amenity.no"
                 class="m-1"
-              >{{ amenity.amenityName }}</b-badge>
+                >{{ amenity.amenityName }}</b-badge
+              >
             </li>
           </ul>
-          <div v-if="deliverySpaceDto.brands && deliverySpaceDto.brands.length > 0">
+          <div
+            v-if="deliverySpaceDto.brands && deliverySpaceDto.brands.length > 0"
+          >
             창업 가능 브랜드
             <div class="mt-2">
               <router-link
@@ -101,7 +112,10 @@
               </router-link>
             </div>
           </div>
-          <div v-if="deliverySpaceDto.quantity" class="border bg-light rounded p-3 mt-3">
+          <div
+            v-if="deliverySpaceDto.quantity"
+            class="border bg-light rounded p-3 mt-3"
+          >
             남은 공실 갯수 :
             <b
               :class="[
@@ -109,7 +123,8 @@
                   ? 'text-success'
                   : 'text-danger',
               ]"
-            >{{ deliverySpaceDto.remainingCount }}</b>
+              >{{ deliverySpaceDto.remainingCount }}</b
+            >
             /
             {{ deliverySpaceDto.quantity }}
           </div>
@@ -119,7 +134,8 @@
             variant="primary"
             v-b-modal.update_delivery_space
             @click="showUpdateModal()"
-          >수정하기</b-button>
+            >수정하기</b-button
+          >
         </div>
       </b-col>
       <b-col>
@@ -179,6 +195,9 @@ export default class DeliverySpaceList extends BaseComponent {
       this.findOne(id);
     });
     this.$root.$on('clearout_updatedto', () => {
+      this.findOne(id);
+    });
+    this.$root.$on('delete_contract_list', () => {
       this.findOne(id);
     });
   }

@@ -12,5 +12,6 @@ export class CompanyUserListDto extends BaseDto<CompanyUserListDto>
   companyUserStatus?: APPROVAL_STATUS;
   authCode?: COMPANY_USER;
   companyNo?: number;
+  companyNameKr?: string;
   orderByNo?: OrderByValue;
 }

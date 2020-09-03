@@ -134,7 +134,7 @@
       title="브랜드 추가"
       @hide="clearBrandCreateDto()"
       @cancel="clearBrandCreateDto()"
-      @ok="create()"
+      @ok="createBrand()"
     >
       <div v-if="brandLogo && brandLogo.length > 0" class="mb-4">
         <div v-for="logo in brandLogo" :key="logo.endpoint">
@@ -281,7 +281,7 @@ export default class BrandList extends BaseComponent {
   }
 
   // create brand
-  create() {
+  createBrand() {
     if (this.brandLogo) {
       this.brandCreateDto.logo = this.brandLogo;
     }
@@ -312,6 +312,7 @@ export default class BrandList extends BaseComponent {
   }
 
   clearBrandCreateDto() {
+    this.brandLogo = [];
     this.brandCreateDto = new BrandDto();
   }
 

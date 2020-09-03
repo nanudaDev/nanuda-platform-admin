@@ -1,6 +1,6 @@
 <template>
-  <section>
-    <div v-if="deliverySpaceListCount">
+  <section v-if="deliverySpaceListCount">
+    <div>
       <b-row no-gutters>
         <b-col
           cols="6"
@@ -124,13 +124,30 @@
         class="mt-4 justify-content-center"
       ></b-pagination>
     </div>
-    <div v-else class="empty-data">타입 정보 없음</div>
     <b-modal
       id="view_type_detail"
       size="xl"
       hide-footer
       :title="`${deliverySpaceDto.typeName} 타입 상세 보기`"
     >
+      <div class="clearfix  mb-4">
+        <b-button
+          variant="outline-secondary"
+          @click="findOne(prevNo)"
+          v-if="prevNo"
+          class="float-left"
+        >
+          <b-icon icon="arrow-left"></b-icon> 이전
+        </b-button>
+        <b-button
+          variant="outline-secondary"
+          @click="findOne(nextNo)"
+          v-if="nextNo"
+          class="float-right"
+        >
+          다음 <b-icon icon="arrow-right"></b-icon>
+        </b-button>
+      </div>
       <b-row>
         <b-col cols="12" md="4">
           <b-carousel
@@ -229,6 +246,7 @@
       </b-row>
     </b-modal>
   </section>
+  <div v-else class="empty-data">타입 정보 없음</div>
 </template>
 <script lang="ts">
 import BaseCard from '../../_components/BaseCard.vue';
@@ -236,7 +254,7 @@ import BaseComponent from '@/core/base.component';
 import { Prop, Vue, Component } from 'vue-property-decorator';
 import { DeliverySpaceDto, DeliverySpaceListDto } from '../../../dto';
 import AmenityService from '../../../services/amenity.service';
-import DeliverSpaceService from '../../../services/delivery-space.service';
+import DeliverySpaceService from '../../../services/delivery-space.service';
 import { Pagination } from '@/common';
 
 import DeliverySpaceDetailContractList from '../../delivery-space/components/DeliverySpaceDetailContractList.vue';
@@ -268,7 +286,7 @@ export default class DeliverySpaceList extends BaseComponent {
       this.$route.params.id,
     );
 
-    DeliverSpaceService.findAll(
+    DeliverySpaceService.findAll(
       this.deliverySpaceListDto,
       this.pagination,
     ).subscribe(res => {
@@ -279,10 +297,30 @@ export default class DeliverySpaceList extends BaseComponent {
 
   // 타입 상세 보기
   findOne(typeNo: number) {
-    DeliverSpaceService.findOne(typeNo).subscribe(res => {
+    DeliverySpaceService.findOne(typeNo).subscribe(res => {
       if (res) {
         this.deliverySpaceDto = res.data;
+        this.findOnePrevious(typeNo);
+        this.findOneNext(typeNo);
         this.$root.$emit('find_contract_list', typeNo);
+      }
+    });
+  }
+
+  // 이전 타입 보기
+  findOnePrevious(typeNo: number) {
+    DeliverySpaceService.findModalPrevious(typeNo).subscribe(res => {
+      if (res) {
+        this.prevNo = res.data;
+      }
+    });
+  }
+
+  // 다음 타입 보기
+  findOneNext(typeNo: number) {
+    DeliverySpaceService.findModalNext(typeNo).subscribe(res => {
+      if (res) {
+        this.nextNo = res.data;
       }
     });
   }

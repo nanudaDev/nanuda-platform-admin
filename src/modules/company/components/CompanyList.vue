@@ -86,7 +86,7 @@
       <b-button
         variant="primary"
         v-b-modal.add_company
-        @click="clearOutCompanyDto()"
+        @click="clearOutCompanyCreateDto()"
         >업체 추가</b-button
       >
     </div>
@@ -106,46 +106,46 @@
                 highlighted: companySearchDto.nameKr,
               }"
             >
-              COMPANY
+              업체명
             </th>
             <th
               scope="col"
               v-bind:class="{ highlighted: companySearchDto.ceoKr }"
             >
-              CEO
+              대표자명
             </th>
             <th
               scope="col"
               v-bind:class="{ highlighted: companySearchDto.phone }"
             >
-              TEL
+              전화번호
             </th>
             <th
               scope="col"
               v-bind:class="{ highlighted: companySearchDto.email }"
             >
-              EMAIL
+              이메일
             </th>
             <th
               scope="col"
               v-bind:class="{ highlighted: companySearchDto.fax }"
             >
-              FAX
+              팩스
             </th>
             <th
               scope="col"
               v-bind:class="{ highlighted: companySearchDto.address }"
             >
-              ADDRESS
+              주소
             </th>
-            <th scope="col">CREATED</th>
+            <th scope="col">등록일</th>
             <th
               scope="col"
               v-bind:class="{ highlighted: companySearchDto.companyStatus }"
             >
-              STATUS
+              승인 상태
             </th>
-            <th scope="col">VIEW</th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody v-if="companyListTotalCount">
@@ -181,7 +181,7 @@
           </tr>
         </tbody>
       </table>
-      <td v-else class="empty-data border">검색결과가 없습니다.</td>
+      <div v-else class="empty-data border">검색결과가 없습니다.</div>
     </div>
     <b-pagination
       v-model="pagination.page"
@@ -202,19 +202,20 @@
       title="업체 추가"
       ok-title="추가"
       cancel-title="취소"
+      size="lg"
       @ok="createCompany()"
     >
-      <div v-if="attachment && attachment.length > 0">
-        <div v-for="image in attachment" :key="image.endpoint">
+      <div v-if="companyLogo && companyLogo.length > 0">
+        <div v-for="logo in companyLogo" :key="logo.endpoint">
           <img
-            :src="image.endpoint"
+            :src="logo.endpoint"
             class="rounded mx-auto d-block company-logo"
           />
         </div>
       </div>
       <form ref="form" @submit.stop.prevent="handleSubmit">
-        <div class="form-row">
-          <div class="col-12 col-md-6 mt-2">
+        <b-form-row>
+          <b-col cols="6" lg="3" class="mt-2">
             <label>
               업체명
               <span class="red-text">*</span>
@@ -224,18 +225,16 @@
               v-model="companyCreateDto.nameKr"
               class="form-control"
             />
-          </div>
-          <div class="col-12 col-md-6 mt-2">
+          </b-col>
+          <b-col cols="6" lg="3" class="mt-2">
             <label>업체명(영문)</label>
             <input
               type="text"
               v-model="companyCreateDto.nameEng"
               class="form-control"
             />
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="col-12 col-md-6 mt-2">
+          </b-col>
+          <b-col cols="6" lg="3" class="mt-2">
             <label>
               전회번호
               <span class="red-text">*</span>
@@ -245,8 +244,8 @@
               v-model="companyCreateDto.phone"
               class="form-control"
             />
-          </div>
-          <div class="col-12 col-md-6 mt-2">
+          </b-col>
+          <b-col cols="6" lg="3" class="mt-2">
             <label>
               이메일
               <span class="red-text">*</span>
@@ -256,16 +255,46 @@
               v-model="companyCreateDto.email"
               class="form-control"
             />
-          </div>
-          <div class="col-12 col-md-6 mt-2">
+          </b-col>
+          <b-col cols="6" lg="3" class="mt-2">
             <label>FAX</label>
             <input
               type="text"
               v-model="companyCreateDto.fax"
               class="form-control"
             />
-          </div>
-          <div class="col-12 col-md-6 mt-2">
+          </b-col>
+          <b-col cols="6" lg="3" class="mt-2">
+            <label>
+              사업자번호
+              <span class="red-text">*</span>
+            </label>
+            <input
+              type="text"
+              v-model="companyCreateDto.businessNo"
+              class="form-control"
+            />
+          </b-col>
+          <b-col cols="6" lg="3" class="mt-2">
+            <label>
+              대표명
+              <span class="red-text">*</span>
+            </label>
+            <input
+              type="text"
+              v-model="companyCreateDto.ceoKr"
+              class="form-control"
+            />
+          </b-col>
+          <b-col cols="6" lg="3" class="mt-2">
+            <label>대표명(영문)</label>
+            <input
+              type="text"
+              v-model="companyCreateDto.ceoEng"
+              class="form-control"
+            />
+          </b-col>
+          <b-col lg="6" class="mt-2">
             <label>
               주소
               <span class="red-text">*</span>
@@ -277,48 +306,30 @@
               v-on:keyup.tab="showAddressModal()"
               v-b-modal.postcode
             />
-          </div>
-          <div class="col-12 col-md-6 mt-2">
+          </b-col>
+          <b-col lg="6" class="mt-2">
             <label>
-              대표명
-              <span class="red-text">*</span>
+              상세 주소
             </label>
-            <input
-              type="text"
-              v-model="companyCreateDto.ceoKr"
-              class="form-control"
-            />
-          </div>
-          <div class="col-12 col-md-6 mt-2">
-            <label>대표명(영문)</label>
-            <input
-              type="text"
-              v-model="companyCreateDto.ceoEng"
-              class="form-control"
-            />
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="col-12 col-md-6 mt-2">
+            <b-form-input v-model="addressDetail" />
+          </b-col>
+          <b-col cols="12" lg="6" class="mt-2">
             <label>웹사이트</label>
             <input
               type="text"
               v-model="companyCreateDto.website"
               class="form-control"
             />
-          </div>
-          <div class="col-12 col-md-6 mt-2">
-            <label>
-              사업자번호
-              <span class="red-text">*</span>
-            </label>
-            <input
-              type="text"
-              v-model="companyCreateDto.businessNo"
-              class="form-control"
-            />
-          </div>
-          <div class="col-12 col-md-6 mt-2">
+          </b-col>
+          <b-col lg="3" class="mt-2">
+            <label>업체 로고</label>
+            <b-form-file
+              placeholder="파일 선택"
+              ref="fileInput"
+              @input="upload($event)"
+            ></b-form-file>
+          </b-col>
+          <b-col lg="3" class="mt-2">
             <label>
               승인 상태
               <span class="red-text">*</span>
@@ -335,23 +346,8 @@
                 >{{ status | enumTransformer }}</option
               >
             </select>
-          </div>
-          <div class="col-12 col-md-6 mt-2">
-            <label>업체 로고</label>
-            <div class="custom-file">
-              <input
-                type="file"
-                class="custom-file-input"
-                id="customFileLang"
-                lang="kr"
-                v-on:change="upload($event.target.files)"
-              />
-              <label class="custom-file-label" for="customFileLang"
-                >로고 추가</label
-              >
-            </div>
-          </div>
-        </div>
+          </b-col>
+        </b-form-row>
       </form>
     </b-modal>
     <!-- 주소 검색 모달 -->
@@ -366,38 +362,41 @@
 <script lang="ts">
 import { Component } from 'vue-property-decorator';
 import BaseComponent from '../../../core/base.component';
-import { CompanyListDto, CompanyDto, FileAttachmentDto } from '../../../dto';
+import { CompanyListDto, CompanyDto } from '../../../dto';
 import { Pagination } from '../../../common';
 import CompanyService from '../../../services/company.service';
 import {
   CONST_APPROVAL_STATUS,
   APPROVAL_STATUS,
 } from '../../../services/shared';
+import { FileAttachmentDto } from '@/services/shared/file-upload';
 import FileUploadService from '../../../services/shared/file-upload/file-upload.service';
 import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';
 import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
-
 import { getStatusColor } from '../../../core/utils/status-color.util';
 
 @Component({
   name: 'CompanyList',
 })
 export default class Company extends BaseComponent {
+  constructor() {
+    super();
+  }
   private companySearchDto = new CompanyListDto();
   //   or you can set this value to an empty erray. either or
-  //     private companyListDto: CompanyDto[] = [];
-  private companyListDto: CompanyDto[] = Array<CompanyDto>();
-  private companyListTotalCount = 0;
+  //   private companyListDto: Array<CompanyDto>();
+  private companyListDto: CompanyDto[] = [];
+  private companyListTotalCount = null;
   private companyCreateDto = new CompanyDto();
+  private companySelect: CompanyDto[] = [];
   private pagination = new Pagination();
   private approvalStatus: APPROVAL_STATUS[] = [...CONST_APPROVAL_STATUS];
   private totalPage = 0;
   private dataLoading = false;
   // single file일 경우 치환자를 attachment으로 정한다
-  private attachment: FileAttachmentDto[] = [];
+  private companyLogo: FileAttachmentDto[] = [];
   private addressData = { address: '' };
-
-  private companySelect: CompanyDto[] = Array<CompanyDto>();
+  private addressDetail = null;
 
   // get status color
   getStatusColor(status: APPROVAL_STATUS) {
@@ -433,10 +432,6 @@ export default class Company extends BaseComponent {
       this.pagination.page = 1;
     }
 
-    if (this.$route.params.address) {
-      console.log('params', this.$route.params.address);
-    }
-
     CompanyService.findAll(this.companySearchDto, this.pagination).subscribe(
       res => {
         this.dataLoading = false;
@@ -449,15 +444,13 @@ export default class Company extends BaseComponent {
     );
   }
 
-  async upload(file: FileList) {
-    console.log(file);
-
+  async upload(file: File) {
     const attachments = await FileUploadService.upload(
       UPLOAD_TYPE.COMPANY_LOGO,
-      file,
+      [file],
     );
-    console.log(attachments);
-    this.attachment.push(
+    this.companyLogo = [];
+    this.companyLogo.push(
       ...attachments.filter(
         fileUpload =>
           fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
@@ -467,7 +460,10 @@ export default class Company extends BaseComponent {
 
   // 업체 생성
   createCompany() {
-    this.companyCreateDto.logo = this.attachment;
+    this.companyCreateDto.logo = this.companyLogo;
+    if (this.addressDetail.length > 0) {
+      this.companyCreateDto.address = `${this.addressData.address} ${this.addressDetail}`;
+    }
     CompanyService.createCompany(this.companyCreateDto).subscribe(res => {
       if (res) {
         this.search();
@@ -482,10 +478,10 @@ export default class Company extends BaseComponent {
   }
 
   // 업체 생성 초기화
-  clearOutCompanyDto() {
+  clearOutCompanyCreateDto() {
     this.companyCreateDto = new CompanyDto();
     this.addressData = { address: '' };
-    this.attachment = [];
+    this.companyLogo = [];
   }
 
   created() {

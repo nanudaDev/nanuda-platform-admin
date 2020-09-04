@@ -28,6 +28,7 @@ import {
   StringDistrictPipeTransformer,
   PhonePipeTransformer,
   BizNoPipeTransformer,
+  StringInquiryPipeTransformer,
 } from './core';
 
 let env = new Environment();
@@ -57,6 +58,7 @@ DatePipeTransformer();
 EnumPipeTransformer();
 StringPipeTransformer();
 StringDistrictPipeTransformer();
+StringInquiryPipeTransformer();
 ViewPipeTransformer();
 PhonePipeTransformer();
 BizNoPipeTransformer();

@@ -6,7 +6,7 @@
           >관리자 : <strong>{{ admin.name }}</strong></span
         >
       </div>
-      <div>
+      <div v-on:keyup.enter="showReplyModal()">
         <b-form-textarea
           style="height:100px;"
           v-model="inquiryReplyCreateDto.content"
@@ -220,6 +220,11 @@ export default class InquiryReplyList extends BaseComponent {
     AdminService.findMe().subscribe(res => {
       this.admin = res.data;
     });
+  }
+
+  // 답변 작성 모달
+  showReplyModal() {
+    this.$bvModal.show('add_reply');
   }
 
   // 답변 작성

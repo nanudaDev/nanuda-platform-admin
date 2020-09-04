@@ -1,30 +1,32 @@
 <template>
-  <div class="board-view" v-if="inquiry">
+  <div class="board-view" v-if="inquiryDto">
     <div class="board-view-header">
       <div class="board-view-title">
         <b-badge
           variant="warning"
           class="board-view-category"
-          v-if="inquiry.codeManagement && inquiry.codeManagement.value"
-          >{{ inquiry.codeManagement.value }}</b-badge
+          v-if="inquiryDto.codeManagement && inquiryDto.codeManagement.value"
+          >{{ inquiryDto.codeManagement.value }}</b-badge
         >
-        <h3>{{ inquiry.title }}</h3>
+        <h3>{{ inquiryDto.title }}</h3>
       </div>
       <div
         class="board-view-info"
-        v-if="inquiry.companyUser && inquiry.company"
+        v-if="inquiryDto.companyUser && inquiryDto.company"
       >
         <span clsas="board-user-name"
-          >{{ inquiry.companyUser.name }} ({{ inquiry.company.nameKr }})</span
+          >{{ inquiryDto.companyUser.name }} ({{
+            inquiryDto.company.nameKr
+          }})</span
         >
         <span class="baord-view-date">
-          {{ inquiry.createdAt | dateTransformer }}</span
+          {{ inquiryDto.createdAt | dateTransformer }}</span
         >
       </div>
     </div>
     <div class="board-view-body">
-      <div v-html="inquiry.content" class="board-view-content">
-        {{ inquiry.content }}
+      <div v-html="inquiryDto.content" class="board-view-content">
+        {{ inquiryDto.content }}
       </div>
     </div>
     <div class="board-view-footer">
@@ -32,21 +34,26 @@
         <router-link to="/inquiry" class="btn btn-secondary text-center"
           >목록으로</router-link
         >
-        <!-- <b-button
+        <b-button
           variant="success"
-          @click="completeReply()"
-          v-if="inquiry.isClosed == 'N' && inquiryReplyListCount > 0"
+          @click="updateClosed()"
+          v-if="inquiryDto.isClosed === 'N' && inquiryReplyListCount > 0"
           >답변 완료 처리</b-button
-        > -->
+        >
       </b-row>
     </div>
     <!-- 답변 리스트 -->
-    <b-alert variant="success" show v-if="inquiry.isClosed == 'Y'" class="my-4">
+    <b-alert
+      variant="success"
+      show
+      v-if="inquiryDto.isClosed == 'Y'"
+      class="my-4"
+    >
       <p class="text-center">
         답변이 완료된 문의 글입니다.
       </p>
     </b-alert>
-    <InquiryReplyList :admin="admin" :isClosed="inquiry.isClosed" />
+    <InquiryReplyList :admin="admin" :isClosed="inquiryDto.isClosed" />
   </div>
 </template>
 <script lang="ts">
@@ -60,6 +67,7 @@ import {
   InquiryDto,
   InquiryListDto,
   InquiryReplyListDto,
+  InquiryUpdateClosedDto,
 } from '../../../dto';
 import { Pagination, YN, INQUIRY } from '../../../common';
 
@@ -74,49 +82,49 @@ import toast from '../../../../resources/assets/js/services/toast.js';
   },
 })
 export default class InquiryDetail extends BaseComponent {
-  private inquiry = new InquiryDto();
+  private inquiryDto = new InquiryDto();
+  private inquiryUpdateDto = new InquiryDto();
   private pagination = new Pagination();
   private admin = new AdminDto(BaseUser);
-  // private inquiryUpdateDto = new InquiryUpdateDto();
   private inquiryReplyListDto = new InquiryReplyListDto();
-  // private inquiryReplyListCount = 0;
+  private inquiryReplyListCount = 0;
+  private inquiryUpdateClosedDto = new InquiryUpdateClosedDto();
 
   // 문의 상세
-  findOne() {
-    InquiryService.findOne(this.$route.params.id).subscribe(res => {
-      this.inquiry = res.data;
+  findOne(id) {
+    InquiryService.findOne(id).subscribe(res => {
+      this.inquiryDto = res.data;
     });
   }
 
-  // getReplyCount() {
-  //   InquiryService.findForReply(
-  //     this.$route.params.id,
-  //     this.inquiryReplyListDto,
-  //     this.pagination,
-  //   ).subscribe(res => {
-  //     this.inquiryReplyListCount = res.data.totalCount;
-  //   });
-  // }
-
-  // 답변 완료 처리
-  completeReply() {
-    this.inquiry.isClosed = YN.YES;
-    console.log(this.inquiry.isClosed);
-    toast.success('답변 완료 처리 되었습니다');
-    // this.update();
+  getReplyCount() {
+    InquiryService.findForReply(
+      this.$route.params.id,
+      this.inquiryReplyListDto,
+      this.pagination,
+    ).subscribe(res => {
+      this.inquiryReplyListCount = res.data.totalCount;
+    });
   }
 
-  // update() {
-  //   InquiryService.update(this.$route.params.id).subscribe(res => {
-  //     if (res) {
-  //       this.findOne();
-  //     }
-  //   });
-  // }
+  // 답변 완료 처리
+  updateClosed() {
+    this.inquiryDto.isClosed = YN.YES;
+    InquiryService.updateClosed(
+      this.$route.params.id,
+      this.inquiryUpdateClosedDto,
+    ).subscribe(res => {
+      if (res) {
+        this.findOne(this.$route.params.id);
+        toast.success('답변 완료 처리 되었습니다');
+      }
+    });
+  }
 
   created() {
-    this.findOne();
-    // this.getReplyCount();
+    const id = this.$route.params.id;
+    this.findOne(id);
+    this.getReplyCount();
   }
 }
 </script>

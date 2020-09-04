@@ -1,5 +1,10 @@
 import { BaseService } from '@/core';
-import { InquiryListDto, InquiryDto, InquiryReplyListDto } from '@/dto';
+import {
+  InquiryListDto,
+  InquiryDto,
+  InquiryReplyListDto,
+  InquiryUpdateClosedDto,
+} from '@/dto';
 import { Pagination } from '@/common';
 
 class InquiryService extends BaseService {
@@ -26,6 +31,17 @@ class InquiryService extends BaseService {
    */
   update(inquiryNo) {
     return super.patch<InquiryDto>(`admin/inquiry/${inquiryNo}`);
+  }
+
+  /**
+   *
+   * @param inquiryNo
+   */
+  updateClosed(inquiryNo, inquiryUpdateClosedDto: InquiryUpdateClosedDto) {
+    return super.patch<InquiryUpdateClosedDto>(
+      `admin/inquiry/${inquiryNo}/close`,
+      inquiryUpdateClosedDto,
+    );
   }
 
   /**

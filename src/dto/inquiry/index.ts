@@ -3,3 +3,4 @@ export * from './inquiry-list.dto';
 export * from './inquiry-reply-list.dto';
 export * from './inquiry-reply-update.dto';
 export * from './inquiry-update.dto';
+export * from './inquiry-update-closed.dto';

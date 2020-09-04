@@ -14,22 +14,14 @@
             id="user_no"
             v-model="nanudaUserSearchDto.no"
           />
-        </b-col> -->
+        </b-col>-->
         <b-col cols="6" md="2" class="mb-3">
           <label>사용자명</label>
-          <input
-            type="text"
-            class="form-control"
-            v-model="nanudaUserSearchDto.name"
-          />
+          <input type="text" class="form-control" v-model="nanudaUserSearchDto.name" />
         </b-col>
         <b-col cols="6" md="3" class="mb-3">
           <label>사용자 휴대폰 번호</label>
-          <input
-            type="text"
-            class="form-control"
-            v-model="nanudaUserSearchDto.phone"
-          />
+          <input type="text" class="form-control" v-model="nanudaUserSearchDto.phone" />
         </b-col>
       </b-form-row>
       <div class="text-center">
@@ -56,30 +48,20 @@
         <col width="auto" />
         <col width="auto" />
         <col width="200" />
+        <col width="150" />
       </colgroup>
       <thead>
         <tr>
-          <th
-            scope="col"
-            v-bind:class="{ highlighted: nanudaUserSearchDto.no }"
-          >
-            ID
-          </th>
+          <th scope="col" v-bind:class="{ highlighted: nanudaUserSearchDto.no }">ID</th>
           <th
             scope="col"
             v-bind:class="{
               highlighted: nanudaUserSearchDto.name,
             }"
-          >
-            NAME
-          </th>
-          <th
-            scope="col"
-            v-bind:class="{ highlighted: nanudaUserSearchDto.phone }"
-          >
-            PHONE
-          </th>
-          <th scope="col">CREATED</th>
+          >사용자명</th>
+          <th scope="col" v-bind:class="{ highlighted: nanudaUserSearchDto.phone }">휴대폰 번호</th>
+          <th scope="col">가입일</th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody v-if="nanudaUserListCount">
@@ -87,8 +69,17 @@
           <th scope="row">{{ user.no }}</th>
           <td>{{ user.name }}</td>
           <td>{{ user.phone | phoneTransformer }}</td>
+          <td>{{ user.createdAt | dateTransformer }}</td>
           <td>
-            {{ user.createdAt | dateTransformer }}
+            <router-link
+              class="btn btn-sm btn-secondary text-nowrap"
+              :to="{
+              name :'NanudaUserDetail',
+              params : {
+                id : user.no
+              }
+            }"
+            >상세보기</router-link>
           </td>
         </tr>
       </tbody>

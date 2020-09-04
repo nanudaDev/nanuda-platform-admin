@@ -125,16 +125,21 @@
         <b-col cols="12" md="6" class="mb-3">
           <label>브랜드 로고 <span class="red-text">*</span></label>
           <div class="custom-file">
-            <input
+            <!-- <input
               type="file"
               class="custom-file-input"
               id="customFileLang"
               lang="kr"
-              v-on:change="upload($event.target.files)"
+              @input="upload($event.target.files)"
             />
             <label class="custom-file-label" for="customFileLang"
               >로고 추가</label
-            >
+            > -->
+            <b-form-file
+              placeholder="로고 추가"
+              ref="fileInput"
+              @input="upload($event)"
+            ></b-form-file>
           </div>
         </b-col>
         <b-col cols="12" md="6" class="mb-3">
@@ -200,8 +205,10 @@ import { CONST_YN, YN } from '@/common';
   name: 'BrandDetail',
 })
 export default class BrandDetail extends BaseComponent {
+  constructor() {
+    super();
+  }
   private brandDto = new BrandDto();
-
   private brandUpdateDto = new BrandUpdateDto();
   private foodCategorySelect: FoodCategoryDto[] = [];
   private newBrandLogo: FileAttachmentDto[] = [];
@@ -212,6 +219,8 @@ export default class BrandDetail extends BaseComponent {
     BrandService.findOne(id).subscribe(res => {
       if (res) {
         this.brandDto = res.data;
+        this.newBrandLogo = [];
+        this.logoChanged = false;
       }
     });
   }
@@ -248,26 +257,26 @@ export default class BrandDetail extends BaseComponent {
   }
 
   // upload brand logo
-  async upload(file: FileList) {
-    console.log(file);
-
-    const attachments = await FileUploadService.upload(
-      UPLOAD_TYPE.BRAND_LOGO,
-      file,
-    );
-    this.newBrandLogo = [];
-    this.newBrandLogo.push(
-      ...attachments.filter(
-        fileUpload =>
-          fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
-      ),
-    );
-    this.logoChanged = true;
+  async upload(file: File) {
+    if (file) {
+      const attachments = await FileUploadService.upload(
+        UPLOAD_TYPE.BRAND_LOGO,
+        [file],
+      );
+      this.newBrandLogo = [];
+      this.newBrandLogo.push(
+        ...attachments.filter(
+          fileUpload =>
+            fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
+        ),
+      );
+      this.logoChanged = true;
+    }
   }
 
   // remove brand logo
   removeBrandLogo() {
-    this.newBrandLogo = [];
+    this.$refs['fileInput'].reset();
     this.logoChanged = false;
   }
 

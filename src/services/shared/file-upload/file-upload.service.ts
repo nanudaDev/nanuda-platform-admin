@@ -147,7 +147,7 @@ class FileUploadService extends BaseService {
    * @param uploadType
    * @param files
    */
-  async upload(uploadType: UPLOAD_TYPE, files: FileList) {
+  async upload(uploadType: UPLOAD_TYPE, files: FileList | File[]) {
     console.log(uploadType, files);
     const attachments: FileAttachmentDto[] = [];
     const uploadOption = FileUploadService.UPLOAD_OPTIONS[uploadType];

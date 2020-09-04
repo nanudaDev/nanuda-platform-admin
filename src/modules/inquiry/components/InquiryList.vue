@@ -118,19 +118,19 @@
               <b-badge
                 variant="success"
                 class="badge-pill p-2"
-                v-if="inquiry.isClosed == 'Y'"
+                v-if="inquiry.isClosed === 'Y'"
               >
-                답변 완료
+                {{ inquiry.isClosed | stringInquiryTransformer }}
               </b-badge>
               <b-badge
                 variant="warning"
                 class="badge-pill p-2"
-                v-else-if="inquiry.isEdited == 'Y'"
+                v-else-if="inquiry.replyCount > 0"
               >
-                답변 중
+                답변중
               </b-badge>
               <b-badge variant="secondary" class="badge-pill p-2" v-else>
-                답변 대기
+                {{ inquiry.isClosed | stringInquiryTransformer }}
               </b-badge>
             </td>
             <td>

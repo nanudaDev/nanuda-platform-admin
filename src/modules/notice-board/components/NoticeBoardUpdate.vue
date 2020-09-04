@@ -215,14 +215,14 @@ export default class NoticeBoardUpdate extends BaseComponent {
     } else {
       this.noticeBoardUpdateDto.tempSaveYn = YN.YES;
     }
-    if (this.uploadedAttachments && this.uploadedAttachments.length > 0) {
-      this.noticeBoardUpdateDto.attachments = this.uploadedAttachments;
+    if (this.oldAttachments && this.oldAttachments.length > 0) {
+      this.noticeBoardUpdateDto.attachments = this.oldAttachments;
       this.noticeBoardUpdateDto.newAttachments = this.newAttachments;
     }
 
     if (
-      this.uploadedAttachments &&
-      this.uploadedAttachments.length < 1 &&
+      this.oldAttachments &&
+      this.oldAttachments.length < 1 &&
       this.newAttachments &&
       this.newAttachments.length > 0
     ) {
@@ -230,14 +230,24 @@ export default class NoticeBoardUpdate extends BaseComponent {
       this.noticeBoardUpdateDto.newAttachments = this.newAttachments;
     }
     if (
-      this.uploadedAttachments &&
-      this.uploadedAttachments.length < 1 &&
+      this.oldAttachments &&
+      this.oldAttachments.length < 1 &&
       this.newAttachments &&
       this.newAttachments.length < 1
     ) {
       this.noticeBoardUpdateDto.newAttachments = [];
       this.noticeBoardUpdateDto.attachments = [];
     }
+    if (
+      this.oldAttachments &&
+      this.oldAttachments.length === 0 &&
+      this.newAttachments &&
+      this.newAttachments.length > 0
+    ) {
+      this.noticeBoardUpdateDto.attachments = this.newAttachments;
+      this.noticeBoardUpdateDto.newAttachments = [];
+    }
+
     NoticeBoardService.update(
       this.$route.params.id,
       this.noticeBoardUpdateDto,

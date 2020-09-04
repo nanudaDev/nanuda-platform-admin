@@ -203,7 +203,7 @@
           />
         </div>
         <div class="text-center mt-2">
-          <b-button variant="danger" @click="removeDistrcitImage()"
+          <b-button variant="danger" @click="removeDistrictImage()"
             >대표 이미지 삭제</b-button
           >
         </div>
@@ -420,7 +420,7 @@ export default class CompanyDistrictDetail extends BaseComponent {
     this.imageChanged = true;
   }
 
-  removeDistrcitImage() {
+  removeDistrictImage() {
     this.newImage = [];
     this.imageChanged = false;
   }
@@ -508,8 +508,15 @@ export default class CompanyDistrictDetail extends BaseComponent {
       district.lat,
       district.lon,
     );
+    const imageSrc =
+      'https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-512.png';
+    const imageSize = new window.kakao.maps.Size(54, 54);
+
+    const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
+
     const marker = new window.kakao.maps.Marker({
       position: markerPosition,
+      image: markerImage,
     });
     marker.setMap(map);
   }

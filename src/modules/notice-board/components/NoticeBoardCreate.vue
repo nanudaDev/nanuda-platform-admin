@@ -134,19 +134,16 @@
           </span>
         </div>
       </div>
-      <div class="text-center mt-4">
-        <b-row
-          no-gutters
-          align-h="between"
-          align-v="center"
-          class="mb-4"
-          v-if="noticeBoardCreateDto.content"
-        >
+      <div class="clearfix my-4" v-if="noticeBoardCreateDto.content">
+        <div class="float-left">
           <b-button variant="secondary" @click="clearedOut()">초기화</b-button>
+        </div>
+        <div class="float-right">
+          <b-button variant="info" @click="create('Y')">임시저장</b-button>
           <b-button v-b-modal.confirm-notice variant="primary"
             >등록하기</b-button
           >
-        </b-row>
+        </div>
       </div>
     </div>
     <!-- <b-modal
@@ -171,7 +168,7 @@
       ok-title="등록하기"
       cancel-title="취소하기"
       ok-variant="success"
-      @ok="create()"
+      @ok="create('N')"
     >
       <div class="container ql-editor">
         <h3>{{ noticeBoardCreateDto.title }}</h3>
@@ -203,6 +200,7 @@ import {
 import FileUploadService from '../../../services/shared/file-upload/file-upload.service';
 import NoticeBoardService from '../../../services/notice-board.service';
 import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';
+import { YN } from '@/common';
 
 @Component({
   name: 'NoticeBoardCreate',
@@ -246,12 +244,21 @@ export default class NoticeBoardCreate extends BaseComponent {
     }
   }
 
-  create() {
-    this.noticeBoardCreateDto.attachments = this.attachments;
+  create(isTempSaveYn?: YN) {
+    if (this.attachments) {
+      this.noticeBoardCreateDto.attachments = this.attachments;
+    }
+    if (isTempSaveYn === YN.NO) {
+      this.noticeBoardCreateDto.tempSaveYn = YN.NO;
+    }
     NoticeBoardService.create(this.noticeBoardCreateDto).subscribe(res => {
       if (res) {
         this.$router.push('/notice-board');
-        toast.success('승인완료');
+        if (isTempSaveYn === YN.NO) {
+          toast.success('임시저장완료');
+        } else {
+          toast.success('등록완료');
+        }
       }
     });
   }

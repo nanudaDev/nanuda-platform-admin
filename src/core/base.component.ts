@@ -1,4 +1,8 @@
 import { Component, Vue } from 'vue-property-decorator';
 
 @Component
-export default class BaseComponent extends Vue {}
+export default class BaseComponent extends Vue {
+  public $refs: {
+    fileInput: any;
+  };
+}

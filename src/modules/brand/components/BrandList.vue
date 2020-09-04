@@ -136,7 +136,10 @@
       @cancel="clearBrandCreateDto()"
       @ok="createBrand()"
     >
-      <div v-if="brandLogo && brandLogo.length > 0" class="mb-4">
+      <div
+        v-if="brandLogo && brandLogo.length > 0 && !logoChanged"
+        class="mb-4"
+      >
         <div v-for="logo in brandLogo" :key="logo.endpoint">
           <img
             :src="logo.endpoint"

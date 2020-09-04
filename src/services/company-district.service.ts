@@ -101,5 +101,15 @@ class CompanyDistrictService extends BaseService {
       companyDistrictMapUpdateDto,
     );
   }
+
+  /**
+   *
+   * @param companyDistrictNo
+   */
+  deleteOne(companyDistrictNo) {
+    return super.delete<CompanyDistrictDto>(
+      `admin/company-district/${companyDistrictNo}`,
+    );
+  }
 }
 export default new CompanyDistrictService();

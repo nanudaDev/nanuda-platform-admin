@@ -40,7 +40,18 @@ class NoticeBoardService extends BaseService {
   }
 
   /**
-   * delete one for admin
+   * udpaet one for notice board
+   * @param noticeBoardNo
+   */
+  update(noticeBoardNo: string, noticeBoardUpdateDto: NoticeBoardDto) {
+    return super.patch<NoticeBoardDto>(
+      `admin/notice-board/${noticeBoardNo}`,
+      noticeBoardUpdateDto,
+    );
+  }
+
+  /**
+   * delete one for notice board
    * @param noticeBoardNo
    */
   deleteOne(noticeBoardNo: string) {

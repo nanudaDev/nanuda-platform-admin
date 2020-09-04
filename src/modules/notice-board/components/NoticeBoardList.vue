@@ -94,6 +94,7 @@
           <col width="auto" />
           <col width="200" />
           <col width="100" />
+          <col width="150" />
           <col width="100" />
         </colgroup>
         <thead>
@@ -128,6 +129,9 @@
             >
               관리자
             </th>
+            <th scope="col">
+              등록일
+            </th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -141,10 +145,27 @@
             <td v-if="noticeBoard.codeManagement">
               {{ noticeBoard.codeManagement.value }}
             </td>
-            <td class="text-left">{{ noticeBoard.title }}</td>
+            <td class="text-left">
+              <b-badge
+                variant="info"
+                v-if="noticeBoard.tempSaveYn && noticeBoard.tempSaveYn === 'Y'"
+              >
+                임시저장
+              </b-badge>
+              {{ noticeBoard.title }}
+            </td>
             <td>{{ noticeBoard.url }}</td>
             <td v-if="noticeBoard.admin">
               {{ noticeBoard.admin.name }}
+            </td>
+            <td>
+              {{ noticeBoard.createdAt | dateTransformer }}
+              <p
+                v-if="noticeBoard.createdAt !== noticeBoard.updatedAt"
+                class="text-secondary"
+              >
+                <small>({{ noticeBoard.updatedAt | dateTransformer }})</small>
+              </p>
             </td>
             <td>
               <router-link

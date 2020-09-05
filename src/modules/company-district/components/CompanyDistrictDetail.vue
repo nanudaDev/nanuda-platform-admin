@@ -1,10 +1,22 @@
 <template>
   <section>
-    <b-row no-gutters align-h="between" align-v="end" class="title mb-3" v-if="companyDistrictDto">
+    <b-row
+      no-gutters
+      align-h="between"
+      align-v="end"
+      class="title mb-3"
+      v-if="companyDistrictDto"
+    >
       <h3>
-        <span v-if="companyDistrictDto.nameKr">{{ companyDistrictDto.nameKr }} - 업체 지점 정보</span>
+        <span v-if="companyDistrictDto.nameKr"
+          >{{ companyDistrictDto.nameKr }} - 업체 지점 정보</span
+        >
       </h3>
-      <router-link to="/company/company-district" class="btn btn-secondary text-center">목록으로</router-link>
+      <router-link
+        to="/company/company-district"
+        class="btn btn-secondary text-center"
+        >목록으로</router-link
+      >
     </b-row>
     <div class="row d-flex align-items-stretch">
       <div class="col col-12 col-lg-5 my-3">
@@ -15,13 +27,15 @@
                 variant="outline-info"
                 v-b-modal.update_map
                 @click="showMapUpdateModal()"
-              >지도 수정</b-button>
+                >지도 수정</b-button
+              >
               <b-button
                 variant="primary"
                 v-b-modal.update_district
-                @click="findDistrictInfo()"
+                @click="showUpdateModal()"
                 v-if="companyDistrictDto.companyDistrictStatus === 'APPROVAL'"
-              >수정하기</b-button>
+                >수정하기</b-button
+              >
             </div>
           </template>
           <template v-slot:body>
@@ -33,7 +47,10 @@
                 "
                 class="mb-4"
               >
-                <div v-for="image in companyDistrictDto.image" :key="image.endpoint">
+                <div
+                  v-for="image in companyDistrictDto.image"
+                  :key="image.endpoint"
+                >
                   <b-img-lazy
                     :src="image.endpoint"
                     class="rounded mx-auto d-block company-logo"
@@ -50,9 +67,9 @@
                   <li v-if="companyDistrictDto.nameKr">
                     지점명 :
                     <b>{{ companyDistrictDto.nameKr }}</b>
-                    ({{
-                    companyDistrictDto.nameEng
-                    }})
+                    <span v-if="companyDistrictDto.nameEng"
+                      >({{ companyDistrictDto.nameEng }})</span
+                    >
                   </li>
                   <li v-if="companyDistrictDto.address">
                     지점 주소 :
@@ -71,14 +88,20 @@
                       <b>{{ companyDistrictDto.company.nameKr }}</b>
                     </router-link>
                   </li>
-                  <li>
+                  <li
+                    v-if="
+                      companyDistrictDto.amenities &&
+                        companyDistrictDto.amenities.length > 0
+                    "
+                  >
                     공통 시설 :
                     <b-badge
                       variant="info"
                       v-for="amenity in companyDistrictDto.amenities"
                       :key="amenity.no"
                       class="m-1"
-                    >{{ amenity.amenityName }}</b-badge>
+                      >{{ amenity.amenityName }}</b-badge
+                    >
                   </li>
                   <li v-if="companyDistrictDto.createdAt">
                     등록일 :
@@ -93,14 +116,15 @@
                       class="badge-pill p-2 mr-2"
                     >
                       {{
-                      companyDistrictDto.companyDistrictStatus
-                      | enumTransformer
+                        companyDistrictDto.companyDistrictStatus
+                          | enumTransformer
                       }}
                     </b-badge>
-                    <span v-if="companyDistrictDto.updatedAt" class="d-inline-block">
-                      ({{
-                      companyDistrictDto.updatedAt | dateTransformer
-                      }})
+                    <span
+                      v-if="companyDistrictDto.updatedAt"
+                      class="d-inline-block"
+                    >
+                      ({{ companyDistrictDto.updatedAt | dateTransformer }})
                     </span>
                   </li>
                 </ul>
@@ -114,7 +138,8 @@
                     "
                     target="_blank"
                     class="btn btn-sm btn-outline-info"
-                  >크게보기</a>
+                    >크게보기</a
+                  >
                 </div>
               </div>
             </div>
@@ -133,7 +158,9 @@
       <div class="col col-12 col-lg-7 my-3">
         <BaseCard title="타입 정보">
           <template v-slot:head>
-            <b-button variant="primary" v-b-modal.add_delivery_space>추가하기</b-button>
+            <b-button variant="primary" v-b-modal.add_delivery_space
+              >추가하기</b-button
+            >
           </template>
           <template v-slot:body>
             <!-- 타입 리스트 -->
@@ -176,17 +203,51 @@
           />
         </div>
         <div class="text-center mt-2">
-          <b-button variant="danger" @click="removeDistrcitImage()">대표 이미지 삭제</b-button>
+          <b-button variant="danger" @click="removeDistrcitImage()"
+            >대표 이미지 삭제</b-button
+          >
         </div>
       </div>
       <div class="form-row">
         <div class="col-5 col-md-6 mb-3">
-          <label>지점명</label>
-          <input type="text" v-model="companyDistrictUpdateDto.nameKr" class="form-control" />
+          <label>업체명</label>
+          <select
+            class="custom-select"
+            id="update_company"
+            v-model="companyDistrictUpdateDto.companyNo"
+          >
+            <option value selected>전체</option>
+            <option
+              v-for="company in companySelect"
+              :key="company.no"
+              :value="company.no"
+              >{{ company.nameKr }}</option
+            >
+          </select>
         </div>
         <div class="col-5 col-md-6 mb-3">
+          <label>지점명</label>
+          <input
+            type="text"
+            v-model="companyDistrictUpdateDto.nameKr"
+            class="form-control"
+          />
+        </div>
+        <div class="col-6 col-md-6 mb-3">
+          <label>지점명</label>
+          <input
+            type="text"
+            v-model="companyDistrictUpdateDto.nameKr"
+            class="form-control"
+          />
+        </div>
+        <div class="col-6 col-md-6 mb-3">
           <label>지점명(영문)</label>
-          <input type="text" v-model="companyDistrictUpdateDto.nameEng" class="form-control" />
+          <input
+            type="text"
+            v-model="companyDistrictUpdateDto.nameEng"
+            class="form-control"
+          />
         </div>
         <div class="col-12 col-md-6 mb-3">
           <label>지점 주소</label>
@@ -194,7 +255,6 @@
             type="text"
             v-model="addressData.address"
             class="form-control"
-            :readonly="addressData.address"
           />
           <!-- <input
             type="text"
@@ -215,7 +275,8 @@
               v-for="amenity in amenityList"
               :key="amenity.no"
               :value="amenity.no"
-            >{{ amenity.amenityName }}</b-form-checkbox>
+              >{{ amenity.amenityName }}</b-form-checkbox
+            >
           </b-form-checkbox-group>
         </div>
         <div class="col-12 col-md-6 mt-2">
@@ -229,7 +290,9 @@
               v-on:change="upload($event.target.files)"
               multiple
             />
-            <label class="custom-file-label" for="customFileLang">파일 첨부</label>
+            <label class="custom-file-label" for="customFileLang"
+              >파일 첨부</label
+            >
           </div>
         </div>
       </div>
@@ -274,9 +337,11 @@ import {
   CompanyDistrictUpdateRefusalDto,
   CompanyDistrictUpdateRefusalReasonDto,
   AmenityDto,
+  CompanyDto,
 } from '../../../dto';
 
 import AmenityService from '../../../services/amenity.service';
+import CompanyService from '../../../services/company.service';
 import CompanyDistrictService from '../../../services/company-district.service';
 
 import ApprovalCard from '../../../modules/_components/ApprovalCard.vue';
@@ -310,6 +375,7 @@ export default class CompanyDistrictDetail extends BaseComponent {
   private companyDistrictUpdateRefusalReasonDto = (this.companyDistrictUpdateRefusalDto.refusalReasons = new CompanyDistrictUpdateRefusalReasonDto());
   private companyDistrictMapUpdateDto = new CompanyDistrictMapUpdateDto();
   private amenityList = [];
+  private companySelect: CompanyDto[] = [];
   private selectedAmenities: AmenityDto[] = [];
   private selectedAmenityIds: number[] = [];
 
@@ -330,12 +396,13 @@ export default class CompanyDistrictDetail extends BaseComponent {
     });
   }
 
-  findDistrictInfo() {
+  showUpdateModal() {
+    this.getAmenities();
+    this.getCompanies();
     this.companyDistrictUpdateDto = this.companyDistrictDto;
     this.addressData.address = this.companyDistrictDto.address;
     this.selectedAmenityIds = this.companyDistrictDto.amenities.map(v => v.no);
     this.findOne(this.$route.params.id);
-    this.getAmenities();
   }
 
   async upload(file: FileList) {
@@ -365,6 +432,13 @@ export default class CompanyDistrictDetail extends BaseComponent {
     });
   }
 
+  // 업체 셀렉트 박스
+  getCompanies() {
+    CompanyService.findForSelect().subscribe(res => {
+      this.companySelect = res.data;
+    });
+  }
+
   // 지점 정보 수정
   updateCompanyDistrict() {
     if (this.selectedAmenityIds) {
@@ -373,13 +447,16 @@ export default class CompanyDistrictDetail extends BaseComponent {
     if (this.newImage.length > 0) {
       this.companyDistrictUpdateDto.image = this.newImage;
     }
+    if (this.addressData.address) {
+      this.companyDistrictUpdateDto.address = this.addressData.address;
+    }
     CompanyDistrictService.update(
       this.$route.params.id,
       this.companyDistrictUpdateDto,
     ).subscribe(res => {
       if (res) {
-        this.findOne(this.$route.params.id);
         toast.success('수정완료');
+        this.findOne(this.$route.params.id);
       }
     });
   }

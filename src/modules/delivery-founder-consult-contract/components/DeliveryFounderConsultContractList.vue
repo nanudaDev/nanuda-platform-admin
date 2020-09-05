@@ -6,29 +6,29 @@
     <div class="divider"></div>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <b-col sm="12" lg="1" class="mb-3">
+        <!-- <b-col sm="12" lg="1" class="mb-3">
           <label for="contract_id">계약 ID</label>
           <b-form-input
             type="text"
             id="contract_id"
             v-model="deliveryFounderConsultContractSearchDto.no"
           ></b-form-input>
-        </b-col>
+        </b-col> -->
         <b-col sm="12" lg="3" class="mb-3">
-          <label for="contract_company">업체명</label>
-          <select
-            class="custom-select"
-            id="contract_company"
-            v-model="deliveryFounderConsultContractSearchDto.companyNo"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="company in companySelect"
-              :key="company.no"
-              :value="company.no"
-              >{{ company.nameKr }}</option
-            >
-          </select>
+          <b-form-group label="업체명">
+            <b-form-input
+              list="company_lsit"
+              v-model="deliveryFounderConsultContractSearchDto.companyNameKr"
+            ></b-form-input>
+            <datalist id="company_lsit">
+              <option
+                v-for="company in companySelect"
+                :key="company.no"
+                :value="company.nameKr"
+                >{{ company.nameKr }}</option
+              >
+            </datalist>
+          </b-form-group>
         </b-col>
         <b-col sm="12" lg="3" class="mb-3">
           <label for="contract_districat">지점명</label>
@@ -83,7 +83,8 @@
             <th
               scope="col"
               v-bind:class="{
-                highlighted: deliveryFounderConsultContractSearchDto.companyNo,
+                highlighted:
+                  deliveryFounderConsultContractSearchDto.companyNameKr,
               }"
             >
               COMPANY

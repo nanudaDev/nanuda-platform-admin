@@ -9,6 +9,7 @@ export class DeliveryFounderConsultContractListDto
   implements Partial<DeliveryFounderConsultContractDto> {
   no?: number;
   companyNo?: number;
+  companyNameKr?: string;
   nanudaUserNo?: number;
   deliverySpaceNo?: number;
   companyDistrictNo?: number;

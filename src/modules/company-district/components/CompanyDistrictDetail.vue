@@ -23,12 +23,9 @@
         <BaseCard title="지점 정보">
           <template v-slot:head>
             <div>
-              <b-button
-                variant="outline-info"
-                v-b-modal.update_map
-                @click="showMapUpdateModal()"
-                >지도 수정</b-button
-              >
+              <b-button variant="danger" v-b-modal.delete_district>
+                삭제하기
+              </b-button>
               <b-button
                 variant="primary"
                 v-b-modal.update_district
@@ -132,6 +129,13 @@
               <div class="mt-4">
                 <div id="map" style="width:100%; height:300px"></div>
                 <div class="text-right mt-2">
+                  <b-button
+                    variant="outline-info"
+                    size="sm"
+                    v-b-modal.update_map
+                    @click="showMapUpdateModal()"
+                    >지도 수정</b-button
+                  >
                   <a
                     :href="
                       `https://map.kakao.com/link/map/${companyDistrictDto.nameKr},${companyDistrictDto.lat},${companyDistrictDto.lon}`
@@ -169,6 +173,23 @@
         </BaseCard>
       </div>
     </div>
+    <!-- 업체 지점 삭제 모달 -->
+    <b-modal
+      id="delete_district"
+      title="지점 삭제"
+      header-bg-variant="danger"
+      header-text-variant="light"
+      hide-footer
+    >
+      <div class="text-center">
+        <p>
+          <b>정말로 삭제하시겠습니까?</b>
+        </p>
+        <div class="mt-2 text-right">
+          <b-button variant="danger" @click="deleteOne()">삭제</b-button>
+        </div>
+      </div>
+    </b-modal>
     <!-- 업체 지점 정보 수정 모달 -->
     <b-modal
       id="update_district"
@@ -203,7 +224,7 @@
           />
         </div>
         <div class="text-center mt-2">
-          <b-button variant="danger" @click="removeDistrcitImage()"
+          <b-button variant="danger" @click="removeDistrictImage()"
             >대표 이미지 삭제</b-button
           >
         </div>
@@ -420,7 +441,17 @@ export default class CompanyDistrictDetail extends BaseComponent {
     this.imageChanged = true;
   }
 
-  removeDistrcitImage() {
+  // 지점 삭제
+  deleteOne() {
+    CompanyDistrictService.deleteOne(this.$route.params.id).subscribe(res => {
+      if (res) {
+        this.$router.push('/company/company-district');
+        toast.success('삭제완료');
+      }
+    });
+  }
+
+  removeDistrictImage() {
     this.newImage = [];
     this.imageChanged = false;
   }
@@ -508,8 +539,15 @@ export default class CompanyDistrictDetail extends BaseComponent {
       district.lat,
       district.lon,
     );
+    const imageSrc =
+      'https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-512.png';
+    const imageSize = new window.kakao.maps.Size(54, 54);
+
+    const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
+
     const marker = new window.kakao.maps.Marker({
       position: markerPosition,
+      image: markerImage,
     });
     marker.setMap(map);
   }

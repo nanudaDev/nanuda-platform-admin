@@ -53,12 +53,33 @@
           <h4 v-if="deliverySpaceDto.typeName" class="mb-3">
             [{{ deliverySpaceDto.no }}] {{ deliverySpaceDto.typeName }}
           </h4>
+
           <ul class="u-list">
             <li v-if="deliverySpaceDto.companyDistrict.company.nameKr">
-              업체명 : {{ deliverySpaceDto.companyDistrict.company.nameKr }}
+              업체명 :
+              <router-link
+                :to="{
+                  name: 'CompanyDetail',
+                  params: {
+                    id: deliverySpaceDto.companyDistrict.company.no,
+                  },
+                }"
+              >
+                {{ deliverySpaceDto.companyDistrict.company.nameKr }}
+              </router-link>
             </li>
-            <li v-if="deliverySpaceDto.companyDistrict.company.nameKr">
-              지점명 : {{ deliverySpaceDto.companyDistrict.nameKr }}
+            <li v-if="deliverySpaceDto.companyDistrict.nameKr">
+              지점명 :
+              <router-link
+                :to="{
+                  name: 'CompanyDistrictDetail',
+                  params: {
+                    id: deliverySpaceDto.companyDistrict.no,
+                  },
+                }"
+              >
+                {{ deliverySpaceDto.companyDistrict.nameKr }}
+              </router-link>
             </li>
             <li v-if="deliverySpaceDto.buildingName">
               건물명 : {{ deliverySpaceDto.buildingName }}
@@ -236,9 +257,6 @@ export default class DeliverySpaceList extends BaseComponent {
   mounted() {
     const id = this.$route.params.id;
     this.$root.$on('find_delivery_space', () => {
-      this.findOne(id);
-    });
-    this.$root.$on('clearout_updatedto', () => {
       this.findOne(id);
     });
     this.$root.$on('delete_contract_list', () => {

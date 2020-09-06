@@ -422,7 +422,7 @@ export default class Company extends BaseComponent {
   clearOut() {
     this.pagination = new Pagination();
     this.companySearchDto = new CompanyListDto();
-    this.attachment = [];
+    this.companyLogo = [];
     this.search();
   }
 

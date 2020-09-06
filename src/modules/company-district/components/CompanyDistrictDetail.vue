@@ -1,23 +1,15 @@
 <template>
   <section>
-    <b-row
-      no-gutters
-      align-h="between"
-      align-v="end"
-      class="title mb-3"
-      v-if="companyDistrictDto"
+    <SectionTitle
+      :title="`${companyDistrictDto.nameKr} - 지점 정보`"
+      v-if="companyDistrictDto.nameKr"
     >
-      <h3>
-        <span v-if="companyDistrictDto.nameKr"
-          >{{ companyDistrictDto.nameKr }} - 업체 지점 정보</span
+      <template v-slot:rightArea>
+        <router-link to="/company/company-district" class="btn btn-secondary"
+          >목록으로</router-link
         >
-      </h3>
-      <router-link
-        to="/company/company-district"
-        class="btn btn-secondary text-center"
-        >목록으로</router-link
-      >
-    </b-row>
+      </template>
+    </SectionTitle>
     <div class="row d-flex align-items-stretch">
       <div class="col col-12 col-lg-5 my-3">
         <BaseCard title="지점 정보">
@@ -168,7 +160,7 @@
           </template>
           <template v-slot:body>
             <!-- 타입 리스트 -->
-            <DeliverySpaceList />
+            <CompanyDistrictDeliverySpaceList />
           </template>
         </BaseCard>
       </div>
@@ -193,8 +185,9 @@
     <!-- 업체 지점 정보 수정 모달 -->
     <b-modal
       id="update_district"
-      size="xl"
       title="지점 정보 수정"
+      ok-title="수정"
+      cancel-title="취소"
       @hide="clearOutUpdateDto()"
       @cancel="clearOutUpdateDto()"
       @ok="updateCompanyDistrict()"
@@ -229,8 +222,62 @@
           >
         </div>
       </div>
-      <div class="form-row">
-        <div class="col-5 col-md-6 mb-3">
+      <b-form-row>
+        <b-col cols="12" md="6" class="mt-2">
+          <label>지점명</label>
+          <input
+            type="text"
+            v-model="companyDistrictUpdateDto.nameKr"
+            class="form-control"
+          />
+        </b-col>
+        <b-col cols="12" md="6" class="mt-2">
+          <label>지점명</label>
+          <input
+            type="text"
+            v-model="companyDistrictUpdateDto.nameKr"
+            class="form-control"
+          />
+        </b-col>
+        <b-col cols="12" md="6" class="mt-2">
+          <label>지점명(영문)</label>
+          <input
+            type="text"
+            v-model="companyDistrictUpdateDto.nameEng"
+            class="form-control"
+          />
+        </b-col>
+        <b-col cols="12" md="6" class="mt-2">
+          <label>주소</label>
+          <input
+            type="text"
+            v-model="addressData.address"
+            class="form-control"
+          />
+          <!-- <input
+            type="text"
+            v-model="addressData.address"
+            v-b-modal.postcode
+            v-on:keyup.tab="showAddressModal()"
+            class="form-control"
+          />-->
+        </b-col>
+        <b-col cols="12" class="mt-2">
+          <label>공통 시설</label>
+          <b-form-checkbox-group
+            id="common_amenity"
+            v-model="selectedAmenityIds"
+            name="common_amenity"
+          >
+            <b-form-checkbox
+              v-for="amenity in amenityList"
+              :key="amenity.no"
+              :value="amenity.no"
+              >{{ amenity.amenityName }}</b-form-checkbox
+            >
+          </b-form-checkbox-group>
+        </b-col>
+        <b-col cols="12" md="6" class="mt-2">
           <label>업체명</label>
           <select
             class="custom-select"
@@ -245,78 +292,16 @@
               >{{ company.nameKr }}</option
             >
           </select>
-        </div>
-        <div class="col-5 col-md-6 mb-3">
-          <label>지점명</label>
-          <input
-            type="text"
-            v-model="companyDistrictUpdateDto.nameKr"
-            class="form-control"
-          />
-        </div>
-        <div class="col-6 col-md-6 mb-3">
-          <label>지점명</label>
-          <input
-            type="text"
-            v-model="companyDistrictUpdateDto.nameKr"
-            class="form-control"
-          />
-        </div>
-        <div class="col-6 col-md-6 mb-3">
-          <label>지점명(영문)</label>
-          <input
-            type="text"
-            v-model="companyDistrictUpdateDto.nameEng"
-            class="form-control"
-          />
-        </div>
-        <div class="col-12 col-md-6 mb-3">
-          <label>지점 주소</label>
-          <input
-            type="text"
-            v-model="addressData.address"
-            class="form-control"
-          />
-          <!-- <input
-            type="text"
-            v-model="addressData.address"
-            v-b-modal.postcode
-            v-on:keyup.tab="showAddressModal()"
-            class="form-control"
-          />-->
-        </div>
-        <div class="col-12 col-md-6 mb-3">
-          <label>공통 시설</label>
-          <b-form-checkbox-group
-            id="common_amenity"
-            v-model="selectedAmenityIds"
-            name="common_amenity"
-          >
-            <b-form-checkbox
-              v-for="amenity in amenityList"
-              :key="amenity.no"
-              :value="amenity.no"
-              >{{ amenity.amenityName }}</b-form-checkbox
-            >
-          </b-form-checkbox-group>
-        </div>
-        <div class="col-12 col-md-6 mt-2">
-          <label for>파일첨부</label>
-          <div class="custom-file">
-            <input
-              type="file"
-              class="custom-file-input"
-              id="customFileLang"
-              lang="kr"
-              v-on:change="upload($event.target.files)"
-              multiple
-            />
-            <label class="custom-file-label" for="customFileLang"
-              >파일 첨부</label
-            >
-          </div>
-        </div>
-      </div>
+        </b-col>
+        <b-col cols="12" md="6" class="mt-2">
+          <label>지점 이미지</label>
+          <b-form-file
+            placeholder="파일 선택"
+            ref="fileInput"
+            @input="upload($event)"
+          ></b-form-file>
+        </b-col>
+      </b-form-row>
     </b-modal>
     <!-- 주소 검색 모달 -->
     <!-- <b-modal id="postcode" title="주소 검색" hide-footer>
@@ -327,6 +312,7 @@
     </b-modal>-->
     <!-- 지점 타입 추가 모달 -->
     <DeliverySpaceCreate />
+    <!-- 지도 수정 모달 -->
     <b-modal id="update_map" title="지도수정" @ok="updateMap()">
       <p class="text-center">
         <b>지도를 수정하시겠습니까?</b>
@@ -367,7 +353,7 @@ import CompanyDistrictService from '../../../services/company-district.service';
 
 import ApprovalCard from '../../../modules/_components/ApprovalCard.vue';
 import BaseCard from '../../_components/BaseCard.vue';
-import DeliverySpaceList from './DeliverySpaceList.vue';
+import CompanyDistrictDeliverySpaceList from './CompanyDistrictDeliverySpaceList.vue';
 import DeliverySpaceCreate from '../../delivery-space/components/DeliverySpaceCreate.vue';
 
 import { FileAttachmentDto } from '@/services/shared/file-upload';
@@ -385,7 +371,7 @@ import { APPROVAL_STATUS } from '@/services/shared';
   components: {
     ApprovalCard,
     BaseCard,
-    DeliverySpaceList,
+    CompanyDistrictDeliverySpaceList,
     DeliverySpaceCreate,
   },
 })
@@ -406,10 +392,12 @@ export default class CompanyDistrictDetail extends BaseComponent {
   private imageChanged = false;
   private newImage: FileAttachmentDto[] = [];
 
+  // get status color
   getStatusColor(status: APPROVAL_STATUS) {
     return getStatusColor(status);
   }
 
+  // find district detail
   findOne(id) {
     CompanyDistrictService.findOne(id).subscribe(res => {
       this.companyDistrictDto = res.data;
@@ -417,6 +405,7 @@ export default class CompanyDistrictDetail extends BaseComponent {
     });
   }
 
+  // show district update modal
   showUpdateModal() {
     this.getAmenities();
     this.getCompanies();
@@ -426,10 +415,11 @@ export default class CompanyDistrictDetail extends BaseComponent {
     this.findOne(this.$route.params.id);
   }
 
-  async upload(file: FileList) {
+  // upload disrict image
+  async upload(file: File) {
     const attachments = await FileUploadService.upload(
       UPLOAD_TYPE.COMPANY_DISTRICT,
-      file,
+      [file],
     );
     this.newImage = [];
     this.newImage.push(
@@ -441,7 +431,7 @@ export default class CompanyDistrictDetail extends BaseComponent {
     this.imageChanged = true;
   }
 
-  // 지점 삭제
+  // delete district
   deleteOne() {
     CompanyDistrictService.deleteOne(this.$route.params.id).subscribe(res => {
       if (res) {
@@ -451,8 +441,9 @@ export default class CompanyDistrictDetail extends BaseComponent {
     });
   }
 
+  // remove district image
   removeDistrictImage() {
-    this.newImage = [];
+    this.$refs['fileInput'].reset();
     this.imageChanged = false;
   }
 
@@ -519,6 +510,7 @@ export default class CompanyDistrictDetail extends BaseComponent {
     });
   }
 
+  // clear out disrtrict update dto
   clearOutUpdateDto() {
     this.companyDistrictUpdateDto = new CompanyDistrictUpdateDto();
     this.findOne(this.$route.params.id);
@@ -552,10 +544,12 @@ export default class CompanyDistrictDetail extends BaseComponent {
     marker.setMap(map);
   }
 
+  // show address modal
   showAddressModal() {
     this.$bvModal.show('postcode');
   }
 
+  // set address info
   setAddress(res) {
     this.addressData.address = res;
 
@@ -571,10 +565,12 @@ export default class CompanyDistrictDetail extends BaseComponent {
     // this.$bvModal.hide('postcode');
   }
 
+  // show map update modal
   showMapUpdateModal() {
     this.setAddress(this.companyDistrictDto.address);
   }
 
+  // update map info
   updateMap() {
     CompanyDistrictService.updateMap(
       this.$route.params.id,
@@ -587,7 +583,6 @@ export default class CompanyDistrictDetail extends BaseComponent {
     });
   }
 
-  // 지점 타입 추가
   created() {
     const id = this.$route.params.id;
     this.findOne(id);

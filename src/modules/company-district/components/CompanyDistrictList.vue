@@ -1,9 +1,6 @@
 <template>
   <section>
-    <div class="title pb-2 mb-2">
-      <h3>업체 지점 관리</h3>
-    </div>
-    <div class="divider"></div>
+    <SectionTitle title="업체 지점 관리" divider></SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
         <!-- <b-col sm="12" lg="1" class="mb-3">
@@ -32,7 +29,11 @@
         </b-col>
         <b-col sm="12" lg="2" class="mb-3">
           <label for="district_name_kr">지점명</label>
-          <b-form-input type="text" id="district_name_kr" v-model="companyDistrictSearchDto.nameKr"></b-form-input>
+          <b-form-input
+            type="text"
+            id="district_name_kr"
+            v-model="companyDistrictSearchDto.nameKr"
+          ></b-form-input>
         </b-col>
         <b-col sm="12" lg="6" class="mb-3">
           <label for="district_address">주소</label>
@@ -53,7 +54,8 @@
               v-for="status in approvalStatus"
               :key="status"
               :value="status"
-            >{{ status | enumTransformer }}</b-form-select-option>
+              >{{ status | enumTransformer }}</b-form-select-option
+            >
           </b-form-select>
         </b-col>
       </b-form-row>
@@ -71,7 +73,12 @@
           <strong class="text-primary">{{ companyDistrictListCount }}</strong>
         </h5>
       </div>
-      <b-button variant="primary" v-b-modal.add_company_district>업체 지점 추가</b-button>
+      <b-button
+        variant="primary"
+        v-b-modal.add_company_district
+        @click="showCreateModal()"
+        >업체 지점 추가</b-button
+      >
     </div>
     <div v-if="!dataLoading" class="table-bordered table-responsive">
       <table class="table table-sm table-hover" v-if="companyDistrictListCount">
@@ -82,37 +89,49 @@
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.no,
               }"
-            >ID</th>
+            >
+              ID
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.companyNameKr,
               }"
-            >COMPANY</th>
+            >
+              COMPANY
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.nameKr,
               }"
-            >DISTRICT</th>
+            >
+              DISTRICT
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.address,
               }"
-            >ADDRESS</th>
+            >
+              ADDRESS
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.createdAt,
               }"
-            >CREATED</th>
+            >
+              CREATED
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.companyDistrictStatus,
               }"
-            >STATUS</th>
+            >
+              STATUS
+            </th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -147,7 +166,8 @@
                     id: district.no,
                   },
                 }"
-              >상세보기</router-link>
+                >상세보기</router-link
+              >
             </td>
           </tr>
         </tbody>
@@ -167,45 +187,50 @@
       <div class="circle circle-1"></div>
       <div class="circle circle-2"></div>
     </div>
-
+    <!-- 지점 추가 모달 -->
     <b-modal
       id="add_company_district"
-      title="업체 지점 추가하기"
-      size="xl"
+      title="업체 지점 추가"
+      ok-title="추가"
+      cancel-title="취소"
       @hide="clearOutCreateDto()"
       @cancel="clearOutCreateDto()"
       @ok="createCompanyDidstrict()"
     >
-      <div v-if="attachments && attachments.length > 0" class="mb-4">
-        <div v-for="attachment in attachments" :key="attachment.endpoint">
+      <div v-if="districtImage && districtImage.length > 0" class="mb-4">
+        <div v-for="image in districtImage" :key="image.endpoint">
           <b-img-lazy
-            :src="attachment.endpoint"
+            :src="image.endpoint"
             class="rounded mx-auto d-block company-logo"
             style="max-height:80px"
           />
         </div>
       </div>
-      <div class="form-row">
-        <div class="col-12 col-md-6 mt-2">
-          <label for="create_district_name_kr">업체 지점명</label>
+      <b-form-row>
+        <b-col cols="12" md="6" class="mt-2">
+          <label for="create_district_name_kr"
+            >지점명 <span class="red-text">*</span></label
+          >
           <input
             type="text"
             v-model="companyDistrictCreateDto.nameKr"
             class="form-control"
             id="district_name_kr"
           />
-        </div>
-        <div class="col-12 col-md-6 mt-2">
-          <label for="create_district_name_eng">업체 지점명(영문)</label>
+        </b-col>
+        <b-col cols="12" md="6" class="mt-2">
+          <label for="create_district_name_eng">지점명(영문)</label>
           <input
             type="text"
             v-model="companyDistrictCreateDto.nameEng"
             class="form-control"
             id="district_name_eng"
           />
-        </div>
-        <div class="col-12 col-md-6 mt-2">
-          <label for="create_district_address">주소</label>
+        </b-col>
+        <b-col cols="12" md="6" class="mt-2">
+          <label for="create_district_address"
+            >주소 <span class="red-text">*</span></label
+          >
           <input
             type="text"
             v-model="addressData.address"
@@ -214,24 +239,29 @@
             v-b-modal.postcode
             v-on:keyup.tab="showAddressModal()"
           />
-        </div>
-        <div class="col-12 col-md-6 mt-2">
-          <label for="create_district_status">업체 지점 승인 상태</label>
+        </b-col>
+        <b-col cols="12" md="6" class="mt-2">
+          <label for="create_district_status"
+            >승인 상태 <span class="red-text">*</span></label
+          >
           <select
             class="custom-select"
             id="district_status"
-            v-model="companyDistrictCreateDto.companyStatus"
+            v-model="companyDistrictCreateDto.companyDistrictStatus"
           >
             <option value>전체</option>
             <option
               v-for="status in approvalStatus"
               :key="status"
               :value="status"
-            >{{ status | enumTransformer }}</option>
+              >{{ status | enumTransformer }}</option
+            >
           </select>
-        </div>
-        <div class="col-12 col-md-12 mt-2">
-          <label for="create_district_company">공용 시설</label>
+        </b-col>
+        <b-col cols="12" class="mt-2">
+          <label for="create_district_company"
+            >공통 시설 <span class="red-text">*</span></label
+          >
           <b-form-checkbox-group
             id="common_amenity"
             v-model="companyDistrictCreateDto.amenityIds"
@@ -241,11 +271,14 @@
               v-for="amenity in commonAmenityList"
               :key="amenity.no"
               :value="amenity.no"
-            >{{ amenity.amenityName }}</b-form-checkbox>
+              >{{ amenity.amenityName }}</b-form-checkbox
+            >
           </b-form-checkbox-group>
-        </div>
-        <div class="col-12 col-md-6 mt-2">
-          <label for="create_district_company">업체 선택</label>
+        </b-col>
+        <b-col cols="12" md="6" class="mt-2">
+          <label for="create_district_company"
+            >업체 선택 <span class="red-text">*</span></label
+          >
           <select
             class="custom-select"
             id="district_company"
@@ -255,28 +288,26 @@
               v-for="company in companySelect"
               :key="company.no"
               :value="company.no"
-            >{{ company.nameKr }}</option>
+              >{{ company.nameKr }}</option
+            >
           </select>
-        </div>
-        <div class="col-12 col-md-6 mt-2">
-          <label for>파일첨부</label>
-          <div class="custom-file">
-            <input
-              type="file"
-              class="custom-file-input"
-              id="customFileLang"
-              lang="kr"
-              v-on:change="upload($event.target.files)"
-              multiple
-            />
-            <label class="custom-file-label" for="customFileLang">파일 첨부</label>
-          </div>
-        </div>
-      </div>
+        </b-col>
+        <b-col cols="12" md="6" class="mt-2">
+          <label for>지점 이미지 <span class="red-text">*</span></label>
+          <b-form-file
+            placeholder="파일 선택"
+            ref="fileInput"
+            @input="upload($event)"
+          ></b-form-file>
+        </b-col>
+      </b-form-row>
     </b-modal>
-
+    <!-- 주소 검색 모달 -->
     <b-modal id="postcode" title="주소 검색" hide-footer>
-      <vue-daum-postcode style="height:500px; overflow-y:auto;" @complete="setAddress($event)" />
+      <vue-daum-postcode
+        style="height:500px; overflow-y:auto;"
+        @complete="setAddress($event)"
+      />
     </b-modal>
   </section>
 </template>
@@ -325,21 +356,31 @@ export default class CompanyDistrictList extends BaseComponent {
   };
 
   private commonAmenityList = [];
-  private attachments = [];
+  private districtImage = [];
 
+  // get status color
   getStatusColor(status: APPROVAL_STATUS) {
     return getStatusColor(status);
   }
 
+  // get company list
   getCompanies() {
     CompanyService.findForSelect().subscribe(res => {
       this.companySelect = res.data;
     });
   }
 
+  // show company district modal
+  showCreateModal() {
+    this.getAmenities();
+  }
+
+  // show address modal
   showAddressModal() {
     this.$bvModal.show('postcode');
   }
+
+  // set address info
   setAddress(res) {
     this.addressData = res;
     this.companyDistrictCreateDto.address = this.addressData.address;
@@ -352,10 +393,10 @@ export default class CompanyDistrictList extends BaseComponent {
       }
     };
     geocoder.addressSearch(this.companyDistrictCreateDto.address, callback);
-
     this.$bvModal.hide('postcode');
   }
 
+  // serach district
   search(isPagination?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
@@ -371,41 +412,43 @@ export default class CompanyDistrictList extends BaseComponent {
     });
   }
 
+  // paginate
   paginateSearch() {
     this.search(true);
   }
 
+  // clear out district search dto
   clearOut() {
     this.pagination = new Pagination();
     this.companyDistrictSearchDto = new CompanyDistrictListDto();
     this.search();
   }
 
+  // create company district
   createCompanyDidstrict() {
-    if (this.attachments.length > 0) {
-      this.companyDistrictCreateDto.image = this.attachments;
+    if (this.districtImage.length > 0) {
+      this.companyDistrictCreateDto.image = this.districtImage;
     }
     CompanyDistrictService.createCompanyDistrict(
       this.companyDistrictCreateDto,
     ).subscribe(res => {
       this.search();
-      this.getCompanies();
     });
   }
 
+  // clear out company district create dto
   clearOutCreateDto() {
-    this.attachments = [];
+    this.districtImage = [];
     this.companyDistrictCreateDto = new CompanyDistrictDto();
-    this.getAmenities();
   }
 
-  async upload(file: FileList) {
+  async upload(file: File) {
     const attachments = await FileUploadService.upload(
       UPLOAD_TYPE.COMPANY_DISTRICT,
-      file,
+      [file],
     );
-    this.attachments = [];
-    this.attachments.push(
+    this.districtImage = [];
+    this.districtImage.push(
       ...attachments.filter(
         fileUpload =>
           fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
@@ -413,6 +456,7 @@ export default class CompanyDistrictList extends BaseComponent {
     );
   }
 
+  // get common facility
   getAmenities() {
     AmenityService.findAmenities('common-facility').subscribe(res => {
       this.commonAmenityList = res.data;
@@ -425,9 +469,9 @@ export default class CompanyDistrictList extends BaseComponent {
         this.$route.params.companyNo,
       );
     }
+    this.getCompanies();
     this.pagination.page = 1;
     this.search();
-    this.getCompanies();
   }
 }
 </script>

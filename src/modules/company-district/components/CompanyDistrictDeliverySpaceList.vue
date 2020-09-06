@@ -241,6 +241,7 @@
           </div>
         </b-col>
         <b-col>
+          <!-- 계약 리스트 -->
           <DeliverySpaceDetailContractList />
         </b-col>
       </b-row>
@@ -260,13 +261,13 @@ import { Pagination } from '@/common';
 import DeliverySpaceDetailContractList from '../../delivery-space/components/DeliverySpaceDetailContractList.vue';
 
 @Component({
-  name: 'DeliverySpaceList',
+  name: 'CompanyDistrictDeliverySpaceList',
   components: {
     BaseCard,
     DeliverySpaceDetailContractList,
   },
 })
-export default class DeliverySpaceList extends BaseComponent {
+export default class CompanyDistrictDeliverySpaceList extends BaseComponent {
   private deliverySpaceList: DeliverySpaceDto[] = Array<DeliverySpaceDto>();
   private deliverySpaceListDto = new DeliverySpaceListDto();
   private deliverySpaceDto = new DeliverySpaceDto();

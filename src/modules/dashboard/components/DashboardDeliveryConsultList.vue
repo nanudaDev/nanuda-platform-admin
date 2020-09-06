@@ -26,30 +26,41 @@
           <td>{{ founderConsult.deliverySpaceNo }}</td>
           <td>{{ founderConsult.nanudaUser.name }}</td>
           <td>{{ founderConsult.nanudaUser.phone | phoneTransformer }}</td>
-
-          <td
-            v-if="founderConsult.deliverySpaces.companyDistrict"
-          >{{ founderConsult.deliverySpaces.companyDistrict.company.nameKr }}</td>
           <td>
-            <div v-if="founderConsult.availableTime">{{ founderConsult.availableTime.value }}</div>
+            <div
+              v-if="
+                founderConsult.deliverySpaces &&
+                  founderConsult.deliverySpaces.companyDistrict
+              "
+            >
+              {{ founderConsult.deliverySpaces.companyDistrict.company.nameKr }}
+            </div>
           </td>
-          <td
-            v-if="
-              founderConsult.deliverySpaces &&
-                founderConsult.deliverySpaces.contracts
-            "
-          >
-            {{
-            founderConsult.deliverySpaces.quantity -
-            founderConsult.deliverySpaces.contracts.length
-            }}/{{ founderConsult.deliverySpaces.quantity }}
+          <td>
+            <div v-if="founderConsult.availableTime">
+              {{ founderConsult.availableTime.value }}
+            </div>
+          </td>
+          <td>
+            <div
+              v-if="
+                founderConsult.deliverySpaces &&
+                  founderConsult.deliverySpaces.contracts
+              "
+            >
+              {{
+                founderConsult.deliverySpaces.quantity -
+                  founderConsult.deliverySpaces.contracts.length
+              }}/{{ founderConsult.deliverySpaces.quantity }}
+            </div>
           </td>
           <td>{{ founderConsult.createdAt | dateTransformer }}</td>
           <td>
             <b-badge
               :variant="getStatusColor(founderConsult.status)"
               class="badge-pill p-2 mr-2"
-            >{{ founderConsult.codeManagement.value }}</b-badge>
+              >{{ founderConsult.codeManagement.value }}</b-badge
+            >
           </td>
         </tr>
       </tbody>

@@ -4,9 +4,7 @@
       <b-col md="6" class="my-3">
         <BaseCard title="업체 승인 요청" no-body>
           <template v-slot:head>
-            <router-link to="/company" class="btn btn-primary float-right">
-              더 보기
-            </router-link>
+            <router-link to="/company" class="btn btn-primary float-right">더 보기</router-link>
           </template>
           <DashboardCompanyList />
         </BaseCard>
@@ -14,12 +12,7 @@
       <b-col md="6" class="my-3">
         <BaseCard title="업체 사용자 승인 요청" no-body>
           <template v-slot:head>
-            <router-link
-              to="/company/company-user"
-              class="btn btn-primary float-right"
-            >
-              더 보기
-            </router-link>
+            <router-link to="/company/company-user" class="btn btn-primary float-right">더 보기</router-link>
           </template>
           <DashboardCompanyUserList />
         </BaseCard>
@@ -49,8 +42,7 @@
                   <router-link
                     to="/graph-by-cities"
                     class="btn btn-primary text-center float-right"
-                    >더 보기</router-link
-                  >
+                  >더 보기</router-link>
                 </div>
               </template>
               <template v-slot:body>
@@ -61,15 +53,20 @@
         </b-row>
       </b-col>
     </b-row>
+    <b-row>
+      <b-col lg="12" my-3>
+        <BaseCard title="매장 매출 추이">
+          <template v-slot:body>
+            <DashboardPaymentListGraph />
+          </template>
+        </BaseCard>
+      </b-col>
+    </b-row>
     <b-row class="my-0">
       <b-col lg="6" class="my-3">
         <BaseCard title="최신 배달형 상담 신청" no-body>
           <template v-slot:head>
-            <router-link
-              to="/delivery-founder-consult"
-              class="btn btn-primary float-right"
-              >더 보기</router-link
-            >
+            <router-link to="/delivery-founder-consult" class="btn btn-primary float-right">더 보기</router-link>
           </template>
           <DashboardDeliveryConsultList />
         </BaseCard>
@@ -77,11 +74,7 @@
       <b-col lg="6" class="my-3">
         <BaseCard title="최신 식당형 상담 신청" no-body>
           <template v-slot:head>
-            <router-link
-              to="/founder-consult"
-              class="btn btn-primary float-right"
-              >더 보기</router-link
-            >
+            <router-link to="/founder-consult" class="btn btn-primary float-right">더 보기</router-link>
           </template>
           <DashboardFounderConsultList />
         </BaseCard>
@@ -99,6 +92,7 @@ import DashboardGraph from './components/DashboardGraph.vue';
 import DashboardCityGraph from './components/DashboardCityGraph.vue';
 import DashboardDeliveryConsultGraph from './components/DashboardDeliveryConsultGraph.vue';
 import DashboardDeliveryConsultList from './components/DashboardDeliveryConsultList.vue';
+import DashboardPaymentListGraph from './components/DashboardPaymentListGraph.vue';
 
 @Component({
   name: 'Dashboard',
@@ -110,6 +104,7 @@ import DashboardDeliveryConsultList from './components/DashboardDeliveryConsultL
     DashboardCityGraph,
     DashboardDeliveryConsultGraph,
     DashboardDeliveryConsultList,
+    DashboardPaymentListGraph,
   },
 })
 export default class Dashboard extends BaseComponent {}

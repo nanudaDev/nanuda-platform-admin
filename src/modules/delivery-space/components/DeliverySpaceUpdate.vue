@@ -4,6 +4,8 @@
     title="타입 수정"
     size="xl"
     scrollable
+    ok-title="수정"
+    cancel-title="취소"
     @hide="clearOutUpdateDto()"
     @cancel="clearOutUpdateDto()"
     @ok="updateDeliverySpace()"
@@ -12,7 +14,7 @@
       <b-col lg="12" class="text-right mb-3">
         <b-row no-gutters align-h="end">
           <b-form-group
-            label="삭제 활성화"
+            label="노출 활성화"
             label-size="sm"
             label-text-align="right"
             label-cols="8"
@@ -145,19 +147,13 @@
       </b-col>
       <b-col lg="12">
         <label for>이미지</label>
-        <div class="custom-file">
-          <input
-            type="file"
-            class="custom-file-input"
-            id="customFileLang"
-            lang="kr"
-            v-on:change="upload($event.target.files)"
-            multiple
-          />
-          <label class="custom-file-label" for="customFileLang"
-            >이미지 변경</label
-          >
-        </div>
+        <b-form-file
+          placeholder="파일 선택"
+          ref="fileInput"
+          @input="upload($event)"
+          required
+          multiple
+        ></b-form-file>
         <div v-if="!dataLoading">
           <b-form-row no-gutters class="attatchments-list mt-2">
             <template v-if="uploadImages && uploadImages.length > 0">
@@ -263,8 +259,6 @@ export default class DeliverySpaceUpdate extends BaseComponent {
   private changedImage = false;
   private dataLoading = false;
 
-  private delSpace = new DeliverySpaceDto();
-
   // get common facility list
   getSpaceOptions() {
     DeliverySpaceService.findSpaceOption().subscribe(res => {
@@ -347,7 +341,7 @@ export default class DeliverySpaceUpdate extends BaseComponent {
   }
 
   // 이미지 업로드
-  async upload(file: FileList) {
+  async upload(file: File[]) {
     this.dataLoading = true;
     const attachments = await FileUploadService.upload(
       UPLOAD_TYPE.DELIVERY_SPACE,
@@ -360,12 +354,11 @@ export default class DeliverySpaceUpdate extends BaseComponent {
           fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
       ),
     );
-    // this.uploadImages = [...this.newImages];
+
     this.dataLoading = false;
     this.changedImage = true;
   }
 
-  // TODO: 이미지 리스트 상 삭제 리팩토링 필요.. 음..
   // delete images
   deleteNewImages(image, index) {
     if (this.newImages.includes(image)) {
@@ -422,26 +415,36 @@ export default class DeliverySpaceUpdate extends BaseComponent {
       this.deliverySpaceUpdateDto.images = [];
     }
 
+    if (
+      this.uploadImages &&
+      this.uploadImages.length === 0 &&
+      this.newImages &&
+      this.newImages.length > 0
+    ) {
+      this.deliverySpaceUpdateDto.images = this.newImages;
+      this.deliverySpaceUpdateDto.newImages = [];
+    }
+
     DeliverySpaceService.update(
       this.$route.params.id,
       this.deliverySpaceUpdateDto,
     ).subscribe(res => {
       if (res) {
         this.changedImage = false;
-        this.deliverySpaceUpdateDto = new DeliverySpaceUpdateDto();
-        DeliverySpaceService.findOne(this.$route.params.id).subscribe(res => {
-          this.newImages = [];
-          this.deliverySpaceUpdateDto = res.data;
-        });
         this.$root.$emit('find_delivery_space');
+        // DeliverySpaceService.findOne(this.$route.params.id).subscribe(res => {
+        //   this.newImages = [];
+        //   this.deliverySpaceUpdateDto = res.data;
+        // });
         toast.success('수정완료');
       }
     });
   }
 
+  // clear out delivery space update dto
   clearOutUpdateDto() {
+    this.newImages = [];
     this.deliverySpaceUpdateDto = new DeliverySpaceUpdateDto();
-    this.$root.$emit('clearout_updatedto');
   }
 
   created() {

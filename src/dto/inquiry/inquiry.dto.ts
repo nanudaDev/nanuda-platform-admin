@@ -19,4 +19,5 @@ export class InquiryDto extends BaseDto<InquiryDto> {
   companyUser?: COMPANY_USER;
   company?: COMPANY;
   codeManagement?: CodeManagementDto;
+  replyCount?: number;
 }

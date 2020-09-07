@@ -129,17 +129,17 @@
       <div class="circle circle-1"></div>
       <div class="circle circle-2"></div>
     </div>
+    <!-- 브랜드 추가 모달 -->
     <b-modal
       id="add_brand"
       title="브랜드 추가"
-      @hide="clearBrandCreateDto()"
-      @cancel="clearBrandCreateDto()"
+      ok-title="추가"
+      cancel-title="취소"
+      @hide="clearOutBrandCreateDto()"
+      @cancel="clearOutBrandCreateDto()"
       @ok="createBrand()"
     >
-      <div
-        v-if="brandLogo && brandLogo.length > 0 && !logoChanged"
-        class="mb-4"
-      >
+      <div v-if="brandLogo && brandLogo.length > 0" class="mb-4">
         <div v-for="logo in brandLogo" :key="logo.endpoint">
           <img
             :src="logo.endpoint"
@@ -158,6 +158,7 @@
             id="create_food_category_list"
             class="custom-select"
             v-model="brandCreateDto.categoryNo"
+            required
           >
             <option
               v-for="category in foodCategorySelect"
@@ -172,25 +173,19 @@
             브랜드 로고
             <span class="red-text">*</span>
           </label>
-          <div class="custom-file">
-            <input
-              type="file"
-              class="custom-file-input"
-              id="customFileLang"
-              lang="kr"
-              v-on:change="upload($event.target.files)"
-            />
-            <label class="custom-file-label" for="customFileLang"
-              >로고 추가</label
-            >
-          </div>
+          <b-form-file
+            placeholder="파일 선택"
+            ref="fileInput"
+            @input="upload($event)"
+            required
+          ></b-form-file>
         </b-col>
         <b-col cols="12" md="6" class="mb-3">
           <label>
             브랜드명
             <span class="red-text">*</span>
           </label>
-          <b-form-input v-model="brandCreateDto.nameKr"></b-form-input>
+          <b-form-input v-model="brandCreateDto.nameKr" required></b-form-input>
         </b-col>
         <b-col cols="12" md="6" class="mb-3">
           <label>브랜드명 (영문)</label>
@@ -206,6 +201,7 @@
             maxlength="100"
             style="min-height:100px"
             v-model="brandCreateDto.desc"
+            required
           ></textarea>
           <p class="text-length text-right" v-if="brandCreateDto.desc">
             <b class="text-primary">{{ brandCreateDto.desc.length }}</b> / 100
@@ -235,6 +231,9 @@ import toast from '../../../../resources/assets/js/services/toast.js';
   name: 'BrandList',
 })
 export default class BrandList extends BaseComponent {
+  constructor() {
+    super();
+  }
   private brandList: BrandDto[] = [];
   private brandListCount = null;
   private brandSearchDto = new BrandListDto();
@@ -245,7 +244,6 @@ export default class BrandList extends BaseComponent {
 
   private brandCreateDto = new BrandDto();
   private brandLogo: FileAttachmentDto[] = [];
-  private logoChanged = false;
 
   // get food category
   getFoodCategories() {
@@ -256,12 +254,14 @@ export default class BrandList extends BaseComponent {
 
   // search brand
   search(isPagination?: boolean) {
+    this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
     }
     BrandService.findAll(this.brandSearchDto, this.pagination).subscribe(
       res => {
         if (res) {
+          this.dataLoading = false;
           this.brandList = res.data.items;
           this.brandListCount = res.data.totalCount;
         }
@@ -273,12 +273,13 @@ export default class BrandList extends BaseComponent {
     this.search(true);
   }
 
+  // clear brand search dto
   clearOut() {
     this.brandSearchDto = new BrandListDto();
     this.search();
   }
 
-  // find detail
+  // find brand detail
   findOne(barndNo) {
     this.$router.push(`/brand/${barndNo}`);
   }
@@ -297,24 +298,25 @@ export default class BrandList extends BaseComponent {
     });
   }
 
-  async upload(file: FileList) {
-    console.log(file);
-
-    const attachments = await FileUploadService.upload(
-      UPLOAD_TYPE.BRAND_LOGO,
-      file,
-    );
-    this.brandLogo = [];
-    this.brandLogo.push(
-      ...attachments.filter(
-        fileUpload =>
-          fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
-      ),
-    );
-    this.logoChanged = true;
+  // upload brand logo
+  async upload(file: File) {
+    if (file) {
+      const attachments = await FileUploadService.upload(
+        UPLOAD_TYPE.BRAND_LOGO,
+        [file],
+      );
+      this.brandLogo = [];
+      this.brandLogo.push(
+        ...attachments.filter(
+          fileUpload =>
+            fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
+        ),
+      );
+    }
   }
 
-  clearBrandCreateDto() {
+  // clear brand craete dto
+  clearOutBrandCreateDto() {
     this.brandLogo = [];
     this.brandCreateDto = new BrandDto();
   }

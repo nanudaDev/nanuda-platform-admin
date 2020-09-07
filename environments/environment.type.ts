@@ -5,6 +5,7 @@ export class Environment {
   clientName?: string;
   productionTip?: boolean;
   s3BaseUrl: string;
+  siteUrl?: string;
 }
 
 export enum EnvironmentType {

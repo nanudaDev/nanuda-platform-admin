@@ -1,14 +1,13 @@
 import { BaseService } from '@/core';
-import { BrandListDto } from '@/dto/brand/brand-list.dto';
+import { BrandDto, BrandListDto, BrandUpdateDto } from '@/dto';
 import { Pagination } from '@/common';
-import { BrandDto, BrandUpdateDto } from '@/dto';
 
 class BrandService extends BaseService {
   constructor() {
     super();
   }
 
-  findAll(filter: BrandListDto, pagination: Pagination) {
+  findAll(filter: BrandListDto, pagination?: Pagination) {
     return super.paginate<BrandDto>('admin/brand', filter, pagination);
   }
 
@@ -28,7 +27,7 @@ class BrandService extends BaseService {
     return super.get<BrandDto[]>('admin/brand/select-option');
   }
 
-  deleteBrand(brandNo) {
+  deleteOne(brandNo) {
     return super.delete<BrandDto>(`admin/brand/${brandNo}`);
   }
 }

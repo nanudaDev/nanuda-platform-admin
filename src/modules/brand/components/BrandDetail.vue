@@ -60,7 +60,14 @@
         </BaseCard>
       </b-col>
     </b-row>
-    <b-modal id="update_brand" title="브랜드 수정" @ok="updateBrand()">
+    <!-- 브랜드 수정 모달 -->
+    <b-modal
+      id="update_brand"
+      title="브랜드 수정"
+      ok-title="수정"
+      cancel-title="취소"
+      @ok="updateBrand()"
+    >
       <b-row no-gutters align-h="end">
         <b-form-group
           label="노출 여부"
@@ -100,7 +107,7 @@
             style="max-height:80px"
           />
         </div>
-        <div class="text-center">
+        <div class="text-center mt-2">
           <b-button variant="danger" @click="removeBrandLogo()"
             >로고 제거</b-button
           >
@@ -180,7 +187,7 @@
           <b>정말로 삭제하시겠습니까?</b>
         </p>
         <div class="mt-2 text-right">
-          <b-button variant="danger" @click="deleteBrand()">삭제</b-button>
+          <b-button variant="danger" @click="deleteOne()">삭제</b-button>
         </div>
       </div>
     </b-modal>
@@ -215,6 +222,7 @@ export default class BrandDetail extends BaseComponent {
   private logoChanged = false;
   private showYn: YN[] = [...CONST_YN];
 
+  // find for detail
   findOne(id) {
     BrandService.findOne(id).subscribe(res => {
       if (res) {
@@ -280,8 +288,8 @@ export default class BrandDetail extends BaseComponent {
     this.logoChanged = false;
   }
 
-  deleteBrand() {
-    BrandService.deleteBrand(this.$route.params.id).subscribe(res => {
+  deleteOne() {
+    BrandService.deleteOne(this.$route.params.id).subscribe(res => {
       if (res) {
         toast.success('삭제완료');
         this.$router.push('/brand');

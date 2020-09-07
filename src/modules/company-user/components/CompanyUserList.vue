@@ -32,7 +32,7 @@
           <label>이름</label>
           <input
             type="text"
-            class="form-control" 
+            class="form-control"
             v-model="companyUserSearchDto.name"
           />
         </b-col>
@@ -369,7 +369,7 @@ export default class Company extends BaseComponent {
   }
 
   clearOut() {
-    this.pagination = new Pagination();
+    this.pagination.page = 1;
     this.companyUserSearchDto = new CompanyUserListDto();
     this.search();
   }

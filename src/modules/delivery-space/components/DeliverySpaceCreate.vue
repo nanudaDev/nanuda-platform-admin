@@ -3,7 +3,10 @@
     id="add_delivery_space"
     size="xl"
     title="타입 추가"
-    @cancel="clearOut()"
+    ok-title="추가"
+    cancel-title="취소"
+    @hide="clearOutCreateDto()"
+    @cancel="clearOutCreateDto()"
     @ok="create()"
   >
     <b-form-row>
@@ -24,14 +27,14 @@
       </b-col>
       <b-col lg="3" class="mb-3" v-if="!this.$route.params.id">
         <label>
-          지점명 {{ deliverySpaceCreateDto.companyDistrictNo }}
+          지점명
           <span class="red-text">*</span>
         </label>
         <select
           class="custom-select"
           v-model="deliverySpaceCreateDto.companyDistrictNo"
         >
-          <option value selected disabled>업체를 선택해주세요</option>
+          <option value selected disabled>선택해주세요</option>
           <option
             v-for="district in districtSelect.items"
             :key="district.no"
@@ -158,46 +161,38 @@
       </b-col>
       <b-col lg="12">
         <label for>이미지</label>
-        <div class="custom-file">
-          <input
-            type="file"
-            class="custom-file-input"
-            id="customFileLang"
-            lang="kr"
-            v-on:change="upload($event.target.files)"
-            multiple
-          />
-          <label class="custom-file-label" for="customFileLang"
-            >이미지 추가</label
-          >
-        </div>
+        <b-form-file
+          placeholder="파일 선택"
+          ref="fileInput"
+          @input="upload($event)"
+          required
+          multiple
+        ></b-form-file>
         <div
           v-if="attachments && attachments.length > 0"
           class="attatchments-list mt-2"
         >
-          <b-form-row no-gutters>
-            <b-col
-              cols="2"
-              v-for="attachment in attachments"
-              :key="attachment.originFileName"
-              class="p-2"
-            >
-              <div class="attatchments-list-item">
-                <b-img
-                  :src="attachment.endpoint"
-                  alt
-                  style="max-width:100%"
-                  class="border rounded"
-                />
-                <b-icon
-                  icon="x-circle-fill"
-                  variant="danger"
-                  class="btn-delete-item"
-                  @click="deleteImages(attachment)"
-                ></b-icon>
-              </div>
-            </b-col>
-          </b-form-row>
+          <b-col
+            cols="2"
+            v-for="attachment in attachments"
+            :key="attachment.originFileName"
+            class="p-2"
+          >
+            <div class="attatchments-list-item">
+              <b-img
+                :src="attachment.endpoint"
+                alt
+                style="max-width:100%"
+                class="border rounded"
+              />
+              <b-icon
+                icon="x-circle-fill"
+                variant="danger"
+                class="btn-delete-item"
+                @click="deleteImages(attachment)"
+              ></b-icon>
+            </div>
+          </b-col>
         </div>
       </b-col>
     </b-form-row>
@@ -343,16 +338,14 @@ export default class DeliverySpaceCreate extends BaseComponent {
     this.deliverySpaceCreateDto.images = this.attachments;
     DeliverSpaceService.create(this.deliverySpaceCreateDto).subscribe(res => {
       if (res) {
-        this.clearOut();
         toast.success('추가완료');
-        // 굳이 false보낼 필요는 없음
-        this.$root.$emit('delivery_space_create', false);
+        this.$root.$emit('delivery_space_create');
       }
     });
   }
 
   // 타입 생성 초기화
-  clearOut() {
+  clearOutCreateDto() {
     this.deliverySpaceCreateDto = new DeliverySpaceDto();
     this.amenityIds = [];
     this.deliverySpaceOptionIds = [];
@@ -360,11 +353,12 @@ export default class DeliverySpaceCreate extends BaseComponent {
   }
 
   // 이미지 업로드
-  async upload(file: FileList) {
+  async upload(file: File[]) {
     const attachments = await FileUploadService.upload(
       UPLOAD_TYPE.DELIVERY_SPACE,
       file,
     );
+    this.attachments = [];
     this.attachments.push(
       ...attachments.filter(
         fileUpload =>

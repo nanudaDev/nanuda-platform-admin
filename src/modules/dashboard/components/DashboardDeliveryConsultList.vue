@@ -26,37 +26,36 @@
           <td>{{ founderConsult.deliverySpaceNo }}</td>
           <td>{{ founderConsult.nanudaUser.name }}</td>
           <td>{{ founderConsult.nanudaUser.phone | phoneTransformer }}</td>
-
-          <td
-            v-if="founderConsult.deliverySpaces"
-          >{{ founderConsult.deliverySpaces.companyDistrict.company.nameKr }}</td>
-          <td v-else></td>
           <td>
-            <div v-if="founderConsult.availableTime">{{ founderConsult.availableTime.value }}</div>
+            <div v-if="founderConsult.deliverySpaces">
+              {{ founderConsult.deliverySpaces.companyDistrict.company.nameKr }}
+            </div>
           </td>
-          <td
-            v-if="
-              founderConsult.deliverySpaces &&
-                founderConsult.deliverySpaces.contracts
-            "
-          >
-            {{
-            founderConsult.deliverySpaces.quantity -
-            founderConsult.deliverySpaces.contracts.length
-            }}/{{ founderConsult.deliverySpaces.quantity }}
+          <td>
+            <div v-if="founderConsult.availableTime">
+              {{ founderConsult.availableTime.value }}
+            </div>
           </td>
-          <td v-else></td>
+          <td>
+            <div v-if="founderConsult.deliverySpaces">
+              {{
+                founderConsult.deliverySpaces.quantity -
+                  founderConsult.deliverySpaces.contracts.length
+              }}/{{ founderConsult.deliverySpaces.quantity }}
+            </div>
+          </td>
           <td>{{ founderConsult.createdAt | dateTransformer }}</td>
           <td>
             <b-badge
               :variant="getStatusColor(founderConsult.status)"
               class="badge-pill p-2 mr-2"
-            >{{ founderConsult.codeManagement.value }}</b-badge>
+              >{{ founderConsult.codeManagement.value }}</b-badge
+            >
           </td>
         </tr>
       </tbody>
     </table>
-    <div class="empty-data border" v-else>상담 신청 내역 없음</div>
+    <div class="empty-data" v-else>상담 신청 내역 없음</div>
   </div>
   <div class="half-circle-spinner my-5" v-else>
     <div class="circle circle-1"></div>

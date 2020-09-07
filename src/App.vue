@@ -201,6 +201,8 @@ img {
       right: -5px;
       top: -5px;
       cursor: pointer;
+      border-radius: 50%;
+      background: #fff;
     }
   }
 }

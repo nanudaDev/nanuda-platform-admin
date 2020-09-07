@@ -28,8 +28,9 @@
           <td>{{ founderConsult.nanudaUser.phone | phoneTransformer }}</td>
 
           <td
-            v-if="founderConsult.deliverySpaces.companyDistrict"
+            v-if="founderConsult.deliverySpaces"
           >{{ founderConsult.deliverySpaces.companyDistrict.company.nameKr }}</td>
+          <td v-else></td>
           <td>
             <div v-if="founderConsult.availableTime">{{ founderConsult.availableTime.value }}</div>
           </td>
@@ -44,6 +45,7 @@
             founderConsult.deliverySpaces.contracts.length
             }}/{{ founderConsult.deliverySpaces.quantity }}
           </td>
+          <td v-else></td>
           <td>{{ founderConsult.createdAt | dateTransformer }}</td>
           <td>
             <b-badge

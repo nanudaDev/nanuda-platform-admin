@@ -23,8 +23,8 @@
               switch
               size="lg"
               v-model="deliverySpaceUpdateDto.delYn"
-              :value="delYn[0]"
-              :unchecked-value="delYn[1]"
+              :value="delYn[1]"
+              :unchecked-value="delYn[0]"
             ></b-form-checkbox>
           </b-form-group>
         </b-row>

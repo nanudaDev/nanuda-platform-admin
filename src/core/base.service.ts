@@ -95,14 +95,18 @@ export class BaseService extends Vue {
     params?: any,
   ): AxiosObservable<T> {
     let baseUrl;
+    let siteUrl;
     if (process.env.NODE_ENV === EnvironmentType.development) {
       baseUrl = DevelopmentEnvironment.baseURL;
+      siteUrl = DevelopmentEnvironment.siteUrl;
     }
     if (process.env.NODE_ENV === EnvironmentType.staging) {
       baseUrl = StagingEnvironment.baseURL;
+      siteUrl = StagingEnvironment.siteUrl;
     }
     if (process.env.NODE_ENV === EnvironmentType.production) {
       baseUrl = ProductionEnvironment.baseURL;
+      siteUrl = ProductionEnvironment.siteUrl;
     }
     // axios observable에서 글로벌 에러 catch하는 코드
     Axios.interceptors.response.use(
@@ -110,6 +114,15 @@ export class BaseService extends Vue {
         return response;
       },
       error => {
+        if (
+          typeof error.response.data.message === 'string' &&
+          error.response.data.message ===
+            '세션이 만료되었습니다. 다시 로그인해주세요.'
+        ) {
+          JwtStorageService.removeToken();
+          window.location.replace(`${siteUrl}login`);
+          toast.error('세션이 만료되었습니다. 다시 로그인해주세요.');
+        }
         if (typeof error.response.data.message === 'object') {
           toast.error(
             error.response.data.message[0].constraints[
@@ -117,7 +130,11 @@ export class BaseService extends Vue {
             ],
           );
         }
-        if (typeof error.response.data.message === 'string') {
+        if (
+          typeof error.response.data.message === 'string' &&
+          error.response.data.message !==
+            '세션이 만료되었습니다. 다시 로그인해주세요.'
+        ) {
           toast.error(error.response.data.message);
         }
       },

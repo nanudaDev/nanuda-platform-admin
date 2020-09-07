@@ -65,7 +65,7 @@
         </tr>
       </tbody>
     </table>
-    <div class="empty-data border" v-else>상담 신청 내역 없음</div>
+    <div class="empty-data" v-else>상담 신청 내역 없음</div>
   </div>
   <div class="half-circle-spinner my-5" v-else>
     <div class="circle circle-1"></div>

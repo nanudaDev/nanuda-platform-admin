@@ -21,4 +21,5 @@ export class CompanyDistrictDto extends BaseDto<CompanyDistrictDto> {
   lat?: string;
   lon?: string;
   image?: FileAttachmentDto[];
+  deliverySpaces?: DeliverySpaceDto[];
 }

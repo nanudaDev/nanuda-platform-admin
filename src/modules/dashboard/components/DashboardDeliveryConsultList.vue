@@ -27,12 +27,7 @@
           <td>{{ founderConsult.nanudaUser.name }}</td>
           <td>{{ founderConsult.nanudaUser.phone | phoneTransformer }}</td>
           <td>
-            <div
-              v-if="
-                founderConsult.deliverySpaces &&
-                  founderConsult.deliverySpaces.companyDistrict
-              "
-            >
+            <div v-if="founderConsult.deliverySpaces">
               {{ founderConsult.deliverySpaces.companyDistrict.company.nameKr }}
             </div>
           </td>
@@ -42,12 +37,7 @@
             </div>
           </td>
           <td>
-            <div
-              v-if="
-                founderConsult.deliverySpaces &&
-                  founderConsult.deliverySpaces.contracts
-              "
-            >
+            <div v-if="founderConsult.deliverySpaces">
               {{
                 founderConsult.deliverySpaces.quantity -
                   founderConsult.deliverySpaces.contracts.length

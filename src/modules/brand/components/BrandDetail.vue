@@ -2,9 +2,7 @@
   <section v-if="brandDto">
     <SectionTitle title="브랜드 관리" divider>
       <template v-slot:rightArea>
-        <router-link to="/brand" class="btn btn-secondary">
-          목록으로
-        </router-link>
+        <router-link to="/brand" class="btn btn-secondary">목록으로</router-link>
       </template>
     </SectionTitle>
     <b-row>
@@ -12,16 +10,8 @@
         <BaseCard title="브랜드 정보">
           <template v-slot:head>
             <div>
-              <b-button variant="danger" v-b-modal.delete_brand>
-                삭제하기
-              </b-button>
-              <b-button
-                variant="primary"
-                v-b-modal.update_brand
-                @click="showUpdateModal()"
-              >
-                수정하기
-              </b-button>
+              <b-button variant="danger" v-b-modal.delete_brand>삭제하기</b-button>
+              <b-button variant="primary" v-b-modal.update_brand @click="showUpdateModal()">수정하기</b-button>
             </div>
           </template>
           <template v-slot:body>
@@ -42,17 +32,16 @@
                 </li>
                 <li v-if="brandDto.category">
                   업종 : {{ brandDto.category.nameKr }}
-                  <span v-if="brandDto.category.code"
-                    >({{ brandDto.category.code }} )</span
-                  >
+                  <span
+                    v-if="brandDto.category.code"
+                  >({{ brandDto.category.code }} )</span>
                 </li>
                 <li v-if="brandDto.desc">설명 : {{ brandDto.desc }}</li>
                 <li v-if="brandDto.showYn">
                   노출 여부 :
                   <b-badge
                     :variant="brandDto.showYn === 'Y' ? 'success' : 'danger'"
-                    >{{ brandDto.showYn }}</b-badge
-                  >
+                  >{{ brandDto.showYn }}</b-badge>
                 </li>
               </ul>
             </div>
@@ -61,20 +50,9 @@
       </b-col>
     </b-row>
     <!-- 브랜드 수정 모달 -->
-    <b-modal
-      id="update_brand"
-      title="브랜드 수정"
-      ok-title="수정"
-      cancel-title="취소"
-      @ok="updateBrand()"
-    >
+    <b-modal id="update_brand" title="브랜드 수정" ok-title="수정" cancel-title="취소" @ok="updateBrand()">
       <b-row no-gutters align-h="end">
-        <b-form-group
-          label="노출 여부"
-          label-size="sm"
-          label-text-align="right"
-          label-cols="8"
-        >
+        <b-form-group label="노출 여부" label-size="sm" label-text-align="right" label-cols="8">
           <b-form-checkbox
             switch
             size="lg"
@@ -84,10 +62,7 @@
           ></b-form-checkbox>
         </b-form-group>
       </b-row>
-      <div
-        v-if="brandDto.logo && brandDto.logo.length > 0 && !logoChanged"
-        class="mb-4"
-      >
+      <div v-if="brandDto.logo && brandDto.logo.length > 0 && !logoChanged" class="mb-4">
         <div v-for="logo in brandDto.logo" :key="logo.endpoint">
           <b-img-lazy
             :src="logo.endpoint"
@@ -96,10 +71,7 @@
           />
         </div>
       </div>
-      <div
-        v-if="newBrandLogo && newBrandLogo.length > 0 && logoChanged"
-        class="mb-4"
-      >
+      <div v-if="newBrandLogo && newBrandLogo.length > 0 && logoChanged" class="mb-4">
         <div v-for="logo in newBrandLogo" :key="logo.endpoint">
           <b-img-lazy
             :src="logo.endpoint"
@@ -108,14 +80,15 @@
           />
         </div>
         <div class="text-center mt-2">
-          <b-button variant="danger" @click="removeBrandLogo()"
-            >로고 제거</b-button
-          >
+          <b-button variant="danger" @click="removeBrandLogo()">로고 제거</b-button>
         </div>
       </div>
       <b-form-row>
         <b-col cols="12" md="6" class="mb-3">
-          <label>업종 카테고리 <span class="red-text">*</span></label>
+          <label>
+            업종 카테고리
+            <span class="red-text">*</span>
+          </label>
           <select
             id="create_food_category_list"
             class="custom-select"
@@ -125,12 +98,14 @@
               v-for="category in foodCategorySelect"
               :key="category.code"
               :value="category.no"
-              >{{ category.nameKr }}</option
-            >
+            >{{ category.nameKr }}</option>
           </select>
         </b-col>
         <b-col cols="12" md="6" class="mb-3">
-          <label>브랜드 로고 <span class="red-text">*</span></label>
+          <label>
+            브랜드 로고
+            <span class="red-text">*</span>
+          </label>
           <div class="custom-file">
             <!-- <input
               type="file"
@@ -141,24 +116,26 @@
             />
             <label class="custom-file-label" for="customFileLang"
               >로고 추가</label
-            > -->
-            <b-form-file
-              placeholder="로고 추가"
-              ref="fileInput"
-              @input="upload($event)"
-            ></b-form-file>
+            >-->
+            <b-form-file placeholder="로고 추가" ref="fileInput" @input="upload($event)"></b-form-file>
           </div>
         </b-col>
         <b-col cols="12" md="6" class="mb-3">
-          <label>브랜드명 <span class="red-text">*</span></label>
-          <b-form-input v-model="brandUpdateDto.nameKr"> </b-form-input>
+          <label>
+            브랜드명
+            <span class="red-text">*</span>
+          </label>
+          <b-form-input v-model="brandUpdateDto.nameKr"></b-form-input>
         </b-col>
         <b-col cols="12" md="6" class="mb-3">
           <label>브랜드명 (영문)</label>
-          <b-form-input v-model="brandUpdateDto.nameEng"> </b-form-input>
+          <b-form-input v-model="brandUpdateDto.nameEng"></b-form-input>
         </b-col>
         <b-col cols="12" md="12" class="mb-3">
-          <label>설명 <span class="red-text">*</span></label>
+          <label>
+            설명
+            <span class="red-text">*</span>
+          </label>
           <textarea
             class="form-control"
             maxlength="100"
@@ -240,7 +217,7 @@ export default class BrandDetail extends BaseComponent {
     this.findOne(this.$route.params.id);
   }
 
-  // udpate brand
+  // update brand
   updateBrand() {
     if (this.newBrandLogo.length > 0) {
       this.brandUpdateDto.logo = this.newBrandLogo;

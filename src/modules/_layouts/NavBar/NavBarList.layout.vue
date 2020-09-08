@@ -2,16 +2,16 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <div v-for="item in items" :key="item.path">
-        <b-nav-item-dropdown :text="item.name" left>
+        <b-nav-item-dropdown
+          :text="item.name"
+          left
+          data-toggle="collapse"
+          data-target=".navbar-collapse"
+        >
           <template>
             <div v-for="children in item.children" :key="children.path">
-              <b-dropdown-item
-                v-if="!children.meta.detailPage"
-                :to="children.path"
-              >
-                <template>
-                  {{ children.meta.title }}
-                </template>
+              <b-dropdown-item v-if="!children.meta.detailPage" :to="children.path">
+                <template>{{ children.meta.title }}</template>
               </b-dropdown-item>
             </div>
           </template>
@@ -30,12 +30,8 @@
             aria-haspopup="true"
             aria-expanded="false"
             v-if="admin"
-            >{{ admin.name }}</a
-          >
-          <div
-            class="dropdown-menu dropdown-menu-right"
-            aria-labelledby="navbarDropdown"
-          >
+          >{{ admin.name }}</a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="/my-page">마이 프로필</a>
 
             <div class="dropdown-divider"></div>

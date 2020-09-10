@@ -22,6 +22,14 @@
           <label>TOTAL AMOUNT</label>
           <input type="text" class="form-control" v-model="paymentListSearchDto.totalAmount" />
         </div>
+        <div class="col-6 col-md-2 mb-3">
+          <label>MENU NAME</label>
+          <input
+            type="text"
+            class="form-control"
+            v-model="paymentListSearchDto.nanudaKitchenMenuName"
+          />
+        </div>
         <div class="col-6 col-md-3 mb-3">
           <div>
             <label for="started">시작 날짜</label>
@@ -174,6 +182,7 @@ export default class PaymentListSearch extends BaseComponent {
     newPaymentListSearchDto.started = this.paymentListSearchDto.started;
     newPaymentListSearchDto.nanudaKitchenMasterName = this.paymentListSearchDto.nanudaKitchenMasterName;
     newPaymentListSearchDto.totalAmount = this.paymentListSearchDto.totalAmount;
+    newPaymentListSearchDto.nanudaKitchenMenuName = this.paymentListSearchDto.nanudaKitchenMenuName;
     if (newPaymentListSearchDto.started) {
       PaymentListService.findRevenue(newPaymentListSearchDto).subscribe(res => {
         this.totalRevenue = res.data.sum;

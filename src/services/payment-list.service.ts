@@ -22,6 +22,17 @@ class PaymentListService extends BaseService {
   }
 
   /**
+   * find revenue
+   * @param paymentListSearchDto
+   */
+  findRevenue(paymentListSearchDto: PaymentListSearchDto) {
+    return super.get<any>(
+      'admin/payment-list/total-revenue',
+      paymentListSearchDto,
+    );
+  }
+
+  /**
    * find one
    * @param paymentListNo
    */

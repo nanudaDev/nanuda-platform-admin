@@ -140,6 +140,7 @@ export default class PaymentListSearch extends BaseComponent {
   clearOut() {
     this.paymentListSearchDto = new PaymentListSearchDto();
     this.pagination.page = 1;
+    this.totalRevenue = null;
     this.search();
   }
 
@@ -163,20 +164,21 @@ export default class PaymentListSearch extends BaseComponent {
       this.paymentLists = res.data.items;
       this.paymentListCount = res.data.totalCount;
       this.dataLoading = false;
-      if (
-        this.paymentListSearchDto.nanudaKitchenMasterName &&
-        this.paymentListSearchDto.started
-      ) {
-        const amounts = [];
-        this.paymentLists.map(payment => {
-          amounts.push(payment.totalAmount);
-        });
-        this.totalRevenue = amounts.reduce(
-          (a, b) => parseInt(a) + parseInt(b),
-          0,
-        );
-      }
+      this.findRevenue();
     });
+  }
+
+  findRevenue() {
+    this.totalRevenue = null;
+    const newPaymentListSearchDto = new PaymentListSearchDto();
+    newPaymentListSearchDto.started = this.paymentListSearchDto.started;
+    newPaymentListSearchDto.nanudaKitchenMasterName = this.paymentListSearchDto.nanudaKitchenMasterName;
+    newPaymentListSearchDto.totalAmount = this.paymentListSearchDto.totalAmount;
+    if (newPaymentListSearchDto.started) {
+      PaymentListService.findRevenue(newPaymentListSearchDto).subscribe(res => {
+        this.totalRevenue = res.data.sum;
+      });
+    }
   }
 
   created() {

@@ -16,7 +16,7 @@ export class PaymentListDto extends BaseDto<PaymentListDto> {
   catId: string;
   businessNo: string;
   dongleType: string;
-  totalAmount: string;
+  totalAmount: string | number;
   amount: string;
   surTax: string;
   installment: string;
@@ -28,6 +28,6 @@ export class PaymentListDto extends BaseDto<PaymentListDto> {
   cashType: string;
   prtMsg: string;
   cardCancelFl: string;
-  paymentTime: Date;
+  createdAt: Date;
   nanudaKitchenMaster?: NanudaKitchenMasterDto;
 }

@@ -29,6 +29,7 @@ import {
   PhonePipeTransformer,
   BizNoPipeTransformer,
   StringInquiryPipeTransformer,
+  CurrencyPipeTransformer,
 } from './core';
 
 let env = new Environment();
@@ -62,6 +63,7 @@ StringInquiryPipeTransformer();
 ViewPipeTransformer();
 PhonePipeTransformer();
 BizNoPipeTransformer();
+CurrencyPipeTransformer();
 
 // bootstrap
 Vue.use(BootstrapVue);

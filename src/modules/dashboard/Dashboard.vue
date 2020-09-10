@@ -55,10 +55,11 @@
     </b-row>
     <b-row>
       <b-col lg="12" my-3>
-        <BaseCard title="매장 매출 추이">
-          <template v-slot:body>
-            <DashboardPaymentListGraph />
+        <BaseCard title="키오스크 매장 매출">
+          <template v-slot:head>
+            <router-link to="/kiosk-payment" class="btn btn-primary float-right">자세히 보기</router-link>
           </template>
+          <DashboardPaymentListGraph />
         </BaseCard>
       </b-col>
     </b-row>

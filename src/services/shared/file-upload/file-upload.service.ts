@@ -26,6 +26,7 @@ export enum UPLOAD_TYPE {
   COMPANY_DISTRICT = 'company-district',
   BRAND_LOGO = 'brand-logo',
   NOTICE_BOARD = 'notice-board',
+  MENU = 'menu',
 }
 
 type UploadOptionConfig = {
@@ -111,6 +112,14 @@ class FileUploadService extends BaseService {
       sizeLimit: 1024 * 1024 * 10,
       fileType: FileType.DOCUMENT,
       mimeType: FileType.DOCUMENT,
+      accessType: FileAccessType.PUBLIC,
+      acl: ACL.PUBLIC,
+    },
+    [UPLOAD_TYPE.MENU]: {
+      path: 'menu',
+      sizeLimit: 1024 * 1024 * 10,
+      fileType: FileType.IMAGE,
+      mimeType: FileType.IMAGE,
       accessType: FileAccessType.PUBLIC,
       acl: ACL.PUBLIC,
     },

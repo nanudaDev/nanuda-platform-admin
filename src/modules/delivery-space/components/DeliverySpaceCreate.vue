@@ -10,6 +10,19 @@
     @ok="create()"
   >
     <b-form-row>
+      <b-col lg="12" class="text-right mb-3">
+        <b-row no-gutters align-h="end">
+          <b-form-group label="노출 활성화" label-size="sm" label-text-align="right" label-cols="8">
+            <b-form-checkbox
+              switch
+              size="lg"
+              v-model="deliverySpaceCreateDto.delYn"
+              :value="delYn[1]"
+              :unchecked-value="delYn[0]"
+            ></b-form-checkbox>
+          </b-form-group>
+        </b-row>
+      </b-col>
       <b-col lg="3" class="mb-3" v-if="!this.$route.params.id">
         <label>
           업체명
@@ -21,8 +34,7 @@
             v-for="company in companySelect"
             :key="company.no"
             :value="company.no"
-            >{{ company.nameKr }}</option
-          >
+          >{{ company.nameKr }}</option>
         </select>
       </b-col>
       <b-col lg="3" class="mb-3" v-if="!this.$route.params.id">
@@ -30,17 +42,13 @@
           지점명
           <span class="red-text">*</span>
         </label>
-        <select
-          class="custom-select"
-          v-model="deliverySpaceCreateDto.companyDistrictNo"
-        >
+        <select class="custom-select" v-model="deliverySpaceCreateDto.companyDistrictNo">
           <option value selected disabled>선택해주세요</option>
           <option
             v-for="district in districtSelect.items"
             :key="district.no"
             :value="district.no"
-            >{{ district.nameKr }}</option
-          >
+          >{{ district.nameKr }}</option>
         </select>
       </b-col>
       <b-col lg="3" class="mb-3">
@@ -48,57 +56,39 @@
           타입명
           <span class="red-text">*</span>
         </label>
-        <b-form-input
-          type="text"
-          v-model="deliverySpaceCreateDto.typeName"
-        ></b-form-input>
+        <b-form-input type="text" v-model="deliverySpaceCreateDto.typeName"></b-form-input>
       </b-col>
       <b-col lg="3" class="mb-3">
         <label>건물명</label>
-        <b-form-input
-          type="text"
-          v-model="deliverySpaceCreateDto.buildingName"
-        ></b-form-input>
+        <b-form-input type="text" v-model="deliverySpaceCreateDto.buildingName"></b-form-input>
       </b-col>
       <b-col lg="3" class="mb-3">
         <label>
           평수
           <span class="red-text">*</span>
         </label>
-        <b-form-input
-          type="text"
-          v-model="deliverySpaceCreateDto.size"
-        ></b-form-input>
+        <b-form-input type="text" v-model="deliverySpaceCreateDto.size"></b-form-input>
       </b-col>
       <b-col lg="3" class="mb-3">
         <label>
           공간 수
           <span class="red-text">*</span>
         </label>
-        <b-form-input
-          type="number"
-          v-model="deliverySpaceCreateDto.quantity"
-        ></b-form-input>
+        <b-form-input type="number" v-model="deliverySpaceCreateDto.quantity"></b-form-input>
       </b-col>
       <b-col lg="3" class="mb-3">
         <label>
           보증금 (만원 단위)
           <span class="red-text">*</span>
         </label>
-        <b-form-input
-          type="text"
-          v-model="deliverySpaceCreateDto.deposit"
-        ></b-form-input>
+        <b-form-input type="text" v-model="deliverySpaceCreateDto.deposit"></b-form-input>
       </b-col>
       <b-col lg="3" class="mb-3">
         <label>
           월 임대료 (만원 단위)
           <span class="red-text">*</span>
         </label>
-        <b-form-input
-          type="text"
-          v-model="deliverySpaceCreateDto.monthlyRentFee"
-        ></b-form-input>
+        <b-form-input type="text" v-model="deliverySpaceCreateDto.monthlyRentFee"></b-form-input>
       </b-col>
 
       <b-col lg="3" class="mb-3">
@@ -106,10 +96,12 @@
           월 관리비 (만원 단위)
           <span class="red-text">*</span>
         </label>
-        <b-form-input
-          type="text"
-          v-model="deliverySpaceCreateDto.monthlyUtilityFee"
-        ></b-form-input>
+        <b-form-input type="text" v-model="deliverySpaceCreateDto.monthlyUtilityFee"></b-form-input>
+      </b-col>
+
+      <b-col lg="12" class="mb-3">
+        <label>공간 설명 글</label>
+        <b-form-textarea style="height:100px;" v-model="deliverySpaceCreateDto.desc"></b-form-textarea>
       </b-col>
       <b-col lg="12" class="mb-3">
         <label>공간 옵션</label>
@@ -123,8 +115,7 @@
             :key="option.no"
             :value="option.no"
             @change="addDeliverySpaceOption(option.no)"
-            >{{ option.deliverySpaceOptionName }}</b-form-checkbox
-          >
+          >{{ option.deliverySpaceOptionName }}</b-form-checkbox>
         </b-form-checkbox-group>
       </b-col>
       <b-col lg="12" class="mb-3">
@@ -139,8 +130,7 @@
             :key="amenity.no"
             :value="amenity.no"
             @change="addAmenity(amenity.no)"
-            >{{ amenity.amenityName }}</b-form-checkbox
-          >
+          >{{ amenity.amenityName }}</b-form-checkbox>
         </b-form-checkbox-group>
       </b-col>
       <b-col lg="12" class="mb-3">
@@ -155,23 +145,13 @@
             :key="brand.no"
             :value="brand.no"
             @change="addBrand(brand.no)"
-            >{{ brand.nameKr }}</b-form-checkbox
-          >
+          >{{ brand.nameKr }}</b-form-checkbox>
         </b-form-checkbox-group>
       </b-col>
       <b-col lg="12">
         <label for>이미지</label>
-        <b-form-file
-          placeholder="파일 선택"
-          ref="fileInput"
-          @input="upload($event)"
-          required
-          multiple
-        ></b-form-file>
-        <div
-          v-if="attachments && attachments.length > 0"
-          class="attatchments-list mt-2"
-        >
+        <b-form-file placeholder="파일 선택" ref="fileInput" @input="upload($event)" required multiple></b-form-file>
+        <div v-if="attachments && attachments.length > 0" class="attatchments-list mt-2">
           <b-col
             cols="2"
             v-for="attachment in attachments"
@@ -179,12 +159,7 @@
             class="p-2"
           >
             <div class="attatchments-list-item">
-              <b-img
-                :src="attachment.endpoint"
-                alt
-                style="max-width:100%"
-                class="border rounded"
-              />
+              <b-img :src="attachment.endpoint" alt style="max-width:100%" class="border rounded" />
               <b-icon
                 icon="x-circle-fill"
                 variant="danger"
@@ -225,6 +200,7 @@ import {
   FileAttachmentDto,
 } from '../../../services/shared/file-upload';
 import toast from '../../../../resources/assets/js/services/toast.js';
+import { CONST_YN, YN } from '@/common';
 
 @Component({
   name: 'DeliverySpaceCreate',
@@ -241,6 +217,7 @@ export default class DeliverySpaceCreate extends BaseComponent {
   private companyDistrictDto = new CompanyDistrictDto();
   private districtSelect: CompanyDistrictDto[] = [];
   private spaceOptions: DeliverySpaceOptionDto[] = [];
+  private delYn: YN[] = [...CONST_YN];
 
   // delete images
   deleteImages(image) {
@@ -336,6 +313,14 @@ export default class DeliverySpaceCreate extends BaseComponent {
     this.deliverySpaceCreateDto.brandIds = this.brandIds;
 
     this.deliverySpaceCreateDto.images = this.attachments;
+    if (
+      this.deliverySpaceCreateDto.images &&
+      this.deliverySpaceCreateDto.images.length === 0 &&
+      this.deliverySpaceCreateDto.delYn === YN.NO
+    ) {
+      toast.error('이미지 추가 후 노출 가능합니다.');
+      return;
+    }
     DeliverSpaceService.create(this.deliverySpaceCreateDto).subscribe(res => {
       if (res) {
         toast.success('추가완료');

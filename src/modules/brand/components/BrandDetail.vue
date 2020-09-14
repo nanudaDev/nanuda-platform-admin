@@ -48,6 +48,45 @@
           </template>
         </BaseCard>
       </b-col>
+      <b-col md="6">
+        <BaseCard title="브랜드 메뉴">
+          <template v-slot:head>
+            <div>
+              <b-button variant="success" v-b-modal.add_menu>추가하기</b-button>
+            </div>
+          </template>
+          <div v-if="!dataLoading" class="table-responsive">
+            <table class="table table-hover" v-if="menuTotalCount">
+              <thead>
+                <th scope="col">NO</th>
+                <th scope="col">NAME</th>
+                <th scope="col">CREATED</th>
+              </thead>
+              <tbody>
+                <tr v-for="menu in menus" :key="menu.no" style="cursor:pointer">
+                  <td>{{ menu.no }}</td>
+                  <td>{{ menu.nameKr }}</td>
+                  <td>{{ menu.createdAt | dateTransformer }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div v-else class="empty-data">등록된 메뉴가 없습니다.</div>
+          </div>
+          <b-pagination
+            v-model="pagination.page"
+            v-if="menuTotalCount"
+            pills
+            :total-rows="menuTotalCount"
+            :per-page="pagination.limit"
+            @input="paginateSearch()"
+            class="mt-4 justify-content-center"
+          ></b-pagination>
+          <div class="half-circle-spinner mt-5" v-if="dataLoading">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+          </div>
+        </BaseCard>
+      </b-col>
     </b-row>
     <!-- 브랜드 수정 모달 -->
     <b-modal id="update_brand" title="브랜드 수정" ok-title="수정" cancel-title="취소" @ok="updateBrand()">
@@ -168,25 +207,35 @@
         </div>
       </div>
     </b-modal>
+    <MenuCreate :brandNo="brandDto.no" />
   </section>
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
 import Component from 'vue-class-component';
-import { BrandDto, BrandUpdateDto, FoodCategoryDto } from '@/dto';
-import BrandService from '@/services/brand.service';
+import {
+  BrandDto,
+  BrandUpdateDto,
+  FoodCategoryDto,
+  MenuDto,
+  MenuListDto,
+} from '@/dto';
+import BrandService from '../../../services/brand.service';
+import MenuService from '../../../services/menu.service';
 import FoodCategoryService from '../../../services/food-category.service';
-
 import { FileAttachmentDto } from '@/services/shared/file-upload';
 import FileUploadService from '../../../services/shared/file-upload/file-upload.service';
 import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';
 import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
-
 import toast from '../../../../resources/assets/js/services/toast.js';
-import { CONST_YN, YN } from '@/common';
+import { CONST_YN, YN, Pagination } from '@/common';
+import MenuCreate from '../../menu/components/MenuCreate.vue';
 
 @Component({
   name: 'BrandDetail',
+  components: {
+    MenuCreate,
+  },
 })
 export default class BrandDetail extends BaseComponent {
   constructor() {
@@ -198,6 +247,11 @@ export default class BrandDetail extends BaseComponent {
   private newBrandLogo: FileAttachmentDto[] = [];
   private logoChanged = false;
   private showYn: YN[] = [...CONST_YN];
+  private menus: MenuDto[] = [];
+  private menuListDto = new MenuListDto();
+  private menuTotalCount = null;
+  private pagination = new Pagination();
+  private dataLoading = false;
 
   // find for detail
   findOne(id) {
@@ -232,6 +286,24 @@ export default class BrandDetail extends BaseComponent {
         }
       },
     );
+  }
+
+  searchMenus(isPagination?: boolean) {
+    this.dataLoading = true;
+    if (!isPagination) {
+      this.pagination.page = 1;
+    }
+    this.menuListDto.brandNo = this.$route.params.id;
+    this.pagination.limit = 5;
+    MenuService.findAll(this.menuListDto, this.pagination).subscribe(res => {
+      this.dataLoading = false;
+      this.menus = res.data.items;
+      this.menuTotalCount = res.data.totalCount;
+    });
+  }
+
+  paginateSearch() {
+    this.searchMenus(true);
   }
 
   // get food category
@@ -276,7 +348,15 @@ export default class BrandDetail extends BaseComponent {
 
   created() {
     const id = this.$route.params.id;
+    this.pagination.page = 1;
+    this.searchMenus();
     this.findOne(id);
+  }
+
+  mounted() {
+    this.$root.$on('menu_create', () => {
+      this.searchMenus();
+    });
   }
 }
 </script>

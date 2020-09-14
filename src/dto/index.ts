@@ -18,6 +18,7 @@ export * from './founder-consult';
 export * from './founder-consult-management';
 export * from './graph';
 export * from './inquiry';
+export * from './menu';
 export * from './nanuda-user';
 export * from './nanuda-kitchen-master';
 export * from './nanuda-kitchen-menu';

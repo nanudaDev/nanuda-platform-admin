@@ -49,7 +49,7 @@
         </BaseCard>
       </b-col>
       <b-col md="6">
-        <BaseCard title="브랜드 메뉴">
+        <BaseCard title="브랜드 메뉴" no-body>
           <template v-slot:head>
             <div>
               <b-button variant="success" v-b-modal.add_menu>추가하기</b-button>
@@ -58,14 +58,20 @@
           <div v-if="!dataLoading" class="table-responsive">
             <table class="table table-hover" v-if="menuTotalCount">
               <thead>
-                <th scope="col">NO</th>
-                <th scope="col">NAME</th>
-                <th scope="col">CREATED</th>
+                <tr>
+                  <th scope="col">NO</th>
+                  <th scope="col">메뉴명</th>
+                  <th scope="col">노출 여부</th>
+                  <th scope="col">생성날짜</th>
+                </tr>
               </thead>
               <tbody>
                 <tr v-for="menu in menus" :key="menu.no" style="cursor:pointer">
                   <td>{{ menu.no }}</td>
                   <td>{{ menu.nameKr }}</td>
+                  <td>
+                    <b-badge :variant="menu.showYn === 'Y' ? 'success' : 'danger'">{{ menu.showYn }}</b-badge>
+                  </td>
                   <td>{{ menu.createdAt | dateTransformer }}</td>
                 </tr>
               </tbody>

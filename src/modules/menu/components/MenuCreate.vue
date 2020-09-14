@@ -20,13 +20,13 @@
         </b-form-group>
       </b-col>
     </b-form-row>
-    <!-- <b-form-row v-if="brandNo">
+    <b-form-row v-if="proppedBrandNo">
       <b-col md="6">
         <b-form-group label="브렌드">
           <b-form-input v-model="menuCreateDto.brandNo" />
         </b-form-group>
       </b-col>
-    </b-form-row>-->
+    </b-form-row>
     <b-form-row>
       <b-col md="12">
         <b-form-group label="메뉴 설명 글">
@@ -50,6 +50,7 @@ import toast from '../../../../resources/assets/js/services/toast.js';
 export default class MenuCreate extends BaseComponent {
   @Prop() readonly brandNo: number;
   private menuCreateDto = new MenuCreateDto();
+  private proppedBrandNo = true;
 
   clearOutCreateDto() {
     this.menuCreateDto = new MenuCreateDto();
@@ -59,7 +60,6 @@ export default class MenuCreate extends BaseComponent {
     if (this.brandNo) {
       this.menuCreateDto.brandNo = this.brandNo;
     }
-    console.log(this.menuCreateDto);
     MenuService.create(this.menuCreateDto).subscribe(res => {
       if (res) {
         toast.success('추가 완료');
@@ -69,7 +69,11 @@ export default class MenuCreate extends BaseComponent {
   }
 
   created() {
-    console.log(this.brandNo);
+    if (this.brandNo) {
+      this.proppedBrandNo = true;
+    } else {
+      this.proppedBrandNo = false;
+    }
   }
 }
 </script>

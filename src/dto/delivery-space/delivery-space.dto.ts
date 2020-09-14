@@ -22,6 +22,7 @@ export class DeliverySpaceDto extends BaseDto<DeliverySpaceDto> {
   monthlyUtilityFee?: string;
   companyDistrict?: CompanyDistrictDto;
   remainingCount?: number;
+  desc?: string;
   brands?: BrandDto[];
   amenities?: AmenityDto[];
   deliverySpaceOptions?: DeliverySpaceOptionDto[];

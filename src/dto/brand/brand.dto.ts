@@ -15,6 +15,7 @@ export class BrandDto extends BaseDto<BrandDto> {
   admin?: AdminDto;
   category?: FoodCategoryDto;
   logo?: FileAttachmentDto[];
+  mainMenuImage?: FileAttachmentDto[];
   showYn?: YN;
   menus?: MenuDto[];
 }

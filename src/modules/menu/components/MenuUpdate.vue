@@ -11,7 +11,12 @@
     <b-form-row>
       <b-col lg="12" class="text-right mb-3">
         <b-row no-gutters align-h="end">
-          <b-form-group label="노출 활성화" label-size="sm" label-text-align="right" label-cols="8">
+          <b-form-group
+            label="노출 활성화"
+            label-size="sm"
+            label-text-align="right"
+            label-cols="8"
+          >
             <b-form-checkbox
               switch
               size="lg"
@@ -32,11 +37,37 @@
           <b-form-input v-model="menuUpdateDto.nameEng" />
         </b-form-group>
       </b-col>
+      <b-col>
+        <b-form-group label="대표 메뉴 노출">
+          <b-form-radio
+            v-model="menuUpdateDto.mainYn"
+            v-for="yn in showYn"
+            :key="yn"
+            :value="yn"
+            name="main_yn"
+            :id="`main_yn_${yn}`"
+            >{{ yn | enumTransformer }}</b-form-radio
+          >
+        </b-form-group>
+        <b-alert
+          variant="success"
+          show
+          class="my-4"
+          v-if="menuUpdateDto.showYn === 'N' && menuUpdateDto.mainYn === 'Y'"
+        >
+          <p class="text-center">
+            <small>노출상태가 활성화 되어있어야 대표메뉴에 노출됩니다.</small>
+          </p>
+        </b-alert>
+      </b-col>
     </b-form-row>
     <b-form-row>
       <b-col md="12">
         <b-form-group label="메뉴 설명 글">
-          <b-form-textarea style="height:100px;" v-model="menuUpdateDto.desc"></b-form-textarea>
+          <b-form-textarea
+            style="height:100px;"
+            v-model="menuUpdateDto.desc"
+          ></b-form-textarea>
         </b-form-group>
       </b-col>
     </b-form-row>

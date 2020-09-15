@@ -6,3 +6,4 @@ export * from './string-district-filter.pipe';
 export * from './phone-filter.pipe';
 export * from './bizno-filter.pipe';
 export * from './string-inquiry-filter.pipe';
+export * from './currency-filter.pipe';

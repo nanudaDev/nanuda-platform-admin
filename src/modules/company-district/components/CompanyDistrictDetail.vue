@@ -490,7 +490,6 @@ export default class CompanyDistrictDetail extends BaseComponent {
       district.lon,
     );
 
-    console.log(content);
     const imageSrc =
       'https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-512.png';
     const imageSize = new window.kakao.maps.Size(54, 54);
@@ -520,6 +519,12 @@ export default class CompanyDistrictDetail extends BaseComponent {
       if (status === window.kakao.maps.services.Status.OK) {
         this.companyDistrictMapUpdateDto.lon = results[0].x;
         this.companyDistrictMapUpdateDto.lat = results[0].y;
+        this.companyDistrictMapUpdateDto.region1DepthName =
+          results[0].address.region_1depth_name;
+        this.companyDistrictMapUpdateDto.region2DepthName =
+          results[0].address.region_2depth_name;
+        this.companyDistrictMapUpdateDto.region3DepthName =
+          results[0].address.region_3depth_name;
       }
       console.log(results);
     };
@@ -534,6 +539,7 @@ export default class CompanyDistrictDetail extends BaseComponent {
 
   // update map info
   updateMap() {
+    console.log(this.companyDistrictMapUpdateDto);
     CompanyDistrictService.updateMap(
       this.$route.params.id,
       this.companyDistrictMapUpdateDto,

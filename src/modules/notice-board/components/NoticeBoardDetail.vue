@@ -1,33 +1,27 @@
 <template>
   <section v-if="!editMode">
     <div class="board-view">
-      <b-alert
-        variant="info"
-        show
-        v-if="noticeBoard.tempSaveYn === 'Y'"
-        class="my-4"
-      >
+      <b-alert variant="info" show v-if="noticeBoard.tempSaveYn === 'Y'" class="my-4">
         <p class="text-center">
-          <b>{{ noticeBoard.tempSavedAt | dateTransformer }}</b> 에 임지 저장된
+          <b>{{ noticeBoard.tempSavedAt | dateTransformer }}</b> 에 임시 저장된
           글입니다 수정하기 버튼을 클릭하여 작성 완료해주세요.
         </p>
       </b-alert>
       <div class="board-view-header">
         <div class="board-view-title">
-          <b-badge variant="warning" class="board-view-category">{{
+          <b-badge variant="warning" class="board-view-category">
+            {{
             noticeBoard.noticeBoardType | enumTransformer
-          }}</b-badge>
+            }}
+          </b-badge>
           <h3>{{ noticeBoard.title }}</h3>
         </div>
         <div class="board-view-info">
           <span
             class="baord-view-user"
             v-if="noticeBoard.admin && noticeBoard.admin.name"
-            >{{ noticeBoard.admin.name }}</span
-          >
-          <span class="baord-view-date">
-            {{ noticeBoard.createdAt | dateTransformer }}
-          </span>
+          >{{ noticeBoard.admin.name }}</span>
+          <span class="baord-view-date">{{ noticeBoard.createdAt | dateTransformer }}</span>
         </div>
       </div>
       <div class="board-view-body">
@@ -36,9 +30,7 @@
           <span>{{ noticeBoard.started }}</span> ~
           <span>{{ noticeBoard.ended }}</span>
         </div>
-        <div v-html="noticeBoard.content" class="board-view-content">
-          {{ noticeBoard.content }}
-        </div>
+        <div v-html="noticeBoard.content" class="board-view-content">{{ noticeBoard.content }}</div>
         <div
           v-if="noticeBoard.attachments && noticeBoard.attachments.length > 0"
           class="board-view-attachments"
@@ -62,14 +54,10 @@
       </div>
       <div class="board-view-footer clearfix">
         <div class="float-left">
-          <b-button variant="danger" v-b-modal.delete_notice>
-            삭제하기
-          </b-button>
+          <b-button variant="danger" v-b-modal.delete_notice>삭제하기</b-button>
         </div>
         <div class="float-right">
-          <router-link to="/notice-board" class="btn btn-secondary text-center"
-            >목록으로</router-link
-          >
+          <router-link to="/notice-board" class="btn btn-secondary text-center">목록으로</router-link>
           <b-button variant="primary" @click="update()">수정하기</b-button>
         </div>
       </div>

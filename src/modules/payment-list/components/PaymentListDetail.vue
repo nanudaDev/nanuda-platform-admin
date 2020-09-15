@@ -15,7 +15,7 @@
               <ul class="u-list">
                 <li>ID: {{ paymentList.paymentListNo }}</li>
                 <li>매장명: {{ paymentList.shopName }}</li>
-                <li>
+                <li v-if="paymentList.nanudaKitchenMaster">
                   관리명: {{ paymentList.nanudaKitchenMaster.nanudaName }}
                 </li>
               </ul>

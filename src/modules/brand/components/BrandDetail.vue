@@ -8,7 +8,7 @@
       </template>
     </SectionTitle>
     <b-row>
-      <b-col md="5">
+      <b-col md="5" class="my-3">
         <BaseCard title="브랜드 정보">
           <template v-slot:head>
             <div>
@@ -80,7 +80,7 @@
           </template>
         </BaseCard>
       </b-col>
-      <b-col md="7">
+      <b-col md="7" class="my-3">
         <BaseCard title="브랜드 메뉴" no-body>
           <template v-slot:head>
             <div>
@@ -128,16 +128,16 @@
               </tbody>
             </table>
             <div v-else class="empty-data">등록된 메뉴가 없습니다.</div>
+            <b-pagination
+              v-model="pagination.page"
+              v-if="menuTotalCount"
+              pills
+              :total-rows="menuTotalCount"
+              :per-page="pagination.limit"
+              @input="paginateSearch()"
+              class="mt-4 justify-content-center"
+            ></b-pagination>
           </div>
-          <b-pagination
-            v-model="pagination.page"
-            v-if="menuTotalCount"
-            pills
-            :total-rows="menuTotalCount"
-            :per-page="pagination.limit"
-            @input="paginateSearch()"
-            class="mt-4 justify-content-center"
-          ></b-pagination>
           <div class="half-circle-spinner mt-5" v-if="dataLoading">
             <div class="circle circle-1"></div>
             <div class="circle circle-2"></div>
@@ -411,6 +411,8 @@ export default class BrandDetail extends BaseComponent {
         this.brandDto = res.data;
         this.newBrandLogo = [];
         this.logoChanged = false;
+        this.newMainMenu = [];
+        this.menuChanged = false;
       }
     });
   }

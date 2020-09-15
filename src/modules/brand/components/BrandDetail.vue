@@ -258,7 +258,7 @@ import toast from '../../../../resources/assets/js/services/toast.js';
 import { CONST_YN, YN, Pagination } from '@/common';
 import MenuCreate from '../../menu/components/MenuCreate.vue';
 import MenuUpdate from '../../menu/components/MenuUpdate.vue';
-import { CONST_SPACE_TYPE, SPACE_TYPE } from '@/services/shared';
+import { CONST_SPACE_TYPE, SPACE, SPACE_TYPE } from '@/services/shared';
 
 @Component({
   name: 'BrandDetail',
@@ -277,7 +277,7 @@ export default class BrandDetail extends BaseComponent {
   private newBrandLogo: FileAttachmentDto[] = [];
   private logoChanged = false;
   private showYn: YN[] = [...CONST_YN];
-  private spaceType = [...CONST_SPACE_TYPE];
+  private spaceType = [2, 1];
   private menus: MenuDto[] = [];
   private menuListDto = new MenuListDto();
   private menuTotalCount = null;

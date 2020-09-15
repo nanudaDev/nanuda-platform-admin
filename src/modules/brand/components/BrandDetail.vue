@@ -62,6 +62,7 @@
                   <th scope="col">NO</th>
                   <th scope="col">메뉴명</th>
                   <th scope="col">노출 여부</th>
+                  <th scope="col">대표 메뉴</th>
                   <th scope="col">생성날짜</th>
                   <th scope="col"></th>
                 </tr>
@@ -73,9 +74,16 @@
                   <td>
                     <b-badge :variant="menu.showYn === 'Y' ? 'success' : 'danger'">{{ menu.showYn }}</b-badge>
                   </td>
+                  <td>
+                    <b-badge :variant="menu.mainYn === 'Y' ? 'success' : 'danger'">{{ menu.mainYn }}</b-badge>
+                  </td>
                   <td>{{ menu.createdAt | dateTransformer }}</td>
                   <td>
-                    <b-button variant="primary" v-b-modal.update_menu>수정하기</b-button>
+                    <b-button
+                      variant="primary"
+                      v-b-modal.update_menu
+                      @click="showMenuUpdateModal(menu.no)"
+                    >수정하기</b-button>
                   </td>
                 </tr>
               </tbody>
@@ -156,16 +164,6 @@
             <span class="red-text">*</span>
           </label>
           <div class="custom-file">
-            <!-- <input
-              type="file"
-              class="custom-file-input"
-              id="customFileLang"
-              lang="kr"
-              @input="upload($event.target.files)"
-            />
-            <label class="custom-file-label" for="customFileLang"
-              >로고 추가</label
-            >-->
             <b-form-file placeholder="로고 추가" ref="fileInput" @input="upload($event)"></b-form-file>
           </div>
         </b-col>
@@ -198,6 +196,24 @@
             <b class="text-primary">{{ brandUpdateDto.desc.length }}</b> / 100
           </p>
         </b-col>
+        <!-- TODO: CASE 2 때는 삭제 -->
+        <b-col md="12">
+          <span class="red-text text-center" style="font0-size:11px">
+            <i>
+              아래 부분은
+              <b>개발자들만이</b> 사용할 수 있으며 잘못 사용하실 경우 운영 사이트에 정확한 정보를 노출 못할 수도 있습니다
+            </i>
+          </span>
+          <b-form-group label-cols="3" label="공간 유형">
+            <b-form-radio
+              v-model="brandUpdateDto.spaceTypeNo"
+              v-for="type in spaceType"
+              :key="type"
+              :value="type"
+              name="space_type_no"
+            >{{ type }}</b-form-radio>
+          </b-form-group>
+        </b-col>
       </b-form-row>
     </b-modal>
     <!-- 브랜드 삭제하기 -->
@@ -218,6 +234,7 @@
       </div>
     </b-modal>
     <MenuCreate :brandNo="brandDto.no" />
+    <MenuUpdate />
   </section>
 </template>
 <script lang="ts">
@@ -241,6 +258,7 @@ import toast from '../../../../resources/assets/js/services/toast.js';
 import { CONST_YN, YN, Pagination } from '@/common';
 import MenuCreate from '../../menu/components/MenuCreate.vue';
 import MenuUpdate from '../../menu/components/MenuUpdate.vue';
+import { CONST_SPACE_TYPE, SPACE_TYPE } from '@/services/shared';
 
 @Component({
   name: 'BrandDetail',
@@ -259,6 +277,7 @@ export default class BrandDetail extends BaseComponent {
   private newBrandLogo: FileAttachmentDto[] = [];
   private logoChanged = false;
   private showYn: YN[] = [...CONST_YN];
+  private spaceType = [...CONST_SPACE_TYPE];
   private menus: MenuDto[] = [];
   private menuListDto = new MenuListDto();
   private menuTotalCount = null;
@@ -281,6 +300,11 @@ export default class BrandDetail extends BaseComponent {
     this.getFoodCategories();
     this.brandUpdateDto = this.brandDto;
     this.findOne(this.$route.params.id);
+  }
+
+  showMenuUpdateModal(menuNo) {
+    this.$root.$emit('menu_update', menuNo);
+    this.$bvModal.show('update_menu');
   }
 
   // update brand

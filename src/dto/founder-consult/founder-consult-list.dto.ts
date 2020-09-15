@@ -1,6 +1,6 @@
 import { BaseDto } from '@/core';
 import { FounderConsultDto } from '.';
-import { FOUNDER_CONSULT, GENDER } from '@/services/shared';
+import { FOUNDER_CONSULT, GENDER, SPACE_TYPE } from '@/services/shared';
 import { AVAILABLE_TIME, YN, OrderByValue } from '@/common';
 
 export class FounderConsultListDto extends BaseDto<FounderConsultListDto>
@@ -16,7 +16,7 @@ export class FounderConsultListDto extends BaseDto<FounderConsultListDto>
   companyDistrictNameKr?: string;
   companyDistrictNameEng?: string;
   companyUserNo?: number;
-  spaceTypeNo?: string | number;
+  spaceTypeNo?: SPACE_TYPE;
   nanudaUserName?: string;
   gender?: GENDER;
   adminUserName?: string;

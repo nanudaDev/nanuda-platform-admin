@@ -6,7 +6,7 @@
       </template>
     </SectionTitle>
     <b-row>
-      <b-col md="6">
+      <b-col md="5">
         <BaseCard title="브랜드 정보">
           <template v-slot:head>
             <div>
@@ -48,7 +48,7 @@
           </template>
         </BaseCard>
       </b-col>
-      <b-col md="6">
+      <b-col md="7">
         <BaseCard title="브랜드 메뉴" no-body>
           <template v-slot:head>
             <div>
@@ -63,6 +63,7 @@
                   <th scope="col">메뉴명</th>
                   <th scope="col">노출 여부</th>
                   <th scope="col">생성날짜</th>
+                  <th scope="col"></th>
                 </tr>
               </thead>
               <tbody>
@@ -73,6 +74,9 @@
                     <b-badge :variant="menu.showYn === 'Y' ? 'success' : 'danger'">{{ menu.showYn }}</b-badge>
                   </td>
                   <td>{{ menu.createdAt | dateTransformer }}</td>
+                  <td>
+                    <b-button variant="primary" v-b-modal.update_menu>수정하기</b-button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -236,11 +240,13 @@ import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { CONST_YN, YN, Pagination } from '@/common';
 import MenuCreate from '../../menu/components/MenuCreate.vue';
+import MenuUpdate from '../../menu/components/MenuUpdate.vue';
 
 @Component({
   name: 'BrandDetail',
   components: {
     MenuCreate,
+    MenuUpdate,
   },
 })
 export default class BrandDetail extends BaseComponent {

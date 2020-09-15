@@ -224,7 +224,7 @@
               v-if="
                 brandDto.mainMenuImage &&
                   brandDto.mainMenuImage.length > 0 &&
-                  !logoChanged
+                  !menuChanged
               "
               class="mb-4"
             >

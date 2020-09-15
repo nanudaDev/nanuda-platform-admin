@@ -1,5 +1,5 @@
 import { BaseService } from '@/core';
-import { MenuListDto, MenuDto, MenuCreateDto } from '@/dto';
+import { MenuListDto, MenuDto, MenuCreateDto, MenuUpdateDto } from '@/dto';
 import { Pagination } from '@/common';
 
 class MenuService extends BaseService {
@@ -22,6 +22,10 @@ class MenuService extends BaseService {
 
   create(body: MenuCreateDto) {
     return super.post<MenuDto>('admin/menu', body);
+  }
+
+  update(id, body: MenuUpdateDto) {
+    return super.patch<MenuDto>(`admin/menu/${id}`, body);
   }
 
   // TODO: UPDATE

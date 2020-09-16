@@ -39,6 +39,14 @@ class PaymentListService extends BaseService {
   findOne(paymentListNo: string) {
     return super.get<PaymentListDto>(`admin/payment-list/${paymentListNo}`);
   }
+
+  /**
+   * find revenue
+   * @param nanudaNo
+   */
+  findRevenueForBrand(nanudaNo) {
+    return super.get<any>(`admin/payment-list/brand/${nanudaNo}`);
+  }
 }
 
 export default new PaymentListService();

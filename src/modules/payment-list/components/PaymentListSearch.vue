@@ -10,7 +10,7 @@
           <label>PAYMENT ID</label>
           <input type="text" class="form-control" v-model="paymentListSearchDto.paymentListNo" />
         </div>
-        <div class="col-6 col-md-3 mb-3">
+        <div class="col-6 col-md-2 mb-3">
           <label>BRANCH(ex: 선릉점)</label>
           <input
             type="text"
@@ -18,10 +18,10 @@
             v-model="paymentListSearchDto.nanudaKitchenMasterName"
           />
         </div>
-        <div class="col-6 col-md-2 mb-3">
+        <!-- <div class="col-6 col-md-2 mb-3">
           <label>TOTAL AMOUNT</label>
           <input type="text" class="form-control" v-model="paymentListSearchDto.totalAmount" />
-        </div>
+        </div>-->
         <div class="col-6 col-md-2 mb-3">
           <label>MENU NAME</label>
           <input
@@ -34,6 +34,12 @@
           <div>
             <label for="started">시작 날짜</label>
             <b-form-datepicker id="started" v-model="paymentListSearchDto.started"></b-form-datepicker>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+          <div>
+            <label for="ended">종료 날짜</label>
+            <b-form-datepicker id="ended" v-model="paymentListSearchDto.ended"></b-form-datepicker>
           </div>
         </div>
       </div>

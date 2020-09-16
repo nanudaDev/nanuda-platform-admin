@@ -9,4 +9,5 @@ export class PaymentListSearchDto extends PaymentListDto {
   nanudaKitchenMenuName?: string;
   orderByPaymentListNo?: OrderByValue;
   started?: Date;
+  ended?: Date;
 }

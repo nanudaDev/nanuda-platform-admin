@@ -1,44 +1,42 @@
 <template>
   <section v-if="paymentList">
-    <SectionTitle :title="`${paymentList.shopName} - 매출 정보`" divider>
+    <SectionTitle :title="`${paymentList.shopName} - 결제 정보`" divider>
       <template v-slot:rightArea>
-        <router-link to="/kiosk-payment" class="btn btn-secondary"
-          >목록으로</router-link
-        >
+        <router-link to="/kiosk-payment" class="btn btn-secondary">목록으로</router-link>
       </template>
     </SectionTitle>
     <b-row>
       <b-col md="6">
-        <BaseCard title="매출 정보">
+        <BaseCard title="결제 내역">
           <template v-slot:body>
             <div>
               <ul class="u-list">
-                <li>ID: {{ paymentList.paymentListNo }}</li>
+                <li>PAYMENT ID: {{ paymentList.paymentListNo }}</li>
                 <li>매장명: {{ paymentList.shopName }}</li>
-                <li>
-                  관리명: {{ paymentList.nanudaKitchenMaster.nanudaName }}
-                </li>
+                <li
+                  v-if="paymentList.nanudaKitchenMaster"
+                >관리명: {{ paymentList.nanudaKitchenMaster.nanudaName }}</li>
               </ul>
-              <div
-                class="bg-light border text-right p-3 mt-3"
-                v-if="paymentList.amount"
-              >
+              <div class="border-top">
+                <ul class="u-list">
+                  <li>CARD ISSUER: {{ paymentList.issuerName }}</li>
+                </ul>
+              </div>
+              <div class="bg-light border text-right p-3 mt-3" v-if="paymentList.amount">
                 <div>
-                  <b-row
-                    no-gutters
-                    align-h="between"
-                    align-v="center"
-                    class="mb-2"
-                  >
+                  <b-row no-gutters align-h="between" align-v="center" class="mb-2">
+                    <span>MENU</span>
+                    <p>{{ paymentList.kioskOrderList.menuName }}</p>
+                  </b-row>
+                  <b-row no-gutters align-h="between" align-v="center" class="mb-2">
+                    <span>QTY</span>
+                    <p>{{ paymentList.kioskOrderList.menuCount }}</p>
+                  </b-row>
+                  <b-row no-gutters align-h="between" align-v="center" class="mb-2">
                     <span>AMOUNT</span>
                     <p>{{ paymentList.amount | currencyTransformer }}</p>
                   </b-row>
-                  <b-row
-                    no-gutters
-                    align-h="between"
-                    align-v="center"
-                    class="mb-2"
-                  >
+                  <b-row no-gutters align-h="between" align-v="center" class="mb-2">
                     <span>SURTAX</span>
                     <p>{{ paymentList.surTax | currencyTransformer }}</p>
                   </b-row>

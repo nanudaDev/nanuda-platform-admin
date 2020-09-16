@@ -93,7 +93,7 @@
                 </div>
               </div>
             </td>
-            <td>{{ brand.name }}</td>
+            <td>{{ brand.nameKr }}</td>
             <td>
               <template v-if="brand.desc">{{ brand.desc }}</template>
             </td>

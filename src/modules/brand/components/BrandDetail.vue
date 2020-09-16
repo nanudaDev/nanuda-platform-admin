@@ -68,6 +68,16 @@
               </ul>
             </div>
           </template>
+          <div class="bg-light border text-right p-3" v-if="todayRevenue">
+            <div class="pt-1">
+              <b-row no-gutters align-h="between" align-v="end">
+                <span>TODAY'S REVENUE</span>
+                <h4>
+                  <b>{{ todayRevenue | currencyTransformer }}</b>
+                </h4>
+              </b-row>
+            </div>
+          </div>
         </BaseCard>
       </b-col>
       <b-col md="7">
@@ -306,10 +316,7 @@
           </select>
         </b-col>
         <b-col cols="12" md="12" class="mb-3">
-          <label>
-            설명
-            <span class="red-text">*</span>
-          </label>
+          <label>브랜드 설명</label>
           <textarea
             class="form-control"
             maxlength="100"
@@ -322,6 +329,10 @@
           >
             <b class="text-primary">{{ brandUpdateDto.desc.length }}</b> / 100
           </p>
+        </b-col>
+        <b-col cols="12" md="4">
+          <label>키오스크 아이디</label>
+          <b-form-input v-model="brandUpdateDto.kioskNo"></b-form-input>
         </b-col>
         <!-- TODO: CASE 2 때는 삭제 -->
         <b-col md="12">
@@ -376,6 +387,7 @@ import {
   MenuListDto,
 } from '@/dto';
 import BrandService from '../../../services/brand.service';
+import PaymentListService from '../../../services/payment-list.service';
 import MenuService from '../../../services/menu.service';
 import FoodCategoryService from '../../../services/food-category.service';
 import CodeManagementService from '../../../services/code-management.service';
@@ -418,6 +430,7 @@ export default class BrandDetail extends BaseComponent {
   private storeCountValues: CodeManagementDto[] = [];
   private costValues: CodeManagementDto[] = [];
   private difficultyValues: CodeManagementDto[] = [];
+  private todayRevenue = null;
 
   // find for detail
   findOne(id) {
@@ -426,6 +439,13 @@ export default class BrandDetail extends BaseComponent {
         this.brandDto = res.data;
         this.newBrandLogo = [];
         this.logoChanged = false;
+      }
+      if (this.brandDto.kioskNo) {
+        PaymentListService.findRevenueForBrand(this.brandDto.kioskNo).subscribe(
+          res => {
+            this.todayRevenue = res.data.sum;
+          },
+        );
       }
     });
   }

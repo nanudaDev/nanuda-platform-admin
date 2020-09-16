@@ -39,7 +39,11 @@
         <div class="col-6 col-md-3 mb-3">
           <div>
             <label for="ended">종료 날짜</label>
-            <b-form-datepicker id="ended" v-model="paymentListSearchDto.ended"></b-form-datepicker>
+            <b-form-datepicker
+              id="ended"
+              v-model="paymentListSearchDto.ended"
+              :disabled="paymentListSearchDto.started ? false : true"
+            ></b-form-datepicker>
           </div>
         </div>
       </div>

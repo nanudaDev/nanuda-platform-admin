@@ -73,6 +73,7 @@
               scope="col"
               v-bind:class="{ highlighted: paymentListSearchDto.paymentListNo }"
             >PAYMENT ID</th>
+            <th scope="col">KITCHEN NO</th>
             <th
               scope="col"
               v-bind:class="{ highlighted: paymentListSearchDto.nanudaKitchenMasterName }"
@@ -92,6 +93,7 @@
             @click="findOne(paymentList.paymentListNo)"
           >
             <td scope="row">{{ paymentList.paymentListNo }}</td>
+            <td>{{paymentList.nanudaKitchenMaster.nanudaNo}}</td>
             <td>{{paymentList.nanudaKitchenMaster.nanudaName}}</td>
             <td>{{paymentList.totalAmount | currencyTransformer}}</td>
             <td>{{paymentList.createdAt | dateTransformer}}</td>

@@ -2,12 +2,7 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <div v-for="item in items" :key="item.path">
-        <b-nav-item-dropdown
-          :text="item.name"
-          left
-          data-toggle="collapse"
-          data-target=".navbar-collapse"
-        >
+        <b-nav-item-dropdown :text="item.name" left>
           <template>
             <div v-for="children in item.children" :key="children.path">
               <b-dropdown-item v-if="!children.meta.detailPage" :to="children.path">

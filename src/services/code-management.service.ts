@@ -23,6 +23,12 @@ class CodeManagementService extends BaseService {
       'admin/code-management/b2b-founder-consult',
     );
   }
+
+  findAnyCode(categoryType: string) {
+    return super.get<CodeManagementDto[]>(
+      `admin/code-management/${categoryType}`,
+    );
+  }
 }
 
 export default new CodeManagementService();

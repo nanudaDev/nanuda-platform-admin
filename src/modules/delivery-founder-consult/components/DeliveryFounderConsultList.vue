@@ -70,8 +70,7 @@
                 v-for="company in companySelect"
                 :key="company.no"
                 :value="company.nameKr"
-                >{{ company.nameKr }}</option
-              >
+              >{{ company.nameKr }}</option>
             </datalist>
           </b-form-group>
         </div>
@@ -86,7 +85,7 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="col-6 col-lg-2 mb-3">
+        <!-- <div class="col-6 col-lg-2 mb-3">
           <label for="admin_user">관리자명</label>
           <template>
             <b-form-input
@@ -102,7 +101,7 @@
               >{{ admin.name }}</option>
             </datalist>
           </template>
-        </div>
+        </div>-->
 
         <div class="col-6 col-lg-2 mb-3">
           <label for="hope_time">희망 시간대</label>
@@ -144,6 +143,22 @@
             <option value selected>전체</option>
             <option v-for="yn in delYn" :key="yn" :value="yn">{{ yn | viewTransformer }}</option>
           </select>
+        </div>
+        <div class="col-6 col-lg-3 mb-3">
+          <div>
+            <label for="ended">시작 날짜</label>
+            <b-form-datepicker id="started" v-model="deliveryFounderConsultSearchDto.started"></b-form-datepicker>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+          <div>
+            <label for="ended">종료 날짜</label>
+            <b-form-datepicker
+              id="ended"
+              v-model="deliveryFounderConsultSearchDto.ended"
+              :disabled="deliveryFounderConsultSearchDto.started ? false : true"
+            ></b-form-datepicker>
+          </div>
         </div>
       </div>
       <b-row align-h="center">

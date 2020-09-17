@@ -6,31 +6,6 @@
     <div class="divider"></div>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <div class="form-row">
-        <div class="col-6 col-lg-1 mb-3">
-          <label for="space_id">공간 ID</label>
-          <input
-            type="text"
-            class="form-control"
-            id="space_id"
-            v-model="founderConsultSearchDto.spaceNo"
-          />
-        </div>
-        <!-- <div class="col-6 col-lg-1 mb-3">
-          <label for="space_type">공간 유형</label>
-          <select
-            class="custom-select"
-            id="space_type"
-            v-model="founderConsultSearchDto.spaceTypeNo"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="spaceType in spaceTypeSelect"
-              :key="spaceType.no"
-              :value="spaceType.no"
-              >{{ spaceType.displayName }}</option
-            >
-          </select>
-        </div>-->
         <div class="col-6 col-lg-2 mb-3">
           <label for="user_name">사용자명</label>
           <input
@@ -75,10 +50,35 @@
             </option>
           </select>
         </div>
+        <div class="col-6 col-lg-3 mb-3">
+          <div>
+            <label for="ended">시작 날짜</label>
+            <b-form-datepicker id="started" v-model="founderConsultSearchDto.started"></b-form-datepicker>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+          <div>
+            <label for="ended">종료 날짜</label>
+            <b-form-datepicker
+              id="ended"
+              v-model="founderConsultSearchDto.ended"
+              :disabled="founderConsultSearchDto.started ? false : true"
+            ></b-form-datepicker>
+          </div>
+        </div>
       </div>
       <!-- second row -->
       <div class="form-row">
-        <div class="col-lg-4 mb-3">
+        <div class="col-6 col-lg-1 mb-3">
+          <label for="space_id">공간 ID</label>
+          <input
+            type="text"
+            class="form-control"
+            id="space_id"
+            v-model="founderConsultSearchDto.spaceNo"
+          />
+        </div>
+        <div class="col-lg-3 mb-2">
           <label for="space_address">공간 주소</label>
           <input
             type="text"

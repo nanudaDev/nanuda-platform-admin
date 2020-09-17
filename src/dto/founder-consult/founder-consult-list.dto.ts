@@ -25,6 +25,8 @@ export class FounderConsultListDto extends BaseDto<FounderConsultListDto>
   address?: string;
   viewCount?: YN;
   companyDecisionStatus?: FOUNDER_CONSULT;
+  started?: Date;
+  ended?: Date;
   openedAt?: Date;
   orderByNo?: OrderByValue;
 }

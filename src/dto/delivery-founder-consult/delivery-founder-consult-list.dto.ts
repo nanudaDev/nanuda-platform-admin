@@ -30,6 +30,6 @@ export class DeliveryFounderConsultListDto
   companyDecisionStatus?: B2B_FOUNDER_CONSULT;
   viewCount?: YN;
   companyUserNo?: number;
-  startDate?: Date;
-  endDate?: Date;
+  started?: Date;
+  ended?: Date;
 }

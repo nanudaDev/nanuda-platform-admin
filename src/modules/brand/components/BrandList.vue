@@ -93,7 +93,7 @@
                 </div>
               </div>
             </td>
-            <td>{{ brand.name }}</td>
+            <td>{{ brand.nameKr }}</td>
             <td>
               <template v-if="brand.desc">{{ brand.desc }}</template>
             </td>
@@ -124,6 +124,7 @@
       title="브랜드 추가"
       ok-title="추가"
       cancel-title="취소"
+      size="lg"
       @hide="clearOutBrandCreateDto()"
       @cancel="clearOutBrandCreateDto()"
       @ok="createBrand()"
@@ -174,11 +175,44 @@
           <label>브랜드명 (영문)</label>
           <b-form-input v-model="brandCreateDto.nameEng"></b-form-input>
         </b-col>
+        <b-col cols="4" md="4" class="mb-3">
+          <label>창업 비용</label>
+          <select id="brand_cost" class="custom-select" v-model="brandCreateDto.cost" required>
+            <option v-for="cost in costValues" :key="cost.code" :value="cost.key">{{ cost.value }}</option>
+          </select>
+        </b-col>
+        <b-col cols="4" md="4" class="mb-3">
+          <label>조리 난이도</label>
+          <select
+            id="brand_difficulty"
+            class="custom-select"
+            v-model="brandCreateDto.difficulty"
+            required
+          >
+            <option
+              v-for="difficulty in difficultyValues"
+              :key="difficulty.code"
+              :value="difficulty.key"
+            >{{ difficulty.value }}</option>
+          </select>
+        </b-col>
+        <b-col cols="4" md="4" class="mb-3">
+          <label>매장 수</label>
+          <select
+            id="brand_store_count"
+            class="custom-select"
+            v-model="brandCreateDto.storeCount"
+            required
+          >
+            <option
+              v-for="storeCount in storeCountValues"
+              :key="storeCount.code"
+              :value="storeCount.key"
+            >{{ storeCount.value }}</option>
+          </select>
+        </b-col>
         <b-col cols="12" md="12" class="mb-3">
-          <label>
-            브랜드 설명
-            <span class="red-text">*</span>
-          </label>
+          <label>브랜드 설명</label>
           <textarea
             class="form-control"
             maxlength="100"
@@ -189,6 +223,10 @@
           <p class="text-length text-right" v-if="brandCreateDto.desc">
             <b class="text-primary">{{ brandCreateDto.desc.length }}</b> / 100
           </p>
+        </b-col>
+        <b-col cols="12" md="4">
+          <label>키오스크 아이디</label>
+          <b-form-input v-model="brandCreateDto.kioskNo"></b-form-input>
         </b-col>
       </b-form-row>
     </b-modal>
@@ -202,13 +240,14 @@ import { BrandDto, BrandListDto, FoodCategoryDto } from '../../../dto';
 import BrandService from '../../../services/brand.service';
 import FoodCategoryService from '../../../services/food-category.service';
 import { Pagination, YN, CONST_YN } from '@/common';
-
+import CodeManagementService from '../../../services/code-management.service';
 import { FileAttachmentDto } from '@/services/shared/file-upload';
 import FileUploadService from '../../../services/shared/file-upload/file-upload.service';
 import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';
 import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 import toast from '../../../../resources/assets/js/services/toast.js';
+import { CodeManagementDto } from '@/services/init/dto';
 
 @Component({
   name: 'BrandList',
@@ -224,7 +263,9 @@ export default class BrandList extends BaseComponent {
   private ynSelect: YN[] = [...CONST_YN];
   private foodCategorySelect: FoodCategoryDto[] = [];
   private dataLoading = false;
-
+  private storeCountValues: CodeManagementDto[] = [];
+  private costValues: CodeManagementDto[] = [];
+  private difficultyValues: CodeManagementDto[] = [];
   private brandCreateDto = new BrandDto();
   private brandLogo: FileAttachmentDto[] = [];
 
@@ -250,6 +291,18 @@ export default class BrandList extends BaseComponent {
         }
       },
     );
+  }
+
+  getCommonCodes() {
+    CodeManagementService.findAnyCode('BRAND').subscribe(res => {
+      this.costValues = res.data;
+    });
+    CodeManagementService.findAnyCode('STORE_COUNT').subscribe(res => {
+      this.storeCountValues = res.data;
+    });
+    CodeManagementService.findAnyCode('DIFFICULTY').subscribe(res => {
+      this.difficultyValues = res.data;
+    });
   }
 
   paginateSearch() {
@@ -306,6 +359,7 @@ export default class BrandList extends BaseComponent {
 
   created() {
     this.pagination.page = 1;
+    this.getCommonCodes();
     this.search();
     this.getFoodCategories();
   }

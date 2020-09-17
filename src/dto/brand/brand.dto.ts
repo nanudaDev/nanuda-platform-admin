@@ -4,6 +4,8 @@ import { FoodCategoryDto } from '../food-category';
 import { FileAttachmentDto } from '@/services/shared/file-upload';
 import { YN } from '@/common';
 import { MenuDto } from '../menu';
+import { BRAND, DIFFICULTY, STORE_COUNT } from '@/services/shared';
+import { CodeManagementDto } from '@/services/init/dto';
 
 export class BrandDto extends BaseDto<BrandDto> {
   no?: number;
@@ -18,4 +20,11 @@ export class BrandDto extends BaseDto<BrandDto> {
   mainMenuImage?: FileAttachmentDto[];
   showYn?: YN;
   menus?: MenuDto[];
+  cost?: BRAND;
+  difficulty?: DIFFICULTY;
+  storeCount?: STORE_COUNT;
+  storeCountValue?: CodeManagementDto;
+  difficultyValue?: CodeManagementDto;
+  costValue?: CodeManagementDto;
+  kioskNo?: number;
 }

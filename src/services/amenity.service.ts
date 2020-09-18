@@ -33,10 +33,7 @@ class AmenityService extends BaseService {
    * @param amenityDto
    */
   update(aminityNo, amenityDto: AmenityDto) {
-    return super.patch<AmenityListDto>(
-      `admin/amenity/${aminityNo}`,
-      amenityDto,
-    );
+    return super.patch<AmenityDto>(`admin/amenity/${aminityNo}`, amenityDto);
   }
 }
 

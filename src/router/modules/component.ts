@@ -423,6 +423,44 @@ const componentsRouter: RouteConfig[] = [
       // },
     ],
   },
+  {
+    path: '/article',
+    name: '기사 관리',
+    component: () => import('../../modules/article/Article.vue'),
+    children: [
+      {
+        path: '/article',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/article/components/ArticleList.vue'
+          ),
+        name: 'ArticleList',
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          title: '기사 관리',
+        },
+      },
+      {
+        path: '/article/:id([0-9]+)',
+        name: 'ArticleDetail',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/article/components/ArticleDetail.vue'
+          ),
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          detailPage: true,
+          title: '기사 상세',
+        },
+      },
+    ],
+  },
   ...kioskComponentRouter,
 ];
 

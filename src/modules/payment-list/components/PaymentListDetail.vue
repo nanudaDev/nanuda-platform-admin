@@ -3,9 +3,7 @@
     <div v-if="paymentList && !dataLoading">
       <SectionTitle :title="`${paymentList.shopName} - 결제 정보`" divider>
         <template v-slot:rightArea>
-          <router-link to="/kiosk-payment" class="btn btn-secondary"
-            >목록으로</router-link
-          >
+          <router-link to="/kiosk-payment" class="btn btn-secondary">목록으로</router-link>
         </template>
       </SectionTitle>
       <b-row>
@@ -16,53 +14,35 @@
                 <ul class="u-list">
                   <li>PAYMENT ID: {{ paymentList.paymentListNo }}</li>
                   <li>매장명: {{ paymentList.shopName }}</li>
-                  <li v-if="paymentList.nanudaKitchenMaster">
-                    관리명: {{ paymentList.nanudaKitchenMaster.nanudaName }}
-                  </li>
+                  <li
+                    v-if="paymentList.nanudaKitchenMaster"
+                  >관리명: {{ paymentList.nanudaKitchenMaster.nanudaName }}</li>
                 </ul>
                 <div class="border-top">
                   <ul class="u-list">
                     <li>CARD ISSUER: {{ paymentList.issuerName }}</li>
                   </ul>
                 </div>
-                <div
-                  class="bg-light border text-right p-3 mt-3"
-                  v-if="paymentList.amount"
-                >
+                <div class="bg-light border text-right p-3 mt-3" v-if="paymentList.amount">
                   <div>
-                    <b-row
-                      no-gutters
-                      align-h="between"
-                      align-v="center"
-                      class="mb-2"
-                    >
+                    <b-row no-gutters align-h="between" align-v="center" class="mb-2">
                       <span>MENU</span>
-                      <p>{{ paymentList.kioskOrderList.menuName }}</p>
+                      <p
+                        v-if=" paymentList.kioskOrderList"
+                      >{{ paymentList.kioskOrderList.menuName }}</p>
+                      <p v-else class="red-text">등록되지 않은 메뉴 (시스템에게 문의 바랍니다)</p>
                     </b-row>
-                    <b-row
-                      no-gutters
-                      align-h="between"
-                      align-v="center"
-                      class="mb-2"
-                    >
+                    <b-row no-gutters align-h="between" align-v="center" class="mb-2">
                       <span>QTY</span>
-                      <p>{{ paymentList.kioskOrderList.menuCount }}</p>
+                      <p
+                        v-if=" paymentList.kioskOrderList"
+                      >{{ paymentList.kioskOrderList.menuCount }}</p>
                     </b-row>
-                    <b-row
-                      no-gutters
-                      align-h="between"
-                      align-v="center"
-                      class="mb-2"
-                    >
+                    <b-row no-gutters align-h="between" align-v="center" class="mb-2">
                       <span>AMOUNT</span>
                       <p>{{ paymentList.amount | currencyTransformer }}</p>
                     </b-row>
-                    <b-row
-                      no-gutters
-                      align-h="between"
-                      align-v="center"
-                      class="mb-2"
-                    >
+                    <b-row no-gutters align-h="between" align-v="center" class="mb-2">
                       <span>SURTAX</span>
                       <p>{{ paymentList.surTax | currencyTransformer }}</p>
                     </b-row>
@@ -71,9 +51,11 @@
                     <b-row no-gutters align-h="between" align-v="end">
                       <span>TOTAL</span>
                       <h4>
-                        <b>{{
+                        <b>
+                          {{
                           paymentList.totalAmount | currencyTransformer
-                        }}</b>
+                          }}
+                        </b>
                       </h4>
                     </b-row>
                   </div>

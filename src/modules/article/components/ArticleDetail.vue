@@ -2,9 +2,7 @@
   <section v-if="articleDto">
     <SectionTitle title="기사 관리" divider>
       <template v-slot:rightArea>
-        <router-link to="/article" class="btn btn-secondary"
-          >목록으로</router-link
-        >
+        <router-link to="/article" class="btn btn-secondary">목록으로</router-link>
       </template>
     </SectionTitle>
     <b-row>
@@ -12,24 +10,14 @@
         <BaseCard title="기사 정보">
           <template v-slot:head>
             <div>
-              <b-button variant="danger" v-b-modal.delete_article
-                >삭제하기</b-button
-              >
-              <b-button
-                variant="primary"
-                v-b-modal.update_article
-                @click="showUpdateModal()"
-                >수정하기</b-button
-              >
+              <b-button variant="danger" v-b-modal.delete_article>삭제하기</b-button>
+              <b-button variant="primary" v-b-modal.update_article @click="showUpdateModal()">수정하기</b-button>
             </div>
           </template>
           <template v-slot:body>
             <b-row aligh-h="start" align-v="start">
               <b-col cols="12" md="4">
-                <div
-                  v-if="articleDto.image && articleDto.image.length > 0"
-                  class="mb-4"
-                >
+                <div v-if="articleDto.image && articleDto.image.length > 0" class="mb-4">
                   <div v-for="image in articleDto.image" :key="image.endpoint">
                     <b-img-lazy
                       :src="image.endpoint"
@@ -46,9 +34,11 @@
                     <li>언론사 :{{ articleDto.mediaName }}</li>
                     <li>
                       URL :
-                      <a :href="articleDto.url" target="_blank">{{
+                      <a :href="articleDto.url" target="_blank">
+                        {{
                         articleDto.url
-                      }}</a>
+                        }}
+                      </a>
                     </li>
                     <li>설명글 : {{ articleDto.desc }}</li>
                   </ul>
@@ -69,12 +59,7 @@
       size="lg"
     >
       <b-row no-gutters align-h="end">
-        <b-form-group
-          label="노출 여부"
-          label-size="sm"
-          label-text-align="right"
-          label-cols="8"
-        >
+        <b-form-group label="노출 여부" label-size="sm" label-text-align="right" label-cols="8">
           <b-form-checkbox
             switch
             size="lg"
@@ -85,18 +70,8 @@
         </b-form-group>
       </b-row>
       <b-form-row>
-        <b-col cols="12" md="6" class="mb-3">
-          <label>
-            언론사
-            <span class="red-text">*</span>
-          </label>
-          <b-form-input v-model="articleUpdateDto.mediaName"></b-form-input>
-        </b-col>
-        <b-col cols="12" md="6" class="mb-3">
-          <label>
-            기사 이미지
-            <span class="red-text">*</span>
-          </label>
+        <b-col cols="12" md="6" class="mb-3 offset-3">
+          <label>기사 이미지</label>
           <div class="my-2">
             <div
               v-if="
@@ -136,19 +111,20 @@
                 />
               </div>
               <div class="text-center mt-2">
-                <b-button variant="danger" @click="removeArticleImage()"
-                  >이미지 제거</b-button
-                >
+                <b-button variant="danger" @click="removeArticleImage()">이미지 제거</b-button>
               </div>
             </div>
           </div>
           <div class="custom-file">
-            <b-form-file
-              placeholder="파일 첨부"
-              ref="fileInput"
-              @input="upload($event)"
-            ></b-form-file>
+            <b-form-file placeholder="파일 첨부" ref="fileInput" @input="upload($event)"></b-form-file>
           </div>
+        </b-col>
+        <b-col cols="12" md="12" class="mb-3">
+          <label>
+            언론사
+            <span class="red-text">*</span>
+          </label>
+          <b-form-input v-model="articleUpdateDto.mediaName"></b-form-input>
         </b-col>
         <b-col cols="12" class="mb-3">
           <label>

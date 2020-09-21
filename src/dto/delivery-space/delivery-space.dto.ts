@@ -14,12 +14,12 @@ export class DeliverySpaceDto extends BaseDto<DeliverySpaceDto> {
   companyDistrictNo?: number;
   size?: number;
   images?: FileAttachmentDto[];
-  deposit?: string;
-  monthlyRentFee?: string;
+  deposit?: number;
+  monthlyRentFee?: number;
   quantity?: number;
   showYn?: YN;
   delYn?: YN;
-  monthlyUtilityFee?: string;
+  monthlyUtilityFee?: number;
   companyDistrict?: CompanyDistrictDto;
   remainingCount?: number;
   desc?: string;

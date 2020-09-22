@@ -24,6 +24,7 @@ export * from './nanuda-user';
 export * from './nanuda-kitchen-master';
 export * from './nanuda-kitchen-menu';
 export * from './payment-list';
+export * from './product-consult';
 export * from './notice-board';
 export * from './space';
 export * from './space-type';

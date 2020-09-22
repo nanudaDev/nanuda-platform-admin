@@ -580,6 +580,7 @@ import {
   YN,
   CONST_YN,
 } from '../../../common';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'DeliveryFounderConsultList',
@@ -725,6 +726,12 @@ export default class DeliveryFounderConsult extends BaseComponent {
       this.dataLoading = false;
       this.deliveryFounderConsultList = res.data.items;
       this.deliveryFounderConsultListCount = res.data.totalCount;
+      this.$router.push({
+        query: {
+          ...Object.assign(this.deliveryFounderConsultSearchDto),
+          ...Object.assign(this.pagination),
+        },
+      });
     });
     window.scrollTo(0, 0);
   }
@@ -758,7 +765,11 @@ export default class DeliveryFounderConsult extends BaseComponent {
   }
 
   created() {
-    this.pagination.page = 1;
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.deliveryFounderConsultSearchDto = query;
+      this.pagination.page = parseInt(query.page);
+    }
     this.getAvailableTimes();
     this.getCompanies();
     this.getFounderConsultCodes();

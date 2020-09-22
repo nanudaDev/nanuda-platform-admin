@@ -294,6 +294,21 @@ const componentsRouter: RouteConfig[] = [
           title: '배달형 계약 상세',
         },
       },
+      {
+        path: '/product-consult',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/product-consult/components/ProductConsultList.vue'
+          ),
+        name: 'ProductConsultList',
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          title: '상품 상담 신청',
+        },
+      },
     ],
   },
   {

@@ -5,12 +5,12 @@ export class BaseUser extends BaseDto<BaseUser> {
   constructor(user: any) {
     super(user);
   }
-  no: number;
-  phone: string;
-  name: string;
-  email: string;
-  authCode: COMPANY_USER;
-  companyUserStatus: APPROVAL_STATUS;
+  no?: number;
+  phone?: string;
+  name?: string;
+  email?: string;
+  authCode?: COMPANY_USER;
+  companyUserStatus?: APPROVAL_STATUS;
   password?: string;
   passwordConfirm?: string;
 }

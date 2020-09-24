@@ -5,7 +5,7 @@ import { OrderByValue } from '@/common';
 
 export class CompanyUserListDto extends BaseDto<CompanyUserListDto>
   implements Partial<CompanyUserDto> {
-  no: number;
+  no?: number;
   name?: string;
   email?: string;
   phone?: string;

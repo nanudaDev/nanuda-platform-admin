@@ -172,6 +172,7 @@ import Component from 'vue-class-component';
 import { InquiryDto, InquiryListDto } from '../../../dto';
 import { Pagination, INQUIRY, CONST_INQUIRY } from '../../../common';
 import InquiryService from '../../../services/inquiry.service';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'InquiryList',
@@ -196,6 +197,9 @@ export default class InquiryList extends BaseComponent {
         this.dataLoading = false;
         this.inquiryList = res.data.items;
         this.inquiryListCount = res.data.totalCount;
+        this.$router.push({
+          query: Object.assign(this.inquirySearchDto),
+        });
       },
     );
   }
@@ -211,7 +215,10 @@ export default class InquiryList extends BaseComponent {
   }
 
   created() {
-    this.pagination.page = 1;
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.inquirySearchDto = query;
+    }
     this.search();
   }
 }

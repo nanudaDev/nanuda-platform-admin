@@ -208,6 +208,7 @@ import { NoticeBoardListDto, NoticeBoardDto, AdminDto } from '@/dto';
 import { Pagination } from '@/common';
 import AdminService from '../../../services/admin.service';
 import NoticeBoardService from '../../../services/notice-board.service';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'NoticeBoardList',
@@ -256,6 +257,9 @@ export default class NoticeBoardList extends BaseComponent {
       this.totalPage = Math.ceil(
         this.noticeBoardListCount / this.pagination.limit,
       );
+      this.$router.push({
+        query: Object.assign(this.noticeBoardListDto),
+      });
     });
     window.scrollTo(0, 0);
   }
@@ -266,7 +270,10 @@ export default class NoticeBoardList extends BaseComponent {
   }
 
   created() {
-    this.pagination.page = 1;
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.noticeBoardListDto = query;
+    }
     this.search();
     this.findAdmin();
   }

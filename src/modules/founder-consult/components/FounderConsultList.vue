@@ -26,13 +26,18 @@
         </div>
         <div class="col-6 col-lg-1 mb-3">
           <label for="user_gender">성별</label>
-          <select class="custom-select" id="user_gender" v-model="founderConsultSearchDto.gender">
+          <select
+            class="custom-select"
+            id="user_gender"
+            v-model="founderConsultSearchDto.gender"
+          >
             <option value selected>전체</option>
             <option
               v-for="gender in genderSelect"
               :key="gender"
               :value="gender"
-            >{{ gender | enumTransformer }}</option>
+              >{{ gender | enumTransformer }}</option
+            >
           </select>
         </div>
         <div class="col-6 col-lg-1 mb-3">
@@ -44,16 +49,17 @@
           >
             <option value selected>전체</option>
             <option v-for="yn in delYn" :key="yn" :value="yn">
-              {{
-              yn | enumTransformer
-              }}
+              {{ yn | enumTransformer }}
             </option>
           </select>
         </div>
         <div class="col-6 col-lg-3 mb-3">
           <div>
             <label for="ended">시작 날짜</label>
-            <b-form-datepicker id="started" v-model="founderConsultSearchDto.started"></b-form-datepicker>
+            <b-form-datepicker
+              id="started"
+              v-model="founderConsultSearchDto.started"
+            ></b-form-datepicker>
           </div>
         </div>
         <div class="col-6 col-md-3 mb-3">
@@ -100,41 +106,54 @@
                 v-for="admin in adminList.items"
                 :key="admin.no"
                 :value="admin.name"
-              >{{ admin.name }}</option>
+                >{{ admin.name }}</option
+              >
             </datalist>
           </template>
         </div>
 
         <div class="col-6 col-lg-2 mb-3">
           <label for="hope_time">희망 시간대</label>
-          <select class="custom-select" id="hope_time" v-model="founderConsultSearchDto.hopeTime">
+          <select
+            class="custom-select"
+            id="hope_time"
+            v-model="founderConsultSearchDto.hopeTime"
+          >
             <option value selected>전체</option>
             <option
               v-for="time in availableTimesSelect"
               :key="time.no"
               :value="time.key"
-            >{{ time.value }}</option>
+              >{{ time.value }}</option
+            >
           </select>
         </div>
         <div class="col-6 col-lg-2 mb-3">
           <label for="status">신청 상태</label>
-          <select class="custom-select" id="status" v-model="founderConsultSearchDto.status">
+          <select
+            class="custom-select"
+            id="status"
+            v-model="founderConsultSearchDto.status"
+          >
             <option value selected>전체</option>
             <option
               v-for="status in founderConsultStatusSelect"
               :key="status.no"
               :value="status.key"
-            >{{ status.value }}</option>
+              >{{ status.value }}</option
+            >
           </select>
         </div>
         <div class="col-6 col-lg-2 mb-3">
           <label for="view_count">열람 유무</label>
-          <select class="custom-select" id="view_count" v-model="founderConsultSearchDto.viewCount">
+          <select
+            class="custom-select"
+            id="view_count"
+            v-model="founderConsultSearchDto.viewCount"
+          >
             <option value selected>전체</option>
             <option v-for="yn in delYn" :key="yn" :value="yn">
-              {{
-              yn | viewTransformer
-              }}
+              {{ yn | viewTransformer }}
             </option>
           </select>
         </div>
@@ -155,11 +174,19 @@
       </div>
     </div>
     <div v-if="!dataLoading" class="table-bordered table-responsive">
-      <table class="table table-hover table-sm text-center" v-if="founderConsultListCount">
+      <table
+        class="table table-hover table-sm text-center"
+        v-if="founderConsultListCount"
+      >
         <thead>
           <tr>
             <th scope="col">NO</th>
-            <th scope="col" v-bind:class="{ highlighted: founderConsultSearchDto.spaceNo }">SPACE ID</th>
+            <th
+              scope="col"
+              v-bind:class="{ highlighted: founderConsultSearchDto.spaceNo }"
+            >
+              SPACE ID
+            </th>
             <!-- <th
               scope="col"
               v-bind:class="{ highlighted: founderConsultSearchDto.spaceNo }"
@@ -171,44 +198,82 @@
               v-bind:class="{
                 highlighted: founderConsultSearchDto.nanudaUserName,
               }"
-            >USER NAME</th>
-            <th scope="col" v-bind:class="{ highlighted: founderConsultSearchDto.phone }">USER PHONE</th>
-            <th scope="col" v-bind:class="{ highlighted: founderConsultSearchDto.gender }">GENDER</th>
-            <th scope="col" v-bind:class="{ highlighted: founderConsultSearchDto.address }">ADDRESS</th>
+            >
+              USER NAME
+            </th>
+            <th
+              scope="col"
+              v-bind:class="{ highlighted: founderConsultSearchDto.phone }"
+            >
+              USER PHONE
+            </th>
+            <th
+              scope="col"
+              v-bind:class="{ highlighted: founderConsultSearchDto.gender }"
+            >
+              GENDER
+            </th>
+            <th
+              scope="col"
+              v-bind:class="{ highlighted: founderConsultSearchDto.address }"
+            >
+              ADDRESS
+            </th>
             <th
               scope="col"
               v-bind:class="{ highlighted: founderConsultSearchDto.hopeTime }"
-            >AVAILABLE TIME</th>
+            >
+              AVAILABLE TIME
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: founderConsultSearchDto.changUpExpYn,
               }"
-            >EXPERIENCE</th>
-            <th scope="col" v-bind:class="{ highlighted: founderConsultSearchDto.viewCount }">VIEW</th>
+            >
+              EXPERIENCE
+            </th>
+            <th
+              scope="col"
+              v-bind:class="{ highlighted: founderConsultSearchDto.viewCount }"
+            >
+              VIEW
+            </th>
             <th scope="col">CREATED</th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: founderConsultSearchDto.adminUserName,
               }"
-            >ADMIN</th>
-            <th scope="col" v-bind:class="{ highlighted: founderConsultSearchDto.status }">STATUS</th>
+            >
+              ADMIN
+            </th>
+            <th
+              scope="col"
+              v-bind:class="{ highlighted: founderConsultSearchDto.status }"
+            >
+              STATUS
+            </th>
             <th scope="col"></th>
           </tr>
         </thead>
 
         <tbody>
-          <tr v-for="founderConsult in founderConsultList" :key="founderConsult.no">
+          <tr
+            v-for="founderConsult in founderConsultList"
+            :key="founderConsult.no"
+          >
             <th scope="row">{{ founderConsult.no }}</th>
             <td>{{ founderConsult.spaceNo }}</td>
             <!-- <td>{{ founderConsult.space.spaceType.displayName }}</td> -->
             <td>{{ founderConsult.nanudaUser.name }}</td>
-            <td class="text-nowrap">{{ founderConsult.nanudaUser.phone | phoneTransformer }}</td>
+            <td class="text-nowrap">
+              {{ founderConsult.nanudaUser.phone | phoneTransformer }}
+            </td>
             <td>
-              <div
-                v-if="founderConsult.nanudaUser.genderInfo"
-              >{{ founderConsult.nanudaUser.genderInfo.value }}</div>
+              <div v-if="founderConsult.nanudaUser.genderInfo">
+                {{ founderConsult.nanudaUser.genderInfo.value }}
+              </div>
             </td>
             <td class="text-left">
               <div v-if="founderConsult.space">
@@ -217,7 +282,9 @@
               </div>
             </td>
             <td>
-              <div v-if="founderConsult.availableTime">{{ founderConsult.availableTime.value }}</div>
+              <div v-if="founderConsult.availableTime">
+                {{ founderConsult.availableTime.value }}
+              </div>
             </td>
             <td>
               <b-badge
@@ -225,7 +292,8 @@
                 :variant="
                   founderConsult.changUpExpYn === 'Y' ? 'success' : 'danger'
                 "
-              >{{ founderConsult.changUpExpYn }}</b-badge>
+                >{{ founderConsult.changUpExpYn }}</b-badge
+              >
               <div v-else>-</div>
             </td>
             <td>
@@ -234,19 +302,23 @@
                   :variant="
                     founderConsult.viewCount === 'Y' ? 'success' : 'danger'
                   "
-                >{{ founderConsult.viewCount }}</b-badge>
+                  >{{ founderConsult.viewCount }}</b-badge
+                >
               </div>
             </td>
             <td>{{ founderConsult.createdAt | dateTransformer }}</td>
             <td>
-              <div v-if="founderConsult.admin">{{ founderConsult.admin.name }}</div>
+              <div v-if="founderConsult.admin">
+                {{ founderConsult.admin.name }}
+              </div>
               <div v-else>-</div>
             </td>
             <td>
               <b-badge
                 :variant="getStatusColor(founderConsult.status)"
                 class="badge-pill p-2 mr-2"
-              >{{ founderConsult.codeManagement.value }}</b-badge>
+                >{{ founderConsult.codeManagement.value }}</b-badge
+              >
             </td>
             <td>
               <router-link
@@ -258,7 +330,8 @@
                     id: founderConsult.no,
                   },
                 }"
-              >상세보기</router-link>
+                >상세보기</router-link
+              >
             </td>
           </tr>
         </tbody>
@@ -314,6 +387,7 @@ import {
   YN,
   CONST_YN,
 } from '../../../common';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'FounderConsultList',
@@ -383,7 +457,7 @@ export default class FounderConsult extends BaseComponent {
     this.founderConsultSearchDto.spaceTypeNo = SPACE_TYPE.SPACE_SHARE;
     this.dataLoading = true;
     if (!isPagination) {
-      this.pagination.page = 1;
+      this.pagination = new Pagination();
     }
     FounderConsultService.findAll(
       this.founderConsultSearchDto,
@@ -395,6 +469,9 @@ export default class FounderConsult extends BaseComponent {
       this.totalPage = Math.ceil(
         this.founderConsultListCount / this.pagination.limit,
       );
+      this.$router.push({
+        query: Object.assign(this.founderConsultSearchDto),
+      });
     });
     window.scrollTo(0, 0);
   }
@@ -407,7 +484,10 @@ export default class FounderConsult extends BaseComponent {
   }
 
   created() {
-    this.pagination.page = 1;
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.founderConsultSearchDto = query;
+    }
     this.getAvailableTimes();
     this.getCompanies();
     this.getFounderConsultCodes();

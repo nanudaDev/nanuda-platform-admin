@@ -8,7 +8,11 @@
       <div class="form-row">
         <div class="col-6 col-md-1 mb-3">
           <label>PAYMENT ID</label>
-          <input type="text" class="form-control" v-model="paymentListSearchDto.paymentListNo" />
+          <input
+            type="text"
+            class="form-control"
+            v-model="paymentListSearchDto.paymentListNo"
+          />
         </div>
         <div class="col-6 col-md-2 mb-3">
           <label>BRANCH(ex: 선릉점)</label>
@@ -33,7 +37,10 @@
         <div class="col-6 col-md-3 mb-3">
           <div>
             <label for="started">시작 날짜</label>
-            <b-form-datepicker id="started" v-model="paymentListSearchDto.started"></b-form-datepicker>
+            <b-form-datepicker
+              id="started"
+              v-model="paymentListSearchDto.started"
+            ></b-form-datepicker>
           </div>
         </div>
         <div class="col-6 col-md-3 mb-3">
@@ -63,11 +70,14 @@
       </div>
       <div v-if="totalRevenue">
         설정 값 기준 매출:
-        <b>{{totalRevenue | currencyTransformer}}</b>
+        <b>{{ totalRevenue | currencyTransformer }}</b>
       </div>
     </div>
     <div v-if="!dataLoading" class="table-bordered table-responsive">
-      <table class="table table-hover table-sm table-nowrap text-center" v-if="paymentListCount">
+      <table
+        class="table table-hover table-sm table-nowrap text-center"
+        v-if="paymentListCount"
+      >
         <colgroup>
           <col width="40" />
           <col width="100" />
@@ -82,16 +92,24 @@
             <th
               scope="col"
               v-bind:class="{ highlighted: paymentListSearchDto.paymentListNo }"
-            >PAYMENT ID</th>
+            >
+              PAYMENT ID
+            </th>
             <th scope="col">KITCHEN NO</th>
             <th
               scope="col"
-              v-bind:class="{ highlighted: paymentListSearchDto.nanudaKitchenMasterName }"
-            >BRANCH</th>
+              v-bind:class="{
+                highlighted: paymentListSearchDto.nanudaKitchenMasterName,
+              }"
+            >
+              BRANCH
+            </th>
             <th
               scope="col"
               v-bind:class="{ highlighted: paymentListSearchDto.totalAmount }"
-            >TOTAL AMOUNT</th>
+            >
+              TOTAL AMOUNT
+            </th>
             <th scope="col">CREATED</th>
             <th scope="col"></th>
           </tr>
@@ -103,21 +121,22 @@
             @click="findOne(paymentList.paymentListNo)"
           >
             <td scope="row">{{ paymentList.paymentListNo }}</td>
-            <td>{{paymentList.nanudaKitchenMaster.nanudaNo}}</td>
-            <td>{{paymentList.nanudaKitchenMaster.nanudaName}}</td>
-            <td>{{paymentList.totalAmount | currencyTransformer}}</td>
-            <td>{{paymentList.createdAt | dateTransformer}}</td>
+            <td>{{ paymentList.nanudaKitchenMaster.nanudaNo }}</td>
+            <td>{{ paymentList.nanudaKitchenMaster.nanudaName }}</td>
+            <td>{{ paymentList.totalAmount | currencyTransformer }}</td>
+            <td>{{ paymentList.createdAt | dateTransformer }}</td>
             <td>
               <router-link
-                v-if="paymentList.paymentListNo "
+                v-if="paymentList.paymentListNo"
                 class="btn btn-sm btn-secondary"
                 :to="{
                   name: 'PaymentListDetail',
                   params: {
-                    id:paymentList.paymentListNo ,
+                    id: paymentList.paymentListNo,
                   },
                 }"
-              >상세보기</router-link>
+                >상세보기</router-link
+              >
             </td>
           </tr>
         </tbody>
@@ -141,6 +160,7 @@
 </template>
 <script lang="ts">
 import { Pagination } from '@/common';
+import { ReverseQueryParamMapper } from '@/core';
 import BaseComponent from '@/core/base.component';
 import { Component, Vue } from 'vue-property-decorator';
 import { PaymentListSearchDto, PaymentListDto } from '../../../dto';
@@ -184,6 +204,9 @@ export default class PaymentListSearch extends BaseComponent {
       this.paymentLists = res.data.items;
       this.paymentListCount = res.data.totalCount;
       this.dataLoading = false;
+      this.$router.push({
+        query: Object.assign(this.paymentListSearchDto),
+      });
       this.findRevenue();
     });
   }
@@ -203,6 +226,10 @@ export default class PaymentListSearch extends BaseComponent {
   }
 
   created() {
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.paymentListSearchDto = query;
+    }
     this.search(false);
   }
 }

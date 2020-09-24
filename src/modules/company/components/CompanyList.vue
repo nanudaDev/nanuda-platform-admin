@@ -374,6 +374,7 @@ import FileUploadService from '../../../services/shared/file-upload/file-upload.
 import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';
 import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 import { getStatusColor } from '../../../core/utils/status-color.util';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'CompanyList',
@@ -440,6 +441,9 @@ export default class Company extends BaseComponent {
         this.totalPage = Math.ceil(
           this.companyListTotalCount / this.pagination.limit,
         );
+        this.$router.push({
+          query: Object.assign(this.companySearchDto),
+        });
       },
     );
   }
@@ -485,6 +489,10 @@ export default class Company extends BaseComponent {
   }
 
   created() {
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.companySearchDto = query;
+    }
     this.search();
     this.getCompanies();
   }

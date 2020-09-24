@@ -220,6 +220,7 @@ import {
 import AmenityService from '../../../services/amenity.service';
 import { getStatusColor } from '../../../core/utils/status-color.util';
 import deliveryFounderConsultContarctService from '@/services/delivery-founder-consult-contarct.service';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'DeliveryFounderConsultContractList',
@@ -257,7 +258,11 @@ export default class DeliveryFounderConsultContractList extends BaseComponent {
         this.dataLoading = false;
         this.deliveryFounderConsultContractList = res.data.items;
         this.deliveryFounderConsultContractListCount = res.data.totalCount;
+        this.$router.push({
+          query: Object.assign(this.deliveryFounderConsultContractSearchDto),
+        });
       });
+    window.scrollTo(0, 0);
   }
 
   clearOut() {
@@ -267,6 +272,10 @@ export default class DeliveryFounderConsultContractList extends BaseComponent {
   }
 
   created() {
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.deliveryFounderConsultContractSearchDto = query;
+    }
     this.search();
     this.getCompanies();
   }

@@ -309,6 +309,22 @@ const componentsRouter: RouteConfig[] = [
           title: '상품 상담 신청',
         },
       },
+      {
+        path: '/product-consult/:id([0-9]+)',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/product-consult/components/ProductConsultDetail.vue'
+          ),
+        name: 'ProductConsultDetail',
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          detailPage: true,
+          title: '상품 상담 신청 상세',
+        },
+      },
     ],
   },
   {

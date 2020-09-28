@@ -2,6 +2,7 @@ import {
   APPROVAL_STATUS,
   FOUNDER_CONSULT,
   B2B_FOUNDER_CONSULT,
+  PRODUCT_CONSULT,
 } from '@/services/shared';
 
 export const getStatusColor = (status: string): string => {
@@ -25,7 +26,8 @@ export const getStatusColor = (status: string): string => {
   if (
     status === APPROVAL_STATUS.REFUSED ||
     status === FOUNDER_CONSULT.F_DROP ||
-    status === B2B_FOUNDER_CONSULT.B2B_F_CANCELLED
+    status === B2B_FOUNDER_CONSULT.B2B_F_CANCELLED ||
+    status === PRODUCT_CONSULT.P_CONTACT_CANCEL
   ) {
     return 'danger';
   }
@@ -36,7 +38,8 @@ export const getStatusColor = (status: string): string => {
 
   if (
     status === FOUNDER_CONSULT.F_DIST_COMPLETE ||
-    status === B2B_FOUNDER_CONSULT.B2B_F_CONTRACT_COMPLETE
+    status === B2B_FOUNDER_CONSULT.B2B_F_CONTRACT_COMPLETE ||
+    status === PRODUCT_CONSULT.P_FIN_CONTRACT
   ) {
     return 'secondary';
   }
@@ -47,7 +50,8 @@ export const getStatusColor = (status: string): string => {
 
   if (
     status === FOUNDER_CONSULT.F_NEW_REG ||
-    status === B2B_FOUNDER_CONSULT.B2B_F_NEW_REG
+    status === B2B_FOUNDER_CONSULT.B2B_F_NEW_REG ||
+    status === PRODUCT_CONSULT.P_NEW_REG
   ) {
     return 'primary';
   }

@@ -37,7 +37,7 @@ class ProductConsultService extends BaseService {
    * @param id
    * @param productConsultUpdateDto
    */
-  updateConsult(id, productConsultUpdateDto: ProductConsultUpdateDto) {
+  update(id, productConsultUpdateDto: ProductConsultUpdateDto) {
     return super.patch<ProductConsultDto>(
       `admin/product-consult/${id}`,
       productConsultUpdateDto,

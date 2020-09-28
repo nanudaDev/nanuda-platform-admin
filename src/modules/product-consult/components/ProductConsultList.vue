@@ -1,15 +1,283 @@
 <template>
-  <section></section>
+  <section>
+    <SectionTitle title="상품 상담 내역" divider></SectionTitle>
+    <div class="search-box my-4" v-on:keyup.enter="search()">
+      <b-form-row>
+        <b-col cols="4" lg="2" class="mb-3">
+          <label>사용자명</label>
+          <b-form-input
+            v-model="productConsultListDto.nanudaUserName"
+          ></b-form-input>
+        </b-col>
+        <b-col cols="4" lg="2" class="mb-3">
+          <label>휴대폰 번호</label>
+          <b-form-input
+            v-model="productConsultListDto.nanudaUserPhone"
+          ></b-form-input>
+        </b-col>
+        <b-col>
+          <label for="user_gender">성별</label>
+          <select
+            class="custom-select"
+            id="user_gender"
+            v-model="productConsultListDto.gender"
+          >
+            <option value selected>전체</option>
+            <option
+              v-for="gender in genderSelect"
+              :key="gender.no"
+              :value="gender.key"
+              >{{ gender.value }}</option
+            >
+          </select>
+        </b-col>
+        <b-col cols="4" lg="1">
+          <label for="changup_exp_yn">창업 경험</label>
+          <select
+            class="custom-select"
+            id="changup_exp_yn"
+            v-model="productConsultListDto.changUpExpYn"
+          >
+            <option value selected>전체</option>
+            <option v-for="yn in expYn" :key="yn" :value="yn">
+              {{ yn | enumTransformer }}
+            </option>
+          </select>
+        </b-col>
+        <b-col cols="4" lg="2" class="mb-3">
+          <label for="hope_time">희망 시간대</label>
+          <select
+            class="custom-select"
+            id="hope_time"
+            v-model="productConsultListDto.hopeTime"
+          >
+            <option value selected>전체</option>
+            <option
+              v-for="time in availableTimesSelect"
+              :key="time.no"
+              :value="time.key"
+              >{{ time.value }}</option
+            >
+          </select>
+        </b-col>
+        <b-col cols="4" lg="2" class="mb-3">
+          <label>관리자명</label>
+          <template>
+            <b-form-input
+              list="admin_list"
+              id="admin_user"
+              v-model="productConsultListDto.adminName"
+            ></b-form-input>
+            <datalist id="admin_list">
+              <option
+                v-for="admin in adminList.items"
+                :key="admin.no"
+                :value="admin.name"
+                >{{ admin.name }}</option
+              >
+            </datalist>
+          </template>
+        </b-col>
+        <b-col cols="4" lg="2" class="mb-3">
+          <label for="product_approve_status">승인 상태</label>
+          <b-form-select
+            id="product_approve_status"
+            v-model="productConsultListDto.status"
+          >
+            <b-select-option value>전체</b-select-option>
+            <b-form-select-option
+              v-for="status in statusSelect"
+              :key="status.no"
+              :value="status.key"
+              >{{ status.value }}</b-form-select-option
+            >
+          </b-form-select>
+        </b-col>
+      </b-form-row>
+      <!-- second row -->
+      <b-row align-h="center">
+        <b-btn-group>
+          <b-button variant="primary" @click="clearOut()">초기화</b-button>
+          <b-button variant="success" @click="search()">검색</b-button>
+        </b-btn-group>
+      </b-row>
+    </div>
+    <div class="table-top">
+      <div class="total-count">
+        <h5>
+          <span>TOTAL</span>
+          <strong class="text-primary">{{ productConsultTotalCount }}</strong>
+        </h5>
+      </div>
+    </div>
+    <div v-if="!dataLoading">
+      <table v-if="productConsultTotalCount" class="table border">
+        <thead>
+          <tr>
+            <th>
+              ID
+            </th>
+            <th scope="col">
+              이름
+            </th>
+            <th
+              scope="col"
+              v-bind:class="{
+                highlighted: productConsultListDto.nanudaUserPhone,
+              }"
+            >
+              연락처
+            </th>
+            <th
+              scope="col"
+              v-bind:class="{
+                highlighted: productConsultListDto.gender,
+              }"
+            >
+              성별
+            </th>
+            <th
+              scope="col"
+              v-bind:class="{
+                highlighted: productConsultListDto.hopeTime,
+              }"
+            >
+              희망 상담 시간대
+            </th>
+            <th
+              scope="col"
+              v-bind:class="{
+                highlighted: productConsultListDto.changUpExpYn,
+              }"
+            >
+              창업 경험 유무
+            </th>
+            <th
+              scope="col"
+              v-bind:class="{
+                highlighted: productConsultListDto.adminName,
+              }"
+            >
+              담당자
+            </th>
+            <th scope="col">
+              신청일
+            </th>
+            <th scope="col">
+              신청 상태
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="productConsult in productConsultLists"
+            :key="productConsult.no"
+          >
+            <td>
+              {{ productConsult.no }}
+            </td>
+            <td>
+              {{ productConsult.nanudaUser.name }}
+            </td>
+            <td>
+              {{ productConsult.nanudaUser.phone | phoneTransformer }}
+            </td>
+            <td>
+              <div
+                v-if="
+                  productConsult.nanudaUser && productConsult.nanudaUser.gender
+                "
+              >
+                {{ productConsult.nanudaUser.gender | enumTransformer }}
+              </div>
+              <div v-else>
+                -
+              </div>
+            </td>
+            <td>
+              {{ productConsult.availableTime.value }}
+            </td>
+            <td>
+              <b-badge
+                :variant="
+                  productConsult.changUpExpYn === 'Y' ? 'success' : 'danger'
+                "
+                >{{ productConsult.changUpExpYn | enumTransformer }}</b-badge
+              >
+            </td>
+            <td>
+              <div v-if="productConsult.admin">
+                {{ productConsult.admin.name }}
+              </div>
+              <div v-else>
+                -
+              </div>
+            </td>
+            <td>
+              {{ productConsult.createdAt | dateTransformer }}
+            </td>
+            <td>
+              <b-badge
+                :variant="getStatusColor(productConsult.codeManagement.key)"
+                class="badge-pill p-2 mr-2"
+                >{{ productConsult.codeManagement.value }}</b-badge
+              >
+            </td>
+            <td>
+              <router-link
+                class="btn btn-sm btn-secondary text-nowrap"
+                :to="{
+                  name: 'ProductConsultDetail',
+                  params: {
+                    id: productConsult.no,
+                  },
+                }"
+                >상세보기</router-link
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-else class="empty-data border">검색결과가 없습니다.</div>
+      <b-pagination
+        v-model="pagination.page"
+        v-if="productConsultTotalCount"
+        pills
+        :total-rows="productConsultTotalCount"
+        :per-page="pagination.limit"
+        @input="paginateSearch()"
+        class="mt-4 justify-content-center"
+      ></b-pagination>
+    </div>
+    <div class="half-circle-spinner mt-5" v-if="dataLoading">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+    </div>
+  </section>
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
 import { Component, Vue } from 'vue-property-decorator';
-import { ProductConsultDto, ProductConsultListDto } from '../../../dto';
+import {
+  AdminDto,
+  ProductConsultDto,
+  ProductConsultListDto,
+} from '../../../dto';
 import ProductConsultService from '../../../services/product-consult.service';
-import { OrderByValue, Pagination } from '@/common';
+import { CONST_YN, OrderByValue, Pagination, YN } from '@/common';
 import { QueryParamMapper, ReverseQueryParamMapper } from '@/core';
-import { PRODUCT_CONSULT } from '@/services/shared';
+import {
+  APPROVAL_STATUS,
+  CONST_APPROVAL_STATUS,
+  CONST_PRODUCT_CONSULT,
+  PRODUCT_CONSULT,
+} from '@/services/shared';
 import router from '@/router';
+import { getStatusColor } from '../../../core/utils/status-color.util';
+import CodeManagementService from '../../../services/code-management.service';
+import { CodeManagementDto } from '@/services/init/dto';
+import AdminService from '../../../services/admin.service';
 
 @Component({
   name: 'ProductConsultList',
@@ -17,9 +285,48 @@ import router from '@/router';
 export default class ProductConsultList extends BaseComponent {
   private productConsultListDto = new ProductConsultListDto();
   private pagination = new Pagination();
-  private productConsulTotalCount = null;
+  private productConsultTotalCount = null;
   private productConsultLists: ProductConsultDto[] = [];
-  private dataLoading = true;
+  private dataLoading = false;
+  private statusSelect: CodeManagementDto[] = [];
+  private adminList: AdminDto[] = [];
+  private availableTimesSelect: CodeManagementDto[] = [];
+  private expYn: YN[] = [...CONST_YN];
+  private genderSelect: CodeManagementDto[] = [];
+
+  findAdmin() {
+    AdminService.findForSelect().subscribe(res => {
+      if (res) {
+        this.adminList = res.data;
+      }
+    });
+  }
+
+  // get status color
+  getStatusColor(status: APPROVAL_STATUS) {
+    return getStatusColor(status);
+  }
+
+  // get product consult codes
+  getProductConsultCodes() {
+    CodeManagementService.findAnyCode('PRODUCT_CONSULT').subscribe(res => {
+      this.statusSelect = res.data;
+    });
+  }
+
+  // 성별
+  getGender() {
+    CodeManagementService.findGender().subscribe(res => {
+      this.genderSelect = res.data;
+    });
+  }
+
+  // 희망시간대
+  getAvailableTimes() {
+    CodeManagementService.findAvailableTimes().subscribe(res => {
+      this.availableTimesSelect = res.data;
+    });
+  }
 
   search(isPagination?: boolean) {
     this.dataLoading = true;
@@ -31,7 +338,7 @@ export default class ProductConsultList extends BaseComponent {
       this.pagination,
     ).subscribe(res => {
       this.productConsultLists = res.data.items;
-      this.productConsulTotalCount = res.data.totalCount;
+      this.productConsultTotalCount = res.data.totalCount;
       this.dataLoading = false;
       this.$router.push({
         query: Object.assign(this.productConsultListDto),
@@ -39,13 +346,27 @@ export default class ProductConsultList extends BaseComponent {
     });
   }
 
+  paginateSearch() {
+    this.search(true);
+  }
+
+  clearOut() {
+    this.pagination.page = 1;
+    this.productConsultListDto = new ProductConsultListDto();
+    this.search();
+  }
+
   created() {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.productConsultListDto = query;
     }
-    console.log(this.productConsultListDto);
+    this.pagination.page = 1;
     this.search();
+    this.getProductConsultCodes();
+    this.getAvailableTimes();
+    this.getGender();
+    this.findAdmin();
   }
 }
 </script>

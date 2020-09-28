@@ -1,6 +1,6 @@
 <template>
   <section v-if="productConsultDto">
-    <SectionTitle title="상품 상담 내역 상세" divider>
+    <SectionTitle title="상품 상담 상세" divider>
       <template v-slot:rightArea>
         <router-link to="/product-consult" class="btn btn-secondary"
           >목록으로</router-link
@@ -8,14 +8,20 @@
       </template>
     </SectionTitle>
     <b-row>
-      <b-col md="4" class="my-3">
+      <b-col lg="6" class="my-3">
         <BaseCard title="사용자 정보">
           <template v-slot:head>
             <div>
-              <b-button variant="outline-info" v-b-modal.send_message>
+              <b-button variant="outline-info" v-b-modal.nanuda_user>
                 <b-icon icon="envelope"></b-icon>
                 <span class="ml-2">문자전송</span>
               </b-button>
+              <b-button
+                variant="primary"
+                @click="updateNanudaUser()"
+                v-b-modal.nanuda_user
+                >수정하기</b-button
+              >
             </div>
           </template>
           <template v-slot:body>
@@ -47,7 +53,7 @@
           </template>
         </BaseCard>
       </b-col>
-      <b-col md="4" class="my-3">
+      <b-col lg="6" class="my-3">
         <BaseCard title="관리자 정보">
           <template v-slot:head>
             <div>
@@ -65,18 +71,18 @@
                 <li>
                   관리자 ID :
                   <span>
-                    <b>{{ productConsultDto.admin.no }}</b>
+                    {{ productConsultDto.admin.no }}
                   </span>
                 </li>
                 <li>
                   관리자명 :
                   <span>
-                    <b>{{ productConsultDto.admin.name }}</b>
+                    {{ productConsultDto.admin.name }}
                   </span>
                 </li>
                 <li>
                   휴대폰 번호 :
-                  <b>{{ productConsultDto.admin.phone | phoneTransformer }}</b>
+                  {{ productConsultDto.admin.phone | phoneTransformer }}
                 </li>
               </ul>
             </div>
@@ -84,7 +90,7 @@
           </template>
         </BaseCard>
       </b-col>
-      <b-col md="4" class="my-3">
+      <b-col lg="12" class="my-3">
         <BaseCard title="상담 상세 정보">
           <template v-slot:head>
             <div>
@@ -124,7 +130,7 @@
                 <li>
                   확정 방문 일자 :
                   <span v-if="productConsultDto.confirmDate">
-                    {{ productConsultDto.confirmDate }}
+                    {{ productConsultDto.confirmDate | dateTransformer }}
                   </span>
                   <span v-else>
                     미정
@@ -250,14 +256,14 @@
       @hide="clearOutUpdateDto()"
     >
       <b-form-row>
-        <b-col cols="12" class="my-3">
+        <b-col cols="12" class="mb-3">
           <label for="update_confirm_date">확정 방문 일자</label>
           <b-form-datepicker
             id="update_confirm_date"
-            v-model="updateConfirmDate"
+            v-model="confirmDate"
           ></b-form-datepicker>
         </b-col>
-        <b-col cols="12" class="my-3">
+        <b-col cols="12" class="mb-3">
           <label for="changup_exp_yn">창업 경험 유무</label>
           <b-form-radio
             v-model="productConsultUpdateDto.changUpExpYn"
@@ -268,6 +274,41 @@
             :id="`changup_exp_yn_${yn}`"
             >{{ yn | enumTransformer }}</b-form-radio
           >
+        </b-col>
+        <b-col cols="12" class="mb-3">
+          <label>신청 상태</label>
+          <select
+            class="custom-select"
+            v-model="productConsultUpdateDto.status"
+          >
+            <option
+              v-for="status in statusSelect"
+              :key="status.no"
+              :value="status.key"
+              >{{ status.value }}</option
+            >
+          </select>
+        </b-col>
+      </b-form-row>
+    </b-modal>
+    <!-- 사용자 정보 수정 -->
+    <b-modal
+      id="nanuda_user"
+      title="사용자 정보 수정"
+      @ok="updateProductConsult()"
+    >
+      <b-form-row>
+        <b-col cols="12" class="mb-3">
+          <b-form-group label="사용자 성별">
+            <b-form-radio
+              v-model="productConsultUpdateDto.gender"
+              v-for="gender in genderSelect"
+              :key="gender.no"
+              :value="gender.key"
+              name="gender"
+              >{{ gender.value }}</b-form-radio
+            >
+          </b-form-group>
         </b-col>
       </b-form-row>
     </b-modal>
@@ -280,6 +321,7 @@ import {
   AdminListDto,
   AdminSendMessageDto,
   ProductConsultDto,
+  ProductConsultUpdateDto,
 } from '@/dto';
 import ProductConsultService from '@/services/product-consult.service';
 import { APPROVAL_STATUS, PRODUCT_CONSULT } from '@/services/shared';
@@ -290,6 +332,8 @@ import toast from '../../../../resources/assets/js/services/toast.js';
 import { BaseUser } from '@/services/shared/auth';
 import AdminService from '../../../services/admin.service';
 import { CONST_YN, Pagination, YN } from '@/common';
+import { CodeManagementDto } from '@/services/init/dto';
+import CodeManagementService from '../../../services/code-management.service';
 
 @Component({
   name: 'ProductConsultDetail',
@@ -297,19 +341,35 @@ import { CONST_YN, Pagination, YN } from '@/common';
 export default class ProductConsultDetail extends BaseComponent {
   private productConsultDto = new ProductConsultDto();
   private adminSendMessageDto = new AdminSendMessageDto();
-  private updateConfirmDate = new Date();
+  private confirmDate = new Date();
 
-  private productConsultUpdateDto = new ProductConsultDto();
+  private productConsultUpdateDto = new ProductConsultUpdateDto();
   private selectedAdmin: AdminDto = new AdminDto(BaseUser);
   private adminList: AdminDto[] = [];
   private adminListDto = new AdminListDto();
   private adminListCount = null;
   private pagination = new Pagination();
   private expYn: YN[] = [...CONST_YN];
+  private statusSelect: CodeManagementDto[] = [];
+  private genderSelect: CodeManagementDto[] = [];
 
   // get status color
   getStatusColor(status: PRODUCT_CONSULT) {
     return getStatusColor(status);
+  }
+
+  // get product consult codes
+  getProductConsultCodes() {
+    CodeManagementService.findAnyCode('PRODUCT_CONSULT').subscribe(res => {
+      this.statusSelect = res.data;
+    });
+  }
+
+  // 성별
+  getGender() {
+    CodeManagementService.findAnyCode('GENDER').subscribe(res => {
+      this.genderSelect = res.data;
+    });
   }
 
   findOne(id) {
@@ -332,10 +392,18 @@ export default class ProductConsultDetail extends BaseComponent {
       }
     });
   }
+  // update Nanuda User
+  updateNanudaUser() {
+    if (this.productConsultDto.nanudaUser.gender) {
+      this.productConsultUpdateDto.gender = this.productConsultDto.nanudaUser.gender;
+    }
+    this.getGender();
+  }
 
   // show update modal
   showUpdateModal() {
     this.productConsultUpdateDto = this.productConsultDto;
+    this.getProductConsultCodes();
     this.findOne(this.$route.params.id);
   }
 
@@ -344,6 +412,10 @@ export default class ProductConsultDetail extends BaseComponent {
     if (this.selectedAdmin) {
       this.productConsultUpdateDto.pConsultManager = this.selectedAdmin.no;
     }
+    if (this.confirmDate) {
+      this.productConsultUpdateDto.confirmDate = this.confirmDate;
+    }
+
     ProductConsultService.update(
       this.$route.params.id,
       this.productConsultUpdateDto,

@@ -27,11 +27,16 @@
                   <div>
                     <b-row no-gutters align-h="between" align-v="center" class="mb-2">
                       <span>MENU</span>
-                      <p>{{ paymentList.kioskOrderList.menuName }}</p>
+                      <p
+                        v-if=" paymentList.kioskOrderList"
+                      >{{ paymentList.kioskOrderList.menuName }}</p>
+                      <p v-else class="red-text">등록되지 않은 메뉴 (시스템에게 문의 바랍니다)</p>
                     </b-row>
                     <b-row no-gutters align-h="between" align-v="center" class="mb-2">
                       <span>QTY</span>
-                      <p>{{ paymentList.kioskOrderList.menuCount }}</p>
+                      <p
+                        v-if=" paymentList.kioskOrderList"
+                      >{{ paymentList.kioskOrderList.menuCount }}</p>
                     </b-row>
                     <b-row no-gutters align-h="between" align-v="center" class="mb-2">
                       <span>AMOUNT</span>
@@ -46,7 +51,11 @@
                     <b-row no-gutters align-h="between" align-v="end">
                       <span>TOTAL</span>
                       <h4>
-                        <b>{{ paymentList.totalAmount | currencyTransformer }}</b>
+                        <b>
+                          {{
+                          paymentList.totalAmount | currencyTransformer
+                          }}
+                        </b>
                       </h4>
                     </b-row>
                   </div>

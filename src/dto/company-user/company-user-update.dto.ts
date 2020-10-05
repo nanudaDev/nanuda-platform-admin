@@ -4,5 +4,5 @@ import { BaseDto } from '@/core';
 export class CompanyUserUpdateDto extends BaseDto<CompanyUserUpdateDto>
   implements Partial<CompanyUserDto> {
   authCode?: COMPANY_USER;
-  companyUserStatus: APPROVAL_STATUS;
+  companyUserStatus?: APPROVAL_STATUS;
 }

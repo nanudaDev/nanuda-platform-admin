@@ -1,5 +1,6 @@
 export * from './admin';
 export * from './amenity';
+export * from './article';
 export * from './brand';
 export * from './company';
 export * from './company-update-history';
@@ -23,6 +24,7 @@ export * from './nanuda-user';
 export * from './nanuda-kitchen-master';
 export * from './nanuda-kitchen-menu';
 export * from './payment-list';
+export * from './product-consult';
 export * from './notice-board';
 export * from './space';
 export * from './space-type';

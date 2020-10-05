@@ -6,12 +6,12 @@ import { YN } from '@/common';
 
 export class NoticeBoardDto extends BaseDto<NoticeBoardDto> {
   no?: number;
-  title: string;
-  content: string;
+  title?: string;
+  content?: string;
   started?: Date;
   ended?: Date;
   url?: string;
-  admin: AdminDto;
+  admin?: AdminDto;
   noticeBoardType?: NOTICE_BOARD;
   attachments?: FileAttachmentDto[];
   newAttachments?: FileAttachmentDto[];

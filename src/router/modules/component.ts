@@ -294,6 +294,37 @@ const componentsRouter: RouteConfig[] = [
           title: '배달형 계약 상세',
         },
       },
+      {
+        path: '/product-consult',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/product-consult/components/ProductConsultList.vue'
+          ),
+        name: 'ProductConsultList',
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          title: '상품 상담 신청',
+        },
+      },
+      {
+        path: '/product-consult/:id([0-9]+)',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/product-consult/components/ProductConsultDetail.vue'
+          ),
+        name: 'ProductConsultDetail',
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          detailPage: true,
+          title: '상품 상담 신청 상세',
+        },
+      },
     ],
   },
   {
@@ -421,6 +452,44 @@ const componentsRouter: RouteConfig[] = [
       //     title: '공지사항 생성',
       //   },
       // },
+    ],
+  },
+  {
+    path: '/article',
+    name: '기사 관리',
+    component: () => import('../../modules/article/Article.vue'),
+    children: [
+      {
+        path: '/article',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/article/components/ArticleList.vue'
+          ),
+        name: 'ArticleList',
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          title: '기사 관리',
+        },
+      },
+      {
+        path: '/article/:id([0-9]+)',
+        name: 'ArticleDetail',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/article/components/ArticleDetail.vue'
+          ),
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          detailPage: true,
+          title: '기사 상세',
+        },
+      },
     ],
   },
   ...kioskComponentRouter,

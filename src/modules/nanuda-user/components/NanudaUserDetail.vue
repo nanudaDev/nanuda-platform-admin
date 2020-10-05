@@ -2,7 +2,9 @@
   <section v-if="nanudaUserDto">
     <SectionTitle :title="`${nanudaUserDto.name} - 사용자 정보`">
       <template v-slot:rightArea>
-        <router-link to="/nanuda-user" class="btn btn-secondary">목록으로</router-link>
+        <router-link to="/nanuda-user" class="btn btn-secondary"
+          >목록으로</router-link
+        >
       </template>
     </SectionTitle>
     <b-row>
@@ -19,61 +21,56 @@
           <template v-slot:body>
             <div>
               <ul class="u-list">
-                <li v-if="nanudaUserDto.gender">사용자 ID : {{nanudaUserDto.no}}</li>
-                <li v-if="nanudaUserDto.name">사용자명 : {{nanudaUserDto.name}}</li>
+                <li v-if="nanudaUserDto.no">
+                  사용자 ID : {{ nanudaUserDto.no }}
+                </li>
+                <li v-if="nanudaUserDto.name">
+                  사용자명 : {{ nanudaUserDto.name }}
+                </li>
                 <li v-if="nanudaUserDto.phone">
                   휴대폰 번호 :
-                  <span>{{nanudaUserDto.phone | phoneTransformer }}</span>
+                  <span>{{ nanudaUserDto.phone | phoneTransformer }}</span>
                 </li>
-                <li v-if="nanudaUserDto.gender">성별 : {{nanudaUserDto.gender | enumTransformer}}</li>
+                <li v-if="nanudaUserDto.gender">
+                  성별 : {{ nanudaUserDto.gender | enumTransformer }}
+                </li>
                 <li v-if="nanudaUserDto.infoYn">
                   개인정보 이용 약관 동의 :
                   <b-badge
                     :variant="
-                        nanudaUserDto.infoYn === 'Y'
-                          ? 'success'
-                          : 'danger'
-                      "
+                      nanudaUserDto.infoYn === 'Y' ? 'success' : 'danger'
+                    "
                   >
-                    {{
-                    nanudaUserDto.infoYn | enumTransformer
-                    }}
+                    {{ nanudaUserDto.infoYn | enumTransformer }}
                   </b-badge>
                 </li>
                 <li v-if="nanudaUserDto.serviceYn">
                   서비스 이용 약관 동의 :
                   <b-badge
                     :variant="
-                        nanudaUserDto.serviceYn === 'Y'
-                          ? 'success'
-                          : 'danger'
-                      "
+                      nanudaUserDto.serviceYn === 'Y' ? 'success' : 'danger'
+                    "
                   >
-                    {{
-                    nanudaUserDto.serviceYn | enumTransformer
-                    }}
+                    {{ nanudaUserDto.serviceYn | enumTransformer }}
                   </b-badge>
                 </li>
                 <li v-if="nanudaUserDto.marketYn">
                   마케팅 이용 약관 동의 :
                   <b-badge
                     :variant="
-                        nanudaUserDto.marketYn === 'Y'
-                          ? 'success'
-                          : 'danger'
-                      "
+                      nanudaUserDto.marketYn === 'Y' ? 'success' : 'danger'
+                    "
                   >
-                    {{
-                    nanudaUserDto.marketYn | enumTransformer
-                    }}
+                    {{ nanudaUserDto.marketYn | enumTransformer }}
                   </b-badge>
                 </li>
-                <li
-                  v-if="nanudaUserDto.createdAt"
-                >가입 일시 : {{nanudaUserDto.createdAt | dateTransformer}}</li>
-                <li
-                  v-if="nanudaUserDto.lastLoginAt"
-                >마지막 로그인 일시 : {{nanudaUserDto.lastLoginAt | dateTransformer}}</li>
+                <li v-if="nanudaUserDto.createdAt">
+                  가입 일시 : {{ nanudaUserDto.createdAt | dateTransformer }}
+                </li>
+                <li v-if="nanudaUserDto.lastLoginAt">
+                  마지막 로그인 일시 :
+                  {{ nanudaUserDto.lastLoginAt | dateTransformer }}
+                </li>
               </ul>
             </div>
           </template>
@@ -94,9 +91,7 @@
       <p class="mb-2">
         휴대폰 번호 :
         <b class="text-primary">
-          {{
-          nanudaUserDto.phone | phoneTransformer
-          }}
+          {{ nanudaUserDto.phone | phoneTransformer }}
         </b>
       </p>
       <b-form-input

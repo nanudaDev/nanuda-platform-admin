@@ -3,7 +3,7 @@
     <SectionTitle title="브랜드 관리" divider></SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <div class="col-md-2 mb-3">
+        <div class="col-md-1 mb-3">
           <label>업종 카테고리</label>
           <b-form-input
             list="food-category-list"
@@ -15,7 +15,8 @@
               v-for="category in foodCategorySelect"
               :key="category.code"
               :value="category.nameKr"
-            >{{ category.nameKr }}</option>
+              >{{ category.nameKr }}</option
+            >
           </datalist>
         </div>
         <div class="col-md-3 mb-3">
@@ -27,7 +28,42 @@
           <label>노출 여부</label>
           <select class="custom-select" v-model="brandSearchDto.showYn">
             <option value>전체</option>
-            <option v-for="yn in ynSelect" :key="yn" :value="yn">{{ yn | enumTransformer }}</option>
+            <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
+              yn | enumTransformer
+            }}</option>
+          </select>
+        </div>
+        <div class="col-md-2 mb-3">
+          <label>창업 비용</label>
+          <select class="custom-select" v-model="brandSearchDto.cost">
+            <option value>전체</option>
+            <option v-for="cost in costValues" :key="cost" :value="cost.key">{{
+              cost.value
+            }}</option>
+          </select>
+        </div>
+        <div class="col-md-2 mb-3">
+          <label>조리 난이도</label>
+          <select class="custom-select" v-model="brandSearchDto.difficulty">
+            <option value>전체</option>
+            <option
+              v-for="difficulty in difficultyValues"
+              :key="difficulty"
+              :value="difficulty.key"
+              >{{ difficulty.value }}</option
+            >
+          </select>
+        </div>
+        <div class="col-md-2 mb-3">
+          <label>매장 수</label>
+          <select class="custom-select" v-model="brandSearchDto.storeCount">
+            <option value>전체</option>
+            <option
+              v-for="storeCount in storeCountValues"
+              :key="storeCount"
+              :value="storeCount.key"
+              >{{ storeCount.value }}</option
+            >
           </select>
         </div>
       </b-form-row>
@@ -57,21 +93,27 @@
             v-bind:class="{
               highlighted: brandSearchDto.categoryName,
             }"
-          >업종</th>
+          >
+            업종
+          </th>
           <th scope="row">로고</th>
           <th
             scope="row"
             v-bind:class="{
               highlighted: brandSearchDto.nameKr,
             }"
-          >브랜드명</th>
+          >
+            브랜드명
+          </th>
           <th scope="row">설명</th>
           <th
             scope="row"
             v-bind:class="{
               highlighted: brandSearchDto.showYn,
             }"
-          >노출 여부</th>
+          >
+            노출 여부
+          </th>
         </thead>
         <tbody>
           <tr
@@ -98,7 +140,9 @@
               <template v-if="brand.desc">{{ brand.desc }}</template>
             </td>
             <td>
-              <b-badge :variant="brand.showYn === 'Y' ? 'success' : 'danger'">{{ brand.showYn }}</b-badge>
+              <b-badge :variant="brand.showYn === 'Y' ? 'success' : 'danger'">{{
+                brand.showYn
+              }}</b-badge>
             </td>
           </tr>
         </tbody>
@@ -154,7 +198,8 @@
               v-for="category in foodCategorySelect"
               :key="category.code"
               :value="category.no"
-            >{{ category.nameKr }}</option>
+              >{{ category.nameKr }}</option
+            >
           </select>
         </b-col>
         <b-col cols="12" md="6" class="mb-3">
@@ -162,7 +207,12 @@
             브랜드 로고
             <span class="red-text">*</span>
           </label>
-          <b-form-file placeholder="파일 선택" ref="fileInput" @input="upload($event)" required></b-form-file>
+          <b-form-file
+            placeholder="파일 선택"
+            ref="fileInput"
+            @input="upload($event)"
+            required
+          ></b-form-file>
         </b-col>
         <b-col cols="12" md="6" class="mb-3">
           <label>
@@ -177,8 +227,18 @@
         </b-col>
         <b-col cols="4" md="4" class="mb-3">
           <label>창업 비용</label>
-          <select id="brand_cost" class="custom-select" v-model="brandCreateDto.cost" required>
-            <option v-for="cost in costValues" :key="cost.code" :value="cost.key">{{ cost.value }}</option>
+          <select
+            id="brand_cost"
+            class="custom-select"
+            v-model="brandCreateDto.cost"
+            required
+          >
+            <option
+              v-for="cost in costValues"
+              :key="cost.code"
+              :value="cost.key"
+              >{{ cost.value }}</option
+            >
           </select>
         </b-col>
         <b-col cols="4" md="4" class="mb-3">
@@ -193,7 +253,8 @@
               v-for="difficulty in difficultyValues"
               :key="difficulty.code"
               :value="difficulty.key"
-            >{{ difficulty.value }}</option>
+              >{{ difficulty.value }}</option
+            >
           </select>
         </b-col>
         <b-col cols="4" md="4" class="mb-3">
@@ -208,7 +269,8 @@
               v-for="storeCount in storeCountValues"
               :key="storeCount.code"
               :value="storeCount.key"
-            >{{ storeCount.value }}</option>
+              >{{ storeCount.value }}</option
+            >
           </select>
         </b-col>
         <b-col cols="12" md="12" class="mb-3">
@@ -248,6 +310,7 @@ import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { CodeManagementDto } from '@/services/init/dto';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'BrandList',
@@ -288,6 +351,9 @@ export default class BrandList extends BaseComponent {
           this.dataLoading = false;
           this.brandList = res.data.items;
           this.brandListCount = res.data.totalCount;
+          this.$router.push({
+            query: Object.assign(this.brandSearchDto),
+          });
         }
       },
     );
@@ -358,7 +424,10 @@ export default class BrandList extends BaseComponent {
   }
 
   created() {
-    this.pagination.page = 1;
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.brandSearchDto = query;
+    }
     this.getCommonCodes();
     this.search();
     this.getFoodCategories();

@@ -336,6 +336,7 @@ import {
 } from '../../../services/shared';
 
 import { getStatusColor } from '../../../core/utils/status-color.util';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'CompanyUserList',
@@ -393,6 +394,9 @@ export default class Company extends BaseComponent {
       this.totalPage = Math.ceil(
         this.companyUserListTotalCount / this.pagination.limit,
       );
+      this.$router.push({
+        query: Object.assign(this.companyUserSearchDto),
+      });
     });
   }
 
@@ -413,7 +417,10 @@ export default class Company extends BaseComponent {
         this.$route.params.companyNo,
       );
     }
-    this.pagination.page = 1;
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.companyUserSearchDto = query;
+    }
     this.search();
     this.getCompanies();
   }

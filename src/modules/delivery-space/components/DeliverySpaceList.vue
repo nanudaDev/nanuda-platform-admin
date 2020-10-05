@@ -219,6 +219,7 @@ import CompanyService from '../../../services/company.service';
 import DeliverSpaceService from '../../../services/delivery-space.service';
 
 import DeliverySpaceCreate from './DeliverySpaceCreate.vue';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'DeliverySpaceList',
@@ -249,8 +250,6 @@ export default class DeliverySpaceList extends BaseComponent {
     if (!isPagination) {
       this.pagination.page = 1;
     }
-    this.pagination.limit = 20;
-
     DeliverSpaceService.findAll(
       this.deliverySpaceSearchDto,
       this.pagination,
@@ -258,6 +257,9 @@ export default class DeliverySpaceList extends BaseComponent {
       this.dataLoading = false;
       this.deliverySpaceList = res.data.items;
       this.deliverySpaceListCount = res.data.totalCount;
+      this.$router.push({
+        query: Object.assign(this.deliverySpaceSearchDto),
+      });
     });
   }
 
@@ -266,12 +268,16 @@ export default class DeliverySpaceList extends BaseComponent {
   }
 
   clearOut() {
-    this.pagination.page = 1;
+    this.pagination = new Pagination();
     this.deliverySpaceSearchDto = new DeliverySpaceListDto();
     this.search();
   }
 
   created() {
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.deliverySpaceSearchDto = query;
+    }
     this.getCompanies();
     this.search();
   }

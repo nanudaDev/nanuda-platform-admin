@@ -13,19 +13,27 @@
         </b-col>-->
         <b-col sm="12" lg="2" class="mb-3">
           <b-form-group label="업체명">
-            <b-form-input list="company_lsit" v-model="companyDistrictSearchDto.companyNameKr"></b-form-input>
+            <b-form-input
+              list="company_lsit"
+              v-model="companyDistrictSearchDto.companyNameKr"
+            ></b-form-input>
             <datalist id="company_lsit">
               <option
                 v-for="company in companySelect"
                 :key="company.no"
                 :value="company.nameKr"
-              >{{ company.nameKr }}</option>
+                >{{ company.nameKr }}</option
+              >
             </datalist>
           </b-form-group>
         </b-col>
         <b-col sm="12" lg="2" class="mb-3">
           <label for="district_name_kr">지점명</label>
-          <b-form-input type="text" id="district_name_kr" v-model="companyDistrictSearchDto.nameKr"></b-form-input>
+          <b-form-input
+            type="text"
+            id="district_name_kr"
+            v-model="companyDistrictSearchDto.nameKr"
+          ></b-form-input>
         </b-col>
         <b-col sm="12" lg="6" class="mb-3">
           <label for="district_address">주소</label>
@@ -46,7 +54,8 @@
               v-for="status in approvalStatus"
               :key="status"
               :value="status"
-            >{{ status | enumTransformer }}</b-form-select-option>
+              >{{ status | enumTransformer }}</b-form-select-option
+            >
           </b-form-select>
         </b-col>
       </b-form-row>
@@ -64,7 +73,12 @@
           <strong class="text-primary">{{ companyDistrictListCount }}</strong>
         </h5>
       </div>
-      <b-button variant="primary" v-b-modal.add_company_district @click="showCreateModal()">업체 지점 추가</b-button>
+      <b-button
+        variant="primary"
+        v-b-modal.add_company_district
+        @click="showCreateModal()"
+        >업체 지점 추가</b-button
+      >
     </div>
     <div v-if="!dataLoading" class="table-bordered table-responsive">
       <table class="table table-sm table-hover" v-if="companyDistrictListCount">
@@ -75,37 +89,49 @@
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.no,
               }"
-            >ID</th>
+            >
+              ID
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.companyNameKr,
               }"
-            >COMPANY</th>
+            >
+              COMPANY
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.nameKr,
               }"
-            >DISTRICT</th>
+            >
+              DISTRICT
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.address,
               }"
-            >ADDRESS</th>
+            >
+              ADDRESS
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.createdAt,
               }"
-            >CREATED</th>
+            >
+              CREATED
+            </th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: companyDistrictSearchDto.companyDistrictStatus,
               }"
-            >STATUS</th>
+            >
+              STATUS
+            </th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -140,7 +166,8 @@
                     id: district.no,
                   },
                 }"
-              >상세보기</router-link>
+                >상세보기</router-link
+              >
             </td>
           </tr>
         </tbody>
@@ -230,7 +257,8 @@
               v-for="status in approvalStatus"
               :key="status"
               :value="status"
-            >{{ status | enumTransformer }}</option>
+              >{{ status | enumTransformer }}</option
+            >
           </select>
         </b-col>
         <b-col cols="12" class="mt-2">
@@ -247,7 +275,8 @@
               v-for="amenity in commonAmenityList"
               :key="amenity.no"
               :value="amenity.no"
-            >{{ amenity.amenityName }}</b-form-checkbox>
+              >{{ amenity.amenityName }}</b-form-checkbox
+            >
           </b-form-checkbox-group>
         </b-col>
         <b-col cols="12" md="6" class="mt-2">
@@ -264,7 +293,8 @@
               v-for="company in companySelect"
               :key="company.no"
               :value="company.no"
-            >{{ company.nameKr }}</option>
+              >{{ company.nameKr }}</option
+            >
           </select>
         </b-col>
         <b-col cols="12" md="6" class="mt-2">
@@ -272,13 +302,20 @@
             지점 이미지
             <span class="red-text">*</span>
           </label>
-          <b-form-file placeholder="파일 선택" ref="fileInput" @input="upload($event)"></b-form-file>
+          <b-form-file
+            placeholder="파일 선택"
+            ref="fileInput"
+            @input="upload($event)"
+          ></b-form-file>
         </b-col>
       </b-form-row>
     </b-modal>
     <!-- 주소 검색 모달 -->
     <b-modal id="postcode" title="주소 검색" hide-footer>
-      <vue-daum-postcode style="height:500px; overflow-y:auto;" @complete="setAddress($event)" />
+      <vue-daum-postcode
+        style="height:500px; overflow-y:auto;"
+        @complete="setAddress($event)"
+      />
     </b-modal>
   </section>
 </template>
@@ -307,6 +344,7 @@ import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.se
 import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 import { getStatusColor } from '../../../core/utils/status-color.util';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'CompanyDistrictList',
@@ -386,6 +424,9 @@ export default class CompanyDistrictList extends BaseComponent {
       this.dataLoading = false;
       this.companyDistrictList = res.data.items;
       this.companyDistrictListCount = res.data.totalCount;
+      this.$router.push({
+        query: Object.assign(this.companyDistrictSearchDto),
+      });
     });
   }
 
@@ -447,7 +488,10 @@ export default class CompanyDistrictList extends BaseComponent {
       );
     }
     this.getCompanies();
-    this.pagination.page = 1;
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.companyDistrictSearchDto = query;
+    }
     this.search();
   }
 }

@@ -2,6 +2,7 @@ export * from './admin';
 export * from './amenity';
 export * from './article';
 export * from './brand';
+export * from './brand-kiosk-mapper';
 export * from './company';
 export * from './company-update-history';
 export * from './company-user';

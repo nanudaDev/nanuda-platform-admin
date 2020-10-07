@@ -531,7 +531,7 @@ export default class BrandDetail extends BaseComponent {
       //   );
       // }
       this.brandRevenueInfo.brandNo = id;
-      this.brandRevenueInfo.started = new Date('2020-09-01');
+      // this.brandRevenueInfo.started = new Date('2020-10-06');
       BrandKioskMapperService.getRevenueForBrand(
         this.brandRevenueInfo,
       ).subscribe(res => {

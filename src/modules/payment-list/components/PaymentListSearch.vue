@@ -121,8 +121,18 @@
             @click="findOne(paymentList.paymentListNo)"
           >
             <td scope="row">{{ paymentList.paymentListNo }}</td>
-            <td>{{ paymentList.nanudaKitchenMaster.nanudaNo }}</td>
-            <td>{{ paymentList.nanudaKitchenMaster.nanudaName }}</td>
+            <td>
+              <span v-if="paymentList.nanudaKitchenMaster">{{
+                paymentList.nanudaKitchenMaster.nanudaNo
+              }}</span
+              ><span v-else class="red-text">미정</span>
+            </td>
+            <td>
+              <span v-if="paymentList.nanudaKitchenMaster">{{
+                paymentList.nanudaKitchenMaster.nanudaName
+              }}</span
+              ><span v-else class="red-text">미정</span>
+            </td>
             <td>{{ paymentList.totalAmount | currencyTransformer }}</td>
             <td>{{ paymentList.createdAt | dateTransformer }}</td>
             <td>

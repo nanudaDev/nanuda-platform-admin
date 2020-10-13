@@ -531,14 +531,14 @@ import MenuUpdate from '../../menu/components/MenuUpdate.vue';
 import { CONST_SPACE_TYPE, SPACE, SPACE_TYPE } from '@/services/shared';
 import { CodeManagementDto } from '@/services/init/dto';
 import BrandKioskMapperService from '../../../services/brand-kiosk-mapper.service';
-import BrandRevenusGraph from './BrandRevenusGraph.vue';
+// import BrandRevenusGraph from './BrandRevenusGraph.vue';
 
 @Component({
   name: 'BrandDetail',
   components: {
     MenuCreate,
     MenuUpdate,
-    BrandRevenusGraph,
+    // BrandRevenusGraph,
   },
 })
 export default class BrandDetail extends BaseComponent {

@@ -3,8 +3,8 @@
     <SectionTitle title="브랜드 관리" divider></SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <div class="col-md-1 mb-3">
-          <label>업종 카테고리</label>
+        <div class="col-sm-4 col-lg-1 mb-3">
+          <label>업종</label>
           <b-form-input
             list="food-category-list"
             id="food_category"
@@ -19,12 +19,12 @@
             >
           </datalist>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-sm-4 col-lg-3 mb-3">
           <b-form-group label="브랜드명">
             <b-form-input v-model="brandSearchDto.nameKr"></b-form-input>
           </b-form-group>
         </div>
-        <div class="col-md-2 mb-3">
+        <div class="col-sm-4 col-lg-2 mb-3">
           <label>노출 여부</label>
           <select class="custom-select" v-model="brandSearchDto.showYn">
             <option value>전체</option>
@@ -33,34 +33,37 @@
             }}</option>
           </select>
         </div>
-        <div class="col-md-2 mb-3">
+        <div class="col-sm-4 col-lg-2 mb-3">
           <label>창업 비용</label>
           <select class="custom-select" v-model="brandSearchDto.cost">
             <option value>전체</option>
-            <option v-for="cost in costValues" :key="cost" :value="cost.key">{{
-              cost.value
-            }}</option>
+            <option
+              v-for="cost in costValues"
+              :key="cost.no"
+              :value="cost.key"
+              >{{ cost.value }}</option
+            >
           </select>
         </div>
-        <div class="col-md-2 mb-3">
+        <div class="col-sm-4 col-lg-2 mb-3">
           <label>조리 난이도</label>
           <select class="custom-select" v-model="brandSearchDto.difficulty">
             <option value>전체</option>
             <option
               v-for="difficulty in difficultyValues"
-              :key="difficulty"
+              :key="difficulty.no"
               :value="difficulty.key"
               >{{ difficulty.value }}</option
             >
           </select>
         </div>
-        <div class="col-md-2 mb-3">
+        <div class="col-sm-4 col-lg-2 mb-3">
           <label>매장 수</label>
           <select class="custom-select" v-model="brandSearchDto.storeCount">
             <option value>전체</option>
             <option
               v-for="storeCount in storeCountValues"
-              :key="storeCount"
+              :key="storeCount.no"
               :value="storeCount.key"
               >{{ storeCount.value }}</option
             >

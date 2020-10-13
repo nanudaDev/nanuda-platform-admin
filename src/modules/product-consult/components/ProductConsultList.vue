@@ -1,6 +1,6 @@
 <template>
   <section>
-    <SectionTitle title="상품 상담 내역" divider></SectionTitle>
+    <SectionTitle title="상품 상담 신청 내역" divider></SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
         <b-col cols="4" lg="2" class="mb-3">
@@ -111,134 +111,140 @@
       </div>
     </div>
     <div v-if="!dataLoading">
-      <table v-if="productConsultTotalCount" class="table border">
-        <thead>
-          <tr>
-            <th>
-              ID
-            </th>
-            <th scope="col">
-              이름
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: productConsultListDto.nanudaUserPhone,
-              }"
-            >
-              연락처
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: productConsultListDto.gender,
-              }"
-            >
-              성별
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: productConsultListDto.hopeTime,
-              }"
-            >
-              희망 상담 시간대
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: productConsultListDto.changUpExpYn,
-              }"
-            >
-              창업 경험 유무
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: productConsultListDto.adminName,
-              }"
-            >
-              담당자
-            </th>
-            <th scope="col">
-              신청일
-            </th>
-            <th scope="col">
-              신청 상태
-            </th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="productConsult in productConsultLists"
-            :key="productConsult.no"
-          >
-            <td>
-              {{ productConsult.no }}
-            </td>
-            <td>
-              {{ productConsult.nanudaUser.name }}
-            </td>
-            <td>
-              {{ productConsult.nanudaUser.phone | phoneTransformer }}
-            </td>
-            <td>
-              <div
-                v-if="
-                  productConsult.nanudaUser && productConsult.nanudaUser.gender
-                "
-              >
-                {{ productConsult.nanudaUser.gender | enumTransformer }}
-              </div>
-              <div v-else>
-                -
-              </div>
-            </td>
-            <td>
-              {{ productConsult.availableTime.value }}
-            </td>
-            <td>
-              <b-badge
-                :variant="
-                  productConsult.changUpExpYn === 'Y' ? 'success' : 'danger'
-                "
-                >{{ productConsult.changUpExpYn | enumTransformer }}</b-badge
-              >
-            </td>
-            <td>
-              <div v-if="productConsult.admin">
-                {{ productConsult.admin.name }}
-              </div>
-              <div v-else>
-                -
-              </div>
-            </td>
-            <td>
-              {{ productConsult.createdAt | dateTransformer }}
-            </td>
-            <td>
-              <b-badge
-                :variant="getStatusColor(productConsult.codeManagement.key)"
-                class="badge-pill p-2 mr-2"
-                >{{ productConsult.codeManagement.value }}</b-badge
-              >
-            </td>
-            <td>
-              <router-link
-                class="btn btn-sm btn-secondary text-nowrap"
-                :to="{
-                  name: 'ProductConsultDetail',
-                  params: {
-                    id: productConsult.no,
-                  },
+      <div class="table-responsive" v-if="productConsultTotalCount">
+        <table
+          v-if="productConsultTotalCount"
+          class="table table-hover table-nowrap table-sm border"
+        >
+          <thead>
+            <tr>
+              <th>
+                ID
+              </th>
+              <th scope="col">
+                이름
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: productConsultListDto.nanudaUserPhone,
                 }"
-                >상세보기</router-link
               >
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                연락처
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: productConsultListDto.gender,
+                }"
+              >
+                성별
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: productConsultListDto.hopeTime,
+                }"
+              >
+                희망 상담 시간대
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: productConsultListDto.changUpExpYn,
+                }"
+              >
+                창업 경험 유무
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: productConsultListDto.adminName,
+                }"
+              >
+                담당자
+              </th>
+              <th scope="col">
+                신청일
+              </th>
+              <th scope="col">
+                신청 상태
+              </th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="productConsult in productConsultLists"
+              :key="productConsult.no"
+            >
+              <td>
+                {{ productConsult.no }}
+              </td>
+              <td>
+                {{ productConsult.nanudaUser.name }}
+              </td>
+              <td>
+                {{ productConsult.nanudaUser.phone | phoneTransformer }}
+              </td>
+              <td>
+                <div
+                  v-if="
+                    productConsult.nanudaUser &&
+                      productConsult.nanudaUser.gender
+                  "
+                >
+                  {{ productConsult.nanudaUser.gender | enumTransformer }}
+                </div>
+                <div v-else>
+                  -
+                </div>
+              </td>
+              <td>
+                {{ productConsult.availableTime.value }}
+              </td>
+              <td>
+                <b-badge
+                  :variant="
+                    productConsult.changUpExpYn === 'Y' ? 'success' : 'danger'
+                  "
+                  >{{ productConsult.changUpExpYn | enumTransformer }}</b-badge
+                >
+              </td>
+              <td>
+                <div v-if="productConsult.admin">
+                  {{ productConsult.admin.name }}
+                </div>
+                <div v-else>
+                  -
+                </div>
+              </td>
+              <td>
+                {{ productConsult.createdAt | dateTransformer }}
+              </td>
+              <td>
+                <b-badge
+                  :variant="getStatusColor(productConsult.codeManagement.key)"
+                  class="badge-pill p-2 mr-2"
+                  >{{ productConsult.codeManagement.value }}</b-badge
+                >
+              </td>
+              <td>
+                <router-link
+                  class="btn btn-sm btn-secondary text-nowrap"
+                  :to="{
+                    name: 'ProductConsultDetail',
+                    params: {
+                      id: productConsult.no,
+                    },
+                  }"
+                  >상세보기</router-link
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <div v-else class="empty-data border">검색결과가 없습니다.</div>
       <b-pagination
         v-model="pagination.page"

@@ -41,6 +41,8 @@ export default class BaseCard extends BaseComponent {
     min-height: 52px;
     margin-bottom: -1px;
     .card-title {
+      font-size: 1rem;
+      font-weight: bold;
       margin-bottom: 0;
       line-height: 1;
     }

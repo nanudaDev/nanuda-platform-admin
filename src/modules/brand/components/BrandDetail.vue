@@ -1,6 +1,6 @@
 <template>
   <section v-if="brandDto">
-    <SectionTitle title="브랜드 관리" divider>
+    <SectionTitle :title="`${brandDto.nameKr} - 브랜드 정보`" divider>
       <template v-slot:rightArea>
         <router-link to="/brand" class="btn btn-secondary"
           >목록으로</router-link
@@ -8,7 +8,7 @@
       </template>
     </SectionTitle>
     <b-row>
-      <b-col md="5" class="my-3">
+      <b-col lg="5" class="my-3">
         <BaseCard title="브랜드 정보">
           <template v-slot:head>
             <div>
@@ -86,26 +86,38 @@
                 </li>
               </ul>
             </div>
-          </template>
-
-          <div
-            class="bg-light border text-right p-3"
-            v-if="revenues && revenues.length > 0"
-          >
-            <div class="pt-1">
-              <b-row no-gutters align-h="between" align-v="end">
-                <div v-for="revenue in revenues" :key="revenue.nanudaName">
-                  <span>{{ revenue.nanudaName }}</span>
+            <div
+              class="bg-light border text-right p-3 mt-3"
+              v-if="revenues && revenues.length > 0"
+            >
+              <div>
+                <b-row
+                  no-gutters
+                  align-h="between"
+                  align-v="center"
+                  class="mb-2"
+                  v-for="revenue in revenues"
+                  :key="revenue.nanudaName"
+                >
+                  <span> {{ revenue.nanudaName }}</span>
+                  <p>{{ revenue.sum | currencyTransformer }}</p>
+                </b-row>
+              </div>
+              <div class="pt-2 border-top">
+                <b-row no-gutters align-h="between" align-v="end">
+                  <span>TOTAL</span>
                   <h4>
-                    <b>{{ revenue.sum | currencyTransformer }}</b>
+                    <b>
+                      {{ totalRevenue | currencyTransformer }}
+                    </b>
                   </h4>
-                </div>
-              </b-row>
+                </b-row>
+              </div>
             </div>
-          </div>
+          </template>
         </BaseCard>
       </b-col>
-      <b-col md="7" class="my-3">
+      <b-col lg="7" class="my-3">
         <BaseCard title="브랜드 메뉴" no-body>
           <template v-slot:head>
             <div>
@@ -116,7 +128,7 @@
             <table class="table table-hover" v-if="menuTotalCount">
               <thead>
                 <tr>
-                  <th scope="col">NO</th>
+                  <th scope="col">ID</th>
                   <th scope="col">메뉴명</th>
                   <th scope="col">노출 여부</th>
                   <th scope="col">대표 메뉴</th>
@@ -169,6 +181,44 @@
           </div>
         </BaseCard>
       </b-col>
+      <!-- <b-col cols="12" class="my-3" v-if="revenues && revenues.length > 0">
+        <BaseCard title="키오스크 매출">
+          <template v-slot:head>
+            {{ brandDto.updatedAt | dateTransformer }} 기준
+          </template>
+          <template v-slot:body>
+            <b-row align-v="start">
+              <b-col md="5">
+                <BrandRevenusGraph />
+              </b-col>
+              <b-col md="7">
+                <table class="table table-lg">
+                  <tfoot>
+                    <tr>
+                      <th class="text-left" scope="row">
+                        <b>TOTAL</b>
+                      </th>
+                      <td class="text-right">
+                        <h4>{{ totalRevenue | currencyTransformer }}</h4>
+                      </td>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    <tr v-for="revenue in revenues" :key="revenue.nanudaName">
+                      <th class="text-left" scope="row">
+                        {{ revenue.nanudaName }}
+                      </th>
+                      <td class="text-right">
+                        {{ revenue.sum | currencyTransformer }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </b-col>
+            </b-row>
+          </template>
+        </BaseCard>
+      </b-col> -->
     </b-row>
     <!-- 브랜드 수정 모달 -->
     <b-modal
@@ -481,12 +531,14 @@ import MenuUpdate from '../../menu/components/MenuUpdate.vue';
 import { CONST_SPACE_TYPE, SPACE, SPACE_TYPE } from '@/services/shared';
 import { CodeManagementDto } from '@/services/init/dto';
 import BrandKioskMapperService from '../../../services/brand-kiosk-mapper.service';
+import BrandRevenusGraph from './BrandRevenusGraph.vue';
 
 @Component({
   name: 'BrandDetail',
   components: {
     MenuCreate,
     MenuUpdate,
+    BrandRevenusGraph,
   },
 })
 export default class BrandDetail extends BaseComponent {
@@ -536,6 +588,7 @@ export default class BrandDetail extends BaseComponent {
         this.brandRevenueInfo,
       ).subscribe(res => {
         this.revenues = res.data;
+
         function amount(item) {
           return item.sum;
         }
@@ -543,7 +596,6 @@ export default class BrandDetail extends BaseComponent {
           return prev + next;
         }
         this.totalRevenue = this.revenues.map(amount).reduce(sum);
-        console.log(this.totalRevenue);
       });
     });
   }

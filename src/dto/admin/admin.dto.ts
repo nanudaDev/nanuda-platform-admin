@@ -5,5 +5,7 @@ export class AdminDto extends BaseUser {
   no: number;
   name: string;
   phone: string;
+  password: string;
+  passwordConfirm: string;
   brands?: BrandDto[];
 }

@@ -6,7 +6,7 @@ import kioskComponentRouter from './kiosk.component';
 const componentsRouter: RouteConfig[] = [
   {
     path: '/nanuda-user',
-    name: '사용자',
+    name: '관리자/사용자',
     component: () => import('../../modules/nanuda-user/NanudaUser.vue'),
     children: [
       {
@@ -36,6 +36,20 @@ const componentsRouter: RouteConfig[] = [
           roles: [...CONST_ADMIN_USER],
           detailPage: true,
           title: '사용자',
+        },
+      },
+      {
+        path: '/admin',
+        name: 'AdminList',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */ '../../modules/admin/components/AdminList.vue'
+          ),
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          title: '관리자 관리',
         },
       },
     ],

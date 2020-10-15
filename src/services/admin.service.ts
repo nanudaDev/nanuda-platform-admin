@@ -14,6 +14,10 @@ class AdminService extends BaseService {
   findForSelect() {
     return super.get<AdminDto[]>('admin');
   }
+
+  create(adminCreateDto: AdminDto) {
+    return super.post<AdminDto>('admin', adminCreateDto);
+  }
 }
 
 export default new AdminService();

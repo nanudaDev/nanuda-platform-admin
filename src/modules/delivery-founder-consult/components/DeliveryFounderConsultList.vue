@@ -331,15 +331,15 @@
               </div>
             </td>
             <td>
-              <div v-if="founderConsult.deliverySpaces">
+              <div v-if="founderConsult.deliverySpace">
                 {{
-                  founderConsult.deliverySpaces.companyDistrict.company.nameKr
+                  founderConsult.deliverySpace.companyDistrict.company.nameKr
                 }}
               </div>
             </td>
             <td>
-              <div v-if="founderConsult.deliverySpaces">
-                {{ founderConsult.deliverySpaces.companyDistrict.nameKr }}
+              <div v-if="founderConsult.deliverySpace">
+                {{ founderConsult.deliverySpace.companyDistrict.nameKr }}
               </div>
             </td>
             <td>
@@ -384,14 +384,14 @@
             <td>
               <div
                 v-if="
-                  founderConsult.deliverySpaces &&
-                    founderConsult.deliverySpaces.contracts
+                  founderConsult.deliverySpace &&
+                    founderConsult.deliverySpace.contracts
                 "
               >
                 {{
-                  founderConsult.deliverySpaces.quantity -
-                    founderConsult.deliverySpaces.contracts.length
-                }}/{{ founderConsult.deliverySpaces.quantity }}
+                  founderConsult.deliverySpace.quantity -
+                    founderConsult.deliverySpace.contracts.length
+                }}/{{ founderConsult.deliverySpace.quantity }}
               </div>
             </td>
             <td>

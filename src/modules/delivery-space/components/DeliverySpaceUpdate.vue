@@ -145,6 +145,14 @@
           >
         </b-form-checkbox-group>
       </b-col>
+
+      <b-col lg="12" class="mb-3">
+        <label>공간 설명 글</label>
+        <b-form-textarea
+          style="height:100px;"
+          v-model="deliverySpaceUpdateDto.desc"
+        ></b-form-textarea>
+      </b-col>
       <b-col lg="12">
         <label for>이미지</label>
         <b-form-file

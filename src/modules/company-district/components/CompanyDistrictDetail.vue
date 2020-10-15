@@ -1,8 +1,13 @@
 <template>
   <section>
-    <SectionTitle :title="`${companyDistrictDto.nameKr} - 지점 정보`" v-if="companyDistrictDto.nameKr">
+    <SectionTitle
+      :title="`${companyDistrictDto.nameKr} - 지점 정보`"
+      v-if="companyDistrictDto.nameKr"
+    >
       <template v-slot:rightArea>
-        <router-link to="/company/company-district" class="btn btn-secondary">목록으로</router-link>
+        <router-link to="/company/company-district" class="btn btn-secondary"
+          >목록으로</router-link
+        >
       </template>
     </SectionTitle>
     <div class="row d-flex align-items-stretch">
@@ -10,13 +15,16 @@
         <BaseCard title="지점 정보">
           <template v-slot:head>
             <div>
-              <b-button variant="danger" v-b-modal.delete_district>삭제하기</b-button>
+              <b-button variant="danger" v-b-modal.delete_district
+                >삭제하기</b-button
+              >
               <b-button
                 variant="primary"
                 v-b-modal.update_district
                 @click="showUpdateModal()"
                 v-if="companyDistrictDto.companyDistrictStatus === 'APPROVAL'"
-              >수정하기</b-button>
+                >수정하기</b-button
+              >
             </div>
           </template>
           <template v-slot:body>
@@ -28,7 +36,10 @@
                 "
                 class="mb-4"
               >
-                <div v-for="image in companyDistrictDto.image" :key="image.endpoint">
+                <div
+                  v-for="image in companyDistrictDto.image"
+                  :key="image.endpoint"
+                >
                   <b-img-lazy
                     :src="image.endpoint"
                     class="rounded mx-auto d-block company-logo"
@@ -45,7 +56,9 @@
                   <li v-if="companyDistrictDto.nameKr">
                     지점명 :
                     <b>{{ companyDistrictDto.nameKr }}</b>
-                    <span v-if="companyDistrictDto.nameEng">({{ companyDistrictDto.nameEng }})</span>
+                    <span v-if="companyDistrictDto.nameEng"
+                      >({{ companyDistrictDto.nameEng }})</span
+                    >
                   </li>
                   <li v-if="companyDistrictDto.address">
                     지점 주소 :
@@ -76,7 +89,8 @@
                       v-for="amenity in companyDistrictDto.amenities"
                       :key="amenity.no"
                       class="m-1"
-                    >{{ amenity.amenityName }}</b-badge>
+                      >{{ amenity.amenityName }}</b-badge
+                    >
                   </li>
                   <li v-if="companyDistrictDto.createdAt">
                     등록일 :
@@ -91,14 +105,17 @@
                       class="badge-pill p-2 mr-2"
                     >
                       {{
-                      companyDistrictDto.companyDistrictStatus
-                      | enumTransformer
+                        companyDistrictDto.companyDistrictStatus
+                          | enumTransformer
                       }}
                     </b-badge>
                     <span
                       v-if="companyDistrictDto.updatedAt"
                       class="d-inline-block"
-                    >({{ companyDistrictDto.updatedAt | dateTransformer }})</span>
+                      >({{
+                        companyDistrictDto.updatedAt | dateTransformer
+                      }})</span
+                    >
                   </li>
                 </ul>
               </div>
@@ -110,14 +127,16 @@
                     size="sm"
                     v-b-modal.update_map
                     @click="showMapUpdateModal()"
-                  >지도 수정</b-button>
+                    >지도 수정</b-button
+                  >
                   <a
                     :href="
                       `https://map.kakao.com/link/map/${companyDistrictDto.nameKr},${companyDistrictDto.lat},${companyDistrictDto.lon}`
                     "
                     target="_blank"
                     class="btn btn-sm btn-outline-info"
-                  >크게보기</a>
+                    >크게보기</a
+                  >
                 </div>
               </div>
             </div>
@@ -136,7 +155,9 @@
       <div class="col col-12 col-lg-7 my-3">
         <BaseCard title="타입 정보">
           <template v-slot:head>
-            <b-button variant="primary" v-b-modal.add_delivery_space>추가하기</b-button>
+            <b-button variant="primary" v-b-modal.add_delivery_space
+              >추가하기</b-button
+            >
           </template>
           <template v-slot:body>
             <!-- 타입 리스트 -->
@@ -197,25 +218,43 @@
           />
         </div>
         <div class="text-center mt-2">
-          <b-button variant="danger" @click="removeDistrictImage()">대표 이미지 삭제</b-button>
+          <b-button variant="danger" @click="removeDistrictImage()"
+            >대표 이미지 삭제</b-button
+          >
         </div>
       </div>
       <b-form-row>
         <b-col cols="12" md="6" class="mt-2">
           <label>지점명</label>
-          <input type="text" v-model="companyDistrictUpdateDto.nameKr" class="form-control" />
+          <input
+            type="text"
+            v-model="companyDistrictUpdateDto.nameKr"
+            class="form-control"
+          />
         </b-col>
         <b-col cols="12" md="6" class="mt-2">
           <label>지점명</label>
-          <input type="text" v-model="companyDistrictUpdateDto.nameKr" class="form-control" />
+          <input
+            type="text"
+            v-model="companyDistrictUpdateDto.nameKr"
+            class="form-control"
+          />
         </b-col>
         <b-col cols="12" md="6" class="mt-2">
           <label>지점명(영문)</label>
-          <input type="text" v-model="companyDistrictUpdateDto.nameEng" class="form-control" />
+          <input
+            type="text"
+            v-model="companyDistrictUpdateDto.nameEng"
+            class="form-control"
+          />
         </b-col>
         <b-col cols="12" md="6" class="mt-2">
           <label>주소</label>
-          <input type="text" v-model="addressData.address" class="form-control" />
+          <input
+            type="text"
+            v-model="addressData.address"
+            class="form-control"
+          />
           <!-- <input
             type="text"
             v-model="addressData.address"
@@ -235,7 +274,8 @@
               v-for="amenity in amenityList"
               :key="amenity.no"
               :value="amenity.no"
-            >{{ amenity.amenityName }}</b-form-checkbox>
+              >{{ amenity.amenityName }}</b-form-checkbox
+            >
           </b-form-checkbox-group>
         </b-col>
         <b-col cols="12" md="6" class="mt-2">
@@ -250,12 +290,17 @@
               v-for="company in companySelect"
               :key="company.no"
               :value="company.no"
-            >{{ company.nameKr }}</option>
+              >{{ company.nameKr }}</option
+            >
           </select>
         </b-col>
         <b-col cols="12" md="6" class="mt-2">
           <label>지점 이미지</label>
-          <b-form-file placeholder="파일 선택" ref="fileInput" @input="upload($event)"></b-form-file>
+          <b-form-file
+            placeholder="파일 선택"
+            ref="fileInput"
+            @input="upload($event)"
+          ></b-form-file>
         </b-col>
       </b-form-row>
     </b-modal>
@@ -484,17 +529,11 @@ export default class CompanyDistrictDetail extends BaseComponent {
       };
 
     const map = new window.kakao.maps.Map(mapContainer, mapOption);
-    const content = `<img src="https://pngriver.com/wp-content/uploads/2018/04/Download-Building-Transparent-PNG-081.png" style="position:absolute;min-width:90px;max-width:90px"><br><span class="badge badge-primary" style="font-size:21px;border-radius: 100px;opacity: 82%">${district.deliverySpaces.length}</span>`;
+    const content = `<span class="badge badge-primary" style="font-size:21px;border-radius: 100px;opacity: 82%">${district.deliverySpaces.length}</span>`;
     const markerPosition = new window.kakao.maps.LatLng(
       district.lat,
       district.lon,
     );
-
-    const imageSrc =
-      'https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-512.png';
-    const imageSize = new window.kakao.maps.Size(54, 54);
-
-    // const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
 
     const customOverlay = new window.kakao.maps.CustomOverlay({
       position: markerPosition,

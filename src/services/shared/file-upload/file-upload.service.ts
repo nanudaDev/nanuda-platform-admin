@@ -48,7 +48,7 @@ class FileUploadService extends BaseService {
     },
     [UPLOAD_TYPE.DELIVERY_SPACE]: {
       path: 'delivery-space',
-      sizeLimit: 1024 * 1024 * 10,
+      sizeLimit: 1500 * 1024 * 10,
       fileType: FileType.IMAGE,
       mimeType: FileType.IMAGE,
       accessType: FileAccessType.PUBLIC,

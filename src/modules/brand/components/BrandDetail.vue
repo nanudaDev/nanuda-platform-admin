@@ -1,17 +1,26 @@
 <template>
   <section v-if="brandDto">
-    <SectionTitle title="브랜드 관리" divider>
+    <SectionTitle :title="`${brandDto.nameKr} - 브랜드 정보`" divider>
       <template v-slot:rightArea>
-        <router-link to="/brand" class="btn btn-secondary">목록으로</router-link>
+        <router-link to="/brand" class="btn btn-secondary"
+          >목록으로</router-link
+        >
       </template>
     </SectionTitle>
     <b-row>
-      <b-col md="5" class="my-3">
+      <b-col lg="5" class="my-3">
         <BaseCard title="브랜드 정보">
           <template v-slot:head>
             <div>
-              <b-button variant="danger" v-b-modal.delete_brand>삭제하기</b-button>
-              <b-button variant="primary" v-b-modal.update_brand @click="showUpdateModal()">수정하기</b-button>
+              <b-button variant="danger" v-b-modal.delete_brand
+                >삭제하기</b-button
+              >
+              <b-button
+                variant="primary"
+                v-b-modal.update_brand
+                @click="showUpdateModal()"
+                >수정하기</b-button
+              >
             </div>
           </template>
           <template v-slot:body>
@@ -34,7 +43,10 @@
                   "
                 >
                   <div>
-                    <div v-for="image in brandDto.mainMenuImage" :key="image.endpoint">
+                    <div
+                      v-for="image in brandDto.mainMenuImage"
+                      :key="image.endpoint"
+                    >
                       <b-img-lazy
                         :src="image.endpoint"
                         class="rounded mx-auto d-block company-logo"
@@ -51,36 +63,61 @@
                 </li>
                 <li v-if="brandDto.category">
                   업종 : {{ brandDto.category.nameKr }}
-                  <span
-                    v-if="brandDto.category.code"
-                  >({{ brandDto.category.code }} )</span>
+                  <span v-if="brandDto.category.code"
+                    >({{ brandDto.category.code }} )</span
+                  >
                 </li>
                 <li v-if="brandDto.desc">설명 : {{ brandDto.desc }}</li>
                 <li v-if="brandDto.showYn">
                   노출 여부 :
                   <b-badge
                     :variant="brandDto.showYn === 'Y' ? 'success' : 'danger'"
-                  >{{ brandDto.showYn }}</b-badge>
+                    >{{ brandDto.showYn }}</b-badge
+                  >
                 </li>
-                <li v-if="brandDto.costValue">창업 비용: {{brandDto.costValue.value}}</li>
-                <li v-if="brandDto.storeCountValue">매장 수: {{brandDto.storeCountValue.value}}</li>
-                <li v-if="brandDto.difficultyValue">조리 난이도: {{brandDto.difficultyValue.value}}</li>
+                <li v-if="brandDto.costValue">
+                  창업 비용: {{ brandDto.costValue.value }}
+                </li>
+                <li v-if="brandDto.storeCountValue">
+                  매장 수: {{ brandDto.storeCountValue.value }}
+                </li>
+                <li v-if="brandDto.difficultyValue">
+                  조리 난이도: {{ brandDto.difficultyValue.value }}
+                </li>
               </ul>
             </div>
-          </template>
-          <div class="bg-light border text-right p-3" v-if="todayRevenue">
-            <div class="pt-1">
-              <b-row no-gutters align-h="between" align-v="end">
-                <span>TODAY'S REVENUE</span>
-                <h4>
-                  <b>{{ todayRevenue | currencyTransformer }}</b>
-                </h4>
-              </b-row>
+            <div
+              class="bg-light border text-right p-3 mt-3"
+              v-if="revenues && revenues.length > 0"
+            >
+              <div>
+                <b-row
+                  no-gutters
+                  align-h="between"
+                  align-v="center"
+                  class="mb-2"
+                  v-for="revenue in revenues"
+                  :key="revenue.nanudaName"
+                >
+                  <span> {{ revenue.nanudaName }}</span>
+                  <p>{{ revenue.sum | currencyTransformer }}</p>
+                </b-row>
+              </div>
+              <div class="pt-2 border-top">
+                <b-row no-gutters align-h="between" align-v="end">
+                  <span>TOTAL</span>
+                  <h4>
+                    <b>
+                      {{ totalRevenue | currencyTransformer }}
+                    </b>
+                  </h4>
+                </b-row>
+              </div>
             </div>
-          </div>
+          </template>
         </BaseCard>
       </b-col>
-      <b-col md="7" class="my-3">
+      <b-col lg="7" class="my-3">
         <BaseCard title="브랜드 메뉴" no-body>
           <template v-slot:head>
             <div>
@@ -91,7 +128,7 @@
             <table class="table table-hover" v-if="menuTotalCount">
               <thead>
                 <tr>
-                  <th scope="col">NO</th>
+                  <th scope="col">ID</th>
                   <th scope="col">메뉴명</th>
                   <th scope="col">노출 여부</th>
                   <th scope="col">대표 메뉴</th>
@@ -104,10 +141,16 @@
                   <td>{{ menu.no }}</td>
                   <td>{{ menu.nameKr }}</td>
                   <td>
-                    <b-badge :variant="menu.showYn === 'Y' ? 'success' : 'danger'">{{ menu.showYn }}</b-badge>
+                    <b-badge
+                      :variant="menu.showYn === 'Y' ? 'success' : 'danger'"
+                      >{{ menu.showYn }}</b-badge
+                    >
                   </td>
                   <td>
-                    <b-badge :variant="menu.mainYn === 'Y' ? 'success' : 'danger'">{{ menu.mainYn }}</b-badge>
+                    <b-badge
+                      :variant="menu.mainYn === 'Y' ? 'success' : 'danger'"
+                      >{{ menu.mainYn }}</b-badge
+                    >
                   </td>
                   <td>{{ menu.createdAt | dateTransformer }}</td>
                   <td>
@@ -115,7 +158,8 @@
                       variant="primary"
                       v-b-modal.update_menu
                       @click="showMenuUpdateModal(menu.no)"
-                    >수정하기</b-button>
+                      >수정하기</b-button
+                    >
                   </td>
                 </tr>
               </tbody>
@@ -137,6 +181,44 @@
           </div>
         </BaseCard>
       </b-col>
+      <!-- <b-col cols="12" class="my-3" v-if="revenues && revenues.length > 0">
+        <BaseCard title="키오스크 매출">
+          <template v-slot:head>
+            {{ brandDto.updatedAt | dateTransformer }} 기준
+          </template>
+          <template v-slot:body>
+            <b-row align-v="start">
+              <b-col md="5">
+                <BrandRevenusGraph />
+              </b-col>
+              <b-col md="7">
+                <table class="table table-lg">
+                  <tfoot>
+                    <tr>
+                      <th class="text-left" scope="row">
+                        <b>TOTAL</b>
+                      </th>
+                      <td class="text-right">
+                        <h4>{{ totalRevenue | currencyTransformer }}</h4>
+                      </td>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    <tr v-for="revenue in revenues" :key="revenue.nanudaName">
+                      <th class="text-left" scope="row">
+                        {{ revenue.nanudaName }}
+                      </th>
+                      <td class="text-right">
+                        {{ revenue.sum | currencyTransformer }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </b-col>
+            </b-row>
+          </template>
+        </BaseCard>
+      </b-col> -->
     </b-row>
     <!-- 브랜드 수정 모달 -->
     <b-modal
@@ -148,7 +230,12 @@
       size="lg"
     >
       <b-row no-gutters align-h="end">
-        <b-form-group label="노출 여부" label-size="sm" label-text-align="right" label-cols="8">
+        <b-form-group
+          label="노출 여부"
+          label-size="sm"
+          label-text-align="right"
+          label-cols="8"
+        >
           <b-form-checkbox
             switch
             size="lg"
@@ -165,7 +252,10 @@
             <span class="red-text">*</span>
           </label>
           <div class="my-2">
-            <div v-if="brandDto.logo && brandDto.logo.length > 0 && !logoChanged" class="mb-4">
+            <div
+              v-if="brandDto.logo && brandDto.logo.length > 0 && !logoChanged"
+              class="mb-4"
+            >
               <div v-for="logo in brandDto.logo" :key="logo.endpoint">
                 <b-img-lazy
                   :src="logo.endpoint"
@@ -177,12 +267,17 @@
             <div v-if="!brandDto.logo && !newBrandLogo" class="mb-4">
               <b-img-lazy
                 class="rounded mx-auto d-block company-logo"
-                :src="require('@/assets/images/general/common/img_placeholder.jpg')"
+                :src="
+                  require('@/assets/images/general/common/img_placeholder.jpg')
+                "
                 rounded
                 style="max-height:80px"
               />
             </div>
-            <div v-if="newBrandLogo && newBrandLogo.length > 0 && logoChanged" class="mb-4">
+            <div
+              v-if="newBrandLogo && newBrandLogo.length > 0 && logoChanged"
+              class="mb-4"
+            >
               <div v-for="logo in newBrandLogo" :key="logo.endpoint">
                 <b-img-lazy
                   :src="logo.endpoint"
@@ -191,12 +286,18 @@
                 />
               </div>
               <div class="text-center mt-2">
-                <b-button variant="danger" @click="removeBrandLogo()">로고 제거</b-button>
+                <b-button variant="danger" @click="removeBrandLogo()"
+                  >로고 제거</b-button
+                >
               </div>
             </div>
           </div>
           <div class="custom-file">
-            <b-form-file placeholder="파일 첨부" ref="fileInput" @input="upload($event)"></b-form-file>
+            <b-form-file
+              placeholder="파일 첨부"
+              ref="fileInput"
+              @input="upload($event)"
+            ></b-form-file>
           </div>
         </b-col>
         <b-col cols="12" md="6" class="mb-3">
@@ -213,7 +314,10 @@
               "
               class="mb-4"
             >
-              <div v-for="image in brandDto.mainMenuImage" :key="image.endpoint">
+              <div
+                v-for="image in brandDto.mainMenuImage"
+                :key="image.endpoint"
+              >
                 <b-img-lazy
                   :src="image.endpoint"
                   class="rounded mx-auto d-block company-logo"
@@ -222,7 +326,10 @@
               </div>
             </div>
 
-            <div v-if="newMainMenu && newMainMenu.length > 0 && menuChanged" class="mb-4">
+            <div
+              v-if="newMainMenu && newMainMenu.length > 0 && menuChanged"
+              class="mb-4"
+            >
               <div v-for="image in newMainMenu" :key="image.endpoint">
                 <b-img-lazy
                   :src="image.endpoint"
@@ -231,13 +338,20 @@
                 />
               </div>
               <div class="text-center mt-2">
-                <b-button variant="danger" @click="removeMainMenu()">메뉴 이미지 제거</b-button>
+                <b-button variant="danger" @click="removeMainMenu()"
+                  >메뉴 이미지 제거</b-button
+                >
               </div>
             </div>
-            <div v-if="!brandDto.mainMenuImage && newMainMenu.length === 0" class="mb-4">
+            <div
+              v-if="!brandDto.mainMenuImage && newMainMenu.length === 0"
+              class="mb-4"
+            >
               <b-img-lazy
                 class="rounded mx-auto d-block company-logo"
-                :src="require('@/assets/images/general/common/img_placeholder.jpg')"
+                :src="
+                  require('@/assets/images/general/common/img_placeholder.jpg')
+                "
                 rounded
                 style="max-height:80px"
               />
@@ -265,7 +379,8 @@
               v-for="category in foodCategorySelect"
               :key="category.code"
               :value="category.no"
-            >{{ category.nameKr }}</option>
+              >{{ category.nameKr }}</option
+            >
           </select>
         </b-col>
         <b-col cols="12" md="4" class="mb-3">
@@ -281,8 +396,18 @@
         </b-col>
         <b-col cols="4" md="4" class="mb-3">
           <label>창업 비용</label>
-          <select id="brand_cost" class="custom-select" v-model="brandUpdateDto.cost" required>
-            <option v-for="cost in costValues" :key="cost.code" :value="cost.key">{{ cost.value }}</option>
+          <select
+            id="brand_cost"
+            class="custom-select"
+            v-model="brandUpdateDto.cost"
+            required
+          >
+            <option
+              v-for="cost in costValues"
+              :key="cost.code"
+              :value="cost.key"
+              >{{ cost.value }}</option
+            >
           </select>
         </b-col>
         <b-col cols="4" md="4" class="mb-3">
@@ -297,7 +422,8 @@
               v-for="storeCount in storeCountValues"
               :key="storeCount.code"
               :value="storeCount.key"
-            >{{ storeCount.value }}</option>
+              >{{ storeCount.value }}</option
+            >
           </select>
         </b-col>
         <b-col cols="4" md="4" class="mb-3">
@@ -312,7 +438,8 @@
               v-for="difficulty in difficultyValues"
               :key="difficulty.code"
               :value="difficulty.key"
-            >{{ difficulty.value }}</option>
+              >{{ difficulty.value }}</option
+            >
           </select>
         </b-col>
         <b-col cols="12" md="12" class="mb-3">
@@ -350,7 +477,8 @@
               :key="type"
               :value="type"
               name="space_type_no"
-            >{{ type }}</b-form-radio>
+              >{{ type }}</b-form-radio
+            >
           </b-form-group>
         </b-col>
       </b-form-row>
@@ -381,6 +509,7 @@ import BaseComponent from '@/core/base.component';
 import Component from 'vue-class-component';
 import {
   BrandDto,
+  BrandKioskMapperDto,
   BrandUpdateDto,
   FoodCategoryDto,
   MenuDto,
@@ -401,12 +530,15 @@ import MenuCreate from '../../menu/components/MenuCreate.vue';
 import MenuUpdate from '../../menu/components/MenuUpdate.vue';
 import { CONST_SPACE_TYPE, SPACE, SPACE_TYPE } from '@/services/shared';
 import { CodeManagementDto } from '@/services/init/dto';
+import BrandKioskMapperService from '../../../services/brand-kiosk-mapper.service';
+// import BrandRevenusGraph from './BrandRevenusGraph.vue';
 
 @Component({
   name: 'BrandDetail',
   components: {
     MenuCreate,
     MenuUpdate,
+    // BrandRevenusGraph,
   },
 })
 export default class BrandDetail extends BaseComponent {
@@ -430,8 +562,9 @@ export default class BrandDetail extends BaseComponent {
   private storeCountValues: CodeManagementDto[] = [];
   private costValues: CodeManagementDto[] = [];
   private difficultyValues: CodeManagementDto[] = [];
-  private todayRevenue = null;
-
+  private brandRevenueInfo = new BrandKioskMapperDto();
+  private revenues: BrandKioskMapperDto[] = [];
+  private totalRevenue = null;
   // find for detail
   findOne(id) {
     BrandService.findOne(id).subscribe(res => {
@@ -442,13 +575,28 @@ export default class BrandDetail extends BaseComponent {
         this.newMainMenu = [];
         this.menuChanged = false;
       }
-      if (this.brandDto.kioskNo) {
-        PaymentListService.findRevenueForBrand(this.brandDto.kioskNo).subscribe(
-          res => {
-            this.todayRevenue = res.data.sum;
-          },
-        );
-      }
+      // if (this.brandDto.kioskNo) {
+      //   PaymentListService.findRevenueForBrand(this.brandDto.kioskNo).subscribe(
+      //     res => {
+      //       this.todayRevenue = res.data.sum;
+      //     },
+      //   );
+      // }
+      this.brandRevenueInfo.brandNo = id;
+      // this.brandRevenueInfo.started = new Date('2020-10-06');
+      BrandKioskMapperService.getRevenueForBrand(
+        this.brandRevenueInfo,
+      ).subscribe(res => {
+        this.revenues = res.data;
+
+        function amount(item) {
+          return item.sum;
+        }
+        function sum(prev, next) {
+          return prev + next;
+        }
+        this.totalRevenue = this.revenues.map(amount).reduce(sum);
+      });
     });
   }
 

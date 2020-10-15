@@ -236,7 +236,7 @@
           </b-col>
           <b-col cols="6" lg="3" class="mt-2">
             <label>
-              전회번호
+              전화번호
               <span class="red-text">*</span>
             </label>
             <input

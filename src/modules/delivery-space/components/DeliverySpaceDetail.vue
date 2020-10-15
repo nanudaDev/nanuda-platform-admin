@@ -126,6 +126,9 @@
                 >{{ amenity.amenityName }}</b-badge
               >
             </li>
+            <li v-if="deliverySpaceDto.desc">
+              공간 설명: {{ deliverySpaceDto.desc }}
+            </li>
           </ul>
           <div
             v-if="deliverySpaceDto.brands && deliverySpaceDto.brands.length > 0"

@@ -147,7 +147,7 @@
       <b-col md="4" class="my-3">
         <BaseCard title="업체 정보">
           <template v-slot:body>
-            <div v-if="deliveryFounderConsult.deliverySpaces">
+            <div v-if="deliveryFounderConsult.deliverySpace">
               <ul>
                 <li>
                   업체명 :
@@ -156,14 +156,14 @@
                       name: 'CompanyDetail',
                       params: {
                         id:
-                          deliveryFounderConsult.deliverySpaces.companyDistrict
+                          deliveryFounderConsult.deliverySpace.companyDistrict
                             .company.no,
                       },
                     }"
                   >
                     <b>
                       {{
-                        deliveryFounderConsult.deliverySpaces.companyDistrict
+                        deliveryFounderConsult.deliverySpace.companyDistrict
                           .company.nameKr
                       }}
                     </b>
@@ -171,35 +171,35 @@
                 </li>
                 <li
                   v-if="
-                    deliveryFounderConsult.deliverySpaces.companyDistrict
-                      .company.phone
+                    deliveryFounderConsult.deliverySpace.companyDistrict.company
+                      .phone
                   "
                 >
                   전화번호 :
                   <b>
                     {{
-                      deliveryFounderConsult.deliverySpaces.companyDistrict
+                      deliveryFounderConsult.deliverySpace.companyDistrict
                         .company.phone
                     }}
                   </b>
                 </li>
                 <li
                   v-if="
-                    deliveryFounderConsult.deliverySpaces.companyDistrict
-                      .company.email
+                    deliveryFounderConsult.deliverySpace.companyDistrict.company
+                      .email
                   "
                 >
                   이메일 :
                   <b>
                     {{
-                      deliveryFounderConsult.deliverySpaces.companyDistrict
+                      deliveryFounderConsult.deliverySpace.companyDistrict
                         .company.email
                     }}
                   </b>
                 </li>
                 <li
                   v-if="
-                    deliveryFounderConsult.deliverySpaces.companyDistrict.nameKr
+                    deliveryFounderConsult.deliverySpace.companyDistrict.nameKr
                   "
                 >
                   지점명 :
@@ -208,14 +208,14 @@
                       name: 'CompanyDistrictDetail',
                       params: {
                         id:
-                          deliveryFounderConsult.deliverySpaces.companyDistrict
+                          deliveryFounderConsult.deliverySpace.companyDistrict
                             .no,
                       },
                     }"
                   >
                     <b>
                       {{
-                        deliveryFounderConsult.deliverySpaces.companyDistrict
+                        deliveryFounderConsult.deliverySpace.companyDistrict
                           .nameKr
                       }}
                     </b>
@@ -225,7 +225,7 @@
                   지점 주소 :
                   <b>
                     {{
-                      deliveryFounderConsult.deliverySpaces.companyDistrict
+                      deliveryFounderConsult.deliverySpace.companyDistrict
                         .address
                     }}
                   </b>
@@ -235,14 +235,14 @@
                   <b-badge
                     :variant="
                       getStatusColor(
-                        deliveryFounderConsult.deliverySpaces.companyDistrict
+                        deliveryFounderConsult.deliverySpace.companyDistrict
                           .companyDistrictStatus,
                       )
                     "
                     class="badge-pill p-2 mr-2"
                   >
                     {{
-                      deliveryFounderConsult.deliverySpaces.companyDistrict
+                      deliveryFounderConsult.deliverySpace.companyDistrict
                         .companyDistrictStatus | enumTransformer
                     }}
                   </b-badge>
@@ -257,12 +257,12 @@
         <BaseCard title="타입 정보">
           <template v-slot:head>
             <router-link
-              v-if="deliveryFounderConsult.deliverySpaces"
+              v-if="deliveryFounderConsult.deliverySpace"
               variant="outline-info"
               :to="{
                 name: 'DeliverySpaceDetail',
                 params: {
-                  id: deliveryFounderConsult.deliverySpaces.no,
+                  id: deliveryFounderConsult.deliverySpace.no,
                 },
               }"
               class="btn btn-outline-info"
@@ -270,63 +270,59 @@
             >
           </template>
           <template v-slot:body>
-            <div v-if="deliveryFounderConsult.deliverySpaces">
+            <div v-if="deliveryFounderConsult.deliverySpace">
               <ul>
-                <li v-if="deliveryFounderConsult.deliverySpaces.no">
+                <li v-if="deliveryFounderConsult.deliverySpace.no">
                   타입 ID :
-                  <b>{{ deliveryFounderConsult.deliverySpaces.no }}</b>
+                  <b>{{ deliveryFounderConsult.deliverySpace.no }}</b>
                 </li>
-                <li v-if="deliveryFounderConsult.deliverySpaces.typeName">
+                <li v-if="deliveryFounderConsult.deliverySpace.typeName">
                   타입명 :
-                  <b>{{ deliveryFounderConsult.deliverySpaces.typeName }}</b>
+                  <b>{{ deliveryFounderConsult.deliverySpace.typeName }}</b>
                 </li>
-                <li v-if="deliveryFounderConsult.deliverySpaces.deposit">
+                <li v-if="deliveryFounderConsult.deliverySpace.deposit">
                   보증금 :
-                  <b
-                    >{{ deliveryFounderConsult.deliverySpaces.deposit }} 만원</b
-                  >
+                  <b>{{ deliveryFounderConsult.deliverySpace.deposit }} 만원</b>
                 </li>
-                <li v-if="deliveryFounderConsult.deliverySpaces.monthlyRentFee">
+                <li v-if="deliveryFounderConsult.deliverySpace.monthlyRentFee">
                   월 임대료 :
                   <b>
-                    {{ deliveryFounderConsult.deliverySpaces.monthlyRentFee }}
+                    {{ deliveryFounderConsult.deliverySpace.monthlyRentFee }}
                     만원
                   </b>
                 </li>
                 <li
-                  v-if="deliveryFounderConsult.deliverySpaces.monthlyUtilityFee"
+                  v-if="deliveryFounderConsult.deliverySpace.monthlyUtilityFee"
                 >
                   월 관리비 :
                   <b>
-                    {{
-                      deliveryFounderConsult.deliverySpaces.monthlyUtilityFee
-                    }}
+                    {{ deliveryFounderConsult.deliverySpace.monthlyUtilityFee }}
                     만원
                   </b>
                 </li>
                 <li
                   v-if="
-                    deliveryFounderConsult.deliverySpaces &&
-                      deliveryFounderConsult.deliverySpaces.contracts
+                    deliveryFounderConsult.deliverySpace &&
+                      deliveryFounderConsult.deliverySpace.contracts
                   "
                 >
                   공실 수:
                   <b>
                     {{
-                      deliveryFounderConsult.deliverySpaces.quantity -
-                        deliveryFounderConsult.deliverySpaces.contracts.length
-                    }}/{{ deliveryFounderConsult.deliverySpaces.quantity }}
+                      deliveryFounderConsult.deliverySpace.quantity -
+                        deliveryFounderConsult.deliverySpace.contracts.length
+                    }}/{{ deliveryFounderConsult.deliverySpace.quantity }}
                   </b>
                 </li>
                 <li
                   v-if="
-                    deliveryFounderConsult.deliverySpaces.amenities.length > 0
+                    deliveryFounderConsult.deliverySpace.amenities.length > 0
                   "
                 >
                   주방시설 :
                   <b-badge
                     variant="info"
-                    v-for="amenity in deliveryFounderConsult.deliverySpaces
+                    v-for="amenity in deliveryFounderConsult.deliverySpace
                       .amenities"
                     :key="amenity.no"
                     class="m-1"
@@ -335,15 +331,15 @@
                 </li>
                 <li
                   v-if="
-                    deliveryFounderConsult.deliverySpaces &&
-                      deliveryFounderConsult.deliverySpaces.deliverySpaceOptions
+                    deliveryFounderConsult.deliverySpace &&
+                      deliveryFounderConsult.deliverySpace.deliverySpaceOptions
                         .length > 0
                   "
                 >
                   공간옵션 :
                   <b-badge
                     variant="info"
-                    v-for="option in deliveryFounderConsult.deliverySpaces
+                    v-for="option in deliveryFounderConsult.deliverySpace
                       .deliverySpaceOptions"
                     :key="option.no"
                     class="m-1"
@@ -429,11 +425,7 @@
                   <li>
                     신청 상태 :
                     <b-badge
-                      :variant="
-                        getStatusColor(
-                          deliveryFounderConsult.status,
-                        )
-                      "
+                      :variant="getStatusColor(deliveryFounderConsult.status)"
                       class="badge-pill p-2 mr-2"
                     >
                       {{ deliveryFounderConsult.codeManagement.value }}

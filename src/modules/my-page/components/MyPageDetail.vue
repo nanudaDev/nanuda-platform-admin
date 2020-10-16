@@ -21,15 +21,19 @@
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
 import Component from 'vue-class-component';
-import { AdminDto } from '@/dto';
+import { AdminDto, FounderConsultDto } from '@/dto';
 import { BaseUser } from '@/services/shared/auth';
 import AdminService from '@/services/admin.service';
+import FounderConsultService from '@/services/founder-consult.service'
+import { Pagination } from '@/common';
 
 @Component({
   name: 'MyPageDetail',
 })
 export default class MyPageDetail extends BaseComponent {
   private myPageDto: AdminDto = new AdminDto(BaseUser);
+  private pagination = new Pagination()
+  private founderConsultList: FounderConsultDto[] = []
 
   findOne() {
     AdminService.findMe().subscribe(res => {
@@ -39,8 +43,16 @@ export default class MyPageDetail extends BaseComponent {
     });
   }
 
+  findConsults() {
+    this.pagination.limit = 10
+    FounderConsultService.findMyConsults(this.pagination).subscribe(res => {
+      this.founderConsultList = res.data.items
+    })
+  }
+
   created() {
     this.findOne();
+    this.findConsults()
   }
 }
 </script>

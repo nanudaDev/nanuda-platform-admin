@@ -208,6 +208,7 @@ export default class AdminList extends BaseComponent {
   }
 
   created() {
+    this.dataLoading = true;
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.adminListDto = query;

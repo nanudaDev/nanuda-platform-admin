@@ -179,14 +179,21 @@ export default class AdminList extends BaseComponent {
       this.pagination.page = 1;
     }
     AdminService.findAll(this.adminListDto, this.pagination).subscribe(res => {
-      this.adminList = res.data.items;
-      this.adminTotalCount = res.data.totalCount;
+      if (res) {
+        this.dataLoading = false;
+        this.adminList = res.data.items;
+        this.adminTotalCount = res.data.totalCount;
+        this.$router.push({
+          query: Object.assign(this.adminListDto),
+        });
+      }
     });
   }
 
   clearOut() {
     this.adminListDto = new AdminListDto();
     this.pagination = new Pagination();
+    this.search();
   }
 
   clearOutCreateDto() {

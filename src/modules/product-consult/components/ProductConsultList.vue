@@ -182,10 +182,21 @@
                 {{ productConsult.no }}
               </td>
               <td>
-                {{ productConsult.nanudaUser.name }}
+                <div v-if="productConsult.nanudaUser">
+                  {{ productConsult.nanudaUser.name }}
+                </div>
+                <div v-else>
+                  {{ productConsult.nonUserName }}
+                  <span class="red-text">(비회원)</span>
+                </div>
               </td>
               <td>
-                {{ productConsult.nanudaUser.phone | phoneTransformer }}
+                <div v-if="productConsult.nanudaUser">
+                  {{ productConsult.nanudaUser.phone | phoneTransformer }}
+                </div>
+                <div v-else>
+                  {{ productConsult.nonUserPhone | phoneTransformer }}
+                </div>
               </td>
               <td>
                 <div
@@ -201,7 +212,12 @@
                 </div>
               </td>
               <td>
-                {{ productConsult.availableTime.value }}
+                <div v-if="productConsult.availableTime">
+                  {{ productConsult.availableTime.value }}
+                </div>
+                <div v-else>
+                  -
+                </div>
               </td>
               <td>
                 <b-badge

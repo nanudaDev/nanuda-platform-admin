@@ -11,7 +11,7 @@
       <b-col lg="6" class="my-3">
         <BaseCard title="사용자 정보">
           <template v-slot:head>
-            <div>
+            <div v-if="productConsultDto.nanudaUser">
               <b-button variant="outline-info" v-b-modal.nanuda_user>
                 <b-icon icon="envelope"></b-icon>
                 <span class="ml-2">문자전송</span>
@@ -47,6 +47,21 @@
                 <li v-if="productConsultDto.nanudaUser.gender">
                   성별 :
                   {{ productConsultDto.nanudaUser.gender | enumTransformer }}
+                </li>
+              </ul>
+            </div>
+            <div v-else>
+              <ul class="u-list">
+                <li>
+                  사용자명: {{ productConsultDto.nonUserName }}
+                  <span class="red-text">(비회원)</span>
+                </li>
+
+                <li>
+                  휴대폰 번호 :
+                  <span>{{
+                    productConsultDto.nonUserPhone | phoneTransformer
+                  }}</span>
                 </li>
               </ul>
             </div>

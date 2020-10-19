@@ -21,4 +21,6 @@ export class ProductConsultDto extends BaseDto<ProductConsultDto> {
   nanudaUser?: NanudaUserDto;
   admin?: AdminDto;
   codeManagement?: CodeManagementDto;
+  nonUserName?: string;
+  nonUserPhone?: string;
 }

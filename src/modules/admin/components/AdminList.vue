@@ -190,6 +190,11 @@ export default class AdminList extends BaseComponent {
     });
   }
 
+  // find brand detail
+  findOne(id) {
+    this.$router.push(`/admin/${id}`);
+  }
+
   clearOut() {
     this.adminListDto = new AdminListDto();
     this.pagination = new Pagination();

@@ -419,9 +419,7 @@
                     희망 업종 :
                     <b>{{ deliveryFounderConsult.hopeFoodCategory }}</b>
                   </li>
-                  <li v-if="deliveryFounderConsult.spaceConsultEtc">
-                    문의 내용 : {{ deliveryFounderConsult.spaceConsultEtc }}
-                  </li>
+
                   <li>
                     신청 상태 :
                     <b-badge
@@ -439,8 +437,11 @@
                       }})
                     </span>
                   </li>
+                  <li v-if="deliveryFounderConsult.spaceConsultEtc">
+                    비고 내용 : {{ deliveryFounderConsult.spaceConsultEtc }}
+                  </li>
                   <li v-if="elapsedTime">
-                    경과 시간 :
+                    전달 경과 시간 :
                     {{ elapsedTime }}
                   </li>
                 </ul>
@@ -483,7 +484,7 @@
                       }}
                     </b-badge>
                   </li>
-                  <li
+                  <!-- <li
                     v-if="
                       deliveryFounderConsultManagements &&
                         deliveryFounderConsultManagements.memo
@@ -530,7 +531,7 @@
                         >메모 이력 보기</b-button
                       >
                     </div>
-                  </li>
+                  </li> -->
                 </ul>
               </b-row>
             </div>
@@ -618,6 +619,14 @@
               >
             </datalist>
           </template>
+        </div>
+        <div class="col-12 mb-3">
+          <label for="space_consult_etc">비고 내용</label>
+          <b-form-textarea
+          id="space_consult_etc"
+            style="height:100px;"
+            v-model="deliveryFounderConsultUpdateDto.spaceConsultEtc"
+          ></b-form-textarea>
         </div>
       </div>
     </b-modal>
@@ -848,15 +857,6 @@ export default class FounderConsultDetail extends BaseComponent {
       this.deliveryFounderConsultStatusSelect = res.data;
     });
   }
-
-  // // 상담 메모 management
-  // getFounderConsultManagements(id) {
-  //   FounderConsultManagementService.findForManagement(id).subscribe(res => {
-  //     if (res) {
-  //       this.deliveryFounderConsultManagements = res.data;
-  //     }
-  //   });
-  // }
 
   findOne(id) {
     // find founder consult detail

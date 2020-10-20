@@ -11,149 +11,172 @@
     @ok="updateDeliverySpace()"
   >
     <b-form-row>
-      <b-col lg="12" class="text-right mb-3">
-        <b-row no-gutters align-h="end">
-          <b-form-group
-            label="노출 활성화"
-            label-size="sm"
-            label-text-align="right"
-            label-cols="8"
+      <b-col lg="9">
+        <b-col lg="12" class="text-right mb-3">
+          <b-row no-gutters align-h="end">
+            <b-form-group
+              label="노출 활성화"
+              label-size="sm"
+              label-text-align="right"
+              label-cols="8"
+            >
+              <b-form-checkbox
+                switch
+                size="lg"
+                v-model="deliverySpaceUpdateDto.delYn"
+                :value="delYn[1]"
+                :unchecked-value="delYn[0]"
+              ></b-form-checkbox>
+            </b-form-group>
+            <b-form-group
+              label="업체 측 노출 활성화"
+              label-size="sm"
+              label-text-align="right"
+              label-cols="10"
+            >
+              <b-form-checkbox
+                switch
+                size="lg"
+                v-model="deliverySpaceUpdateDto.showYn"
+                :value="showYn[0]"
+                :unchecked-value="showYn[1]"
+              ></b-form-checkbox>
+            </b-form-group>
+          </b-row>
+        </b-col>
+        <b-form-row>
+          <b-col lg="6" class="mb-3">
+            <label>
+              타입명
+              <span class="red-text">*</span>
+            </label>
+            <b-form-input
+              type="text"
+              v-model="deliverySpaceUpdateDto.typeName"
+            ></b-form-input>
+          </b-col>
+          <b-col lg="6" class="mb-3">
+            <label>건물명</label>
+            <b-form-input
+              type="text"
+              v-model="deliverySpaceUpdateDto.buildingName"
+            ></b-form-input>
+          </b-col>
+        </b-form-row>
+        <b-form-row>
+          <b-col lg="6" class="mb-3">
+            <label>
+              평수
+              <span class="red-text">*</span>
+            </label>
+            <b-form-input
+              type="text"
+              v-model="deliverySpaceUpdateDto.size"
+            ></b-form-input>
+          </b-col>
+          <b-col lg="6" class="mb-3">
+            <label>
+              공간 수
+              <span class="red-text">*</span>
+            </label>
+            <b-form-input
+              type="number"
+              v-model="deliverySpaceUpdateDto.quantity"
+            ></b-form-input>
+          </b-col>
+        </b-form-row>
+        <b-form-row>
+          <b-col lg="6" class="mb-3">
+            <label>
+              보증금 (만원 단위)
+              <span class="red-text">*</span>
+            </label>
+            <b-form-input
+              type="text"
+              v-model="deliverySpaceUpdateDto.deposit"
+            ></b-form-input>
+          </b-col>
+          <b-col lg="6" class="mb-3">
+            <label>
+              월 임대료 (만원 단위)
+              <span class="red-text">*</span>
+            </label>
+            <b-form-input
+              type="text"
+              v-model="deliverySpaceUpdateDto.monthlyRentFee"
+            ></b-form-input>
+          </b-col>
+        </b-form-row>
+        <b-form-row>
+          <b-col lg="6" class="mb-3">
+            <label>
+              월 관리비 (만원 단위)
+              <span class="red-text">*</span>
+            </label>
+            <b-form-input
+              type="text"
+              v-model="deliverySpaceUpdateDto.monthlyUtilityFee"
+            ></b-form-input>
+          </b-col>
+        </b-form-row>
+        <b-col lg="12" class="mb-3">
+          <label>공간 옵션</label>
+          <b-form-checkbox-group
+            id="update_delivery_space_options"
+            v-model="deliverySpaceOptionIds"
+            name="update_delivery_space_options"
           >
             <b-form-checkbox
-              switch
-              size="lg"
-              v-model="deliverySpaceUpdateDto.delYn"
-              :value="delYn[1]"
-              :unchecked-value="delYn[0]"
-            ></b-form-checkbox>
-          </b-form-group>
-        </b-row>
-      </b-col>
-      <b-col lg="3" class="mb-3">
-        <label>
-          타입명
-          <span class="red-text">*</span>
-        </label>
-        <b-form-input
-          type="text"
-          v-model="deliverySpaceUpdateDto.typeName"
-        ></b-form-input>
-      </b-col>
-      <b-col lg="3" class="mb-3">
-        <label>건물명</label>
-        <b-form-input
-          type="text"
-          v-model="deliverySpaceUpdateDto.buildingName"
-        ></b-form-input>
-      </b-col>
-      <b-col lg="3" class="mb-3">
-        <label>
-          평수
-          <span class="red-text">*</span>
-        </label>
-        <b-form-input
-          type="text"
-          v-model="deliverySpaceUpdateDto.size"
-        ></b-form-input>
-      </b-col>
-      <b-col lg="3" class="mb-3">
-        <label>
-          공간 수
-          <span class="red-text">*</span>
-        </label>
-        <b-form-input
-          type="number"
-          v-model="deliverySpaceUpdateDto.quantity"
-        ></b-form-input>
-      </b-col>
-      <b-col lg="3" class="mb-3">
-        <label>
-          보증금 (만원 단위)
-          <span class="red-text">*</span>
-        </label>
-        <b-form-input
-          type="text"
-          v-model="deliverySpaceUpdateDto.deposit"
-        ></b-form-input>
-      </b-col>
-      <b-col lg="3" class="mb-3">
-        <label>
-          월 임대료 (만원 단위)
-          <span class="red-text">*</span>
-        </label>
-        <b-form-input
-          type="text"
-          v-model="deliverySpaceUpdateDto.monthlyRentFee"
-        ></b-form-input>
-      </b-col>
+              v-for="option in deliverySpaceOptionsList"
+              :key="option.no"
+              :value="option.no"
+              @change="addDeliverySpaceOption(option.no)"
+              >{{ option.deliverySpaceOptionName }}</b-form-checkbox
+            >
+          </b-form-checkbox-group>
+        </b-col>
+        <b-col lg="12" class="mb-3">
+          <label>주방 시설</label>
+          <b-form-checkbox-group
+            id="update_kitchen_facility"
+            v-model="amenityIds"
+            name="update_kitchen_facility"
+          >
+            <b-form-checkbox
+              v-for="amenity in amenityList"
+              :key="amenity.no"
+              :value="amenity.no"
+              @change="addAmenity(amenity.no)"
+              >{{ amenity.amenityName }}</b-form-checkbox
+            >
+          </b-form-checkbox-group>
+        </b-col>
+        <b-col lg="12" class="mb-3">
+          <label>브랜드</label>
+          <b-form-checkbox-group
+            id="update_available_barnd"
+            v-model="brandIds"
+            name="update_available_barnd"
+          >
+            <b-form-checkbox
+              v-for="brand in brandList"
+              :key="brand.no"
+              :value="brand.no"
+              @change="addBrand(brand.no)"
+              >{{ brand.nameKr }}</b-form-checkbox
+            >
+          </b-form-checkbox-group>
+        </b-col>
 
-      <b-col lg="3" class="mb-3">
-        <label>
-          월 관리비 (만원 단위)
-          <span class="red-text">*</span>
-        </label>
-        <b-form-input
-          type="text"
-          v-model="deliverySpaceUpdateDto.monthlyUtilityFee"
-        ></b-form-input>
+        <b-col lg="12" class="mb-3">
+          <label>공간 설명 글</label>
+          <b-form-textarea
+            style="height:100px;"
+            v-model="deliverySpaceUpdateDto.desc"
+          ></b-form-textarea>
+        </b-col>
       </b-col>
-      <b-col lg="12" class="mb-3">
-        <label>공간 옵션</label>
-        <b-form-checkbox-group
-          id="update_delivery_space_options"
-          v-model="deliverySpaceOptionIds"
-          name="update_delivery_space_options"
-        >
-          <b-form-checkbox
-            v-for="option in deliverySpaceOptionsList"
-            :key="option.no"
-            :value="option.no"
-            @change="addDeliverySpaceOption(option.no)"
-            >{{ option.deliverySpaceOptionName }}</b-form-checkbox
-          >
-        </b-form-checkbox-group>
-      </b-col>
-      <b-col lg="12" class="mb-3">
-        <label>주방 시설</label>
-        <b-form-checkbox-group
-          id="update_kitchen_facility"
-          v-model="amenityIds"
-          name="update_kitchen_facility"
-        >
-          <b-form-checkbox
-            v-for="amenity in amenityList"
-            :key="amenity.no"
-            :value="amenity.no"
-            @change="addAmenity(amenity.no)"
-            >{{ amenity.amenityName }}</b-form-checkbox
-          >
-        </b-form-checkbox-group>
-      </b-col>
-      <b-col lg="12" class="mb-3">
-        <label>브랜드</label>
-        <b-form-checkbox-group
-          id="update_available_barnd"
-          v-model="brandIds"
-          name="update_available_barnd"
-        >
-          <b-form-checkbox
-            v-for="brand in brandList"
-            :key="brand.no"
-            :value="brand.no"
-            @change="addBrand(brand.no)"
-            >{{ brand.nameKr }}</b-form-checkbox
-          >
-        </b-form-checkbox-group>
-      </b-col>
-
-      <b-col lg="12" class="mb-3">
-        <label>공간 설명 글</label>
-        <b-form-textarea
-          style="height:100px;"
-          v-model="deliverySpaceUpdateDto.desc"
-        ></b-form-textarea>
-      </b-col>
-      <b-col lg="12">
+      <b-col lg="3">
         <label for>이미지</label>
         <b-form-file
           placeholder="파일 선택"
@@ -164,7 +187,32 @@
         ></b-form-file>
         <div v-if="!dataLoading">
           <b-form-row no-gutters class="attatchments-list mt-2">
-            <template v-if="uploadImages && uploadImages.length > 0">
+            <draggable v-model="uploadImages" draggable=".item">
+              <transition-group>
+                <b-col
+                  cols="12"
+                  v-for="(images, index) in uploadImages"
+                  :key="index"
+                  class="p-2 item"
+                >
+                  <div class="attatchments-list-item">
+                    <b-img
+                      :src="images.endpoint"
+                      alt
+                      style="max-width:100%"
+                      class="border rounded"
+                    />
+                    <b-icon
+                      icon="x-circle-fill"
+                      variant="danger"
+                      class="btn-delete-item"
+                      @click="deleteOldImages(images, index)"
+                    ></b-icon>
+                  </div>
+                </b-col>
+              </transition-group>
+            </draggable>
+            <!-- <template v-if="uploadImages && uploadImages.length > 0">
               <b-col
                 cols="2"
                 v-for="(images, index) in uploadImages"
@@ -186,10 +234,10 @@
                   ></b-icon>
                 </div>
               </b-col>
-            </template>
+            </template> -->
             <template v-if="newImages && newImages.length > 0">
               <b-col
-                cols="2"
+                cols="12"
                 v-for="images in newImages"
                 :key="images.originFileName"
                 class="p-2"
@@ -224,7 +272,7 @@
 import BaseComponent from '@/core/base.component';
 import Component from 'vue-class-component';
 import toast from '../../../../resources/assets/js/services/toast.js';
-
+import draggable from 'vuedraggable';
 import {
   AmenityDto,
   BrandDto,
@@ -246,11 +294,13 @@ import { YN, CONST_YN } from '@/common/interfaces';
 
 @Component({
   name: 'DeliverySpaceUpdate',
+  components: {
+    draggable,
+  },
 })
 export default class DeliverySpaceUpdate extends BaseComponent {
   private deliverySpaceDto = new DeliverySpaceDto();
   private deliverySpaceUpdateDto = new DeliverySpaceUpdateDto();
-
   private amenityList: AmenityDto[] = [];
   private amenityIds: number[] = [];
   private attachments: FileAttachmentDto[] = [];
@@ -259,11 +309,10 @@ export default class DeliverySpaceUpdate extends BaseComponent {
   private deliverySpaceOptionIds: number[] = [];
   private deliverySpaceOptionsList: DeliverySpaceOptionDto[] = [];
   private delYn: YN[] = [...CONST_YN];
-
+  private showYn: YN[] = [...CONST_YN];
   private newImages: FileAttachmentDto[] = [];
   private uploadImages: FileAttachmentDto[] = [];
   private selectedImages = [];
-
   private changedImage = false;
   private dataLoading = false;
 

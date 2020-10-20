@@ -12,7 +12,7 @@
         <BaseCard title="사용자 정보">
           <template v-slot:head>
             <div v-if="productConsultDto.nanudaUser">
-              <b-button variant="outline-info" v-b-modal.nanuda_user>
+              <b-button variant="outline-info" v-b-modal.send_message>
                 <b-icon icon="envelope"></b-icon>
                 <span class="ml-2">문자전송</span>
               </b-button>
@@ -125,6 +125,9 @@
                   관심 공간 유형 :
                   {{ productConsultDto.spaceType.displayName }}
                 </li>
+                <li v-else>
+                  관심 상담: 일반/창업 문의
+                </li>
                 <li
                   v-if="
                     productConsultDto.addressInfo &&
@@ -177,7 +180,7 @@
                   </span>
                 </li>
                 <li v-if="productConsultDto.pConsultEtc">
-                  메모 :{{ productConsultDto.pConsultEtc }}
+                  비고 내용 : {{ productConsultDto.pConsultEtc }}
                 </li>
               </ul>
             </div>
@@ -304,6 +307,14 @@
             >
           </select>
         </b-col>
+        <b-col cols="12" class="mb-3">
+          <label for="p_consult_etc">비고 내용</label>
+          <b-form-textarea
+            id="p_consult_etc"
+            style="height:100px;"
+            v-model="productConsultUpdateDto.pConsultEtc"
+          ></b-form-textarea>
+        </b-col>
       </b-form-row>
     </b-modal>
     <!-- 사용자 정보 수정 -->
@@ -357,7 +368,6 @@ export default class ProductConsultDetail extends BaseComponent {
   private productConsultDto = new ProductConsultDto();
   private adminSendMessageDto = new AdminSendMessageDto();
   private confirmDate = new Date();
-
   private productConsultUpdateDto = new ProductConsultUpdateDto();
   private selectedAdmin: AdminDto = new AdminDto(BaseUser);
   private adminList: AdminDto[] = [];

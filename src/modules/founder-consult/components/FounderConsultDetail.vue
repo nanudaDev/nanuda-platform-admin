@@ -2,16 +2,25 @@
   <section>
     <b-row no-gutters align-h="between" align-v="end" class="mb-2">
       <h3>
-        <span v-if="founderConsult.space">{{ founderConsult.space.name }} - 상담 신청</span>
+        <span v-if="founderConsult.space"
+          >{{ founderConsult.space.name }} - 식당형 상담 신청</span
+        >
       </h3>
-      <router-link to="/founder-consult" class="btn btn-secondary text-center">목록으로</router-link>
+      <router-link to="/founder-consult" class="btn btn-secondary text-center"
+        >목록으로</router-link
+      >
     </b-row>
     <b-row align-h="start" align-v="stretch">
       <b-col md="6" class="my-3" v-if="founderConsult.nanudaUser">
         <BaseCard title="사용자 정보">
           <template v-slot:head>
             <div v-if="founderConsult.status !== 'F_DIST_COMPLETE'">
-              <b-button variant="primary" @click="updateNanudaUser()" v-b-modal.nanuda_user>수정하기</b-button>
+              <b-button
+                variant="primary"
+                @click="updateNanudaUser()"
+                v-b-modal.nanuda_user
+                >수정하기</b-button
+              >
             </div>
           </template>
           <template v-slot:body>
@@ -29,11 +38,15 @@
                   휴대폰 번호 :
                   <span>
                     <b>
-                      {{
-                      founderConsult.nanudaUser.phone | phoneTransformer
-                      }}
+                      {{ founderConsult.nanudaUser.phone | phoneTransformer }}
                     </b>
-                    <b-button size="sm" variant="info" pill v-b-modal.send_message class="mx-2 p-1">
+                    <b-button
+                      size="sm"
+                      variant="info"
+                      pill
+                      v-b-modal.send_message
+                      class="mx-2 p-1"
+                    >
                       <b-icon icon="envelope"></b-icon>
                       <span class="d-none">문자전송</span>
                     </b-button>
@@ -51,7 +64,7 @@
                   마지막 로그인 날짜:
                   <b>
                     {{
-                    founderConsult.nanudaUser.lastLoginAt | dateTransformer
+                      founderConsult.nanudaUser.lastLoginAt | dateTransformer
                     }}
                   </b>
                 </li>
@@ -63,7 +76,8 @@
               variant="danger"
               v-if="!founderConsult.nanudaUser.genderInfo"
               class="mt-3"
-            >성별 미입력 상태</b-alert>
+              >성별 미입력 상태</b-alert
+            >
           </template>
         </BaseCard>
       </b-col>
@@ -71,7 +85,12 @@
         <BaseCard title="관리자 정보">
           <template v-slot:head>
             <div>
-              <b-button variant="primary" @click="findAdmin()" v-b-modal.admin_list>수정하기</b-button>
+              <b-button
+                variant="primary"
+                @click="findAdmin()"
+                v-b-modal.admin_list
+                >수정하기</b-button
+              >
             </div>
           </template>
           <template v-slot:body>
@@ -205,7 +224,8 @@
                     v-for="amenity in founderConsult.space.amenities"
                     :key="amenity.no"
                     class="m-1"
-                  >{{ amenity.amenityName }}</b-badge>
+                    >{{ amenity.amenityName }}</b-badge
+                  >
                 </li>
               </ul>
             </div>
@@ -229,7 +249,8 @@
                 @click="updateConsultInfo()"
                 v-b-modal.consult_info
                 v-if="founderConsult.status !== 'F_DIST_COMPLETE'"
-              >수정하기</b-button>
+                >수정하기</b-button
+              >
             </div>
           </template>
           <template v-slot:body>
@@ -252,7 +273,10 @@
                           ? 'success'
                           : 'danger'
                       "
-                    >{{ founderConsult.changUpExpYn | enumTransformer }}</b-badge>
+                      >{{
+                        founderConsult.changUpExpYn | enumTransformer
+                      }}</b-badge
+                    >
                   </li>
                   <li>
                     공간 소유 유무 :
@@ -260,28 +284,30 @@
                       :variant="
                         founderConsult.spaceOwnYn === 'Y' ? 'success' : 'danger'
                       "
-                    >{{ founderConsult.spaceOwnYn }}</b-badge>
+                      >{{ founderConsult.spaceOwnYn }}</b-badge
+                    >
                   </li>
                   <li v-if="founderConsult.hopeFoodCategory">
                     희망 업종 :
                     <b>{{ founderConsult.hopeFoodCategory }}</b>
                   </li>
-                  <li
-                    v-if="founderConsult.spaceConsultEtc"
-                  >문의 내용 : {{ founderConsult.spaceConsultEtc }}</li>
+
                   <li>
                     신청 상태 :
                     <b-badge
-                      :variant="
-                        getStatusColor(founderConsult.status)
-                      "
+                      :variant="getStatusColor(founderConsult.status)"
                       class="badge-pill p-2 mr-2"
-                    >{{ founderConsult.codeManagement.value }}</b-badge>
+                      >{{ founderConsult.codeManagement.value }}</b-badge
+                    >
                     <span class="ml-1" v-if="founderConsult.deliveredAt">
-                      ({{
-                      founderConsult.deliveredAt | dateTransformer
-                      }})
+                      ({{ founderConsult.deliveredAt | dateTransformer }})
                     </span>
+                  </li>
+                  <li v-if="founderConsult.spaceConsultEtc">
+                    비고 내용 : {{ founderConsult.spaceConsultEtc }}
+                  </li>
+                  <li v-else>
+                    비고 내용 없음
                   </li>
                   <!-- <li v-if="elapsedTime">
                     경과 시간 :
@@ -373,7 +399,11 @@
         <FounderConsultManagementHistory />
       </div>
     </b-modal>
-    <b-modal id="nanuda_user" title="사용자정보 수정" @ok="updateFounderConsult()">
+    <b-modal
+      id="nanuda_user"
+      title="사용자정보 수정"
+      @ok="updateFounderConsult()"
+    >
       <div class="form-row">
         <div class="mb-3">
           <b-form-group label="사용자 성별">
@@ -383,22 +413,31 @@
               :key="gender.no"
               :value="gender.key"
               name="gender"
-            >{{ gender.value }}</b-form-radio>
+              >{{ gender.value }}</b-form-radio
+            >
           </b-form-group>
         </div>
       </div>
     </b-modal>
-    <b-modal id="consult_info" title="상담 내용 수정" @ok="updateFounderConsult()">
+    <b-modal
+      id="consult_info"
+      title="상담 내용 수정"
+      @ok="updateFounderConsult()"
+    >
       <div class="form-row">
         <div class="col-12 mb-3">
           <label>신청 상태</label>
-          <select class="custom-select" v-model="founderConsultUpdateDto.status">
+          <select
+            class="custom-select"
+            v-model="founderConsultUpdateDto.status"
+          >
             <option value selected>전체</option>
             <option
               v-for="status in founderConsultStatusSelect"
               :key="status.no"
               :value="status.key"
-            >{{ status.value }}</option>
+              >{{ status.value }}</option
+            >
           </select>
         </div>
         <div class="col-12 mb-3">
@@ -410,7 +449,8 @@
             :value="yn"
             name="changup_exp_yn"
             :id="`changup_exp_yn_${yn}`"
-          >{{ yn | enumTransformer }}</b-form-radio>
+            >{{ yn | enumTransformer }}</b-form-radio
+          >
         </div>
         <div class="col-12 mb-3">
           <label for="hope_food_category">희망 업종</label>
@@ -425,9 +465,18 @@
                 v-for="category in foodCategorySelect"
                 :key="category.code"
                 :value="category.nameKr"
-              >{{ category.nameKr }}</option>
+                >{{ category.nameKr }}</option
+              >
             </datalist>
           </template>
+        </div>
+        <div class="col-12 mb-3">
+          <label for="space_consult_etc">비고 내용</label>
+          <b-form-textarea
+            id="space_consult_etc"
+            style="height:100px;"
+            v-model="founderConsultUpdateDto.spaceConsultEtc"
+          ></b-form-textarea>
         </div>
       </div>
     </b-modal>
@@ -442,9 +491,7 @@
       <p class="mb-2">
         휴대폰 번호 :
         <b class="text-primary">
-          {{
-          founderConsult.nanudaUser.phone | phoneTransformer
-          }}
+          {{ founderConsult.nanudaUser.phone | phoneTransformer }}
         </b>
       </p>
       <b-form-input
@@ -500,12 +547,18 @@
             <td>{{ admin.name }}</td>
             <td>{{ admin.phone | phoneTransformer }}</td>
             <td class="text-center">
-              <button class="btn btn-primary" @click="selectAdmin(admin)">선택</button>
+              <button class="btn btn-primary" @click="selectAdmin(admin)">
+                선택
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
-      <div v-if="selectedAdmin.name" class="py-2 px-4 rounded" style="background-color:#f1f1f1">
+      <div
+        v-if="selectedAdmin.name"
+        class="py-2 px-4 rounded"
+        style="background-color:#f1f1f1"
+      >
         선택한 관리자 :
         <b>{{ selectedAdmin.name }}</b>
       </div>
@@ -612,9 +665,7 @@ export default class FounderConsultDetail extends BaseComponent {
 
   // 상담 내용 수정
   updateConsultInfo() {
-    this.founderConsultUpdateDto.status = this.founderConsult.status;
-    this.founderConsultUpdateDto.changUpExpYn = this.founderConsult.changUpExpYn;
-    this.founderConsultUpdateDto.hopeTime = this.founderConsult.hopeTime;
+    this.founderConsultUpdateDto = this.founderConsult;
     this.getFounderConsultCodes();
     this.getAvailableTimes();
     this.getFoodCategories();
@@ -734,9 +785,8 @@ export default class FounderConsultDetail extends BaseComponent {
   }
 
   created() {
-    const founderConsultId = this.$route.params.id;
-    this.findOne(founderConsultId);
-    this.getFounderConsultManagements(founderConsultId);
+    this.findOne(this.$route.params.id);
+    // this.getFounderConsultManagements(founderConsultId);
   }
 }
 </script>

@@ -43,6 +43,18 @@ class FounderConsultService extends BaseService {
   }
 
   /**
+   * find my consults
+   * @param pagination
+   */
+  findMyConsults(pagination: Pagination) {
+    return super.paginate<FounderConsultDto>(
+      'admin/my-founder-consults',
+      null,
+      pagination,
+    );
+  }
+
+  /**
    * reverse read status
    * @param founderConsultNo
    */

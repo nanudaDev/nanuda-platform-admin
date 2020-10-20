@@ -52,6 +52,21 @@ const componentsRouter: RouteConfig[] = [
           title: '관리자 관리',
         },
       },
+      {
+        path: '/admin/:id([0-9]+)',
+        name: 'AdminDetail',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */ '../../modules/admin/components/AdminDetail.vue'
+          ),
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          detailPage: true,
+          roles: [...CONST_ADMIN_USER],
+          title: '관리자 관리',
+        },
+      },
     ],
   },
   {
@@ -92,7 +107,7 @@ const componentsRouter: RouteConfig[] = [
   },
   {
     path: '/company',
-    name: '업체',
+    name: '업체/공간',
     component: () => import('../../modules/company/Company.vue'),
     children: [
       {
@@ -215,7 +230,7 @@ const componentsRouter: RouteConfig[] = [
   },
   {
     path: '/founder-consult',
-    name: '상담 신청',
+    name: '신청',
     component: () => import('../../modules/founder-consult/FounderConsult.vue'),
     children: [
       {
@@ -320,7 +335,7 @@ const componentsRouter: RouteConfig[] = [
           authRequired: true,
           layout: 'MainLayout',
           roles: [...CONST_ADMIN_USER],
-          title: '상품 상담 신청',
+          title: '상품 상담 신청 관리',
         },
       },
       {

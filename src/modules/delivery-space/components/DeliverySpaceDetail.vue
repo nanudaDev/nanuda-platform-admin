@@ -216,15 +216,18 @@ export default class DeliverySpaceList extends BaseComponent {
 
   // 타입 상세 보기
   findOne(id) {
+    console.log(id);
+    console.log(this.$route.params.id);
     this.findOnePrevious(id);
     this.findOneNext(id);
     if (id !== this.$route.params.id) {
-      this.$router.push(`/company/delivery-space/${id}`);
+      this.$route.params.id = id;
+      this.$router.push(`/company/delivery-space/${this.$route.params.id}`);
     }
-    DeliverySpaceService.findOne(id).subscribe(res => {
+    DeliverySpaceService.findOne(this.$route.params.id).subscribe(res => {
       if (res) {
         this.deliverySpaceDto = res.data;
-        this.$root.$emit('find_contract_list', id);
+        this.$root.$emit('find_contract_list', this.$route.params.id);
       }
     });
   }
@@ -253,17 +256,15 @@ export default class DeliverySpaceList extends BaseComponent {
   }
 
   created() {
-    const id = this.$route.params.id;
-    this.findOne(id);
+    this.findOne(this.$route.params.id);
   }
 
   mounted() {
-    const id = this.$route.params.id;
     this.$root.$on('find_delivery_space', () => {
-      this.findOne(id);
+      this.findOne(this.$route.params.id);
     });
     this.$root.$on('delete_contract_list', () => {
-      this.findOne(id);
+      this.findOne(this.$route.params.id);
     });
   }
 }

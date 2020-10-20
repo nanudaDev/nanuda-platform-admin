@@ -179,14 +179,26 @@ export default class AdminList extends BaseComponent {
       this.pagination.page = 1;
     }
     AdminService.findAll(this.adminListDto, this.pagination).subscribe(res => {
-      this.adminList = res.data.items;
-      this.adminTotalCount = res.data.totalCount;
+      if (res) {
+        this.dataLoading = false;
+        this.adminList = res.data.items;
+        this.adminTotalCount = res.data.totalCount;
+        this.$router.push({
+          query: Object.assign(this.adminListDto),
+        });
+      }
     });
+  }
+
+  // find brand detail
+  findOne(id) {
+    this.$router.push(`/admin/${id}`);
   }
 
   clearOut() {
     this.adminListDto = new AdminListDto();
     this.pagination = new Pagination();
+    this.search();
   }
 
   clearOutCreateDto() {
@@ -201,6 +213,7 @@ export default class AdminList extends BaseComponent {
   }
 
   created() {
+    this.dataLoading = true;
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.adminListDto = query;

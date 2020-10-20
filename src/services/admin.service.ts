@@ -15,6 +15,10 @@ class AdminService extends BaseService {
     return super.get<AdminDto[]>('admin');
   }
 
+  findOne(id) {
+    return super.get<AdminDto>(`admin/${id}`);
+  }
+
   create(adminCreateDto: AdminDto) {
     return super.post<AdminDto>('admin', adminCreateDto);
   }

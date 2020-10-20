@@ -236,6 +236,7 @@ export default class PaymentListSearch extends BaseComponent {
   }
 
   created() {
+    this.paymentListSearchDto.started = new Date();
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.paymentListSearchDto = query;

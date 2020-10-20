@@ -191,8 +191,8 @@
               <transition-group>
                 <b-col
                   cols="12"
-                  v-for="(images, index) in uploadImages"
-                  :key="index"
+                  v-for="images in uploadImages"
+                  :key="images.endpoint"
                   class="p-2 item"
                 >
                   <div class="attatchments-list-item">

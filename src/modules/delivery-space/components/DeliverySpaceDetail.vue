@@ -178,6 +178,13 @@
             @click="showUpdateModal()"
             >수정하기</b-button
           >
+
+          <b-button
+            variant="danger"
+            v-b-modal.delete_delivery_space
+            @click="showUpdateModal()"
+            >영구 삭제하기</b-button
+          >
         </div>
       </b-col>
       <b-col>
@@ -185,6 +192,35 @@
       </b-col>
     </b-row>
     <DeliverySpaceUpdate :deliverySpaceDto="deliverySpaceDto" />
+    <!-- 공간 영구 삭제하기 -->
+    <b-modal
+      id="delete_delivery_space"
+      title="지점 타입 삭제하기"
+      header-bg-variant="danger"
+      header-text-variant="light"
+      hide-footer
+    >
+      <div class="text-center">
+        <p>
+          <b>정말로 삭제하시겠습니까?</b>
+        </p>
+        <div class="mt-3">
+          <input
+            type="text"
+            placeholder="삭제하겠습니다 입력해주세요"
+            name="delete_company"
+            class="form-control"
+            id="delete_company"
+            v-model="deleteDeliverySpaceConfirm"
+          />
+        </div>
+        <div class="mt-2 text-right">
+          <b-button variant="danger" @click="deleteDeliverySpace()"
+            >영구 삭제</b-button
+          >
+        </div>
+      </div>
+    </b-modal>
   </section>
 </template>
 <script lang="ts">
@@ -210,7 +246,7 @@ import toast from '../../../../resources/assets/js/services/toast.js';
 })
 export default class DeliverySpaceList extends BaseComponent {
   private deliverySpaceDto = new DeliverySpaceDto();
-
+  private deleteDeliverySpaceConfirm = null;
   private prevNo = null;
   private nextNo = null;
 
@@ -253,6 +289,19 @@ export default class DeliverySpaceList extends BaseComponent {
   showUpdateModal() {
     this.$root.$emit('update_delivery_space', this.deliverySpaceDto);
     this.findOne(this.$route.params.id);
+  }
+
+  deleteDeliverySpace() {
+    if (this.deleteDeliverySpaceConfirm === '삭제하겠습니다') {
+      DeliverySpaceService.hardDelete(this.$route.params.id).subscribe(res => {
+        if (res) {
+          this.$router.push('/company/delivery-space');
+          toast.success('삭제완료');
+        }
+      });
+    } else {
+      toast.error('삭제하겠습니다 입력해주세요');
+    }
   }
 
   created() {

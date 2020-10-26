@@ -521,6 +521,28 @@ const componentsRouter: RouteConfig[] = [
       },
     ],
   },
+  {
+    path: '/banner',
+    name: '배너',
+    component: () => import('../../modules/banner/Banner.vue'),
+    children: [
+      {
+        path: '/banner',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/banner/components/BannerList.vue'
+          ),
+        name: 'BannerList',
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          title: '배너 관리',
+        },
+      },
+    ],
+  },
   ...kioskComponentRouter,
 ];
 

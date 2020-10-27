@@ -41,14 +41,14 @@
           </b-form-group>
         </b-col>
         <b-col cols="6" md="2" class="mb-3">
-          <b-form-group label="보증금">
+          <b-form-group label="보증금 (만원 단위)">
             <b-form-input
               v-model="deliverySpaceSearchDto.deposit"
             ></b-form-input>
           </b-form-group>
         </b-col>
         <b-col cols="6" md="2" class="mb-3">
-          <b-form-group label="월 임대료">
+          <b-form-group label="월 임대료 (만원 단위)">
             <b-form-input
               v-model="deliverySpaceSearchDto.monthlyRentFee"
             ></b-form-input>
@@ -247,7 +247,6 @@ export default class DeliverySpaceList extends BaseComponent {
   private deliverySpaceDto = new DeliverySpaceDto();
   private deliverySpaceListCount = 0;
   private pagination = new Pagination();
-
   private companySelect: CompanyDto[] = Array<CompanyDto>();
   private dataLoading = false;
 

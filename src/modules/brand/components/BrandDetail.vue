@@ -57,6 +57,15 @@
                 </b-col>
               </b-row>
               <ul class="u-list">
+                <li v-if="brandDto.showYn">
+                  <b>추천 브랜드</b> :
+                  <b-badge
+                    :variant="
+                      brandDto.isRecommendedYn === 'Y' ? 'success' : 'danger'
+                    "
+                    >{{ brandDto.isRecommendedYn }}</b-badge
+                  >
+                </li>
                 <li v-if="brandDto.nameKr">
                   브랜드명 : {{ brandDto.nameKr }}
                   <span v-if="brandDto.nameEng">({{ brandDto.nameEng }})</span>
@@ -68,6 +77,7 @@
                   >
                 </li>
                 <li v-if="brandDto.desc">설명 : {{ brandDto.desc }}</li>
+
                 <li v-if="brandDto.showYn">
                   노출 여부 :
                   <b-badge

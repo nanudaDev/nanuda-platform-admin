@@ -19,7 +19,19 @@
             >
           </datalist>
         </div>
-        <div class="col-sm-4 col-lg-3 mb-3">
+        <div class="col-sm-4 col-lg-1 mb-3">
+          <label>추천 브랜드</label>
+          <select
+            class="custom-select"
+            v-model="brandSearchDto.isRecommendedYn"
+          >
+            <option value>전체</option>
+            <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
+              yn | enumTransformer
+            }}</option>
+          </select>
+        </div>
+        <div class="col-sm-4 col-lg-2 mb-3">
           <b-form-group label="브랜드명">
             <b-form-input v-model="brandSearchDto.nameKr"></b-form-input>
           </b-form-group>
@@ -99,6 +111,7 @@
           >
             업종
           </th>
+
           <th scope="row">로고</th>
           <th
             scope="row"
@@ -109,6 +122,38 @@
             브랜드명
           </th>
           <th scope="row">설명</th>
+          <th
+            scope="row"
+            v-bind:class="{
+              highlighted: brandSearchDto.cost,
+            }"
+          >
+            창업 비용
+          </th>
+          <th
+            scope="row"
+            v-bind:class="{
+              highlighted: brandSearchDto.difficulty,
+            }"
+          >
+            조리 난이도
+          </th>
+          <th
+            scope="row"
+            v-bind:class="{
+              highlighted: brandSearchDto.storeCount,
+            }"
+          >
+            매장 수
+          </th>
+          <th
+            scope="row"
+            v-bind:class="{
+              highlighted: brandSearchDto.isRecommendedYn,
+            }"
+          >
+            추천
+          </th>
           <th
             scope="row"
             v-bind:class="{
@@ -127,6 +172,7 @@
           >
             <td>{{ brand.no }}</td>
             <td>{{ brand.category.nameKr }}</td>
+
             <td style="width:80px">
               <div v-if="brand.logo && brand.logo.length > 0">
                 <div v-for="logo in brand.logo" :key="logo.endpoint">
@@ -141,6 +187,30 @@
             <td>{{ brand.nameKr }}</td>
             <td>
               <template v-if="brand.desc">{{ brand.desc }}</template>
+            </td>
+            <td>
+              <template v-if="brand.costValue">{{
+                brand.costValue.value
+              }}</template>
+              <template v-else> - </template>
+            </td>
+            <td>
+              <template v-if="brand.difficultyValue">{{
+                brand.difficultyValue.value
+              }}</template>
+              <template v-else> - </template>
+            </td>
+            <td>
+              <template v-if="brand.storeCountValue">{{
+                brand.storeCountValue.value
+              }}</template>
+              <template v-else> - </template>
+            </td>
+            <td>
+              <b-badge
+                :variant="brand.isRecommendedYn === 'Y' ? 'success' : 'danger'"
+                >{{ brand.isRecommendedYn }}</b-badge
+              >
             </td>
             <td>
               <b-badge :variant="brand.showYn === 'Y' ? 'success' : 'danger'">{{
@@ -176,6 +246,36 @@
       @cancel="clearOutBrandCreateDto()"
       @ok="createBrand()"
     >
+      <b-row no-gutters align-h="end">
+        <b-form-group
+          label="노출"
+          label-size="sm"
+          label-text-align="right"
+          label-cols="5"
+        >
+          <b-form-checkbox
+            switch
+            size="lg"
+            v-model="brandCreateDto.showYn"
+            :value="ynSelect[0]"
+            :unchecked-value="ynSelect[1]"
+          ></b-form-checkbox>
+        </b-form-group>
+        <b-form-group
+          label="추천 브랜드"
+          label-size="sm"
+          label-text-align="right"
+          label-cols="8"
+        >
+          <b-form-checkbox
+            switch
+            size="lg"
+            v-model="brandCreateDto.isRecommendedYn"
+            :value="ynSelect[0]"
+            :unchecked-value="ynSelect[1]"
+          ></b-form-checkbox>
+        </b-form-group>
+      </b-row>
       <div v-if="brandLogo && brandLogo.length > 0" class="mb-4">
         <div v-for="logo in brandLogo" :key="logo.endpoint">
           <img

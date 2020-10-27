@@ -103,6 +103,14 @@ class DeliverySpaceService extends BaseService {
       deliverySpaceDto,
     );
   }
+
+  /**
+   * hard delete
+   * @param id
+   */
+  hardDelete(id) {
+    return super.delete<any>(`admin/delivery-space/${id}/hard-delete`);
+  }
 }
 
 export default new DeliverySpaceService();

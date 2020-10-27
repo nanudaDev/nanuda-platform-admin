@@ -3,7 +3,7 @@
     <SectionTitle title="지점 타입 관리" divider></SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <b-col cols="6" md="3" class="mb-3">
+        <b-col cols="6" md="2" class="mb-3">
           <b-form-group label="업체명">
             <b-form-input
               list="company_lsit"
@@ -19,24 +19,38 @@
             </datalist>
           </b-form-group>
         </b-col>
-        <b-col cols="6" md="3" class="mb-3">
+        <b-col cols="6" md="2" class="mb-3">
           <b-form-group label="업체 지점명">
             <b-form-input
               v-model="deliverySpaceSearchDto.companyDistrictName"
             ></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="6" md="3" class="mb-3">
+        <b-col cols="6" md="2" class="mb-3">
           <b-form-group label="타입명">
             <b-form-input
               v-model="deliverySpaceSearchDto.typeName"
             ></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="6" md="3" class="mb-3">
+        <b-col cols="6" md="2" class="mb-3">
           <b-form-group label="브랜드명">
             <b-form-input
               v-model="deliverySpaceSearchDto.brandName"
+            ></b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="2" class="mb-3">
+          <b-form-group label="보증금 (만원 단위)">
+            <b-form-input
+              v-model="deliverySpaceSearchDto.deposit"
+            ></b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="2" class="mb-3">
+          <b-form-group label="월 임대료 (만원 단위)">
+            <b-form-input
+              v-model="deliverySpaceSearchDto.monthlyRentFee"
             ></b-form-input>
           </b-form-group>
         </b-col>
@@ -233,7 +247,6 @@ export default class DeliverySpaceList extends BaseComponent {
   private deliverySpaceDto = new DeliverySpaceDto();
   private deliverySpaceListCount = 0;
   private pagination = new Pagination();
-
   private companySelect: CompanyDto[] = Array<CompanyDto>();
   private dataLoading = false;
 

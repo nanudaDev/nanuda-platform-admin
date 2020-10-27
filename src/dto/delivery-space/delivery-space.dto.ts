@@ -27,4 +27,6 @@ export class DeliverySpaceDto extends BaseDto<DeliverySpaceDto> {
   amenities?: AmenityDto[];
   deliverySpaceOptions?: DeliverySpaceOptionDto[];
   contracts?: DeliveryFounderConsultContractDto[];
+  isBestedYn?: YN;
+  isBestedShowYn?: YN;
 }

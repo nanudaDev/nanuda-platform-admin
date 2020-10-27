@@ -57,6 +57,15 @@
                 </b-col>
               </b-row>
               <ul class="u-list">
+                <li v-if="brandDto.showYn">
+                  <b>추천 브랜드</b> :
+                  <b-badge
+                    :variant="
+                      brandDto.isRecommendedYn === 'Y' ? 'success' : 'danger'
+                    "
+                    >{{ brandDto.isRecommendedYn }}</b-badge
+                  >
+                </li>
                 <li v-if="brandDto.nameKr">
                   브랜드명 : {{ brandDto.nameKr }}
                   <span v-if="brandDto.nameEng">({{ brandDto.nameEng }})</span>
@@ -68,6 +77,7 @@
                   >
                 </li>
                 <li v-if="brandDto.desc">설명 : {{ brandDto.desc }}</li>
+
                 <li v-if="brandDto.showYn">
                   노출 여부 :
                   <b-badge
@@ -231,7 +241,21 @@
     >
       <b-row no-gutters align-h="end">
         <b-form-group
-          label="노출 여부"
+          label="노출"
+          label-size="sm"
+          label-text-align="right"
+          label-cols="5"
+        >
+          <b-form-checkbox
+            switch
+            size="lg"
+            v-model="brandUpdateDto.showYn"
+            :value="showYn[0]"
+            :unchecked-value="showYn[1]"
+          ></b-form-checkbox>
+        </b-form-group>
+        <b-form-group
+          label="추천 브랜드"
           label-size="sm"
           label-text-align="right"
           label-cols="8"
@@ -239,7 +263,7 @@
           <b-form-checkbox
             switch
             size="lg"
-            v-model="brandUpdateDto.showYn"
+            v-model="brandUpdateDto.isRecommendedYn"
             :value="showYn[0]"
             :unchecked-value="showYn[1]"
           ></b-form-checkbox>
@@ -575,27 +599,20 @@ export default class BrandDetail extends BaseComponent {
         this.newMainMenu = [];
         this.menuChanged = false;
       }
-      // if (this.brandDto.kioskNo) {
-      //   PaymentListService.findRevenueForBrand(this.brandDto.kioskNo).subscribe(
-      //     res => {
-      //       this.todayRevenue = res.data.sum;
-      //     },
-      //   );
-      // }
       this.brandRevenueInfo.brandNo = id;
-      // this.brandRevenueInfo.started = new Date('2020-10-06');
       BrandKioskMapperService.getRevenueForBrand(
         this.brandRevenueInfo,
       ).subscribe(res => {
         this.revenues = res.data;
-
         function amount(item) {
           return item.sum;
         }
         function sum(prev, next) {
           return prev + next;
         }
-        this.totalRevenue = this.revenues.map(amount).reduce(sum);
+        if (this.revenues && this.revenues.length > 0) {
+          this.totalRevenue = this.revenues.map(amount).reduce(sum);
+        }
       });
     });
   }

@@ -66,7 +66,7 @@
           <strong class="text-primary">{{ bannerTotalCount }}</strong>
         </h5>
       </div>
-      <b-button variant="primary" v-b-modal.add_banner>기사 추가</b-button>
+      <b-button variant="primary" v-b-modal.add_banner>배너 추가</b-button>
     </div>
     <div v-if="!dataLoading" class="table-bordered table-responsive">
       <table class="table table-sm table-hover" v-if="bannerTotalCount">

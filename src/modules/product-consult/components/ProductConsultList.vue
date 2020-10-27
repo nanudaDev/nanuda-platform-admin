@@ -6,13 +6,13 @@
         <b-col cols="4" lg="2" class="mb-3">
           <label>사용자명</label>
           <b-form-input
-            v-model="productConsultListDto.nanudaUserName"
+            v-model="productConsultSearchDto.nanudaUserName"
           ></b-form-input>
         </b-col>
         <b-col cols="4" lg="2" class="mb-3">
           <label>휴대폰 번호</label>
           <b-form-input
-            v-model="productConsultListDto.nanudaUserPhone"
+            v-model="productConsultSearchDto.nanudaUserPhone"
           ></b-form-input>
         </b-col>
         <b-col>
@@ -20,7 +20,7 @@
           <select
             class="custom-select"
             id="user_gender"
-            v-model="productConsultListDto.gender"
+            v-model="productConsultSearchDto.gender"
           >
             <option value selected>전체</option>
             <option
@@ -36,7 +36,7 @@
           <select
             class="custom-select"
             id="changup_exp_yn"
-            v-model="productConsultListDto.changUpExpYn"
+            v-model="productConsultSearchDto.changUpExpYn"
           >
             <option value selected>전체</option>
             <option v-for="yn in expYn" :key="yn" :value="yn">
@@ -49,7 +49,7 @@
           <select
             class="custom-select"
             id="hope_time"
-            v-model="productConsultListDto.hopeTime"
+            v-model="productConsultSearchDto.hopeTime"
           >
             <option value selected>전체</option>
             <option
@@ -66,7 +66,7 @@
             <b-form-input
               list="admin_list"
               id="admin_user"
-              v-model="productConsultListDto.adminName"
+              v-model="productConsultSearchDto.adminName"
             ></b-form-input>
             <datalist id="admin_list">
               <option
@@ -82,7 +82,7 @@
           <label for="product_approve_status">승인 상태</label>
           <b-form-select
             id="product_approve_status"
-            v-model="productConsultListDto.status"
+            v-model="productConsultSearchDto.status"
           >
             <b-select-option value>전체</b-select-option>
             <b-form-select-option
@@ -127,7 +127,7 @@
               <th
                 scope="col"
                 v-bind:class="{
-                  highlighted: productConsultListDto.nanudaUserPhone,
+                  highlighted: productConsultSearchDto.nanudaUserPhone,
                 }"
               >
                 연락처
@@ -135,7 +135,7 @@
               <th
                 scope="col"
                 v-bind:class="{
-                  highlighted: productConsultListDto.gender,
+                  highlighted: productConsultSearchDto.gender,
                 }"
               >
                 성별
@@ -143,7 +143,7 @@
               <th
                 scope="col"
                 v-bind:class="{
-                  highlighted: productConsultListDto.hopeTime,
+                  highlighted: productConsultSearchDto.hopeTime,
                 }"
               >
                 희망 상담 시간대
@@ -151,7 +151,7 @@
               <th
                 scope="col"
                 v-bind:class="{
-                  highlighted: productConsultListDto.changUpExpYn,
+                  highlighted: productConsultSearchDto.changUpExpYn,
                 }"
               >
                 창업 경험 유무
@@ -159,7 +159,7 @@
               <th
                 scope="col"
                 v-bind:class="{
-                  highlighted: productConsultListDto.adminName,
+                  highlighted: productConsultSearchDto.adminName,
                 }"
               >
                 담당자
@@ -175,7 +175,7 @@
           </thead>
           <tbody>
             <tr
-              v-for="productConsult in productConsultLists"
+              v-for="productConsult in productConsultListDto"
               :key="productConsult.no"
             >
               <td>
@@ -305,10 +305,10 @@ import AdminService from '../../../services/admin.service';
   name: 'ProductConsultList',
 })
 export default class ProductConsultList extends BaseComponent {
-  private productConsultListDto = new ProductConsultListDto();
+  private productConsultSearchDto = new ProductConsultListDto();
   private pagination = new Pagination();
   private productConsultTotalCount = null;
-  private productConsultLists: ProductConsultDto[] = [];
+  private productConsultListDto: ProductConsultDto[] = [];
   private dataLoading = false;
   private statusSelect: CodeManagementDto[] = [];
   private adminList: AdminDto[] = [];
@@ -356,14 +356,14 @@ export default class ProductConsultList extends BaseComponent {
       this.pagination.page = 1;
     }
     ProductConsultService.findAll(
-      this.productConsultListDto,
+      this.productConsultSearchDto,
       this.pagination,
     ).subscribe(res => {
-      this.productConsultLists = res.data.items;
+      this.productConsultListDto = res.data.items;
       this.productConsultTotalCount = res.data.totalCount;
       this.dataLoading = false;
       this.$router.push({
-        query: Object.assign(this.productConsultListDto),
+        query: Object.assign(this.productConsultSearchDto),
       });
     });
   }
@@ -374,14 +374,14 @@ export default class ProductConsultList extends BaseComponent {
 
   clearOut() {
     this.pagination.page = 1;
-    this.productConsultListDto = new ProductConsultListDto();
+    this.productConsultSearchDto = new ProductConsultListDto();
     this.search();
   }
 
   created() {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
-      this.productConsultListDto = query;
+      this.productConsultSearchDto = query;
     }
     this.pagination.page = 1;
     this.search();

@@ -26,5 +26,6 @@ export class BrandDto extends BaseDto<BrandDto> {
   storeCountValue?: CodeManagementDto;
   difficultyValue?: CodeManagementDto;
   costValue?: CodeManagementDto;
+  isRecommendedYn?: YN;
   kioskNo?: number;
 }

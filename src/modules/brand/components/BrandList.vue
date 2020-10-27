@@ -246,6 +246,36 @@
       @cancel="clearOutBrandCreateDto()"
       @ok="createBrand()"
     >
+      <b-row no-gutters align-h="end">
+        <b-form-group
+          label="노출"
+          label-size="sm"
+          label-text-align="right"
+          label-cols="5"
+        >
+          <b-form-checkbox
+            switch
+            size="lg"
+            v-model="brandCreateDto.showYn"
+            :value="ynSelect[0]"
+            :unchecked-value="ynSelect[1]"
+          ></b-form-checkbox>
+        </b-form-group>
+        <b-form-group
+          label="추천 브랜드"
+          label-size="sm"
+          label-text-align="right"
+          label-cols="8"
+        >
+          <b-form-checkbox
+            switch
+            size="lg"
+            v-model="brandCreateDto.isRecommendedYn"
+            :value="ynSelect[0]"
+            :unchecked-value="ynSelect[1]"
+          ></b-form-checkbox>
+        </b-form-group>
+      </b-row>
       <div v-if="brandLogo && brandLogo.length > 0" class="mb-4">
         <div v-for="logo in brandLogo" :key="logo.endpoint">
           <img

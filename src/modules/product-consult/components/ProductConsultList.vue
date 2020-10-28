@@ -108,7 +108,6 @@
           <span>TOTAL</span>
           <strong class="text-primary">{{ productConsultTotalCount }}</strong>
         </h5>
-
         <b-form-select v-model="newLimit" class="mt-2" @change="search()">
           <b-form-select-option
             v-for="count in paginationCount"
@@ -118,6 +117,13 @@
           >
         </b-form-select>
       </div>
+      <b-button
+        variant="primary"
+        v-b-modal.update_product_consult_status_nos
+        v-if="selectedProductConsultNos.length > 0"
+        @click="getProductConsultCodes()"
+        >신청 상태 수정</b-button
+      >
     </div>
     <div v-if="!dataLoading">
       <div class="table-responsive" v-if="productConsultTotalCount">
@@ -192,7 +198,7 @@
               <td>
                 <b-form-checkbox
                   :value="productConsult.no"
-                  v-model="selectedProductConsults"
+                  v-model="selectedProductConsultNos"
                 ></b-form-checkbox>
               </td>
               <td>
@@ -316,6 +322,29 @@
         </b-col>
       </b-form-row>
     </b-modal>
+    <b-modal
+      id="update_product_consult_status_nos"
+      title="상품상담 상태 변경"
+      @ok="updateProductConsultNos()"
+    >
+      <b-form-row>
+        <b-col cols="12" class="mb-3">
+          <div>
+            <b-form-select
+              v-model="productConsultUpdateStatusDto.status"
+              class="mt-2"
+            >
+              <b-form-select-option
+                v-for="code in statusSelect"
+                :key="code.no"
+                :value="code.key"
+                >{{ code.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </div>
+        </b-col>
+      </b-form-row>
+    </b-modal>
   </section>
 </template>
 <script lang="ts">
@@ -325,6 +354,7 @@ import {
   AdminDto,
   ProductConsultDto,
   ProductConsultListDto,
+  ProductConsultStatusUpdateDto,
 } from '../../../dto';
 import ProductConsultService from '../../../services/product-consult.service';
 import { CONST_YN, OrderByValue, Pagination, YN } from '@/common';
@@ -362,7 +392,8 @@ export default class ProductConsultList extends BaseComponent {
   private paginationCount: PaginationCount[] = [...CONST_PAGINATION_COUNT];
   private codeManagement: CodeManagementDto[] = [];
   // 선택된 상품 상담 ID
-  private selectedProductConsults: number[] = [];
+  private selectedProductConsultNos: number[] = [];
+  private productConsultUpdateStatusDto = new ProductConsultStatusUpdateDto();
 
   findAdmin() {
     AdminService.findForSelect().subscribe(res => {
@@ -388,6 +419,18 @@ export default class ProductConsultList extends BaseComponent {
     ).subscribe(res => {
       this.search();
     });
+  }
+
+  updateProductConsultNos() {
+    if (this.selectedProductConsultNos.length > 0) {
+      this.productConsultUpdateStatusDto.productConsultNos = this.selectedProductConsultNos;
+      ProductConsultService.updateStatus(
+        this.productConsultUpdateStatusDto,
+      ).subscribe(res => {
+        this.selectedProductConsultNos = [];
+        this.search();
+      });
+    }
   }
 
   // get status color
@@ -446,7 +489,6 @@ export default class ProductConsultList extends BaseComponent {
   }
 
   created() {
-    console.log(this.selectedProductConsults);
     this.newLimit = 50;
     this.pagination.limit = this.newLimit;
     const query = ReverseQueryParamMapper(location.search);

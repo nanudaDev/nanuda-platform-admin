@@ -127,9 +127,8 @@
         >
           <thead>
             <tr>
-              <th>
-                ID
-              </th>
+              <th></th>
+              <th>ID</th>
               <th scope="col">
                 이름
               </th>
@@ -187,6 +186,15 @@
               v-for="productConsult in productConsultListDto"
               :key="productConsult.no"
             >
+              <!-- <td>
+                {{ productConsult.no }}
+              </td> -->
+              <td>
+                <b-form-checkbox
+                  :value="productConsult.no"
+                  v-model="selectedProductConsults"
+                ></b-form-checkbox>
+              </td>
               <td>
                 {{ productConsult.no }}
               </td>
@@ -353,6 +361,8 @@ export default class ProductConsultList extends BaseComponent {
   private newLimit = null;
   private paginationCount: PaginationCount[] = [...CONST_PAGINATION_COUNT];
   private codeManagement: CodeManagementDto[] = [];
+  // 선택된 상품 상담 ID
+  private selectedProductConsults: number[] = [];
 
   findAdmin() {
     AdminService.findForSelect().subscribe(res => {
@@ -436,6 +446,7 @@ export default class ProductConsultList extends BaseComponent {
   }
 
   created() {
+    console.log(this.selectedProductConsults);
     this.newLimit = 50;
     this.pagination.limit = this.newLimit;
     const query = ReverseQueryParamMapper(location.search);

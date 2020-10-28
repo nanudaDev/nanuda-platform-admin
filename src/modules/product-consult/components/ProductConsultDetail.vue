@@ -23,6 +23,12 @@
                 >수정하기</b-button
               >
             </div>
+            <div v-else>
+              <b-button variant="outline-info" v-b-modal.non_user_send_message>
+                <b-icon icon="envelope"></b-icon>
+                <span class="ml-2">문자전송</span>
+              </b-button>
+            </div>
           </template>
           <template v-slot:body>
             <div v-if="productConsultDto.nanudaUser">
@@ -217,6 +223,35 @@
         v-model="adminSendMessageDto.message"
       ></b-form-textarea>
     </b-modal>
+    <!-- 비회원 문자 -->
+    <b-modal
+      id="non_user_send_message"
+      ok-title="전송"
+      cancel-title="취소"
+      :title="`${productConsultDto.nonUserName} (비회원) 사용자에게 문자하기`"
+      @ok="sendMessage()"
+    >
+      <p class="mb-2">
+        휴대폰 번호 :
+        <b class="text-primary">
+          {{ productConsultDto.nonUserPhone | phoneTransformer }}
+        </b>
+      </p>
+      <b-form-input
+        id="title"
+        placeholder="제목"
+        class="mb-2"
+        v-model="adminSendMessageDto.title"
+      ></b-form-input>
+      <b-form-textarea
+        id="message"
+        placeholder="메세지를 입력해주세요.."
+        rows="3"
+        max-rows="6"
+        v-model="adminSendMessageDto.message"
+      ></b-form-textarea>
+    </b-modal>
+
     <!-- 관리자 수정 모달 -->
     <b-modal
       id="admin_list"

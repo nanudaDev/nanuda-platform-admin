@@ -199,14 +199,14 @@
       >
         <thead>
           <tr>
-            <th scope="col">NO</th>
+            <th scope="col">ID</th>
             <th
               scope="col"
               v-bind:class="{
                 highlighted: deliveryFounderConsultSearchDto.deliverySpaceNo,
               }"
             >
-              SPACE ID
+              공간 ID
             </th>
             <th
               scope="col"
@@ -214,7 +214,7 @@
                 highlighted: deliveryFounderConsultSearchDto.nanudaUserName,
               }"
             >
-              USER NAME
+              사용자명
             </th>
             <th
               scope="col"
@@ -222,7 +222,7 @@
                 highlighted: deliveryFounderConsultSearchDto.phone,
               }"
             >
-              USER PHONE
+              연락처
             </th>
             <th
               scope="col"
@@ -230,7 +230,7 @@
                 highlighted: deliveryFounderConsultSearchDto.gender,
               }"
             >
-              GENDER
+              성별
             </th>
             <th
               scope="col"
@@ -238,7 +238,7 @@
                 highlighted: deliveryFounderConsultSearchDto.companyNameKr,
               }"
             >
-              COMPANY
+              업체명
             </th>
             <th
               scope="col"
@@ -247,7 +247,7 @@
                   deliveryFounderConsultSearchDto.companyDistrictNameKr,
               }"
             >
-              DISTRICT
+              지점명
             </th>
             <th
               scope="col"
@@ -255,7 +255,7 @@
                 highlighted: deliveryFounderConsultSearchDto.hopeTime,
               }"
             >
-              AVAILABLE TIME
+              희망 상담 시간대
             </th>
             <th
               scope="col"
@@ -263,7 +263,7 @@
                 highlighted: deliveryFounderConsultSearchDto.changUpExpYn,
               }"
             >
-              EXPERIENCE
+              창업 경험
             </th>
             <th
               scope="col"
@@ -271,16 +271,16 @@
                 highlighted: deliveryFounderConsultSearchDto.viewCount,
               }"
             >
-              VIEW
+              열람
             </th>
-            <th scope="col">CREATED</th>
+
             <th
               scope="col"
               v-bind:class="{
                 highlighted: deliveryFounderConsultSearchDto.adminUserName,
               }"
             >
-              ADMIN
+              관리자명
             </th>
             <th
               scope="col"
@@ -288,9 +288,10 @@
                 highlighted: deliveryFounderConsultSearchDto.status,
               }"
             >
-              STATUS
+              신청 상태
             </th>
             <th scope="col">공간 공실 수</th>
+            <th scope="col">생성날짜</th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -367,7 +368,7 @@
                 >
               </div>
             </td>
-            <td>{{ founderConsult.createdAt | dateTransformer }}</td>
+
             <td>
               <div v-if="founderConsult.admin">
                 {{ founderConsult.admin.name }}
@@ -394,6 +395,7 @@
                 }}/{{ founderConsult.deliverySpace.quantity }}
               </div>
             </td>
+            <td>{{ founderConsult.createdAt | dateTransformer }}</td>
             <td>
               <router-link
                 v-if="founderConsult.no"

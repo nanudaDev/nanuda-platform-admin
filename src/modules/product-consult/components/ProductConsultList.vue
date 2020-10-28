@@ -428,6 +428,7 @@ export default class ProductConsultList extends BaseComponent {
         this.productConsultUpdateStatusDto,
       ).subscribe(res => {
         this.selectedProductConsultNos = [];
+        this.statusSelect = [];
         this.search();
       });
     }

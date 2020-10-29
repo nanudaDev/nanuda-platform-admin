@@ -30,6 +30,10 @@ class BrandService extends BaseService {
   deleteOne(brandNo) {
     return super.delete<BrandDto>(`admin/brand/${brandNo}`);
   }
+
+  findNanudaBrand() {
+    return super.get<BrandDto[]>('admin/brand/recommended');
+  }
 }
 
 export default new BrandService();

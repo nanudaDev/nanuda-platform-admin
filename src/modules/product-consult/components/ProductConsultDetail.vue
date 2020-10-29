@@ -7,7 +7,7 @@
         >
       </template>
     </SectionTitle>
-    <b-row>
+    <b-row v-on:keyup.enter="updateProductConsult()">
       <b-col lg="6" class="my-3">
         <BaseCard title="사용자 정보">
           <template v-slot:head>
@@ -59,15 +59,40 @@
             <div v-else>
               <ul class="u-list">
                 <li>
-                  사용자명: {{ productConsultDto.nonUserName }}
-                  <span class="red-text">(비회원)</span>
+                  <div>
+                    <b-input-group>
+                      <template #prepend>
+                        <b-input-group-text
+                          ><span class="red-text"
+                            >비회원명</span
+                          ></b-input-group-text
+                        >
+                      </template>
+                      <b-form-input
+                        v-model="productConsultDto.nonUserName"
+                      ></b-form-input>
+                      <!-- <template #append>
+                        <b-button
+                          variant="primary"
+                          @click="updateProductConsult()"
+                          >수정</b-button
+                        >
+                      </template> -->
+                    </b-input-group>
+                  </div>
                 </li>
-
                 <li>
-                  휴대폰 번호 :
-                  <span>{{
-                    productConsultDto.nonUserPhone | phoneTransformer
-                  }}</span>
+                  <div>
+                    <b-input-group>
+                      <template #prepend>
+                        <b-input-group-text>휴대번호</b-input-group-text>
+                      </template>
+                      <b-form-input
+                        disabled
+                        v-model="productConsultDto.nonUserPhone"
+                      ></b-form-input>
+                    </b-input-group>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -79,7 +104,13 @@
           <template v-slot:head>
             <div>
               <b-button
+                v-if="!productConsultDto.pConsultManager"
                 variant="primary"
+                @click="assignYourselfAdmin()"
+                >본인으로 정하기</b-button
+              >
+              <b-button
+                variant="secondary"
                 @click="findAdmin()"
                 v-b-modal.admin_list
                 >수정하기</b-button
@@ -113,82 +144,114 @@
       </b-col>
       <b-col lg="12" class="my-3">
         <BaseCard title="상담 상세 정보">
-          <template v-slot:head>
-            <div>
-              <b-button
-                variant="primary"
-                v-b-modal.update_consult_info
-                @click="showUpdateModal()"
-              >
+          <template v-slot:body>
+            <b-row>
+              <b-col lg="6">
+                <ul class="u-list">
+                  <li v-if="productConsultDto.spaceType">
+                    관심 공간 유형 :
+                    {{ productConsultDto.spaceType.displayName }}
+                  </li>
+                  <li v-else>
+                    관심 상담: 일반/창업 문의
+                  </li>
+                  <li
+                    v-if="
+                      productConsultDto.addressInfo &&
+                        productConsultDto.addressInfo.name
+                    "
+                  >
+                    관심 창업 지역 :
+                    {{ productConsultDto.addressInfo.name }}
+                  </li>
+                  <li v-if="productConsultDto.availableTime">
+                    통화 가능 시간 :
+                    {{ productConsultDto.availableTime.value }}
+                  </li>
+                  <li v-if="productConsultDto.hopeDate">
+                    희망 방문 일자 :
+                    {{ productConsultDto.hopeDate }}
+                  </li>
+                  <!-- <li>
+                    확정 방문 일자 :
+                    <span v-if="productConsultDto.confirmDate">
+                      {{ productConsultDto.confirmDate | dateTransformer }}
+                    </span>
+                    <span v-else>
+                      미정
+                    </span>
+                  </li> -->
+                  <li>
+                    창업 경험 유무 :
+                    <b-badge
+                      :variant="
+                        productConsultDto.changUpExpYn === 'Y'
+                          ? 'success'
+                          : 'danger'
+                      "
+                      >{{
+                        productConsultDto.changUpExpYn | enumTransformer
+                      }}</b-badge
+                    >
+                  </li>
+                  <li>
+                    <label for="product_consult_brand">관심 브랜드</label>
+                    <b-form-select
+                      id="product_consult_brand"
+                      v-model="productConsultDto.brandNo"
+                    >
+                      <b-form-select-option
+                        v-for="brand in brandList"
+                        :key="brand.no"
+                        :value="brand.no"
+                        >{{ brand.nameKr }}</b-form-select-option
+                      >
+                      <b-form-select-option :value="0"
+                        >기타</b-form-select-option
+                      >
+                      <b-form-select-option :value="-1"
+                        >미정</b-form-select-option
+                      >
+                      <b-form-select-option :value="null"
+                        >없음</b-form-select-option
+                      >
+                    </b-form-select>
+                  </li>
+                  <li v-if="productConsultDto.codeManagement">
+                    <label for="product_approve_status">신청 상태</label>
+                    <b-form-select
+                      id="product_approve_status"
+                      v-model="productConsultDto.status"
+                    >
+                      <b-select-option value>전체</b-select-option>
+                      <b-form-select-option
+                        v-for="status in statusSelect"
+                        :key="status.no"
+                        :value="status.key"
+                        >{{ status.value }}</b-form-select-option
+                      >
+                    </b-form-select>
+                    <span class="ml-1" v-if="productConsultDto.updatedAt">
+                      ({{ productConsultDto.updatedAt | dateTransformer }})
+                    </span>
+                  </li>
+                </ul>
+              </b-col>
+              <b-col lg="6">
+                비고 내용 : <br />
+                <b-form-textarea
+                  id="productConsultEtc"
+                  v-model="productConsultDto.pConsultEtc"
+                  placeholder="내용 입력해주세요"
+                  rows="7"
+                  max-rows="12"
+                ></b-form-textarea>
+              </b-col>
+            </b-row>
+            <div class="text-center mt-3">
+              <b-button variant="primary" @click="updateProductConsult()">
                 수정하기
               </b-button>
-            </div>
-          </template>
-          <template v-slot:body>
-            <div>
-              <ul class="u-list">
-                <li v-if="productConsultDto.spaceType">
-                  관심 공간 유형 :
-                  {{ productConsultDto.spaceType.displayName }}
-                </li>
-                <li v-else>
-                  관심 상담: 일반/창업 문의
-                </li>
-                <li
-                  v-if="
-                    productConsultDto.addressInfo &&
-                      productConsultDto.addressInfo.name
-                  "
-                >
-                  관심 창업 지역 :
-                  {{ productConsultDto.addressInfo.name }}
-                </li>
-                <li v-if="productConsultDto.availableTime">
-                  통화 가능 시간 :
-                  {{ productConsultDto.availableTime.value }}
-                </li>
-                <li v-if="productConsultDto.hopeDate">
-                  희망 방문 일자 :
-                  {{ productConsultDto.hopeDate }}
-                </li>
-                <li>
-                  확정 방문 일자 :
-                  <span v-if="productConsultDto.confirmDate">
-                    {{ productConsultDto.confirmDate | dateTransformer }}
-                  </span>
-                  <span v-else>
-                    미정
-                  </span>
-                </li>
-                <li>
-                  창업 경험 유무 :
-                  <b-badge
-                    :variant="
-                      productConsultDto.changUpExpYn === 'Y'
-                        ? 'success'
-                        : 'danger'
-                    "
-                    >{{
-                      productConsultDto.changUpExpYn | enumTransformer
-                    }}</b-badge
-                  >
-                </li>
-                <li v-if="productConsultDto.codeManagement">
-                  신청 상태 :
-                  <b-badge
-                    :variant="getStatusColor(productConsultDto.status)"
-                    class="badge-pill p-2"
-                  >
-                    {{ productConsultDto.codeManagement.value }}
-                  </b-badge>
-                  <span class="ml-1" v-if="productConsultDto.updatedAt">
-                    ({{ productConsultDto.updatedAt | dateTransformer }})
-                  </span>
-                </li>
-                <li v-if="productConsultDto.pConsultEtc">
-                  비고 내용 : {{ productConsultDto.pConsultEtc }}
-                </li>
-              </ul>
             </div>
           </template>
         </BaseCard>
@@ -298,60 +361,6 @@
         class="mt-4 justify-content-center"
       ></b-pagination>
     </b-modal>
-    <!-- 상품 상세 정보 -->
-    <b-modal
-      id="update_consult_info"
-      title="상담 내용 수정"
-      ok-title="수정"
-      cancel-title="취소"
-      @ok="updateProductConsult()"
-      @cancel="clearOutUpdateDto()"
-      @hide="clearOutUpdateDto()"
-    >
-      <b-form-row>
-        <b-col cols="12" class="mb-3">
-          <label for="update_confirm_date">확정 방문 일자</label>
-          <b-form-datepicker
-            id="update_confirm_date"
-            v-model="confirmDate"
-          ></b-form-datepicker>
-        </b-col>
-        <b-col cols="12" class="mb-3">
-          <label for="changup_exp_yn">창업 경험 유무</label>
-          <b-form-radio
-            v-model="productConsultUpdateDto.changUpExpYn"
-            v-for="yn in expYn"
-            :key="yn"
-            :value="yn"
-            name="changup_exp_yn"
-            :id="`changup_exp_yn_${yn}`"
-            >{{ yn | enumTransformer }}</b-form-radio
-          >
-        </b-col>
-        <b-col cols="12" class="mb-3">
-          <label>신청 상태</label>
-          <select
-            class="custom-select"
-            v-model="productConsultUpdateDto.status"
-          >
-            <option
-              v-for="status in statusSelect"
-              :key="status.no"
-              :value="status.key"
-              >{{ status.value }}</option
-            >
-          </select>
-        </b-col>
-        <b-col cols="12" class="mb-3">
-          <label for="p_consult_etc">비고 내용</label>
-          <b-form-textarea
-            id="p_consult_etc"
-            style="height:100px;"
-            v-model="productConsultUpdateDto.pConsultEtc"
-          ></b-form-textarea>
-        </b-col>
-      </b-form-row>
-    </b-modal>
     <!-- 사용자 정보 수정 -->
     <b-modal
       id="nanuda_user"
@@ -381,20 +390,23 @@ import {
   AdminDto,
   AdminListDto,
   AdminSendMessageDto,
+  BrandDto,
+  BrandListDto,
   ProductConsultDto,
   ProductConsultUpdateDto,
 } from '@/dto';
 import ProductConsultService from '@/services/product-consult.service';
 import { APPROVAL_STATUS, PRODUCT_CONSULT } from '@/services/shared';
 import { Component, Vue } from 'vue-property-decorator';
-import { getStatusColor } from '../../../core/utils/status-color.util';
-import SmsService from '../../../services/sms.service';
+import { getStatusColor } from '@/core/utils/status-color.util';
+import SmsService from '@//services/sms.service';
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { BaseUser } from '@/services/shared/auth';
-import AdminService from '../../../services/admin.service';
+import AdminService from '@/services/admin.service';
 import { CONST_YN, Pagination, YN } from '@/common';
 import { CodeManagementDto } from '@/services/init/dto';
-import CodeManagementService from '../../../services/code-management.service';
+import BrandService from '@/services/brand.service';
+import CodeManagementService from '@/services/code-management.service';
 
 @Component({
   name: 'ProductConsultDetail',
@@ -412,6 +424,8 @@ export default class ProductConsultDetail extends BaseComponent {
   private expYn: YN[] = [...CONST_YN];
   private statusSelect: CodeManagementDto[] = [];
   private genderSelect: CodeManagementDto[] = [];
+  private brandDto = new BrandListDto();
+  private brandList: BrandDto[] = [];
 
   // get status color
   getStatusColor(status: PRODUCT_CONSULT) {
@@ -432,10 +446,22 @@ export default class ProductConsultDetail extends BaseComponent {
     });
   }
 
+  assignYourselfAdmin() {
+    ProductConsultService.assignAdmin(this.productConsultDto.no).subscribe(
+      res => {
+        this.findOne(this.productConsultDto.no);
+      },
+    );
+  }
+
   findOne(id) {
     ProductConsultService.findOne(id).subscribe(res => {
       if (res) {
+        BrandService.findNanudaBrand().subscribe(res => {
+          this.brandList = res.data;
+        });
         this.productConsultDto = res.data;
+        this.getProductConsultCodes();
       }
     });
   }
@@ -470,19 +496,19 @@ export default class ProductConsultDetail extends BaseComponent {
   // update product consult
   updateProductConsult() {
     if (this.selectedAdmin) {
-      this.productConsultUpdateDto.pConsultManager = this.selectedAdmin.no;
+      this.productConsultDto.pConsultManager = this.selectedAdmin.no;
     }
     if (this.confirmDate) {
-      this.productConsultUpdateDto.confirmDate = this.confirmDate;
+      this.productConsultDto.confirmDate = this.confirmDate;
     }
 
     ProductConsultService.update(
-      this.$route.params.id,
-      this.productConsultUpdateDto,
+      this.productConsultDto.no,
+      this.productConsultDto,
     ).subscribe(res => {
       if (res) {
         toast.success('수정완료');
-        this.findOne(this.$route.params.id);
+        this.findOne(this.productConsultDto.no);
       }
     });
   }

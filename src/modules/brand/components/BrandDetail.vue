@@ -613,6 +613,17 @@
             >
           </select>
         </b-col>
+        <b-col
+          cols="4"
+          md="4"
+          class="mb-3"
+          v-if="brandDto.isRecommendedYn === showYn[0]"
+        >
+          <label>URL 경로</label>
+          <b-input-group prepend="/">
+            <b-form-input v-model="brandUpdateDto.urlPath"></b-form-input>
+          </b-input-group>
+        </b-col>
         <b-col cols="12" md="12" class="mb-3">
           <label>브랜드 설명</label>
           <textarea
@@ -628,6 +639,7 @@
             <b class="text-primary">{{ brandUpdateDto.desc.length }}</b> / 100
           </p>
         </b-col>
+
         <b-col cols="12" md="4">
           <label>키오스크 아이디</label>
           <b-form-input v-model="brandUpdateDto.kioskNo"></b-form-input>

@@ -29,5 +29,6 @@ export class BrandDto extends BaseDto<BrandDto> {
   difficultyValue?: CodeManagementDto;
   costValue?: CodeManagementDto;
   isRecommendedYn?: YN;
+  urlPath?: string;
   kioskNo?: number;
 }

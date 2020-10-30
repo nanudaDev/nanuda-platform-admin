@@ -144,7 +144,7 @@
             >
           </select>
         </div>
-        <div class="col-6 col-lg-2 mb-3">
+        <!-- <div class="col-6 col-lg-2 mb-3">
           <label for="view_count">열람 유무</label>
           <select
             class="custom-select"
@@ -156,7 +156,7 @@
               {{ yn | viewTransformer }}
             </option>
           </select>
-        </div>
+        </div> -->
       </div>
       <b-row align-h="center">
         <b-btn-group>
@@ -180,12 +180,12 @@
       >
         <thead>
           <tr>
-            <th scope="col">NO</th>
+            <th scope="col">ID</th>
             <th
               scope="col"
               v-bind:class="{ highlighted: founderConsultSearchDto.spaceNo }"
             >
-              SPACE ID
+              공간 ID
             </th>
             <!-- <th
               scope="col"
@@ -199,31 +199,31 @@
                 highlighted: founderConsultSearchDto.nanudaUserName,
               }"
             >
-              USER NAME
+              사용자명
             </th>
             <th
               scope="col"
               v-bind:class="{ highlighted: founderConsultSearchDto.phone }"
             >
-              USER PHONE
+              연락처
             </th>
             <th
               scope="col"
               v-bind:class="{ highlighted: founderConsultSearchDto.gender }"
             >
-              GENDER
+              성별
             </th>
             <th
               scope="col"
               v-bind:class="{ highlighted: founderConsultSearchDto.address }"
             >
-              ADDRESS
+              공간 주소
             </th>
             <th
               scope="col"
               v-bind:class="{ highlighted: founderConsultSearchDto.hopeTime }"
             >
-              AVAILABLE TIME
+              희망 상담 시간대
             </th>
             <th
               scope="col"
@@ -231,29 +231,24 @@
                 highlighted: founderConsultSearchDto.changUpExpYn,
               }"
             >
-              EXPERIENCE
+              창업 경험
             </th>
-            <th
-              scope="col"
-              v-bind:class="{ highlighted: founderConsultSearchDto.viewCount }"
-            >
-              VIEW
-            </th>
-            <th scope="col">CREATED</th>
+
             <th
               scope="col"
               v-bind:class="{
                 highlighted: founderConsultSearchDto.adminUserName,
               }"
             >
-              ADMIN
+              관리자
             </th>
             <th
               scope="col"
               v-bind:class="{ highlighted: founderConsultSearchDto.status }"
             >
-              STATUS
+              신청 상태
             </th>
+            <th scope="col">생성날짜</th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -296,7 +291,7 @@
               >
               <div v-else>-</div>
             </td>
-            <td>
+            <!-- <td>
               <div v-if="founderConsult.viewCount">
                 <b-badge
                   :variant="
@@ -305,8 +300,8 @@
                   >{{ founderConsult.viewCount }}</b-badge
                 >
               </div>
-            </td>
-            <td>{{ founderConsult.createdAt | dateTransformer }}</td>
+            </td> -->
+
             <td>
               <div v-if="founderConsult.admin">
                 {{ founderConsult.admin.name }}
@@ -320,6 +315,7 @@
                 >{{ founderConsult.codeManagement.value }}</b-badge
               >
             </td>
+            <td>{{ founderConsult.createdAt | dateTransformer }}</td>
             <td>
               <router-link
                 v-if="founderConsult.space"

@@ -26,6 +26,7 @@ export enum UPLOAD_TYPE {
   COMPANY_USER_ATTACHMENT = 'company-user-attachment',
   COMPANY_DISTRICT = 'company-district',
   BRAND_LOGO = 'brand-logo',
+  BRAND_BANNER = 'brand-banner',
   NOTICE_BOARD = 'notice-board',
   MENU = 'menu',
   MAIN_MENU_IMAGE = 'main-menu-image',
@@ -103,6 +104,14 @@ class FileUploadService extends BaseService {
     },
     [UPLOAD_TYPE.BRAND_LOGO]: {
       path: 'brand-logo',
+      sizeLimit: 1024 * 1024 * 10,
+      fileType: FileType.IMAGE,
+      mimeType: FileType.IMAGE,
+      accessType: FileAccessType.PUBLIC,
+      acl: ACL.PUBLIC,
+    },
+    [UPLOAD_TYPE.BRAND_BANNER]: {
+      path: 'brand-banner',
       sizeLimit: 1024 * 1024 * 10,
       fileType: FileType.IMAGE,
       mimeType: FileType.IMAGE,

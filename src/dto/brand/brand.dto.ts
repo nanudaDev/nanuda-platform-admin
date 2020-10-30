@@ -17,6 +17,8 @@ export class BrandDto extends BaseDto<BrandDto> {
   admin?: AdminDto;
   category?: FoodCategoryDto;
   logo?: FileAttachmentDto[];
+  mainBanner?: FileAttachmentDto[];
+  sideBanner?: FileAttachmentDto[];
   mainMenuImage?: FileAttachmentDto[];
   showYn?: YN;
   menus?: MenuDto[];
@@ -27,5 +29,6 @@ export class BrandDto extends BaseDto<BrandDto> {
   difficultyValue?: CodeManagementDto;
   costValue?: CodeManagementDto;
   isRecommendedYn?: YN;
+  urlPath?: string;
   kioskNo?: number;
 }

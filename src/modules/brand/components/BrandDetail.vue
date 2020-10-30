@@ -324,6 +324,7 @@
             ></b-form-file>
           </div>
         </b-col>
+
         <b-col cols="12" md="6" class="mb-3">
           <label>
             메인 메뉴 이미지
@@ -389,6 +390,152 @@
             ></b-form-file>
           </div>
         </b-col>
+
+        <b-col
+          cols="12"
+          md="6"
+          class="mb-3"
+          v-if="brandDto.isRecommendedYn === showYn[0]"
+        >
+          <label>
+            메인 배너 이미지
+          </label>
+          <div class="my-2">
+            <div
+              v-if="
+                brandDto.mainBanner &&
+                  brandDto.mainBanner.length > 0 &&
+                  !mainBannerChanged
+              "
+              class="mb-4"
+            >
+              <div
+                v-for="mainBanner in brandDto.mainBanner"
+                :key="mainBanner.endpoint"
+              >
+                <b-img-lazy
+                  :src="mainBanner.endpoint"
+                  class="rounded mx-auto d-block company-logo"
+                  style="max-height:80px"
+                />
+              </div>
+            </div>
+            <div
+              v-if="!brandDto.mainBanner && newMainBanner.length < 1"
+              class="mb-4"
+            >
+              <b-img-lazy
+                class="rounded mx-auto d-block company-logo"
+                :src="
+                  require('@/assets/images/general/common/img_placeholder.jpg')
+                "
+                rounded
+                style="max-height:80px"
+              />
+            </div>
+            <div
+              v-if="
+                newMainBanner && newMainBanner.length > 0 && mainBannerChanged
+              "
+              class="mb-4"
+            >
+              <div v-for="banner in newMainBanner" :key="banner.endpoint">
+                <b-img-lazy
+                  :src="banner.endpoint"
+                  class="rounded mx-auto d-block company-logo"
+                  style="max-height:80px"
+                />
+              </div>
+              <div class="text-center mt-2">
+                <b-button variant="danger" @click="removeMainBanner()"
+                  >메인 배너 제거</b-button
+                >
+              </div>
+            </div>
+          </div>
+          <div class="custom-file">
+            <b-form-file
+              placeholder="파일 첨부"
+              ref="fileInputMainBanner"
+              @input="uploadMainBanner($event)"
+            ></b-form-file>
+          </div>
+        </b-col>
+
+        <b-col
+          cols="12"
+          md="6"
+          class="mb-3"
+          v-if="brandDto.isRecommendedYn === showYn[0]"
+        >
+          <label>
+            사이드 배너
+          </label>
+          <div class="my-2">
+            <div
+              v-if="
+                brandDto.sideBanner &&
+                  brandDto.sideBanner.length > 0 &&
+                  !sideBannerChanged
+              "
+              class="mb-4"
+            >
+              <div
+                v-for="sideBanner in brandDto.sideBanner"
+                :key="sideBanner.endpoint"
+              >
+                <b-img-lazy
+                  :src="sideBanner.endpoint"
+                  class="rounded mx-auto d-block company-logo"
+                  style="max-height:80px"
+                />
+              </div>
+            </div>
+            <div
+              v-if="!brandDto.sideBanner && newSideBanner.length < 1"
+              class="mb-4"
+            >
+              <b-img-lazy
+                class="rounded mx-auto d-block company-logo"
+                :src="
+                  require('@/assets/images/general/common/img_placeholder.jpg')
+                "
+                rounded
+                style="max-height:80px"
+              />
+            </div>
+            <div
+              v-if="
+                newSideBanner && newSideBanner.length > 0 && sideBannerChanged
+              "
+              class="mb-4"
+            >
+              <div
+                v-for="sideBanner in newSideBanner"
+                :key="sideBanner.endpoint"
+              >
+                <b-img-lazy
+                  :src="sideBanner.endpoint"
+                  class="rounded mx-auto d-block company-logo"
+                  style="max-height:80px"
+                />
+              </div>
+              <div class="text-center mt-2">
+                <b-button variant="danger" @click="removeSideBanner()"
+                  >사이드 배너 제거</b-button
+                >
+              </div>
+            </div>
+          </div>
+          <div class="custom-file">
+            <b-form-file
+              placeholder="파일 첨부"
+              ref="fileInputSideBanner"
+              @input="uploadSideBanner($event)"
+            ></b-form-file>
+          </div>
+        </b-col>
+
         <b-col cols="12" md="4" class="mb-3">
           <label>
             업종 카테고리
@@ -466,6 +613,17 @@
             >
           </select>
         </b-col>
+        <b-col
+          cols="4"
+          md="4"
+          class="mb-3"
+          v-if="brandDto.isRecommendedYn === showYn[0]"
+        >
+          <label>URL 경로</label>
+          <b-input-group prepend="/">
+            <b-form-input v-model="brandUpdateDto.urlPath"></b-form-input>
+          </b-input-group>
+        </b-col>
         <b-col cols="12" md="12" class="mb-3">
           <label>브랜드 설명</label>
           <textarea
@@ -481,6 +639,7 @@
             <b class="text-primary">{{ brandUpdateDto.desc.length }}</b> / 100
           </p>
         </b-col>
+
         <b-col cols="12" md="4">
           <label>키오스크 아이디</label>
           <b-form-input v-model="brandUpdateDto.kioskNo"></b-form-input>
@@ -575,7 +734,11 @@ export default class BrandDetail extends BaseComponent {
   private newBrandLogo: FileAttachmentDto[] = [];
   private logoChanged = false;
   private newMainMenu: FileAttachmentDto[] = [];
+  private newMainBanner: FileAttachmentDto[] = [];
+  private newSideBanner: FileAttachmentDto[] = [];
   private menuChanged = false;
+  private mainBannerChanged = false;
+  private sideBannerChanged = false;
   private showYn: YN[] = [...CONST_YN];
   private spaceType = [2, 1];
   private menus: MenuDto[] = [];
@@ -589,6 +752,7 @@ export default class BrandDetail extends BaseComponent {
   private brandRevenueInfo = new BrandKioskMapperDto();
   private revenues: BrandKioskMapperDto[] = [];
   private totalRevenue = null;
+
   // find for detail
   findOne(id) {
     BrandService.findOne(id).subscribe(res => {
@@ -598,6 +762,10 @@ export default class BrandDetail extends BaseComponent {
         this.logoChanged = false;
         this.newMainMenu = [];
         this.menuChanged = false;
+        this.newMainBanner = [];
+        this.mainBannerChanged = false;
+        this.newSideBanner = [];
+        this.sideBannerChanged = false;
       }
       this.brandRevenueInfo.brandNo = id;
       BrandKioskMapperService.getRevenueForBrand(
@@ -641,6 +809,18 @@ export default class BrandDetail extends BaseComponent {
       this.brandUpdateDto.mainMenuImage = this.newMainMenu;
     } else {
       delete this.brandUpdateDto.mainMenuImage;
+    }
+
+    if (this.newMainBanner.length > 0) {
+      this.brandUpdateDto.mainBanner = this.newMainBanner;
+    } else {
+      delete this.brandUpdateDto.mainBanner;
+    }
+
+    if (this.newSideBanner.length > 0) {
+      this.brandUpdateDto.sideBanner = this.newSideBanner;
+    } else {
+      delete this.brandUpdateDto.sideBanner;
     }
     BrandService.update(this.$route.params.id, this.brandUpdateDto).subscribe(
       res => {
@@ -737,6 +917,56 @@ export default class BrandDetail extends BaseComponent {
     this.newMainMenu = [];
     this.$refs['fileInputMainMenu'].reset();
     this.menuChanged = false;
+  }
+
+  // upload brand logo
+  async uploadMainBanner(file: File) {
+    if (file) {
+      const attachments = await FileUploadService.upload(
+        UPLOAD_TYPE.BRAND_BANNER,
+        [file],
+      );
+      this.newMainBanner = [];
+      this.newMainBanner.push(
+        ...attachments.filter(
+          fileUpload =>
+            fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
+        ),
+      );
+      this.mainBannerChanged = true;
+    }
+  }
+
+  // remove main menu
+  removeMainBanner() {
+    this.newMainBanner = [];
+    this.$refs['fileInputMainBanner'].reset();
+    this.mainBannerChanged = false;
+  }
+
+  // upload brand logo
+  async uploadSideBanner(file: File) {
+    if (file) {
+      const attachments = await FileUploadService.upload(
+        UPLOAD_TYPE.BRAND_BANNER,
+        [file],
+      );
+      this.newSideBanner = [];
+      this.newSideBanner.push(
+        ...attachments.filter(
+          fileUpload =>
+            fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
+        ),
+      );
+      this.sideBannerChanged = true;
+    }
+  }
+
+  // remove main menu
+  removeSideBanner() {
+    this.newSideBanner = [];
+    this.$refs['fileInputSideBanner'].reset();
+    this.sideBannerChanged = false;
   }
 
   deleteOne() {

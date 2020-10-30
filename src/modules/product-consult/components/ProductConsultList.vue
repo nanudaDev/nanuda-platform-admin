@@ -79,7 +79,7 @@
           </template>
         </b-col>
         <b-col cols="4" lg="2" class="mb-3">
-          <label for="product_approve_status">승인 상태</label>
+          <label for="product_approve_status">신청 상태</label>
           <b-form-select
             id="product_approve_status"
             v-model="productConsultSearchDto.status"
@@ -108,7 +108,22 @@
           <span>TOTAL</span>
           <strong class="text-primary">{{ productConsultTotalCount }}</strong>
         </h5>
+        <b-form-select v-model="newLimit" class="mt-2" @change="search()">
+          <b-form-select-option
+            v-for="count in paginationCount"
+            :key="count"
+            :value="count"
+            >{{ count }}개</b-form-select-option
+          >
+        </b-form-select>
       </div>
+      <b-button
+        variant="primary"
+        v-b-modal.update_product_consult_status_nos
+        v-if="selectedProductConsultNos.length > 0"
+        @click="getProductConsultCodes()"
+        >신청 상태 수정</b-button
+      >
     </div>
     <div v-if="!dataLoading">
       <div class="table-responsive" v-if="productConsultTotalCount">
@@ -118,9 +133,8 @@
         >
           <thead>
             <tr>
-              <th>
-                ID
-              </th>
+              <th></th>
+              <th>ID</th>
               <th scope="col">
                 이름
               </th>
@@ -178,6 +192,15 @@
               v-for="productConsult in productConsultListDto"
               :key="productConsult.no"
             >
+              <!-- <td>
+                {{ productConsult.no }}
+              </td> -->
+              <td>
+                <b-form-checkbox
+                  :value="productConsult.no"
+                  v-model="selectedProductConsultNos"
+                ></b-form-checkbox>
+              </td>
               <td>
                 {{ productConsult.no }}
               </td>
@@ -239,10 +262,12 @@
                 {{ productConsult.createdAt | dateTransformer }}
               </td>
               <td>
-                <b-badge
+                <b-button
                   :variant="getStatusColor(productConsult.codeManagement.key)"
                   class="badge-pill p-2 mr-2"
-                  >{{ productConsult.codeManagement.value }}</b-badge
+                  @click="findOne(productConsult.no)"
+                  v-b-modal.update_product_consult_status
+                  ><b>{{ productConsult.codeManagement.value }}</b></b-button
                 >
               </td>
               <td>
@@ -276,6 +301,50 @@
       <div class="circle circle-1"></div>
       <div class="circle circle-2"></div>
     </div>
+    <!-- 상태값 변경 -->
+    <b-modal
+      id="update_product_consult_status"
+      title="상품상담 상태 변경"
+      @ok="updateProductConsult()"
+    >
+      <b-form-row>
+        <b-col cols="12" class="mb-3">
+          <b-form-group label="상품상담 상태값">
+            <b-form-select v-model="productConsultDto.status" class="mt-2">
+              <b-form-select-option
+                v-for="code in codeManagement"
+                :key="code.no"
+                :value="code.key"
+                >{{ code.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+    </b-modal>
+    <b-modal
+      id="update_product_consult_status_nos"
+      title="상품상담 상태 변경"
+      @ok="updateProductConsultNos()"
+    >
+      <b-form-row>
+        <b-col cols="12" class="mb-3">
+          <div>
+            <b-form-select
+              v-model="productConsultUpdateStatusDto.status"
+              class="mt-2"
+            >
+              <b-form-select-option
+                v-for="code in statusSelect"
+                :key="code.no"
+                :value="code.key"
+                >{{ code.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </div>
+        </b-col>
+      </b-form-row>
+    </b-modal>
   </section>
 </template>
 <script lang="ts">
@@ -285,6 +354,7 @@ import {
   AdminDto,
   ProductConsultDto,
   ProductConsultListDto,
+  ProductConsultStatusUpdateDto,
 } from '../../../dto';
 import ProductConsultService from '../../../services/product-consult.service';
 import { CONST_YN, OrderByValue, Pagination, YN } from '@/common';
@@ -292,7 +362,9 @@ import { QueryParamMapper, ReverseQueryParamMapper } from '@/core';
 import {
   APPROVAL_STATUS,
   CONST_APPROVAL_STATUS,
+  CONST_PAGINATION_COUNT,
   CONST_PRODUCT_CONSULT,
+  PaginationCount,
   PRODUCT_CONSULT,
 } from '@/services/shared';
 import router from '@/router';
@@ -305,6 +377,7 @@ import AdminService from '../../../services/admin.service';
   name: 'ProductConsultList',
 })
 export default class ProductConsultList extends BaseComponent {
+  private productConsultDto = new ProductConsultDto();
   private productConsultSearchDto = new ProductConsultListDto();
   private pagination = new Pagination();
   private productConsultTotalCount = null;
@@ -315,6 +388,12 @@ export default class ProductConsultList extends BaseComponent {
   private availableTimesSelect: CodeManagementDto[] = [];
   private expYn: YN[] = [...CONST_YN];
   private genderSelect: CodeManagementDto[] = [];
+  private newLimit = null;
+  private paginationCount: PaginationCount[] = [...CONST_PAGINATION_COUNT];
+  private codeManagement: CodeManagementDto[] = [];
+  // 선택된 상품 상담 ID
+  private selectedProductConsultNos: number[] = [];
+  private productConsultUpdateStatusDto = new ProductConsultStatusUpdateDto();
 
   findAdmin() {
     AdminService.findForSelect().subscribe(res => {
@@ -322,6 +401,37 @@ export default class ProductConsultList extends BaseComponent {
         this.adminList = res.data;
       }
     });
+  }
+
+  findOne(id) {
+    ProductConsultService.findOne(id).subscribe(res => {
+      this.productConsultDto = res.data;
+      CodeManagementService.findAnyCode('PRODUCT_CONSULT').subscribe(res => {
+        this.codeManagement = res.data;
+      });
+    });
+  }
+
+  updateProductConsult() {
+    ProductConsultService.update(
+      this.productConsultDto.no,
+      this.productConsultDto,
+    ).subscribe(res => {
+      this.search();
+    });
+  }
+
+  updateProductConsultNos() {
+    if (this.selectedProductConsultNos.length > 0) {
+      this.productConsultUpdateStatusDto.productConsultNos = this.selectedProductConsultNos;
+      ProductConsultService.updateStatus(
+        this.productConsultUpdateStatusDto,
+      ).subscribe(res => {
+        this.selectedProductConsultNos = [];
+        this.statusSelect = [];
+        this.search();
+      });
+    }
   }
 
   // get status color
@@ -355,6 +465,7 @@ export default class ProductConsultList extends BaseComponent {
     if (!isPagination) {
       this.pagination.page = 1;
     }
+    this.pagination.limit = this.newLimit;
     ProductConsultService.findAll(
       this.productConsultSearchDto,
       this.pagination,
@@ -379,6 +490,8 @@ export default class ProductConsultList extends BaseComponent {
   }
 
   created() {
+    this.newLimit = 50;
+    this.pagination.limit = this.newLimit;
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.productConsultSearchDto = query;

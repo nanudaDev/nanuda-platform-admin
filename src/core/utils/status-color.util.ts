@@ -13,7 +13,8 @@ export const getStatusColor = (status: string): string => {
   if (
     status === APPROVAL_STATUS.APPROVAL ||
     status === FOUNDER_CONSULT.F_CONTACT_FIN ||
-    status === B2B_FOUNDER_CONSULT.B2B_F_CONTRACT_COMPLETE
+    status === B2B_FOUNDER_CONSULT.B2B_F_CONTRACT_COMPLETE ||
+    status === PRODUCT_CONSULT.P_CONTACT_FIN
   ) {
     return 'success';
   }
@@ -26,8 +27,7 @@ export const getStatusColor = (status: string): string => {
   if (
     status === APPROVAL_STATUS.REFUSED ||
     status === FOUNDER_CONSULT.F_DROP ||
-    status === B2B_FOUNDER_CONSULT.B2B_F_CANCELLED ||
-    status === PRODUCT_CONSULT.P_CONTACT_CANCEL
+    status === B2B_FOUNDER_CONSULT.B2B_F_CANCELLED
   ) {
     return 'danger';
   }

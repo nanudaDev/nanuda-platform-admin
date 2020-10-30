@@ -3,6 +3,7 @@ import {
   ProductConsultListDto,
   ProductConsultDto,
   ProductConsultUpdateDto,
+  ProductConsultStatusUpdateDto,
 } from '@/dto/product-consult';
 import { Pagination } from '@/common';
 
@@ -42,6 +43,25 @@ class ProductConsultService extends BaseService {
       `admin/product-consult/${id}`,
       productConsultUpdateDto,
     );
+  }
+
+  /**
+   * bulk update statuses
+   * @param productConsulstUpdateStatusDto
+   */
+  updateStatus(productConsulstUpdateStatusDto: ProductConsultStatusUpdateDto) {
+    return super.patch<any>(
+      'admin/product-consult/update-statuses',
+      productConsulstUpdateStatusDto,
+    );
+  }
+
+  /**
+   * assign own's self
+   * @param productConsultNo
+   */
+  assignAdmin(productConsultNo) {
+    return super.patch<any>(`admin/product-consult/${productConsultNo}/assign`);
   }
 }
 

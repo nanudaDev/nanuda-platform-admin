@@ -27,6 +27,42 @@
           </b-form-group>
         </b-row>
       </b-col>
+      <b-col lg="12" class="mb-3">
+        <label for>이미지</label>
+        <b-form-file
+          placeholder="파일 선택"
+          ref="fileInput"
+          @input="upload($event)"
+          required
+          multiple
+        ></b-form-file>
+        <div
+          v-if="attachments && attachments.length > 0"
+          class="attatchments-list mt-2"
+        >
+          <b-col
+            cols="2"
+            v-for="attachment in attachments"
+            :key="attachment.originFileName"
+            class="p-2"
+          >
+            <div class="attatchments-list-item">
+              <b-img
+                :src="attachment.endpoint"
+                alt
+                style="max-width:100%"
+                class="border rounded"
+              />
+              <b-icon
+                icon="x-circle-fill"
+                variant="danger"
+                class="btn-delete-item"
+                @click="deleteImages(attachment)"
+              ></b-icon>
+            </div>
+          </b-col>
+        </div>
+      </b-col>
       <b-col md="6">
         <b-form-group label="메뉴명 *">
           <b-form-input v-model="menuCreateDto.nameKr" />
@@ -84,11 +120,15 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import BaseComponent from '@/core/base.component';
-import { MenuCreateDto } from '@/dto';
-import BrandService from '../../../services/brand.service';
-import MenuService from '../../../services/menu.service';
+import { FileAttachmentDto, MenuCreateDto } from '@/dto';
+import BrandService from '@/services/brand.service';
+import MenuService from '@/services/menu.service';
+import FileUploadService, {
+  UPLOAD_TYPE,
+} from '@/services/shared/file-upload/file-upload.service';
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { CONST_YN, YN } from '@/common';
+import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 @Component({
   name: 'MenuCreate',
@@ -98,6 +138,16 @@ export default class MenuCreate extends BaseComponent {
   private menuCreateDto = new MenuCreateDto();
   private proppedBrandNo = true;
   private showYn: YN[] = [...CONST_YN];
+  private attachments: FileAttachmentDto[] = [];
+
+  deleteImages(image) {
+    if (this.attachments.includes(image)) {
+      const index = this.attachments.indexOf(image);
+      if (index > -1) {
+        this.attachments.splice(index, 1);
+      }
+    }
+  }
 
   clearOutCreateDto() {
     this.menuCreateDto = new MenuCreateDto();
@@ -113,6 +163,20 @@ export default class MenuCreate extends BaseComponent {
         this.$root.$emit('menu_create');
       }
     });
+  }
+
+  async upload(file: File[]) {
+    const attachments = await FileUploadService.upload(
+      UPLOAD_TYPE.DELIVERY_SPACE,
+      file,
+    );
+    this.attachments = [];
+    this.attachments.push(
+      ...attachments.filter(
+        fileUpload =>
+          fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
+      ),
+    );
   }
 
   created() {

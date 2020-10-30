@@ -55,6 +55,14 @@ class ProductConsultService extends BaseService {
       productConsulstUpdateStatusDto,
     );
   }
+
+  /**
+   * assign own's self
+   * @param productConsultNo
+   */
+  assignAdmin(productConsultNo) {
+    return super.patch<any>(`admin/product-consult/${productConsultNo}/assign`);
+  }
 }
 
 export default new ProductConsultService();

@@ -389,10 +389,10 @@
             <b class="text-primary">{{ brandCreateDto.desc.length }}</b> / 100
           </p>
         </b-col>
-        <b-col cols="12" md="4">
+        <!-- <b-col cols="12" md="4">
           <label>키오스크 아이디</label>
           <b-form-input v-model="brandCreateDto.kioskNo"></b-form-input>
-        </b-col>
+        </b-col> -->
       </b-form-row>
     </b-modal>
   </section>

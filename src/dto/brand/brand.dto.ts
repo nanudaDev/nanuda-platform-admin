@@ -19,6 +19,7 @@ export class BrandDto extends BaseDto<BrandDto> {
   logo?: FileAttachmentDto[];
   mainBanner?: FileAttachmentDto[];
   sideBanner?: FileAttachmentDto[];
+  mobileSideBanner?: FileAttachmentDto[];
   mainMenuImage?: FileAttachmentDto[];
   showYn?: YN;
   menus?: MenuDto[];

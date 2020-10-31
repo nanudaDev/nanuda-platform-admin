@@ -534,7 +534,86 @@
               @input="uploadSideBanner($event)"
             ></b-form-file>
           </div>
+
+          <label class="mt-3">
+            모바일 사이드 배너
+          </label>
+          <div class="my-2">
+            <div
+              v-if="
+                brandDto.mobileSideBanner &&
+                  brandDto.mobileSideBanner.length > 0 &&
+                  !mobileSideBannerChanged
+              "
+              class="mb-4"
+            >
+              <div
+                v-for="mobileSideBanner in brandDto.mobileSideBanner"
+                :key="mobileSideBanner.endpoint"
+              >
+                <b-img-lazy
+                  :src="mobileSideBanner.endpoint"
+                  class="rounded mx-auto d-block company-logo"
+                  style="max-height:80px"
+                />
+              </div>
+            </div>
+            <div
+              v-if="
+                !brandDto.mobileSideBanner && newMobileSideBanner.length < 1
+              "
+              class="mb-4"
+            >
+              <b-img-lazy
+                class="rounded mx-auto d-block company-logo"
+                :src="
+                  require('@/assets/images/general/common/img_placeholder.jpg')
+                "
+                rounded
+                style="max-height:80px"
+              />
+            </div>
+            <div
+              v-if="
+                newMobileSideBanner &&
+                  newMobileSideBanner.length > 0 &&
+                  mobileSideBannerChanged
+              "
+              class="mb-4"
+            >
+              <div
+                v-for="mobileSideBanner in newMobileSideBanner"
+                :key="mobileSideBanner.endpoint"
+              >
+                <b-img-lazy
+                  :src="mobileSideBanner.endpoint"
+                  class="rounded mx-auto d-block company-logo"
+                  style="max-height:80px"
+                />
+              </div>
+              <div class="text-center mt-2">
+                <b-button variant="danger" @click="removeSideBanner()"
+                  >모바일 사이드 배너 제거</b-button
+                >
+              </div>
+            </div>
+          </div>
+          <div class="custom-file">
+            <b-form-file
+              placeholder="파일 첨부"
+              ref="fileInputMobileSideBanner"
+              @input="uploadMobileSideBanner($event)"
+            ></b-form-file>
+          </div>
         </b-col>
+
+        <!-- <b-col
+          cols="12"
+          md="6"
+          class="mb-3"
+          v-if="brandDto.isRecommendedYn === showYn[0]"
+        >
+        </b-col> -->
 
         <b-col cols="12" md="4" class="mb-3">
           <label>
@@ -640,10 +719,10 @@
           </p>
         </b-col>
 
-        <b-col cols="12" md="4">
+        <!-- <b-col cols="12" md="4">
           <label>키오스크 아이디</label>
           <b-form-input v-model="brandUpdateDto.kioskNo"></b-form-input>
-        </b-col>
+        </b-col> -->
         <!-- TODO: CASE 2 때는 삭제 -->
         <b-col md="12">
           <span class="red-text text-center" style="font0-size:11px">
@@ -736,9 +815,11 @@ export default class BrandDetail extends BaseComponent {
   private newMainMenu: FileAttachmentDto[] = [];
   private newMainBanner: FileAttachmentDto[] = [];
   private newSideBanner: FileAttachmentDto[] = [];
+  private newMobileSideBanner: FileAttachmentDto[] = [];
   private menuChanged = false;
   private mainBannerChanged = false;
   private sideBannerChanged = false;
+  private mobileSideBannerChanged = false;
   private showYn: YN[] = [...CONST_YN];
   private spaceType = [2, 1];
   private menus: MenuDto[] = [];
@@ -766,6 +847,8 @@ export default class BrandDetail extends BaseComponent {
         this.mainBannerChanged = false;
         this.newSideBanner = [];
         this.sideBannerChanged = false;
+        this.newMobileSideBanner = [];
+        this.mobileSideBannerChanged = false;
       }
       this.brandRevenueInfo.brandNo = id;
       BrandKioskMapperService.getRevenueForBrand(
@@ -821,6 +904,12 @@ export default class BrandDetail extends BaseComponent {
       this.brandUpdateDto.sideBanner = this.newSideBanner;
     } else {
       delete this.brandUpdateDto.sideBanner;
+    }
+
+    if (this.newMobileSideBanner.length > 0) {
+      this.brandUpdateDto.mobileSideBanner = this.newMobileSideBanner;
+    } else {
+      delete this.brandUpdateDto.mobileSideBanner;
     }
     BrandService.update(this.$route.params.id, this.brandUpdateDto).subscribe(
       res => {
@@ -919,7 +1008,7 @@ export default class BrandDetail extends BaseComponent {
     this.menuChanged = false;
   }
 
-  // upload brand logo
+  // upload brand main banner
   async uploadMainBanner(file: File) {
     if (file) {
       const attachments = await FileUploadService.upload(
@@ -937,14 +1026,14 @@ export default class BrandDetail extends BaseComponent {
     }
   }
 
-  // remove main menu
+  // remove main banner
   removeMainBanner() {
     this.newMainBanner = [];
     this.$refs['fileInputMainBanner'].reset();
     this.mainBannerChanged = false;
   }
 
-  // upload brand logo
+  // upload brand side banner
   async uploadSideBanner(file: File) {
     if (file) {
       const attachments = await FileUploadService.upload(
@@ -962,11 +1051,36 @@ export default class BrandDetail extends BaseComponent {
     }
   }
 
-  // remove main menu
+  // remove side banner
   removeSideBanner() {
     this.newSideBanner = [];
     this.$refs['fileInputSideBanner'].reset();
     this.sideBannerChanged = false;
+  }
+
+  // upload mobile side banner
+  async uploadMobileSideBanner(file: File) {
+    if (file) {
+      const attachments = await FileUploadService.upload(
+        UPLOAD_TYPE.BRAND_BANNER,
+        [file],
+      );
+      this.newMobileSideBanner = [];
+      this.newMobileSideBanner.push(
+        ...attachments.filter(
+          fileUpload =>
+            fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
+        ),
+      );
+      this.mobileSideBannerChanged = true;
+    }
+  }
+
+  // remove mobile side banner
+  removeMobileSideBanner() {
+    this.newMobileSideBanner = [];
+    this.$refs['fileInputMobileSideBanner'].reset();
+    this.mobileSideBannerChanged = false;
   }
 
   deleteOne() {

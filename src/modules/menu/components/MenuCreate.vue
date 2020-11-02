@@ -120,7 +120,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import BaseComponent from '@/core/base.component';
-import { MenuCreateDto } from '@/dto';
+import { FileAttachmentDto, MenuCreateDto } from '@/dto';
 import BrandService from '@/services/brand.service';
 import MenuService from '@/services/menu.service';
 import FileUploadService, {
@@ -128,10 +128,7 @@ import FileUploadService, {
 } from '@/services/shared/file-upload/file-upload.service';
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { CONST_YN, YN } from '@/common';
-import {
-  ATTACHMENT_REASON_TYPE,
-  FileAttachmentDto,
-} from '@/services/shared/file-upload';
+import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 @Component({
   name: 'MenuCreate',
@@ -160,7 +157,6 @@ export default class MenuCreate extends BaseComponent {
     if (this.brandNo) {
       this.menuCreateDto.brandNo = this.brandNo;
     }
-    this.menuCreateDto.images = this.attachments;
     MenuService.create(this.menuCreateDto).subscribe(res => {
       if (res) {
         toast.success('추가 완료');

@@ -99,16 +99,6 @@
         <b-btn-group>
           <b-button variant="primary" @click="clearOut()">초기화</b-button>
           <b-button variant="success" @click="search()">검색</b-button>
-          <download-excel
-            class="btn btn-outline-success"
-            :data="productConsultListDto"
-            :fields="fields"
-            :stringifyLongNum="true"
-            worksheet="상품 상담 리스트"
-            :name="`product_consult_${newDate}.xls`"
-          >
-            엑셀 다운로드
-          </download-excel>
         </b-btn-group>
       </b-row>
     </div>
@@ -127,7 +117,6 @@
           >
         </b-form-select>
       </div>
-
       <b-button
         variant="primary"
         v-b-modal.update_product_consult_status_nos
@@ -405,29 +394,6 @@ export default class ProductConsultList extends BaseComponent {
   // 선택된 상품 상담 ID
   private selectedProductConsultNos: number[] = [];
   private productConsultUpdateStatusDto = new ProductConsultStatusUpdateDto();
-  private newDate = new Date();
-  // excel options
-  private fields = {
-    이름: 'nanudaUser.name',
-    연락처: 'nanudaUser.phone',
-    비회원명: 'nonUserName',
-    비회원연락처: 'nonUserPhone',
-    성별: 'nanudaUser.genderInfo.value',
-    상담시간: 'availableTime.value',
-    신청일: 'createdAt',
-    창업경험: 'changUpExpYn',
-    신청상태: 'codeManagement.value',
-    주소: 'addressInfo.name',
-    비고: 'pConsultEtc',
-  };
-  private json_meta = [
-    [
-      {
-        key: 'charset',
-        value: 'utf-8',
-      },
-    ],
-  ];
 
   findAdmin() {
     AdminService.findForSelect().subscribe(res => {

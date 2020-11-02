@@ -229,7 +229,7 @@ export default class MenuUpdate extends BaseComponent {
 
     if (
       this.uploadImages &&
-      this.uploadImages.length < 1 &&
+      this.uploadImages.length === 0 &&
       this.newImages &&
       this.newImages.length > 0
     ) {
@@ -241,7 +241,7 @@ export default class MenuUpdate extends BaseComponent {
     //   this.menuUpdateDto.images = this.uploadImages;
     //   this.menuUpdateDto.newImages = [];
     // }
-    console.log(this.menuUpdateDto);
+
     MenuService.update(this.updateMenuNo, this.menuUpdateDto).subscribe(res => {
       if (res) {
         toast.success('수정완료');

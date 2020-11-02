@@ -65,6 +65,16 @@ class DeliveryFounderConsultService extends BaseService {
       `admin/delivery-founder-consult/${deliveryFounderConsultNo}/reverse-read-status`,
     );
   }
+
+  /**
+   * assign own's self
+   * @param deliveryFounderConsultNo
+   */
+  assignAdmin(deliveryFounderConsultNo) {
+    return super.patch<any>(
+      `admin/delivery-founder-consult/${deliveryFounderConsultNo}/assign`,
+    );
+  }
 }
 
 export default new DeliveryFounderConsultService();

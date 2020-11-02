@@ -109,10 +109,15 @@
           <template v-slot:head>
             <div>
               <b-button
+                v-if="!deliveryFounderConsult.spaceConsultManager"
+                variant="primary"
+                @click="assignYourselfAdmin()"
+                >본인으로 정하기</b-button
+              >
+              <b-button
                 variant="primary"
                 @click="findAdmin()"
                 v-b-modal.admin_list
-                v-if="deliveryFounderConsult.admin"
                 >수정하기</b-button
               >
             </div>
@@ -623,7 +628,7 @@
         <div class="col-12 mb-3">
           <label for="space_consult_etc">비고 내용</label>
           <b-form-textarea
-          id="space_consult_etc"
+            id="space_consult_etc"
             style="height:100px;"
             v-model="deliveryFounderConsultUpdateDto.spaceConsultEtc"
           ></b-form-textarea>
@@ -834,6 +839,14 @@ export default class FounderConsultDetail extends BaseComponent {
       } else {
         return;
       }
+    });
+  }
+
+  assignYourselfAdmin() {
+    DeliveryFounderConsultService.assignAdmin(
+      this.deliveryFounderConsult.no,
+    ).subscribe(res => {
+      this.findOne(this.deliveryFounderConsult.no);
     });
   }
 

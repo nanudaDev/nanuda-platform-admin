@@ -30,6 +30,7 @@
     "vue-daum-map": "^1.0.15",
     "vue-daum-postcode": "^0.9.0",
     "vue-izitoast": "^1.2.1",
+    "vue-json-excel": "^0.3.0",
     "vue-router": "^3.3.4",
     "vue-spinner": "^1.0.4",
     "vue2-editor": "^2.10.2",

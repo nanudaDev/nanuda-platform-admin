@@ -1,7 +1,7 @@
 import { BaseDto } from '@/core';
 import { APPROVAL_STATUS } from '@/services/shared';
+import { FileAttachmentDto } from '@/services/shared/file-upload';
 import { CompanyDto } from '.';
-import { FileAttachmentDto } from '..';
 
 export class CompanyUpdateDto extends BaseDto<CompanyUpdateDto>
   implements Partial<CompanyDto> {

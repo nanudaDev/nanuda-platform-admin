@@ -1,7 +1,7 @@
 export * from './admin';
 export * from './amenity';
 export * from './article';
-export * from './banner'
+export * from './banner';
 export * from './brand';
 export * from './brand-kiosk-mapper';
 export * from './company';
@@ -15,7 +15,6 @@ export * from './delivery-founder-consult-contract';
 export * from './delivery-founder-consult-management';
 export * from './delivery-space';
 export * from './delivery-space-option';
-export * from './file-upload';
 export * from './food-category';
 export * from './founder-consult';
 export * from './founder-consult-management';

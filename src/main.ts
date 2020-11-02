@@ -19,6 +19,7 @@ import NonMainLayout from '../src/modules/_layouts/Layout/NonMainLayout.layout.v
 import SectionTitle from '../src/modules/_components/SectionTitle.vue';
 import BaseCard from '../src/modules/_components/BaseCard.vue';
 import '@/core/guards/auth-role.guard';
+import JsonExcel from 'vue-json-excel';
 
 import {
   DatePipeTransformer,
@@ -53,6 +54,7 @@ Vue.component('MainLayout', MainLayout);
 
 Vue.component('SectionTitle', SectionTitle);
 Vue.component('BaseCard', BaseCard);
+Vue.component('downloadExcel', JsonExcel);
 
 // filters
 DatePipeTransformer();
@@ -68,6 +70,7 @@ CurrencyPipeTransformer();
 // bootstrap
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
+Vue.use(JsonExcel);
 
 // daum kakao
 Vue.use(VueDaumPostcode);

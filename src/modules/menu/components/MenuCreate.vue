@@ -69,7 +69,7 @@
         </b-form-group>
       </b-col>
       <b-col md="6">
-        <b-form-group label="메뉴 (영문명)">
+        <b-form-group label="메뉴명 (영문)">
           <b-form-input v-model="menuCreateDto.nameEng" />
         </b-form-group>
       </b-col>
@@ -166,10 +166,7 @@ export default class MenuCreate extends BaseComponent {
   }
 
   async upload(file: File[]) {
-    const attachments = await FileUploadService.upload(
-      UPLOAD_TYPE.DELIVERY_SPACE,
-      file,
-    );
+    const attachments = await FileUploadService.upload(UPLOAD_TYPE.MENU, file);
     this.attachments = [];
     this.attachments.push(
       ...attachments.filter(

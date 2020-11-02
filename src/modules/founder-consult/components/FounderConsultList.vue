@@ -162,6 +162,16 @@
         <b-btn-group>
           <b-button variant="primary" @click="clearOut()">초기화</b-button>
           <b-button variant="success" @click="search()">검색</b-button>
+          <download-excel
+            class="btn btn-outline-success"
+            :data="founderConsultList"
+            :fields="fields"
+            :stringifyLongNum="true"
+            worksheet="식당형 리스트"
+            :name="`founder_consult_${newDate}.xls`"
+          >
+            엑셀 다운로드
+          </download-excel>
         </b-btn-group>
       </b-row>
     </div>
@@ -401,8 +411,28 @@ export default class FounderConsult extends BaseComponent {
   private spaceTypeSelect: SpaceTypeDto[] = [];
   private pagination = new Pagination();
   private dataLoading = false;
-
+  private newDate = new Date();
   private adminList: AdminDto[] = [];
+
+  private fields = {
+    이름: 'nanudaUser.name',
+    연락처: 'nanudaUser.phone',
+    성별: 'nanudaUser.genderInfo.value',
+    상담시간: 'availableTime.value',
+    신청일: 'createdAt',
+    창업경험: 'changUpExpYn',
+    신청상태: 'codeManagement.value',
+    점포명: 'space.name',
+    주소: 'space.address',
+  };
+  private json_meta = [
+    [
+      {
+        key: 'charset',
+        value: 'utf-8',
+      },
+    ],
+  ];
 
   // get status color
   getStatusColor(status: FOUNDER_CONSULT) {

@@ -206,4 +206,10 @@ img {
     }
   }
 }
+.custom-file-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 90px;
+}
 </style>

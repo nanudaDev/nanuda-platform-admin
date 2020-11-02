@@ -27,13 +27,71 @@
           </b-form-group>
         </b-row>
       </b-col>
+      <b-col lg="12" class="mb-3">
+        <label for>이미지</label>
+        <b-form-file
+          placeholder="파일 선택"
+          ref="fileInput"
+          @input="upload($event)"
+          required
+          multiple
+        ></b-form-file>
+        <b-form-row no-gutters class="attatchments-list mt-2">
+          <template>
+            <b-col
+              cols="2"
+              v-for="(images, index) in uploadImages"
+              :key="images.endpoint"
+              class="p-2 item"
+            >
+              <div class="attatchments-list-item">
+                <b-img
+                  :src="images.endpoint"
+                  alt
+                  style="max-width:100%"
+                  class="border rounded"
+                />
+                <b-icon
+                  icon="x-circle-fill"
+                  variant="danger"
+                  class="btn-delete-item"
+                  @click="deleteOldImages(images, index)"
+                ></b-icon>
+              </div>
+            </b-col>
+          </template>
+          <template v-if="newImages && newImages.length > 0">
+            <b-col
+              cols="2"
+              v-for="(images, index) in newImages"
+              :key="images.endpoint"
+              class="p-2"
+            >
+              <div class="attatchments-list-item">
+                <b-img
+                  :src="images.endpoint"
+                  alt
+                  style="max-width:100%"
+                  class="border rounded"
+                />
+                <b-icon
+                  icon="x-circle-fill"
+                  variant="danger"
+                  class="btn-delete-item"
+                  @click="deleteNewImages(images, index)"
+                ></b-icon>
+              </div>
+            </b-col>
+          </template>
+        </b-form-row>
+      </b-col>
       <b-col md="6">
-        <b-form-group label="메뉴 한글명 (필수)">
+        <b-form-group label="메뉴명 *">
           <b-form-input v-model="menuUpdateDto.nameKr" />
         </b-form-group>
       </b-col>
       <b-col md="6">
-        <b-form-group label="메뉴 영어명">
+        <b-form-group label="메뉴명 (영문)">
           <b-form-input v-model="menuUpdateDto.nameEng" />
         </b-form-group>
       </b-col>
@@ -80,6 +138,12 @@ import { MenuUpdateDto, MenuDto } from '@/dto';
 import MenuService from '../../../services/menu.service';
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { CONST_YN, YN } from '@/common';
+import { ArticleUpdateDto } from '@/dto/article/article-update.dto';
+import { FileAttachmentDto } from '@/services/shared/file-upload';
+import FileUploadService from '../../../services/shared/file-upload/file-upload.service';
+import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';
+import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
+import draggable from 'vuedraggable';
 
 @Component({ name: 'MenuUpdate' })
 export default class MenuUpdate extends BaseComponent {
@@ -87,18 +151,97 @@ export default class MenuUpdate extends BaseComponent {
   private menuDto = new MenuDto();
   private updateMenuNo = null;
   private showYn: YN[] = [...CONST_YN];
+  private uploadImages: FileAttachmentDto[] = [];
+  private newImages: FileAttachmentDto[] = [];
+  private selectedImages = [];
+  private dataLoading = false;
+
+  // delete images
+  deleteNewImages(image, index) {
+    if (this.newImages.includes(image)) {
+      index = this.newImages.indexOf(image);
+      if (index > -1) {
+        this.newImages.splice(index, 1);
+      }
+    }
+  }
+
+  deleteOldImages(image, index) {
+    if (this.uploadImages.includes(image)) {
+      index = this.uploadImages.indexOf(image);
+      if (index > -1) {
+        this.uploadImages.splice(index, 1);
+      }
+    }
+  }
+
+  // 이미지 업로드
+  async upload(file: File[]) {
+    this.dataLoading = true;
+    const attachments = await FileUploadService.upload(UPLOAD_TYPE.MENU, file);
+    this.newImages = [];
+    this.newImages.push(
+      ...attachments.filter(
+        fileUpload =>
+          fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
+      ),
+    );
+
+    this.dataLoading = false;
+  }
 
   clearOutUpdateDto() {
     this.menuUpdateDto = new MenuUpdateDto();
+    this.newImages = [];
   }
 
   findOne(menuNo) {
     MenuService.findOne(menuNo).subscribe(res => {
       this.menuUpdateDto = res.data;
+      this.uploadImages = res.data.images;
+      this.newImages = [];
     });
   }
 
   update() {
+    if (this.uploadImages && this.uploadImages.length > 0) {
+      this.menuUpdateDto.images = this.uploadImages;
+      this.menuUpdateDto.newImages = this.newImages;
+    }
+    if (
+      this.uploadImages &&
+      this.uploadImages.length < 1 &&
+      this.newImages &&
+      this.newImages.length > 0
+    ) {
+      this.menuUpdateDto.images = [];
+      this.menuUpdateDto.newImages = this.newImages;
+    }
+    if (
+      this.uploadImages &&
+      this.uploadImages.length < 1 &&
+      this.newImages &&
+      this.newImages.length < 1
+    ) {
+      this.menuUpdateDto.newImages = [];
+      this.menuUpdateDto.images = [];
+    }
+
+    if (
+      this.uploadImages &&
+      this.uploadImages.length === 0 &&
+      this.newImages &&
+      this.newImages.length > 0
+    ) {
+      this.menuUpdateDto.images = this.newImages;
+      this.menuUpdateDto.newImages = [];
+    }
+
+    // if (this.newImages && this.newImages.length < 1) {
+    //   this.menuUpdateDto.images = this.uploadImages;
+    //   this.menuUpdateDto.newImages = [];
+    // }
+
     MenuService.update(this.updateMenuNo, this.menuUpdateDto).subscribe(res => {
       if (res) {
         toast.success('수정완료');
@@ -115,3 +258,4 @@ export default class MenuUpdate extends BaseComponent {
   }
 }
 </script>
+``

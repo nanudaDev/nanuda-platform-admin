@@ -129,6 +129,22 @@
             <li v-if="deliverySpaceDto.desc">
               공간 설명: {{ deliverySpaceDto.desc }}
             </li>
+            <li>
+              노출 여부 :
+              <b-badge
+                :variant="deliverySpaceDto.delYn === 'Y' ? 'success' : 'danger'"
+                >{{ deliverySpaceDto.delYn }}</b-badge
+              >
+            </li>
+            <li>
+              업체 노출 여부 :
+              <b-badge
+                :variant="
+                  deliverySpaceDto.showYn === 'Y' ? 'success' : 'danger'
+                "
+                >{{ deliverySpaceDto.showYn }}</b-badge
+              >
+            </li>
           </ul>
           <div
             v-if="deliverySpaceDto.brands && deliverySpaceDto.brands.length > 0"

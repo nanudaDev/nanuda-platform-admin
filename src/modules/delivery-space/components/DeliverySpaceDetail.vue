@@ -132,7 +132,7 @@
             <li>
               노출 여부 :
               <b-badge
-                :variant="deliverySpaceDto.delYn === 'Y' ? 'success' : 'danger'"
+                :variant="deliverySpaceDto.delYn === 'N' ? 'success' : 'danger'"
                 >{{ deliverySpaceDto.delYn }}</b-badge
               >
             </li>

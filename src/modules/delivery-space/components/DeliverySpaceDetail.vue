@@ -132,6 +132,13 @@
             <li>
               노출 여부 :
               <b-badge
+                :variant="deliverySpaceDto.delYn === 'Y' ? 'success' : 'danger'"
+                >{{ deliverySpaceDto.delYn }}</b-badge
+              >
+            </li>
+            <li>
+              업체 노출 여부 :
+              <b-badge
                 :variant="
                   deliverySpaceDto.showYn === 'Y' ? 'success' : 'danger'
                 "

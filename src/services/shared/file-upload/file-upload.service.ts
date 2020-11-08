@@ -30,6 +30,7 @@ export enum UPLOAD_TYPE {
   NOTICE_BOARD = 'notice-board',
   MENU = 'menu',
   MAIN_MENU_IMAGE = 'main-menu-image',
+  PRESENTATION_EVENT = 'presentation-event',
 }
 
 type UploadOptionConfig = {
@@ -144,6 +145,14 @@ class FileUploadService extends BaseService {
     },
     [UPLOAD_TYPE.MAIN_MENU_IMAGE]: {
       path: 'main-menu-image',
+      sizeLimit: 1024 * 1024 * 10,
+      fileType: FileType.IMAGE,
+      mimeType: FileType.IMAGE,
+      accessType: FileAccessType.PUBLIC,
+      acl: ACL.PUBLIC,
+    },
+    [UPLOAD_TYPE.PRESENTATION_EVENT]: {
+      path: 'presentation-event',
       sizeLimit: 1024 * 1024 * 10,
       fileType: FileType.IMAGE,
       mimeType: FileType.IMAGE,

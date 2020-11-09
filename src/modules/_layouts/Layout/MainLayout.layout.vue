@@ -1,7 +1,7 @@
 <template>
   <section :id="this.$route.name">
     <NavBar />
-    <div id="app-main" class="container">
+    <div id="app-main" class="container-fluid">
       <router-view />
     </div>
   </section>

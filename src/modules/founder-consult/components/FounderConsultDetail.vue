@@ -14,11 +14,16 @@
       <b-col md="6" class="my-3" v-if="founderConsult.nanudaUser">
         <BaseCard title="사용자 정보">
           <template v-slot:head>
-            <div v-if="founderConsult.status !== 'F_DIST_COMPLETE'">
+            <div>
+              <b-button variant="outline-info" v-b-modal.send_message>
+                <b-icon icon="envelope"></b-icon>
+                <span class="ml-2">문자전송</span>
+              </b-button>
               <b-button
                 variant="primary"
                 @click="updateNanudaUser()"
                 v-b-modal.nanuda_user
+                v-if="founderConsult.status !== 'F_DIST_COMPLETE'"
                 >수정하기</b-button
               >
             </div>
@@ -40,16 +45,6 @@
                     <b>
                       {{ founderConsult.nanudaUser.phone | phoneTransformer }}
                     </b>
-                    <b-button
-                      size="sm"
-                      variant="info"
-                      pill
-                      v-b-modal.send_message
-                      class="mx-2 p-1"
-                    >
-                      <b-icon icon="envelope"></b-icon>
-                      <span class="d-none">문자전송</span>
-                    </b-button>
                   </span>
                 </li>
                 <li v-if="founderConsult.nanudaUser.genderInfo">

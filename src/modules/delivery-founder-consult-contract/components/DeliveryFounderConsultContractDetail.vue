@@ -17,6 +17,14 @@
     <b-row>
       <b-col md="6" class="my-3">
         <BaseCard title="계약자 정보">
+          <template v-slot:head>
+            <div>
+              <b-button variant="outline-info" v-b-modal.send_message>
+                <b-icon icon="envelope"></b-icon>
+                <span class="ml-2">문자전송</span>
+              </b-button>
+            </div>
+          </template>
           <template v-slot:body>
             <div v-if="deliveryFounderConsultContractDto.nanudaUser">
               <ul class="u-list">
@@ -39,16 +47,6 @@
                         | phoneTransformer
                     }}
                   </b>
-                  <b-button
-                    size="sm"
-                    variant="info"
-                    pill
-                    v-b-modal.send_message
-                    class="mx-2 p-1"
-                  >
-                    <b-icon icon="envelope"></b-icon>
-                    <span class="d-none">문자전송</span>
-                  </b-button>
                 </li>
               </ul>
             </div>

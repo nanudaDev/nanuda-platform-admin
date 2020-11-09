@@ -1,21 +1,21 @@
 <template>
   <section>
-    <SectionTitle title="상품 상담 신청 내역" divider></SectionTitle>
+    <SectionTitle title="상품 상담 신청" divider></SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <b-col cols="4" lg="2" class="mb-3">
-          <label>사용자명</label>
+        <b-col cols="12" md="6" xl="2" class="mb-3">
+          <label>이름</label>
           <b-form-input
             v-model="productConsultSearchDto.nanudaUserName"
           ></b-form-input>
         </b-col>
-        <b-col cols="4" lg="2" class="mb-3">
-          <label>휴대폰 번호</label>
+        <b-col cols="12" md="6" xl="2" class="mb-3">
+          <label>연락처</label>
           <b-form-input
             v-model="productConsultSearchDto.nanudaUserPhone"
           ></b-form-input>
         </b-col>
-        <b-col>
+        <b-col cols="4" xl="1" class="mb-3">
           <label for="user_gender">성별</label>
           <select
             class="custom-select"
@@ -31,20 +31,7 @@
             >
           </select>
         </b-col>
-        <b-col cols="4" lg="1">
-          <label for="changup_exp_yn">창업 경험</label>
-          <select
-            class="custom-select"
-            id="changup_exp_yn"
-            v-model="productConsultSearchDto.changUpExpYn"
-          >
-            <option value selected>전체</option>
-            <option v-for="yn in expYn" :key="yn" :value="yn">
-              {{ yn | enumTransformer }}
-            </option>
-          </select>
-        </b-col>
-        <b-col cols="4" lg="2" class="mb-3">
+        <b-col cols="4" xl="2" class="mb-3">
           <label for="hope_time">희망 시간대</label>
           <select
             class="custom-select"
@@ -60,8 +47,22 @@
             >
           </select>
         </b-col>
-        <b-col cols="4" lg="2" class="mb-3">
-          <label>관리자명</label>
+        <b-col cols="4" xl="1">
+          <label for="changup_exp_yn">창업 경험 유무</label>
+          <select
+            class="custom-select"
+            id="changup_exp_yn"
+            v-model="productConsultSearchDto.changUpExpYn"
+          >
+            <option value selected>전체</option>
+            <option v-for="yn in expYn" :key="yn" :value="yn">
+              {{ yn | enumTransformer }}
+            </option>
+          </select>
+        </b-col>
+
+        <b-col cols="12" md="6" xl="2" class="mb-3">
+          <label>담당자</label>
           <template>
             <b-form-input
               list="admin_list"
@@ -78,7 +79,7 @@
             </datalist>
           </template>
         </b-col>
-        <b-col cols="4" lg="2" class="mb-3">
+        <b-col cols="12" md="6" xl="2" class="mb-3">
           <label for="product_approve_status">신청 상태</label>
           <b-form-select
             id="product_approve_status"
@@ -96,9 +97,47 @@
       </b-form-row>
       <!-- second row -->
       <b-row align-h="center">
-        <b-btn-group>
-          <b-button variant="primary" @click="clearOut()">초기화</b-button>
-          <b-button variant="success" @click="search()">검색</b-button>
+        <div>
+          <b-button variant="secondary" @click="clearOut()">초기화</b-button>
+          <b-button variant="primary" @click="search()">검색</b-button>
+        </div>
+      </b-row>
+    </div>
+    <div v-if="!dataLoading">
+      <div class="table-top">
+        <div class="total-count">
+          <div class="d-flex align-items-center">
+            <h5>
+              <span>TOTAL</span>
+              <strong class="text-primary">{{
+                productConsultTotalCount
+              }}</strong>
+            </h5>
+            <b-form-select
+              v-model="newLimit"
+              size="sm"
+              class="select-limit ml-3"
+              @change="search()"
+              v-if="productConsultTotalCount"
+            >
+              <b-form-select-option
+                v-for="count in paginationCount"
+                :key="count"
+                :value="count"
+                >{{ count }}개</b-form-select-option
+              >
+            </b-form-select>
+          </div>
+        </div>
+        <div>
+          <b-button
+            variant="primary"
+            v-b-modal.update_product_consult_status_nos
+            v-if="selectedProductConsultNos.length > 0"
+            @click="getProductConsultCodes()"
+            >신청 상태 수정</b-button
+          >
+
           <download-excel
             class="btn btn-outline-success"
             :data="productConsultListDto"
@@ -106,42 +145,32 @@
             :stringifyLongNum="true"
             worksheet="상품 상담 리스트"
             :name="`product_consult_${newDate}.xls`"
+            v-if="productConsultTotalCount"
           >
+            <b-icon icon="file-earmark-arrow-down"></b-icon>
             엑셀 다운로드
           </download-excel>
-        </b-btn-group>
-      </b-row>
-    </div>
-    <div class="table-top">
-      <div class="total-count">
-        <h5>
-          <span>TOTAL</span>
-          <strong class="text-primary">{{ productConsultTotalCount }}</strong>
-        </h5>
-        <b-form-select v-model="newLimit" class="mt-2" @change="search()">
-          <b-form-select-option
-            v-for="count in paginationCount"
-            :key="count"
-            :value="count"
-            >{{ count }}개</b-form-select-option
-          >
-        </b-form-select>
+        </div>
       </div>
-
-      <b-button
-        variant="primary"
-        v-b-modal.update_product_consult_status_nos
-        v-if="selectedProductConsultNos.length > 0"
-        @click="getProductConsultCodes()"
-        >신청 상태 수정</b-button
-      >
-    </div>
-    <div v-if="!dataLoading">
       <div class="table-responsive" v-if="productConsultTotalCount">
         <table
           v-if="productConsultTotalCount"
-          class="table table-hover table-nowrap table-sm border"
+          class="table table-hover table-sm border table-fixed"
         >
+          <colgroup>
+            <col width="60" />
+            <col width="60" />
+            <col width="100" />
+            <col width="100" />
+            <col width="80" />
+            <col width="100" />
+            <col width="100" />
+            <col width="500" />
+            <col width="100" />
+            <col width="150" />
+            <col width="100" />
+            <col width="100" />
+          </colgroup>
           <thead>
             <tr>
               <th></th>
@@ -181,6 +210,9 @@
               >
                 창업 경험 유무
               </th>
+              <th>
+                비고
+              </th>
               <th
                 scope="col"
                 v-bind:class="{
@@ -203,9 +235,6 @@
               v-for="productConsult in productConsultListDto"
               :key="productConsult.no"
             >
-              <!-- <td>
-                {{ productConsult.no }}
-              </td> -->
               <td>
                 <b-form-checkbox
                   :value="productConsult.no"
@@ -216,42 +245,42 @@
                 {{ productConsult.no }}
               </td>
               <td>
-                <div v-if="productConsult.nanudaUser">
+                <template v-if="productConsult.nanudaUser">
                   {{ productConsult.nanudaUser.name }}
-                </div>
-                <div v-else>
+                </template>
+                <template v-else>
                   {{ productConsult.nonUserName }}
                   <span class="red-text">(비회원)</span>
-                </div>
+                </template>
               </td>
               <td>
-                <div v-if="productConsult.nanudaUser">
+                <template v-if="productConsult.nanudaUser">
                   {{ productConsult.nanudaUser.phone | phoneTransformer }}
-                </div>
-                <div v-else>
+                </template>
+                <template v-else>
                   {{ productConsult.nonUserPhone | phoneTransformer }}
-                </div>
+                </template>
               </td>
               <td>
-                <div
+                <template
                   v-if="
                     productConsult.nanudaUser &&
                       productConsult.nanudaUser.gender
                   "
                 >
                   {{ productConsult.nanudaUser.gender | enumTransformer }}
-                </div>
-                <div v-else>
+                </template>
+                <template v-else>
                   -
-                </div>
+                </template>
               </td>
               <td>
-                <div v-if="productConsult.availableTime">
+                <template v-if="productConsult.availableTime">
                   {{ productConsult.availableTime.value }}
-                </div>
-                <div v-else>
+                </template>
+                <template v-else>
                   -
-                </div>
+                </template>
               </td>
               <td>
                 <b-badge
@@ -262,12 +291,17 @@
                 >
               </td>
               <td>
-                <div v-if="productConsult.admin">
+                <template v-if="productConsult.pConsultEtc">
+                  {{ productConsult.pConsultEtc }}
+                </template>
+              </td>
+              <td>
+                <template v-if="productConsult.admin">
                   {{ productConsult.admin.name }}
-                </div>
-                <div v-else>
+                </template>
+                <template v-else>
                   -
-                </div>
+                </template>
               </td>
               <td>
                 {{ productConsult.createdAt | dateTransformer }}

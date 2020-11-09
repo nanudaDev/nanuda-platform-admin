@@ -18,6 +18,10 @@
         <BaseCard title="사용자 정보">
           <template v-slot:head>
             <div>
+              <b-button variant="outline-info" v-b-modal.send_message>
+                <b-icon icon="envelope"></b-icon>
+                <span class="ml-2">문자전송</span>
+              </b-button>
               <b-button variant="danger" v-b-modal.delete_company_user
                 >삭제하기</b-button
               >
@@ -56,16 +60,6 @@
                 <li>
                   휴대폰 번호 :
                   <b>{{ companyUserDto.phone | phoneTransformer }}</b>
-                  <b-button
-                    size="sm"
-                    variant="info"
-                    pill
-                    v-b-modal.send_message
-                    class="mx-2 p-1"
-                  >
-                    <b-icon icon="envelope"></b-icon>
-                    <span class="d-none">문자전송</span>
-                  </b-button>
                 </li>
                 <li>이메일 : {{ companyUserDto.email }}</li>
                 <li>

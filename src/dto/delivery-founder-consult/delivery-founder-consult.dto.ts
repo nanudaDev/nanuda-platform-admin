@@ -2,6 +2,7 @@ import {
   FOUNDER_CONSULT,
   B2B_FOUNDER_CONSULT,
   ADMIN_USER,
+  GENDER,
 } from '@/services/shared';
 import { AVAILABLE_TIME, YN } from '@/common';
 import { CodeManagementDto } from '@/services/init/dto';
@@ -40,4 +41,5 @@ export class DeliveryFounderConsultDto extends BaseDto<
   availableTime?: CodeManagementDto;
   nanudaUser?: NanudaUserDto;
   companyUser?: CompanyUserDto;
+  gender?: GENDER;
 }

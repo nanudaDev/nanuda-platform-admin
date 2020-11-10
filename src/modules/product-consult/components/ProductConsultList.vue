@@ -32,6 +32,22 @@
           </select>
         </b-col>
         <b-col cols="4" xl="2" class="mb-3">
+          <b-form-group label="브랜드명">
+            <b-form-input
+              list="brand_list"
+              v-model="productConsultSearchDto.brandName"
+            ></b-form-input>
+            <datalist id="brand_list">
+              <option
+                v-for="brand in brandList"
+                :key="brand.nameKr"
+                :value="brand.nameKr"
+                >{{ brand.nameKr }}</option
+              >
+            </datalist>
+          </b-form-group>
+        </b-col>
+        <b-col cols="4" xl="2" class="mb-3">
           <label for="hope_time">희망 시간대</label>
           <select
             class="custom-select"
@@ -161,6 +177,7 @@
             <col width="80" />
             <col width="100" />
             <col width="100" />
+            <col width="100" />
             <col width="500" />
             <col width="100" />
             <col width="150" />
@@ -197,6 +214,14 @@
                 }"
               >
                 희망 상담 시간대
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: productConsultSearchDto.brandName,
+                }"
+              >
+                관심 브랜드
               </th>
               <th
                 scope="col"
@@ -273,6 +298,14 @@
               <td>
                 <template v-if="productConsult.availableTime">
                   {{ productConsult.availableTime.value }}
+                </template>
+                <template v-else>
+                  -
+                </template>
+              </td>
+              <td>
+                <template v-if="productConsult.brand">
+                  {{ productConsult.brand.nameKr }}
                 </template>
                 <template v-else>
                   -
@@ -393,11 +426,12 @@ import BaseComponent from '@/core/base.component';
 import { Component, Vue } from 'vue-property-decorator';
 import {
   AdminDto,
+  BrandDto,
   ProductConsultDto,
   ProductConsultListDto,
   ProductConsultStatusUpdateDto,
-} from '../../../dto';
-import ProductConsultService from '../../../services/product-consult.service';
+} from '@/dto';
+import ProductConsultService from '@/services/product-consult.service';
 import { CONST_YN, OrderByValue, Pagination, YN } from '@/common';
 import { QueryParamMapper, ReverseQueryParamMapper } from '@/core';
 import {
@@ -409,16 +443,18 @@ import {
   PRODUCT_CONSULT,
 } from '@/services/shared';
 import router from '@/router';
-import { getStatusColor } from '../../../core/utils/status-color.util';
-import CodeManagementService from '../../../services/code-management.service';
+import { getStatusColor } from '@/core/utils/status-color.util';
+import CodeManagementService from '@/services/code-management.service';
 import { CodeManagementDto } from '@/services/init/dto';
-import AdminService from '../../../services/admin.service';
+import AdminService from '@/services/admin.service';
+import BrandService from '@/services/brand.service';
 
 @Component({
   name: 'ProductConsultList',
 })
 export default class ProductConsultList extends BaseComponent {
   private productConsultDto = new ProductConsultDto();
+  private brandList: BrandDto[] = [];
   private productConsultSearchDto = new ProductConsultListDto();
   private pagination = new Pagination();
   private productConsultTotalCount = null;
@@ -449,6 +485,7 @@ export default class ProductConsultList extends BaseComponent {
     신청상태: 'codeManagement.value',
     주소: 'addressInfo.name',
     비고: 'pConsultEtc',
+    관심브랜드: 'brand.nameKr',
   };
   private json_meta = [
     [
@@ -464,6 +501,12 @@ export default class ProductConsultList extends BaseComponent {
       if (res) {
         this.adminList = res.data;
       }
+    });
+  }
+
+  findBrands() {
+    BrandService.findNanudaBrand().subscribe(res => {
+      this.brandList = res.data;
     });
   }
 
@@ -563,6 +606,7 @@ export default class ProductConsultList extends BaseComponent {
     this.pagination.page = 1;
     this.search();
     this.getProductConsultCodes();
+    this.findBrands();
     this.getAvailableTimes();
     this.getGender();
     this.findAdmin();

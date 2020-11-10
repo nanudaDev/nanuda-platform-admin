@@ -7,5 +7,7 @@ export class ProductConsultListDto extends ProductConsultDto {
   changUpExpYn?: YN;
   adminName?: string;
   nanudaUserPhone?: string;
+  brandNo?: number;
+  brandName?: string;
   orderByNo?: OrderByValue;
 }

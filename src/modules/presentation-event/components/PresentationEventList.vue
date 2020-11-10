@@ -1,6 +1,6 @@
 <template>
   <section>
-    <SectionTitle title="설명회 등록" divider></SectionTitle>
+    <SectionTitle title="창업 설명회 관리" divider></SectionTitle>
   </section>
 </template>
 <script lang="ts">
@@ -27,7 +27,7 @@ export default class PresentationEventList extends BaseComponent {
   // 이미지 업로드
   async uploadMainImage(file: File[]) {
     const attachments = await FileUploadService.upload(
-      UPLOAD_TYPE.DELIVERY_SPACE,
+      UPLOAD_TYPE.PRESENTATION_EVENT,
       file,
     );
     this.attachments = [];
@@ -41,7 +41,7 @@ export default class PresentationEventList extends BaseComponent {
 
   async uploadMobileImage(file: File[]) {
     const attachments = await FileUploadService.upload(
-      UPLOAD_TYPE.DELIVERY_SPACE,
+      UPLOAD_TYPE.PRESENTATION_EVENT,
       file,
     );
     this.mobileAttachments = [];

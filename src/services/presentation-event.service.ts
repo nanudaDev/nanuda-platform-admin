@@ -19,6 +19,13 @@ class PresentationEventService extends BaseService {
     return super.get<PresentationEventDto>(`admin/presentation-event/${id}`);
   }
 
+  update(id, body: PresentationEventDto) {
+    return super.patch<PresentationEventDto>(
+      `admin/presentation-event/${id}`,
+      body,
+    );
+  }
+
   create(presentationEventCreateDto: PresentationEventDto) {
     return super.post<PresentationEventDto>(
       'admin/presentation-event',

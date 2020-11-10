@@ -393,6 +393,7 @@ export default class BannerDetail extends BaseComponent {
         ),
       );
       this.imageChanged = true;
+      console.log(this.newBannerImage);
     }
   }
 

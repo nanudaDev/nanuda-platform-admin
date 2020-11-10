@@ -522,6 +522,45 @@ const componentsRouter: RouteConfig[] = [
     ],
   },
   {
+    path: '/presentation-event',
+    name: '창업 설명회',
+    component: () =>
+      import('../../modules/presentation-event/PresentationEvent.vue'),
+    children: [
+      {
+        path: '/presentation-event',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/presentation-event/components/PresentationEventList.vue'
+          ),
+        name: 'PresentationEventList',
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          title: '창업 설명회 관리',
+        },
+      },
+      {
+        path: '/presentation-event/:id([0-9]+)',
+        name: 'PresentationEventDetail',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/presentation-event/components/PresentationEventDetail.vue'
+          ),
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          detailPage: true,
+          title: '창업 설명회 상세',
+        },
+      },
+    ],
+  },
+  {
     path: '/banner',
     name: '배너',
     component: () => import('../../modules/banner/Banner.vue'),

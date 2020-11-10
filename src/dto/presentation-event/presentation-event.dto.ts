@@ -19,4 +19,5 @@ export class PresentationEventDto extends BaseDto<PresentationEventDto> {
   lon?: string;
   contactPhone?: string;
   signedUpAttendees?: AttendeesDto[];
+  posteventDesc?: string;
 }

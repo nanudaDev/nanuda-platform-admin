@@ -234,7 +234,7 @@
             <col width="60" />
             <col width="100" />
             <col width="100" />
-            <col width="80" />
+            <col width="100" />
             <col width="100" />
             <col width="60" />
             <col width="60" />
@@ -247,7 +247,6 @@
           </colgroup>
           <thead>
             <tr>
-              <th></th>
               <th scope="col">ID</th>
               <th
                 scope="col"
@@ -420,16 +419,17 @@
                 </template>
               </td>
               <td>
-                <b-badge
-                  v-if="deliveryFounderConsult.changUpExpYn"
-                  :variant="
-                    deliveryFounderConsult.changUpExpYn === 'Y'
-                      ? 'success'
-                      : 'danger'
-                  "
-                  >{{ deliveryFounderConsult.changUpExpYn }}</b-badge
-                >
-                <div v-else>-</div>
+                <template v-if="deliveryFounderConsult.changUpExpYn">
+                  <b-badge
+                    :variant="
+                      deliveryFounderConsult.changUpExpYn === 'Y'
+                        ? 'success'
+                        : 'danger'
+                    "
+                    >{{ deliveryFounderConsult.changUpExpYn }}</b-badge
+                  >
+                </template>
+                <template v-else>-</template>
               </td>
               <td>
                 <template v-if="deliveryFounderConsult.viewCount">

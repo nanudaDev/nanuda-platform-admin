@@ -1,5 +1,5 @@
 import { BaseDto } from '@/core';
-import { FOUNDER_CONSULT } from '@/services/shared';
+import { FOUNDER_CONSULT, GENDER } from '@/services/shared';
 import { AVAILABLE_TIME, YN } from '@/common';
 import { CodeManagementDto } from '@/services/init/dto';
 import { AdminDto } from '../admin';
@@ -32,4 +32,5 @@ export class FounderConsultDto extends BaseDto<FounderConsultDto> {
   companyUserNo?: number;
   createdAt?: Date;
   deliveredAt?: Date;
+  gender?: GENDER;
 }

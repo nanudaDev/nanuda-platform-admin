@@ -80,6 +80,8 @@ select {
   align-items: flex-end;
   margin-bottom: 1rem;
   .total-count {
+    display: flex;
+    align-items: center;
     h5 {
       font-size: 14px;
       margin: 0;

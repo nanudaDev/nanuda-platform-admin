@@ -604,7 +604,6 @@
         </BaseCard>
       </b-col>
     </b-row>
-    <b-divider></b-divider>
     <!-- for the text message -->
     <b-modal id="managemnt_history" title="업체 메모 이력" hide-footer>
       <div>
@@ -612,6 +611,11 @@
       </div>
     </b-modal>
     <div class="text-right">
+      <router-link
+        to="/delivery-founder-consult"
+        class="btn btn-secondary text-center"
+        >목록으로</router-link
+      >
       <b-button
         variant="primary"
         @click="updateFounderConsult()"

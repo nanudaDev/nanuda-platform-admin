@@ -48,7 +48,7 @@
           </select>
         </b-col>
         <b-col cols="4" xl="1">
-          <label for="changup_exp_yn">창업 경험 유무</label>
+          <label for="changup_exp_yn">창업 경험</label>
           <select
             class="custom-select"
             id="changup_exp_yn"
@@ -106,28 +106,24 @@
     <div v-if="!dataLoading">
       <div class="table-top">
         <div class="total-count">
-          <div class="d-flex align-items-center">
-            <h5>
-              <span>TOTAL</span>
-              <strong class="text-primary">{{
-                productConsultTotalCount
-              }}</strong>
-            </h5>
-            <b-form-select
-              v-model="newLimit"
-              size="sm"
-              class="select-limit ml-3"
-              @change="search()"
-              v-if="productConsultTotalCount"
+          <h5>
+            <span>TOTAL</span>
+            <strong class="text-primary">{{ productConsultTotalCount }}</strong>
+          </h5>
+          <b-form-select
+            v-model="newLimit"
+            size="sm"
+            class="select-limit ml-3"
+            @change="search()"
+            v-if="productConsultTotalCount"
+          >
+            <b-form-select-option
+              v-for="count in paginationCount"
+              :key="count"
+              :value="count"
+              >{{ count }}개</b-form-select-option
             >
-              <b-form-select-option
-                v-for="count in paginationCount"
-                :key="count"
-                :value="count"
-                >{{ count }}개</b-form-select-option
-              >
-            </b-form-select>
-          </div>
+          </b-form-select>
         </div>
         <div>
           <b-button
@@ -208,7 +204,7 @@
                   highlighted: productConsultSearchDto.changUpExpYn,
                 }"
               >
-                창업 경험 유무
+                창업 경험
               </th>
               <th>
                 비고

@@ -63,6 +63,14 @@ class FounderConsultService extends BaseService {
       `admin/founder-consult/${founderConsultNo}/reverse-read-status`,
     );
   }
+
+  /**
+   * assign own's self
+   * @param founderConsultNo
+   */
+  assignAdmin(founderConsultNo) {
+    return super.patch<any>(`admin/founder-consult/${founderConsultNo}/assign`);
+  }
 }
 
 export default new FounderConsultService();

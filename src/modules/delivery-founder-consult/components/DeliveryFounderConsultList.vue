@@ -173,10 +173,10 @@
         </div>
       </div>
       <b-row align-h="center">
-        <b-btn-group>
-          <b-button variant="primary" @click="clearOut()">초기화</b-button>
-          <b-button variant="success" @click="search()">검색</b-button>
-        </b-btn-group>
+        <div>
+          <b-button variant="secondary" @click="clearOut()">초기화</b-button>
+          <b-button variant="primary" @click="search()">검색</b-button>
+        </div>
       </b-row>
     </div>
     <div class="table-top">
@@ -184,245 +184,325 @@
         <h5>
           <span>TOTAL</span>
           <strong class="text-primary">
-            {{ deliveryFounderConsultListCount }}
+            {{ deliveryFounderConsultTotalCount }}
           </strong>
         </h5>
-      </div>
-      <b-button variant="primary" v-b-modal.add_founder_consult
-        >상담 신청 추가</b-button
-      >
-    </div>
-    <div v-if="!dataLoading" class="table-bordered table-responsive">
-      <table
-        class="table table-hover table-sm text-center"
-        v-if="deliveryFounderConsultListCount"
-      >
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: deliveryFounderConsultSearchDto.deliverySpaceNo,
-              }"
-            >
-              공간 ID
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: deliveryFounderConsultSearchDto.nanudaUserName,
-              }"
-            >
-              사용자명
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: deliveryFounderConsultSearchDto.phone,
-              }"
-            >
-              연락처
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: deliveryFounderConsultSearchDto.gender,
-              }"
-            >
-              성별
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: deliveryFounderConsultSearchDto.companyNameKr,
-              }"
-            >
-              업체명
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted:
-                  deliveryFounderConsultSearchDto.companyDistrictNameKr,
-              }"
-            >
-              지점명
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: deliveryFounderConsultSearchDto.hopeTime,
-              }"
-            >
-              희망 상담 시간대
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: deliveryFounderConsultSearchDto.changUpExpYn,
-              }"
-            >
-              창업 경험
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: deliveryFounderConsultSearchDto.viewCount,
-              }"
-            >
-              열람
-            </th>
-
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: deliveryFounderConsultSearchDto.adminUserName,
-              }"
-            >
-              관리자명
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: deliveryFounderConsultSearchDto.status,
-              }"
-            >
-              신청 상태
-            </th>
-            <th scope="col">공간 공실 수</th>
-            <th scope="col">생성날짜</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr
-            v-for="founderConsult in deliveryFounderConsultList"
-            :key="founderConsult.no"
+        <b-form-select
+          v-model="newLimit"
+          size="sm"
+          class="select-limit ml-3"
+          @change="search()"
+          v-if="deliveryFounderConsultTotalCount"
+        >
+          <b-form-select-option
+            v-for="count in paginationCount"
+            :key="count"
+            :value="count"
+            >{{ count }}개</b-form-select-option
           >
-            <th scope="row">{{ founderConsult.no }}</th>
-            <td>{{ founderConsult.deliverySpaceNo }}</td>
-            <td>
-              <div
-                v-if="
-                  founderConsult.nanudaUser && founderConsult.nanudaUser.name
-                "
-              >
-                {{ founderConsult.nanudaUser.name }}
-              </div>
-            </td>
-            <td class="text-nowrap">
-              <div
-                v-if="
-                  founderConsult.nanudaUser && founderConsult.nanudaUser.phone
-                "
-              >
-                {{ founderConsult.nanudaUser.phone | phoneTransformer }}
-              </div>
-            </td>
-            <td>
-              <div
-                v-if="
-                  founderConsult.nanudaUser &&
-                    founderConsult.nanudaUser.genderInfo
-                "
-              >
-                {{ founderConsult.nanudaUser.genderInfo.value }}
-              </div>
-            </td>
-            <td>
-              <div v-if="founderConsult.deliverySpace">
-                {{
-                  founderConsult.deliverySpace.companyDistrict.company.nameKr
-                }}
-              </div>
-            </td>
-            <td>
-              <div v-if="founderConsult.deliverySpace">
-                {{ founderConsult.deliverySpace.companyDistrict.nameKr }}
-              </div>
-            </td>
-            <td>
-              <div v-if="founderConsult.availableTime">
-                {{ founderConsult.availableTime.value }}
-              </div>
-            </td>
-            <td>
-              <b-badge
-                v-if="founderConsult.changUpExpYn"
-                :variant="
-                  founderConsult.changUpExpYn === 'Y' ? 'success' : 'danger'
-                "
-                >{{ founderConsult.changUpExpYn }}</b-badge
-              >
-              <div v-else>-</div>
-            </td>
-            <td>
-              <div v-if="founderConsult.viewCount">
-                <b-badge
-                  :variant="
-                    founderConsult.viewCount === 'Y' ? 'success' : 'danger'
-                  "
-                  >{{ founderConsult.viewCount }}</b-badge
-                >
-              </div>
-            </td>
-
-            <td>
-              <div v-if="founderConsult.admin">
-                {{ founderConsult.admin.name }}
-              </div>
-              <div v-else>-</div>
-            </td>
-            <td>
-              <b-badge
-                :variant="getStatusColor(founderConsult.status)"
-                class="badge-pill p-2 mr-2"
-                >{{ founderConsult.codeManagement.value }}</b-badge
-              >
-            </td>
-            <td>
-              <div
-                v-if="
-                  founderConsult.deliverySpace &&
-                    founderConsult.deliverySpace.contracts
-                "
-              >
-                {{
-                  founderConsult.deliverySpace.quantity -
-                    founderConsult.deliverySpace.contracts.length
-                }}/{{ founderConsult.deliverySpace.quantity }}
-              </div>
-            </td>
-            <td>{{ founderConsult.createdAt | dateTransformer }}</td>
-            <td>
-              <router-link
-                v-if="founderConsult.no"
-                class="btn btn-sm btn-secondary text-nowrap"
-                :to="{
-                  name: 'DeliveryFounderConsultDetail',
-                  params: {
-                    id: founderConsult.no,
-                  },
-                }"
-                >상세보기</router-link
-              >
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div v-else class="empty-data border">검색결과가 없습니다.</div>
+        </b-form-select>
+      </div>
+      <div>
+        <download-excel
+          class="btn btn-outline-success"
+          :data="deliveryFounderConsultListDto"
+          :fields="fields"
+          :stringifyLongNum="true"
+          worksheet="배달형 상담 리스트"
+          :name="`deliverey_founder_consult_${newDate}.xls`"
+          v-if="deliveryFounderConsultTotalCount"
+        >
+          <b-icon icon="file-earmark-arrow-down"></b-icon>
+          엑셀 다운로드
+        </download-excel>
+        <b-button variant="primary" v-b-modal.add_founder_consult
+          >상담 신청 추가</b-button
+        >
+      </div>
     </div>
-    <b-pagination
-      v-model="pagination.page"
-      v-if="deliveryFounderConsultListCount"
-      pills
-      :total-rows="deliveryFounderConsultListCount"
-      :per-page="pagination.limit"
-      @input="paginateSearch"
-      class="mt-4 justify-content-center"
-    ></b-pagination>
+    <div v-if="!dataLoading">
+      <div
+        class="table-responsive border"
+        v-if="deliveryFounderConsultTotalCount"
+      >
+        <table class="table table-hover table-sm text-center table-fixed">
+          <colgroup>
+            <col width="60" />
+            <col width="60" />
+            <col width="100" />
+            <col width="100" />
+            <col width="60" />
+            <col width="100" />
+            <col width="100" />
+            <col width="80" />
+            <col width="100" />
+            <col width="60" />
+            <col width="60" />
+            <col width="300" />
+            <col width="80" />
+            <col width="80" />
+            <col width="100" />
+            <col width="150" />
+            <col width="100" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th></th>
+              <th scope="col">ID</th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: deliveryFounderConsultSearchDto.deliverySpaceNo,
+                }"
+              >
+                공간 ID
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: deliveryFounderConsultSearchDto.nanudaUserName,
+                }"
+              >
+                사용자명
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: deliveryFounderConsultSearchDto.phone,
+                }"
+              >
+                연락처
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: deliveryFounderConsultSearchDto.gender,
+                }"
+              >
+                성별
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: deliveryFounderConsultSearchDto.companyNameKr,
+                }"
+              >
+                업체명
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted:
+                    deliveryFounderConsultSearchDto.companyDistrictNameKr,
+                }"
+              >
+                지점명
+              </th>
+              <th>
+                평수
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: deliveryFounderConsultSearchDto.hopeTime,
+                }"
+              >
+                희망 상담 시간대
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: deliveryFounderConsultSearchDto.changUpExpYn,
+                }"
+              >
+                창업 경험
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: deliveryFounderConsultSearchDto.viewCount,
+                }"
+              >
+                열람 유무
+              </th>
+              <th scope="col">
+                비고
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: deliveryFounderConsultSearchDto.adminUserName,
+                }"
+              >
+                관리자명
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: deliveryFounderConsultSearchDto.status,
+                }"
+              >
+                신청 상태
+              </th>
+              <th scope="col">공간 공실 수</th>
+              <th scope="col">생성날짜</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              v-for="deliveryFounderConsult in deliveryFounderConsultListDto"
+              :key="deliveryFounderConsult.no"
+            >
+              <th scope="row">{{ deliveryFounderConsult.no }}</th>
+              <td>{{ deliveryFounderConsult.deliverySpaceNo }}</td>
+              <td>
+                <template
+                  v-if="
+                    deliveryFounderConsult.nanudaUser &&
+                      deliveryFounderConsult.nanudaUser.name
+                  "
+                >
+                  {{ deliveryFounderConsult.nanudaUser.name }}
+                </template>
+              </td>
+              <td class="text-nowrap">
+                <template
+                  v-if="
+                    deliveryFounderConsult.nanudaUser &&
+                      deliveryFounderConsult.nanudaUser.phone
+                  "
+                >
+                  {{
+                    deliveryFounderConsult.nanudaUser.phone | phoneTransformer
+                  }}
+                </template>
+              </td>
+              <td>
+                <template
+                  v-if="
+                    deliveryFounderConsult.nanudaUser &&
+                      deliveryFounderConsult.nanudaUser.genderInfo
+                  "
+                >
+                  {{ deliveryFounderConsult.nanudaUser.genderInfo.value }}
+                </template>
+              </td>
+              <td>
+                <template v-if="deliveryFounderConsult.deliverySpace">
+                  {{
+                    deliveryFounderConsult.deliverySpace.companyDistrict.company
+                      .nameKr
+                  }}
+                </template>
+              </td>
+              <td>
+                <template v-if="deliveryFounderConsult.deliverySpace">
+                  {{
+                    deliveryFounderConsult.deliverySpace.companyDistrict.nameKr
+                  }}
+                </template>
+              </td>
+              <td>
+                <template
+                  v-if="
+                    deliveryFounderConsult.deliverySpace &&
+                      deliveryFounderConsult.deliverySpace.size
+                  "
+                >
+                  {{ deliveryFounderConsult.deliverySpace.size }}
+                </template>
+              </td>
+              <td>
+                <template v-if="deliveryFounderConsult.availableTime">
+                  {{ deliveryFounderConsult.availableTime.value }}
+                </template>
+              </td>
+              <td>
+                <b-badge
+                  v-if="deliveryFounderConsult.changUpExpYn"
+                  :variant="
+                    deliveryFounderConsult.changUpExpYn === 'Y'
+                      ? 'success'
+                      : 'danger'
+                  "
+                  >{{ deliveryFounderConsult.changUpExpYn }}</b-badge
+                >
+                <div v-else>-</div>
+              </td>
+              <td>
+                <template v-if="deliveryFounderConsult.viewCount">
+                  <b-badge
+                    :variant="
+                      deliveryFounderConsult.viewCount === 'Y'
+                        ? 'success'
+                        : 'danger'
+                    "
+                    >{{ deliveryFounderConsult.viewCount }}</b-badge
+                  >
+                </template>
+              </td>
+              <td>
+                <template v-if="deliveryFounderConsult.spaceConsultEtc">
+                  {{ deliveryFounderConsult.spaceConsultEtc }}
+                </template>
+              </td>
+              <td>
+                <template v-if="deliveryFounderConsult.admin">
+                  {{ deliveryFounderConsult.admin.name }}
+                </template>
+                <template v-else>-</template>
+              </td>
+              <td>
+                <b-badge
+                  :variant="getStatusColor(deliveryFounderConsult.status)"
+                  class="badge-pill p-2 mr-2"
+                  >{{ deliveryFounderConsult.codeManagement.value }}</b-badge
+                >
+              </td>
+              <td>
+                <template
+                  v-if="
+                    deliveryFounderConsult.deliverySpace &&
+                      deliveryFounderConsult.deliverySpace.contracts
+                  "
+                >
+                  {{
+                    deliveryFounderConsult.deliverySpace.quantity -
+                      deliveryFounderConsult.deliverySpace.contracts.length
+                  }}/{{ deliveryFounderConsult.deliverySpace.quantity }}
+                </template>
+              </td>
+              <td>{{ deliveryFounderConsult.createdAt | dateTransformer }}</td>
+              <td>
+                <router-link
+                  v-if="deliveryFounderConsult.no"
+                  class="btn btn-sm btn-secondary text-nowrap"
+                  :to="{
+                    name: 'DeliveryFounderConsultDetail',
+                    params: {
+                      id: deliveryFounderConsult.no,
+                    },
+                  }"
+                  >상세보기</router-link
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-else class="empty-data border">검색결과가 없습니다.</div>
+      <b-pagination
+        v-model="pagination.page"
+        v-if="deliveryFounderConsultTotalCount"
+        pills
+        :total-rows="deliveryFounderConsultTotalCount"
+        :per-page="pagination.limit"
+        @input="paginateSearch"
+        class="mt-4 justify-content-center"
+      ></b-pagination>
+    </div>
     <div class="half-circle-spinner mt-5" v-if="dataLoading">
       <div class="circle circle-1"></div>
       <div class="circle circle-2"></div>
@@ -616,6 +696,8 @@ import {
   CONST_FOUNDER_CONSULT,
   GENDER,
   CONST_GENDER,
+  PaginationCount,
+  CONST_PAGINATION_COUNT,
 } from '../../../services/shared';
 import { CodeManagementDto } from '../../../services/init/dto';
 
@@ -664,9 +746,36 @@ import { ReverseQueryParamMapper } from '@/core';
 export default class DeliveryFounderConsult extends BaseComponent {
   private deliveryFounderConsultSearchDto = new DeliveryFounderConsultListDto();
   private deliveryFounderConsultDto = new DeliveryFounderConsultDto();
-  private deliveryFounderConsultList: DeliveryFounderConsultDto[] = [];
-  private deliveryFounderConsultListCount = 0;
+  private deliveryFounderConsultListDto: DeliveryFounderConsultDto[] = [];
+  private deliveryFounderConsultTotalCount = null;
   private deliveryFounderConsultCreateDto = new DeliveryFounderConsultDto();
+  private newLimit = null;
+  private paginationCount: PaginationCount[] = [...CONST_PAGINATION_COUNT];
+  private newDate = new Date();
+  // excel options
+  private fields = {
+    이름: 'nanudaUser.name',
+    연락처: 'nanudaUser.phone',
+    비회원명: 'nonUserName',
+    비회원연락처: 'nonUserPhone',
+    성별: 'nanudaUser.genderInfo.value',
+    업체명: 'deliverySpace.companyDistrict.company.nameKr',
+    지점명: 'deliverySpace.companyDistrict.nameKr',
+    평수: 'deliverySpace.size',
+    상담시간: 'availableTime.value',
+    신청일: 'createdAt',
+    창업경험: 'changUpExpYn',
+    신청상태: 'codeManagement.value',
+    비고: 'spaceConsultEtc',
+  };
+  private json_meta = [
+    [
+      {
+        key: 'charset',
+        value: 'utf-8',
+      },
+    ],
+  ];
 
   private statusSelect: CodeManagementDto[] = [];
   private statusB2BSelect: CodeManagementDto[] = [];
@@ -792,13 +901,14 @@ export default class DeliveryFounderConsult extends BaseComponent {
     if (!isPagination) {
       this.pagination.page = 1;
     }
+    this.pagination.limit = this.newLimit;
     DeliveryFounderConsultService.findAll(
       this.deliveryFounderConsultSearchDto,
       this.pagination,
     ).subscribe(res => {
       this.dataLoading = false;
-      this.deliveryFounderConsultList = res.data.items;
-      this.deliveryFounderConsultListCount = res.data.totalCount;
+      this.deliveryFounderConsultListDto = res.data.items;
+      this.deliveryFounderConsultTotalCount = res.data.totalCount;
       this.$router.push({
         query: Object.assign(this.deliveryFounderConsultSearchDto),
       });
@@ -835,6 +945,8 @@ export default class DeliveryFounderConsult extends BaseComponent {
   }
 
   created() {
+    this.newLimit = 50;
+    this.pagination.limit = this.newLimit;
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.deliveryFounderConsultSearchDto = query;

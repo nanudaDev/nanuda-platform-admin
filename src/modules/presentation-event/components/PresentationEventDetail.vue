@@ -165,6 +165,55 @@
         수정하기
       </b-button>
     </div>
+    <!-- TODO : 추후 API 로 불러와서 작업 -->
+    <div v-if="presentationEventDto.signedUpAttendees.length > 0" class="mt-4">
+      <div class="table-top">
+        <div class="title">
+          <h4>참석자 리스트</h4>
+        </div>
+      </div>
+      <table class="table table-hover table-sm">
+        <thead>
+          <tr>
+            <th scope="col">NO</th>
+            <th scope="col">이름</th>
+            <th scope="col">연락처</th>
+            <th scope="col">성별</th>
+            <th scope="col">계약 여부</th>
+            <th scope="col">이전 참석 여부</th>
+            <th scope="col">참석 시간대</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="attendee in presentationEventDto.signedUpAttendees"
+            :key="attendee.no"
+          >
+            <td>
+              {{ attendee.no }}
+            </td>
+            <td>
+              {{ attendee.name }}
+            </td>
+            <td>
+              {{ attendee.phone | phoneTransformer }}
+            </td>
+            <td>
+              {{ attendee.gender | enumTransformer }}
+            </td>
+            <td>
+              {{ attendee.isContracted }}
+            </td>
+            <td>
+              {{ attendee.isAttended }}
+            </td>
+            <td>
+              {{ attendee.scheduleTime }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 </template>
 <script lang="ts">
@@ -262,10 +311,14 @@ export default class PresentationEventDetail extends BaseComponent {
   updateEvent() {
     if (this.newAttachments.length > 0) {
       this.presentationEventDto.image = this.newAttachments;
+    } else {
+      delete this.presentationEventDto.image;
     }
 
     if (this.newMobileAttachments.length > 0) {
       this.presentationEventDto.mobileImage = this.newMobileAttachments;
+    } else {
+      delete this.presentationEventDto.mobileImage;
     }
 
     PresentationEventService.update(

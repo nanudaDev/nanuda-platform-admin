@@ -1,6 +1,6 @@
 <template>
   <section v-if="productConsultDto">
-    <SectionTitle title="상품 상담 상세" divider>
+    <SectionTitle title="상품 상담 신청" divider>
       <template v-slot:rightArea>
         <router-link to="/product-consult" class="btn btn-secondary"
           >목록으로</router-link
@@ -105,12 +105,12 @@
             <div>
               <b-button
                 v-if="!productConsultDto.pConsultManager"
-                variant="primary"
+                variant="info"
                 @click="assignYourselfAdmin()"
                 >본인으로 정하기</b-button
               >
               <b-button
-                variant="secondary"
+                variant="primary"
                 @click="findAdmin()"
                 v-b-modal.admin_list
                 >수정하기</b-button
@@ -144,6 +144,11 @@
       </b-col>
       <b-col lg="12" class="my-3">
         <BaseCard title="상담 상세 정보">
+          <template v-slot:head>
+            <b-button variant="primary" @click="updateProductConsult()">
+              수정하기
+            </b-button>
+          </template>
           <template v-slot:body>
             <b-row>
               <b-col lg="6">
@@ -231,14 +236,14 @@
                         >{{ status.value }}</b-form-select-option
                       >
                     </b-form-select>
-                    <span class="ml-1" v-if="productConsultDto.updatedAt">
+                    <p class="mt-1" v-if="productConsultDto.updatedAt">
                       ({{ productConsultDto.updatedAt | dateTransformer }})
-                    </span>
+                    </p>
                   </li>
                 </ul>
               </b-col>
               <b-col lg="6">
-                비고 내용 : <br />
+                <label for="productConsultEtc">비고 내용</label>
                 <b-form-textarea
                   id="productConsultEtc"
                   v-model="productConsultDto.pConsultEtc"
@@ -248,11 +253,6 @@
                 ></b-form-textarea>
               </b-col>
             </b-row>
-            <div class="text-center mt-3">
-              <b-button variant="primary" @click="updateProductConsult()">
-                수정하기
-              </b-button>
-            </div>
           </template>
         </BaseCard>
       </b-col>

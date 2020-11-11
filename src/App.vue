@@ -80,6 +80,8 @@ select {
   align-items: flex-end;
   margin-bottom: 1rem;
   .total-count {
+    display: flex;
+    align-items: center;
     h5 {
       font-size: 14px;
       margin: 0;
@@ -87,6 +89,9 @@ select {
     .text-primary {
       margin-left: 0.25rem;
     }
+  }
+  .select-limit {
+    width: 100px;
   }
 }
 
@@ -109,9 +114,16 @@ h5 {
 img {
   max-width: 100%;
 }
+.custom-radio {
+  line-height: 2.2;
+}
 
 .table {
   margin-bottom: 0;
+
+  &.table-fixed {
+    table-layout: fixed;
+  }
 
   &.table-nowrap {
     th,
@@ -124,6 +136,7 @@ img {
   td {
     vertical-align: middle;
     text-align: center;
+    height: 50px;
   }
   thead {
     th {
@@ -211,5 +224,14 @@ img {
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 90px;
+}
+
+@media screen and (max-width: 540px) {
+  .table-top {
+    display: block;
+    .total-count {
+      margin-bottom: 10px;
+    }
+  }
 }
 </style>

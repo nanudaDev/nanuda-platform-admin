@@ -1,6 +1,7 @@
 export * from './admin';
 export * from './amenity';
 export * from './article';
+export * from './attendees';
 export * from './banner';
 export * from './brand';
 export * from './brand-kiosk-mapper';
@@ -25,6 +26,7 @@ export * from './nanuda-user';
 export * from './nanuda-kitchen-master';
 export * from './nanuda-kitchen-menu';
 export * from './payment-list';
+export * from './presentation-event';
 export * from './product-consult';
 export * from './notice-board';
 export * from './space';

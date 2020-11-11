@@ -1,7 +1,7 @@
 <template>
   <section :id="this.$route.name">
     <NavBar />
-    <div id="app-main" class="container">
+    <div id="app-main" class="container-fluid">
       <router-view />
     </div>
   </section>
@@ -67,7 +67,9 @@ export default class MainLayout extends BaseComponent {}
     transform: rotate(360deg);
   }
 }
-
+#app {
+  padding: 0 1rem;
+}
 #Dashboard {
   #app-main {
     max-width: none;

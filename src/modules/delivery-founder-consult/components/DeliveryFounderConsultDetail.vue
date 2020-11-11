@@ -1,17 +1,17 @@
 <template>
   <section>
-    <SectionTitle
-      v-if="deliveryFounderConsult.deliverySpaces"
-      :title="
-        `${deliveryFounderConsult.deliverySpaces.typeName} - 상담
-          신청`
-      "
-    >
+    <SectionTitle title="배달형 상담 신청" divider>
       <template v-slot:rightArea>
         <router-link
           to="/delivery-founder-consult"
           class="btn btn-secondary text-center"
           >목록으로</router-link
+        >
+        <b-button
+          variant="primary"
+          @click="updateFounderConsult()"
+          v-if="!statusDistComplete"
+          >수정하기</b-button
         >
       </template>
     </SectionTitle>
@@ -19,74 +19,74 @@
       <b-col md="4" class="my-3">
         <BaseCard title="사용자 정보">
           <template v-slot:head>
-            <div
-              v-if="
-                deliveryFounderConsult.nanudaUser &&
-                  deliveryFounderConsult.status !== 'F_DIST_COMPLETE'
-              "
-            >
-              <b-button
+            <div>
+              <b-button variant="outline-info" v-b-modal.send_message>
+                <b-icon icon="envelope"></b-icon>
+                <span class="ml-2">문자전송</span>
+              </b-button>
+              <!-- <b-button
                 variant="primary"
                 @click="updateNanudaUser()"
                 v-b-modal.nanuda_user
+                v-if="
+                  deliveryFounderConsultDto.nanudaUser && !statusDistComplete
+                "
                 >수정하기</b-button
-              >
+              > -->
             </div>
           </template>
           <template v-slot:body>
-            <div v-if="deliveryFounderConsult.nanudaUser">
+            <div v-if="deliveryFounderConsultDto.nanudaUser">
               <ul>
                 <li>
                   사용자 ID :
-                  <b>{{ deliveryFounderConsult.nanudaUser.no }}</b>
+                  <b>{{ deliveryFounderConsultDto.nanudaUser.no }}</b>
                 </li>
                 <li>
                   사용자명 :
-                  <b>{{ deliveryFounderConsult.nanudaUser.name }}</b>
+                  <b>{{ deliveryFounderConsultDto.nanudaUser.name }}</b>
                 </li>
                 <li>
                   휴대폰 번호 :
                   <span>
                     <b>
                       {{
-                        deliveryFounderConsult.nanudaUser.phone
+                        deliveryFounderConsultDto.nanudaUser.phone
                           | phoneTransformer
                       }}
                     </b>
-                    <b-button
-                      size="sm"
-                      variant="info"
-                      pill
-                      v-b-modal.send_message
-                      class="mx-2 p-1"
-                    >
-                      <b-icon icon="envelope"></b-icon>
-                      <span class="d-none">문자전송</span>
-                    </b-button>
                   </span>
                 </li>
-                <!-- <li
+                <li
                   v-if="
-                    deliveryFounderConsult.nanudaUser &&
-                      deliveryFounderConsult.nanudaUser.genderInfo
+                    deliveryFounderConsultDto.nanudaUser &&
+                      deliveryFounderConsultDto.nanudaUser.genderInfo
                   "
                 >
-                  성별 :
-                  <b>{{
-                    deliveryFounderConsult.nanudaUser.genderInfo.value
-                  }}</b>
-                </li> -->
-                <li v-if="deliveryFounderConsult.nanudaUser.remainVisitCount">
+                  <label for="">성별</label>
+                  <b-form-radio
+                    v-model="deliveryFounderConsultDto.nanudaUser.gender"
+                    v-for="gender in genderSelect"
+                    :key="gender.no"
+                    :value="gender.key"
+                    name="gender"
+                    :disabled="statusDistComplete"
+                    >{{ gender.value }}</b-form-radio
+                  >
+                </li>
+                <li
+                  v-if="deliveryFounderConsultDto.nanudaUser.remainVisitCount"
+                >
                   남은 공간 신청 횟수 :
                   <b>
-                    {{ deliveryFounderConsult.nanudaUser.remainVisitCount }}
+                    {{ deliveryFounderConsultDto.nanudaUser.remainVisitCount }}
                   </b>
                 </li>
-                <li v-if="deliveryFounderConsult.nanudaUser.lastLoginAt">
+                <li v-if="deliveryFounderConsultDto.nanudaUser.lastLoginAt">
                   마지막 로그인 날짜:
                   <b>
                     {{
-                      deliveryFounderConsult.nanudaUser.lastLoginAt
+                      deliveryFounderConsultDto.nanudaUser.lastLoginAt
                         | dateTransformer
                     }}
                   </b>
@@ -97,7 +97,7 @@
             <!-- <b-alert
               show
               variant="danger"
-              v-if="!deliveryFounderConsult.nanudaUser.genderInfo"
+              v-if="!deliveryFounderConsultDto.nanudaUser.genderInfo"
               class="mt-3"
               >성별 미입력 상태</b-alert
             > -->
@@ -109,8 +109,8 @@
           <template v-slot:head>
             <div>
               <b-button
-                v-if="!deliveryFounderConsult.spaceConsultManager"
-                variant="primary"
+                v-if="!deliveryFounderConsultDto.spaceConsultManager"
+                variant="info"
                 @click="assignYourselfAdmin()"
                 >본인으로 정하기</b-button
               >
@@ -123,24 +123,24 @@
             </div>
           </template>
           <template v-slot:body>
-            <div v-if="deliveryFounderConsult.admin">
+            <div v-if="deliveryFounderConsultDto.admin">
               <ul>
                 <li>
                   관리자 ID :
                   <span>
-                    <b>{{ deliveryFounderConsult.admin.no }}</b>
+                    <b>{{ deliveryFounderConsultDto.admin.no }}</b>
                   </span>
                 </li>
                 <li>
                   관리자명 :
                   <span>
-                    <b>{{ deliveryFounderConsult.admin.name }}</b>
+                    <b>{{ deliveryFounderConsultDto.admin.name }}</b>
                   </span>
                 </li>
                 <li>
                   휴대폰 번호 :
                   <b>{{
-                    deliveryFounderConsult.admin.phone | phoneTransformer
+                    deliveryFounderConsultDto.admin.phone | phoneTransformer
                   }}</b>
                 </li>
               </ul>
@@ -152,7 +152,7 @@
       <b-col md="4" class="my-3">
         <BaseCard title="업체 정보">
           <template v-slot:body>
-            <div v-if="deliveryFounderConsult.deliverySpace">
+            <div v-if="deliveryFounderConsultDto.deliverySpace">
               <ul>
                 <li>
                   업체명 :
@@ -161,14 +161,14 @@
                       name: 'CompanyDetail',
                       params: {
                         id:
-                          deliveryFounderConsult.deliverySpace.companyDistrict
-                            .company.no,
+                          deliveryFounderConsultDto.deliverySpace
+                            .companyDistrict.company.no,
                       },
                     }"
                   >
                     <b>
                       {{
-                        deliveryFounderConsult.deliverySpace.companyDistrict
+                        deliveryFounderConsultDto.deliverySpace.companyDistrict
                           .company.nameKr
                       }}
                     </b>
@@ -176,35 +176,36 @@
                 </li>
                 <li
                   v-if="
-                    deliveryFounderConsult.deliverySpace.companyDistrict.company
-                      .phone
+                    deliveryFounderConsultDto.deliverySpace.companyDistrict
+                      .company.phone
                   "
                 >
                   전화번호 :
                   <b>
                     {{
-                      deliveryFounderConsult.deliverySpace.companyDistrict
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
                         .company.phone
                     }}
                   </b>
                 </li>
                 <li
                   v-if="
-                    deliveryFounderConsult.deliverySpace.companyDistrict.company
-                      .email
+                    deliveryFounderConsultDto.deliverySpace.companyDistrict
+                      .company.email
                   "
                 >
                   이메일 :
                   <b>
                     {{
-                      deliveryFounderConsult.deliverySpace.companyDistrict
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
                         .company.email
                     }}
                   </b>
                 </li>
                 <li
                   v-if="
-                    deliveryFounderConsult.deliverySpace.companyDistrict.nameKr
+                    deliveryFounderConsultDto.deliverySpace.companyDistrict
+                      .nameKr
                   "
                 >
                   지점명 :
@@ -213,14 +214,14 @@
                       name: 'CompanyDistrictDetail',
                       params: {
                         id:
-                          deliveryFounderConsult.deliverySpace.companyDistrict
-                            .no,
+                          deliveryFounderConsultDto.deliverySpace
+                            .companyDistrict.no,
                       },
                     }"
                   >
                     <b>
                       {{
-                        deliveryFounderConsult.deliverySpace.companyDistrict
+                        deliveryFounderConsultDto.deliverySpace.companyDistrict
                           .nameKr
                       }}
                     </b>
@@ -230,7 +231,7 @@
                   지점 주소 :
                   <b>
                     {{
-                      deliveryFounderConsult.deliverySpace.companyDistrict
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
                         .address
                     }}
                   </b>
@@ -240,14 +241,14 @@
                   <b-badge
                     :variant="
                       getStatusColor(
-                        deliveryFounderConsult.deliverySpace.companyDistrict
+                        deliveryFounderConsultDto.deliverySpace.companyDistrict
                           .companyDistrictStatus,
                       )
                     "
                     class="badge-pill p-2 mr-2"
                   >
                     {{
-                      deliveryFounderConsult.deliverySpace.companyDistrict
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
                         .companyDistrictStatus | enumTransformer
                     }}
                   </b-badge>
@@ -262,12 +263,12 @@
         <BaseCard title="타입 정보">
           <template v-slot:head>
             <router-link
-              v-if="deliveryFounderConsult.deliverySpace"
+              v-if="deliveryFounderConsultDto.deliverySpace"
               variant="outline-info"
               :to="{
                 name: 'DeliverySpaceDetail',
                 params: {
-                  id: deliveryFounderConsult.deliverySpace.no,
+                  id: deliveryFounderConsultDto.deliverySpace.no,
                 },
               }"
               class="btn btn-outline-info"
@@ -275,59 +276,71 @@
             >
           </template>
           <template v-slot:body>
-            <div v-if="deliveryFounderConsult.deliverySpace">
+            <div v-if="deliveryFounderConsultDto.deliverySpace">
               <ul>
-                <li v-if="deliveryFounderConsult.deliverySpace.no">
+                <li v-if="deliveryFounderConsultDto.deliverySpace.no">
                   타입 ID :
-                  <b>{{ deliveryFounderConsult.deliverySpace.no }}</b>
+                  <b>{{ deliveryFounderConsultDto.deliverySpace.no }}</b>
                 </li>
-                <li v-if="deliveryFounderConsult.deliverySpace.typeName">
+                <li v-if="deliveryFounderConsultDto.deliverySpace.typeName">
                   타입명 :
-                  <b>{{ deliveryFounderConsult.deliverySpace.typeName }}</b>
+                  <b>{{ deliveryFounderConsultDto.deliverySpace.typeName }}</b>
                 </li>
-                <li v-if="deliveryFounderConsult.deliverySpace.deposit">
+                <li v-if="deliveryFounderConsultDto.deliverySpace.deposit">
                   보증금 :
-                  <b>{{ deliveryFounderConsult.deliverySpace.deposit }} 만원</b>
-                </li>
-                <li v-if="deliveryFounderConsult.deliverySpace.monthlyRentFee">
-                  월 임대료 :
-                  <b>
-                    {{ deliveryFounderConsult.deliverySpace.monthlyRentFee }}
-                    만원
-                  </b>
+                  <b
+                    >{{
+                      deliveryFounderConsultDto.deliverySpace.deposit
+                    }}
+                    만원</b
+                  >
                 </li>
                 <li
-                  v-if="deliveryFounderConsult.deliverySpace.monthlyUtilityFee"
+                  v-if="deliveryFounderConsultDto.deliverySpace.monthlyRentFee"
                 >
-                  월 관리비 :
+                  월 임대료 :
                   <b>
-                    {{ deliveryFounderConsult.deliverySpace.monthlyUtilityFee }}
+                    {{ deliveryFounderConsultDto.deliverySpace.monthlyRentFee }}
                     만원
                   </b>
                 </li>
                 <li
                   v-if="
-                    deliveryFounderConsult.deliverySpace &&
-                      deliveryFounderConsult.deliverySpace.contracts
+                    deliveryFounderConsultDto.deliverySpace.monthlyUtilityFee
+                  "
+                >
+                  월 관리비 :
+                  <b>
+                    {{
+                      deliveryFounderConsultDto.deliverySpace.monthlyUtilityFee
+                    }}
+                    만원
+                  </b>
+                </li>
+                <li
+                  v-if="
+                    deliveryFounderConsultDto.deliverySpace &&
+                      deliveryFounderConsultDto.deliverySpace.contracts
                   "
                 >
                   공실 수:
                   <b>
                     {{
-                      deliveryFounderConsult.deliverySpace.quantity -
-                        deliveryFounderConsult.deliverySpace.contracts.length
-                    }}/{{ deliveryFounderConsult.deliverySpace.quantity }}
+                      deliveryFounderConsultDto.deliverySpace.quantity -
+                        deliveryFounderConsultDto.deliverySpace.contracts
+                          .length
+                    }}/{{ deliveryFounderConsultDto.deliverySpace.quantity }}
                   </b>
                 </li>
                 <li
                   v-if="
-                    deliveryFounderConsult.deliverySpace.amenities.length > 0
+                    deliveryFounderConsultDto.deliverySpace.amenities.length > 0
                   "
                 >
                   주방시설 :
                   <b-badge
                     variant="info"
-                    v-for="amenity in deliveryFounderConsult.deliverySpace
+                    v-for="amenity in deliveryFounderConsultDto.deliverySpace
                       .amenities"
                     :key="amenity.no"
                     class="m-1"
@@ -336,15 +349,15 @@
                 </li>
                 <li
                   v-if="
-                    deliveryFounderConsult.deliverySpace &&
-                      deliveryFounderConsult.deliverySpace.deliverySpaceOptions
-                        .length > 0
+                    deliveryFounderConsultDto.deliverySpace &&
+                      deliveryFounderConsultDto.deliverySpace
+                        .deliverySpaceOptions.length > 0
                   "
                 >
                   공간옵션 :
                   <b-badge
                     variant="info"
-                    v-for="option in deliveryFounderConsult.deliverySpace
+                    v-for="option in deliveryFounderConsultDto.deliverySpace
                       .deliverySpaceOptions"
                     :key="option.no"
                     class="m-1"
@@ -360,136 +373,181 @@
       <b-col md="8" class="my-3">
         <BaseCard title="상담 상세 정보">
           <template v-slot:head>
-            <div v-if="deliveryFounderConsult.createdAt">
+            <div v-if="deliveryFounderConsultDto.createdAt">
               <b-button
                 variant="danger"
                 @click="updateConsultInfo()"
                 v-b-modal.reverse-read
-                v-if="deliveryFounderConsult.viewCount === 'Y'"
+                v-if="deliveryFounderConsultDto.viewCount === 'Y'"
                 >미열람 처리</b-button
-              >
-              <b-button
-                variant="primary"
-                @click="updateConsultInfo()"
-                v-b-modal.consult_info
-                v-if="deliveryFounderConsult.status !== 'F_DIST_COMPLETE'"
-                >수정하기</b-button
               >
             </div>
           </template>
           <template v-slot:body>
             <div
               v-if="
-                deliveryFounderConsult && deliveryFounderConsult.codeManagement
+                deliveryFounderConsultDto &&
+                  deliveryFounderConsultDto.codeManagement
               "
             >
-              <b-row no-gutters>
-                <ul class="col-12 col-md-6">
-                  <li>
-                    상담 신청일 :
-                    <b>{{
-                      deliveryFounderConsult.createdAt | dateTransformer
-                    }}</b>
-                  </li>
-                  <li>
-                    통화 가능 시간 :
-                    <b>{{ deliveryFounderConsult.availableTime.value }}</b>
-                  </li>
-                  <li v-if="deliveryFounderConsult.changUpExpYn">
-                    창업 경험 유무 :
-                    <b-badge
-                      :variant="
-                        deliveryFounderConsult.changUpExpYn === 'Y'
-                          ? 'success'
-                          : 'danger'
-                      "
+              <b-row>
+                <div class="col-12 col-md-6">
+                  <ul>
+                    <li>
+                      상담 신청일 :
+                      <b>{{
+                        deliveryFounderConsultDto.createdAt | dateTransformer
+                      }}</b>
+                    </li>
+                    <li>
+                      통화 가능 시간 :
+                      <b>{{ deliveryFounderConsultDto.availableTime.value }}</b>
+                    </li>
+                    <li>
+                      공간 소유 유무 :
+                      <b-badge
+                        :variant="
+                          deliveryFounderConsultDto.spaceOwnYn === 'Y'
+                            ? 'success'
+                            : 'danger'
+                        "
+                        >{{ deliveryFounderConsultDto.spaceOwnYn }}</b-badge
+                      >
+                    </li>
+                    <li v-if="deliveryFounderConsultDto.changUpExpYn">
+                      창업 경험 유무 :
+                      <b-badge
+                        :variant="
+                          deliveryFounderConsultDto.changUpExpYn === 'Y'
+                            ? 'success'
+                            : 'danger'
+                        "
+                      >
+                        {{
+                          deliveryFounderConsultDto.changUpExpYn
+                            | enumTransformer
+                        }}
+                      </b-badge>
+                    </li>
+                    <li>
+                      <label for="hope_food_category">희망 업종</label>
+                      <template>
+                        <b-form-input
+                          list="food-category-list"
+                          id="hope_food_category"
+                          v-model="deliveryFounderConsultDto.hopeFoodCategory"
+                          :disabled="statusDistComplete"
+                        ></b-form-input>
+                        <datalist id="food-category-list">
+                          <option
+                            v-for="category in foodCategorySelect"
+                            :key="category.code"
+                            :value="category.nameKr"
+                            >{{ category.nameKr }}</option
+                          >
+                        </datalist>
+                      </template>
+                    </li>
+                    <li>
+                      <label>신청 상태</label>
+                      <b-form-select
+                        class="custom-select"
+                        v-model="deliveryFounderConsultDto.status"
+                        :disabled="statusDistComplete"
+                      >
+                        <b-select-option value selected>전체</b-select-option>
+                        <b-select-option
+                          v-for="status in deliveryFounderConsultStatusSelect"
+                          :key="status.no"
+                          :value="status.key"
+                          >{{ status.value }}</b-select-option
+                        >
+                      </b-form-select>
+                      <p
+                        class="text-right mt-1"
+                        v-if="deliveryFounderConsultDto.updatedAt"
+                      >
+                        ({{
+                          deliveryFounderConsultDto.updatedAt | dateTransformer
+                        }})
+                      </p>
+                      <b-alert
+                        variant="danger"
+                        show
+                        v-if="
+                          deliveryFounderConsultDto.status === 'F_DIST_COMPLETE'
+                        "
+                        class="my-4"
+                      >
+                        상태값을 전달완료로 변경할 경우 더이상 수정이
+                        불가능합니다
+                      </b-alert>
+                    </li>
+                    <li>
+                      <label for="space_consult_etc">비고 내용</label>
+                      <b-form-textarea
+                        id="space_consult_etc"
+                        style="height:100px;"
+                        v-model="deliveryFounderConsultDto.spaceConsultEtc"
+                        :disabled="statusDistComplete"
+                      ></b-form-textarea>
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-12 col-md-6">
+                  <ul>
+                    <li v-if="elapsedTime">
+                      전달 완료일 :
+                      <b
+                        >{{
+                          deliveryFounderConsultDto.deliveredAt
+                            | dateTransformer
+                        }}
+                        ({{ elapsedTime }} 경과)</b
+                      >
+                    </li>
+                    <li>
+                      열람 상태 :
+                      <b-badge
+                        :variant="
+                          deliveryFounderConsultDto.viewCount === 'Y'
+                            ? 'success'
+                            : 'danger'
+                        "
+                        >{{
+                          deliveryFounderConsultDto.viewCount | enumTransformer
+                        }}</b-badge
+                      >
+                    </li>
+                    <li v-if="deliveryFounderConsultDto.openedAt">
+                      열람 시간 :
+                      <b>{{
+                        deliveryFounderConsultDto.openedAt | dateTransformer
+                      }}</b>
+                    </li>
+                    <li v-if="deliveryFounderConsultDto.companyUser">
+                      열람 사용자 :
+                      <b>{{ deliveryFounderConsultDto.companyUser.name }}</b>
+                    </li>
+                    <li
+                      v-if="deliveryFounderConsultDto.companyDecisionStatusCode"
                     >
-                      {{
-                        deliveryFounderConsult.changUpExpYn | enumTransformer
-                      }}
-                    </b-badge>
-                  </li>
-                  <li>
-                    공간 소유 유무 :
-                    <b-badge
-                      :variant="
-                        deliveryFounderConsult.spaceOwnYn === 'Y'
-                          ? 'success'
-                          : 'danger'
-                      "
-                      >{{ deliveryFounderConsult.spaceOwnYn }}</b-badge
-                    >
-                  </li>
-                  <li v-if="deliveryFounderConsult.hopeFoodCategory">
-                    희망 업종 :
-                    <b>{{ deliveryFounderConsult.hopeFoodCategory }}</b>
-                  </li>
-
-                  <li>
-                    신청 상태 :
-                    <b-badge
-                      :variant="getStatusColor(deliveryFounderConsult.status)"
-                      class="badge-pill p-2 mr-2"
-                    >
-                      {{ deliveryFounderConsult.codeManagement.value }}
-                    </b-badge>
-                    <span
-                      class="ml-1"
-                      v-if="deliveryFounderConsult.deliveredAt"
-                    >
-                      ({{
-                        deliveryFounderConsult.deliveredAt | dateTransformer
-                      }})
-                    </span>
-                  </li>
-                  <li v-if="deliveryFounderConsult.spaceConsultEtc">
-                    비고 내용 : {{ deliveryFounderConsult.spaceConsultEtc }}
-                  </li>
-                  <li v-if="elapsedTime">
-                    전달 경과 시간 :
-                    {{ elapsedTime }}
-                  </li>
-                </ul>
-                <ul class="col-12 col-md-6">
-                  <li>
-                    열람 상태 :
-                    <b-badge
-                      :variant="
-                        deliveryFounderConsult.viewCount === 'Y'
-                          ? 'success'
-                          : 'danger'
-                      "
-                      >{{
-                        deliveryFounderConsult.viewCount | enumTransformer
-                      }}</b-badge
-                    >
-                  </li>
-                  <li v-if="deliveryFounderConsult.openedAt">
-                    열람 시간 :
-                    <b>{{
-                      deliveryFounderConsult.openedAt | dateTransformer
-                    }}</b>
-                  </li>
-                  <li v-if="deliveryFounderConsult.companyUser">
-                    열람한 사용자 :
-                    <b>{{ deliveryFounderConsult.companyUser.name }}</b>
-                  </li>
-                  <li v-if="deliveryFounderConsult.companyDecisionStatusCode">
-                    업체 지정 상태 :
-                    <b-badge
-                      :variant="
-                        getStatusColor(
-                          deliveryFounderConsult.companyDecisionStatus,
-                        )
-                      "
-                      class="badge-pill p-2 mr-2"
-                    >
-                      {{
-                        deliveryFounderConsult.companyDecisionStatusCode.value
-                      }}
-                    </b-badge>
-                  </li>
-                  <!-- <li
+                      업체 지정 상태 :
+                      <b-badge
+                        :variant="
+                          getStatusColor(
+                            deliveryFounderConsultDto.companyDecisionStatus,
+                          )
+                        "
+                        class="badge-pill p-2 mr-2"
+                      >
+                        {{
+                          deliveryFounderConsultDto.companyDecisionStatusCode
+                            .value
+                        }}
+                      </b-badge>
+                    </li>
+                    <!-- <li
                     v-if="
                       deliveryFounderConsultManagements &&
                         deliveryFounderConsultManagements.memo
@@ -537,7 +595,8 @@
                       >
                     </div>
                   </li> -->
-                </ul>
+                  </ul>
+                </div>
               </b-row>
             </div>
             <div v-else class="empty-data">상담 내역 없음</div>
@@ -551,12 +610,25 @@
         <FounderConsultManagementHistory />
       </div>
     </b-modal>
-    <!-- 사용자 정보 수정 모달 -->
+    <div class="text-right">
+      <router-link
+        to="/delivery-founder-consult"
+        class="btn btn-secondary text-center"
+        >목록으로</router-link
+      >
+      <b-button
+        variant="primary"
+        @click="updateFounderConsult()"
+        v-if="!statusDistComplete"
+        >수정하기</b-button
+      >
+    </div>
+    <!-- 사용자 정보 수정 모달 
     <b-modal
       id="nanuda_user"
       title="사용자정보 수정"
       @ok="updateFounderConsult()"
-      v-if="deliveryFounderConsult.nanudaUser"
+      v-if="deliveryFounderConsultDto.nanudaUser"
     >
       <div class="form-row">
         <div class="mb-3">
@@ -573,7 +645,8 @@
         </div>
       </div>
     </b-modal>
-    <!-- 상담 내용 수정 모달 -->
+    -->
+    <!-- 상담 내용 수정 모달 
     <b-modal
       id="consult_info"
       title="상담 내용 수정"
@@ -582,18 +655,18 @@
       <div class="form-row">
         <div class="col-12 mb-3">
           <label>신청 상태</label>
-          <select
+          <b-form-select
             class="custom-select"
             v-model="deliveryFounderConsultUpdateDto.status"
           >
-            <option value selected>전체</option>
-            <option
+            <b-select-option value selected>전체</b-select-option>
+            <b-select-option
               v-for="status in deliveryFounderConsultStatusSelect"
               :key="status.no"
               :value="status.key"
-              >{{ status.value }}</option
+              >{{ status.value }}</b-select-option
             >
-          </select>
+          </b-form-select>
         </div>
         <div class="col-12 mb-3">
           <label for="changup_exp_yn">창업 경험 유무</label>
@@ -635,18 +708,21 @@
         </div>
       </div>
     </b-modal>
+    -->
     <!-- 문자 전송 모달 -->
     <b-modal
-      v-if="deliveryFounderConsult.nanudaUser"
+      v-if="deliveryFounderConsultDto.nanudaUser"
       id="send_message"
       ok-title="전송"
       cancel-title="취소"
-      :title="`${deliveryFounderConsult.nanudaUser.name} 사용자에게 문자하기`"
+      :title="
+        `${deliveryFounderConsultDto.nanudaUser.name} 사용자에게 문자하기`
+      "
     >
       <p class="mb-2">
         휴대폰 번호 :
         <b class="text-primary">{{
-          deliveryFounderConsult.nanudaUser.phone | phoneTransformer
+          deliveryFounderConsultDto.nanudaUser.phone | phoneTransformer
         }}</b>
       </p>
       <b-form-input
@@ -784,7 +860,7 @@ export default class FounderConsultDetail extends BaseComponent {
   private adminListCount = 0;
   private availableTimesSelect: CodeManagementDto[] = [];
   private delYn: YN[] = [...CONST_YN];
-  private deliveryFounderConsult = new DeliveryFounderConsultDto();
+  private deliveryFounderConsultDto = new DeliveryFounderConsultDto();
   private deliveryFounderConsultUpdateDto = new DeliveryFounderConsultUpdateDto();
   private deliveryFounderConsultStatusSelect: CodeManagementDto[] = [];
   private genderSelect: CodeManagementDto[] = [];
@@ -795,6 +871,7 @@ export default class FounderConsultDetail extends BaseComponent {
   private elapsedTime = null;
   private deliveredTime = new Date();
   private createdTime = new Date();
+  private statusDistComplete = false;
   private adminSendMessageDto = new AdminSendMessageDto();
 
   // get status color
@@ -805,21 +882,21 @@ export default class FounderConsultDetail extends BaseComponent {
   }
 
   // 사용자 정보 수정
-  updateNanudaUser() {
-    if (this.deliveryFounderConsult.nanudaUser.gender) {
-      this.deliveryFounderConsultUpdateDto.gender = this.deliveryFounderConsult.nanudaUser.gender;
-    }
-    this.getGender();
-  }
+  // updateNanudaUser() {
+  //   if (this.deliveryFounderConsultDto.nanudaUser.gender) {
+  //     this.deliveryFounderConsultUpdateDto.gender = this.deliveryFounderConsultDto.nanudaUser.gender;
+  //   }
+  //   this.getGender();
+  // }
 
   // 상담 내용 수정
-  updateConsultInfo() {
-    this.deliveryFounderConsultUpdateDto = this.deliveryFounderConsult;
-    this.getFounderConsultCodes();
-    this.getAvailableTimes();
-    this.getFoodCategories();
-    this.getGender();
-  }
+  // updateConsultInfo() {
+  //   this.deliveryFounderConsultUpdateDto = this.deliveryFounderConsult;
+  //   this.getFounderConsultCodes();
+  //   this.getAvailableTimes();
+  //   this.getFoodCategories();
+  //   this.getGender();
+  // }
 
   reverseReadStatus() {
     DeliveryFounderConsultService.reverseReadStatus(
@@ -831,7 +908,7 @@ export default class FounderConsultDetail extends BaseComponent {
 
   // send message to user
   sendMessage() {
-    this.adminSendMessageDto.phone = this.deliveryFounderConsult.nanudaUser.phone;
+    this.adminSendMessageDto.phone = this.deliveryFounderConsultDto.nanudaUser.phone;
     SmsService.sendMessage(this.adminSendMessageDto).subscribe(res => {
       if (res) {
         this.adminSendMessageDto = new AdminSendMessageDto();
@@ -842,11 +919,12 @@ export default class FounderConsultDetail extends BaseComponent {
     });
   }
 
+  // 담당자 본인으로 정하기
   assignYourselfAdmin() {
     DeliveryFounderConsultService.assignAdmin(
-      this.deliveryFounderConsult.no,
+      this.deliveryFounderConsultDto.no,
     ).subscribe(res => {
-      this.findOne(this.deliveryFounderConsult.no);
+      this.findOne(this.deliveryFounderConsultDto.no);
     });
   }
 
@@ -874,12 +952,15 @@ export default class FounderConsultDetail extends BaseComponent {
   findOne(id) {
     // find founder consult detail
     DeliveryFounderConsultService.findOne(id).subscribe(res => {
-      this.deliveryFounderConsult = res.data;
+      this.deliveryFounderConsultDto = res.data;
       this.deliveredTime = res.data.deliveredAt;
       if (this.deliveredTime) {
         this.createdTime = new Date(res.data.createdAt);
         this.deliveredTime = new Date(res.data.deliveredAt);
         this.getElapsedTime(this.createdTime, this.deliveredTime);
+      }
+      if (this.deliveryFounderConsultDto.status === 'F_DIST_COMPLETE') {
+        this.statusDistComplete = true;
       }
     });
   }
@@ -929,25 +1010,32 @@ export default class FounderConsultDetail extends BaseComponent {
     });
   }
 
+  // update for delivery founder consulut
   updateFounderConsult() {
     if (this.selectedAdmin) {
-      this.deliveryFounderConsultUpdateDto.spaceConsultManager = this.selectedAdmin.no;
+      this.deliveryFounderConsultDto.spaceConsultManager = this.selectedAdmin.no;
+    }
+
+    if (this.deliveryFounderConsultDto.nanudaUser.gender) {
+      this.deliveryFounderConsultDto.gender = this.deliveryFounderConsultDto.nanudaUser.gender;
     }
 
     DeliveryFounderConsultService.update(
-      this.$route.params.id,
-      this.deliveryFounderConsultUpdateDto,
+      this.deliveryFounderConsultDto.no,
+      this.deliveryFounderConsultDto,
     ).subscribe(res => {
       this.cancelSelection();
-      this.deliveryFounderConsultUpdateDto = new DeliveryFounderConsultUpdateDto();
+      // this.deliveryFounderConsultDto = new DeliveryFounderConsultUpdateDto();
       this.findOne(this.$route.params.id);
       toast.success('수정완료');
     });
   }
 
   created() {
-    const founderConsultId = this.$route.params.id;
-    this.findOne(founderConsultId);
+    this.findOne(this.$route.params.id);
+    this.getGender();
+    this.getFoodCategories();
+    this.getFounderConsultCodes();
     // this.getFounderConsultManagements(founderConsultId);
   }
 }

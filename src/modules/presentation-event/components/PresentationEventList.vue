@@ -28,8 +28,8 @@
         >
           <b-card
             :img-src="[
-              event.image && event.image.length > 0
-                ? event.image[0].endpoint
+              event.image && event.mobileImage.length > 0
+                ? event.mobileImage[0].endpoint
                 : require('@/assets/images/general/common/img_placeholder.jpg'),
             ]"
             img-alt="Image"
@@ -47,15 +47,17 @@
               >
                 {{ event.eventTypeInfo.value }}
               </b-badge>
-              <h5>{{ event.title }}</h5>
+              <div class="mt-1">
+                <h5>{{ event.title }}</h5>
+              </div>
             </b-card-title>
             <b-card-text>
-              <p>{{ event.desc }}</p>
-              <div class="mt-2">
-                <p>
+              <p v-if="event.desc">{{ event.desc }}</p>
+              <div class="pt-2 mt-2 border-top">
+                <p class="mt-1">
                   {{ event.presentationDate | dateTransformer }}
                 </p>
-                <p>
+                <p class="mt-1">
                   <span
                     class="badge badge-time"
                     v-for="(time, index) in event.schedule"
@@ -162,6 +164,22 @@
                 ref="fileInput"
                 @input="uploadMainImage($event)"
               ></b-form-file>
+              <template
+                v-if="attachments && attachments.length > 0 && imageChanged"
+              >
+                <div class="mt-2">
+                  <b-img-lazy
+                    :src="attachment.endpoint"
+                    v-for="attachment in attachments"
+                    :key="attachment.endpoint"
+                  />
+                  <div class="text-center mt-2">
+                    <b-button variant="danger" @click="removeImage()"
+                      >이미지 제거</b-button
+                    >
+                  </div>
+                </div>
+              </template>
             </b-col>
             <b-col cols="12" class="mb-3">
               <label for="">이미지 (모바일)</label>
@@ -170,6 +188,26 @@
                 ref="fileInputMobile"
                 @input="uploadMobileImage($event)"
               ></b-form-file>
+              <template
+                v-if="
+                  mobileAttachments &&
+                    mobileAttachments.length > 0 &&
+                    mobieImageChanged
+                "
+              >
+                <div class="mt-2">
+                  <b-img-lazy
+                    :src="attachment.endpoint"
+                    v-for="attachment in mobileAttachments"
+                    :key="attachment.endpoint"
+                  />
+                  <div class="text-center mt-2">
+                    <b-button variant="danger" @click="removeMobileImage()"
+                      >이미지 제거</b-button
+                    >
+                  </div>
+                </div>
+              </template>
             </b-col>
           </b-form-row>
         </b-col>
@@ -208,12 +246,14 @@ export default class PresentationEventList extends BaseComponent {
   private pagination = new Pagination();
   private eventTypeSelect: CodeManagementDto[] = [];
   private scheduleList = ['11시 오전', '2시 오후'];
+  private imageChanged = false;
+  private mobieImageChanged = false;
 
   // 이미지 업로드
-  async uploadMainImage(file: File[]) {
+  async uploadMainImage(file: File) {
     const attachments = await FileUploadService.upload(
       UPLOAD_TYPE.PRESENTATION_EVENT,
-      file,
+      [file],
     );
     this.attachments = [];
     this.attachments.push(
@@ -222,12 +262,19 @@ export default class PresentationEventList extends BaseComponent {
           fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
       ),
     );
+    this.imageChanged = true;
   }
 
-  async uploadMobileImage(file: File[]) {
+  removeImage() {
+    this.attachments = [];
+    this.$refs['fileInput'].reset();
+    this.imageChanged = false;
+  }
+
+  async uploadMobileImage(file: File) {
     const attachments = await FileUploadService.upload(
       UPLOAD_TYPE.PRESENTATION_EVENT,
-      file,
+      [file],
     );
     this.mobileAttachments = [];
     this.mobileAttachments.push(
@@ -236,6 +283,13 @@ export default class PresentationEventList extends BaseComponent {
           fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
       ),
     );
+    this.mobieImageChanged = true;
+  }
+
+  removeMobileImage() {
+    this.mobileAttachments = [];
+    this.$refs['fileInputMobile'].reset();
+    this.mobieImageChanged = false;
   }
 
   getCommonCodes() {
@@ -271,9 +325,13 @@ export default class PresentationEventList extends BaseComponent {
   createEvent() {
     if (this.attachments) {
       this.presentationEventCreateDto.image = this.attachments;
+    } else {
+      delete this.presentationEventCreateDto.image;
     }
     if (this.mobileAttachments) {
-      this.presentationEventCreateDto.image = this.mobileAttachments;
+      this.presentationEventCreateDto.mobileImage = this.mobileAttachments;
+    } else {
+      delete this.presentationEventCreateDto.mobileImage;
     }
     PresentationEventService.create(this.presentationEventCreateDto).subscribe(
       res => {

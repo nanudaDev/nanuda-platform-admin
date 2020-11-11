@@ -32,5 +32,9 @@ class PresentationEventService extends BaseService {
       presentationEventCreateDto,
     );
   }
+
+  deleteForAdmin(id) {
+    return super.delete<any>(`admin/presentation-event/${id}`);
+  }
 }
 export default new PresentationEventService();

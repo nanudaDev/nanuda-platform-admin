@@ -8,6 +8,9 @@
         <b-button variant="primary" @click="updateEvent()">
           수정하기
         </b-button>
+        <b-button variant="danger" v-b-modal.delete_event>
+          삭제하기
+        </b-button>
       </template>
     </SectionTitle>
     <b-row>
@@ -169,7 +172,7 @@
     <div v-if="presentationEventDto.signedUpAttendees.length > 0" class="mt-4">
       <div class="table-top">
         <div class="title">
-          <h4>참석자 리스트</h4>
+          <h4>설명회 참석자</h4>
         </div>
       </div>
       <table class="table table-hover table-sm">
@@ -182,6 +185,7 @@
             <th scope="col">계약 여부</th>
             <th scope="col">이전 참석 여부</th>
             <th scope="col">참석 시간대</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -210,19 +214,95 @@
             <td>
               {{ attendee.scheduleTime }}
             </td>
+            <td>
+              <b-button
+                variant="secondary"
+                v-b-modal.update_attendee
+                @click="findOneAttendee(attendee.no)"
+                >수정</b-button
+              >
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
+    <!-- 삭제 모달 -->
+    <b-modal
+      id="delete_event"
+      title="창업 설명회 삭제"
+      header-bg-variant="danger"
+      header-text-variant="light"
+      hide-footer
+    >
+      <div class="text-center">
+        <p>
+          <b>정말로 삭제하시겠습니까?</b>
+        </p>
+        <div class="mt-2 text-right">
+          <b-button variant="danger" @click="deleteOne()">삭제</b-button>
+        </div>
+      </div>
+    </b-modal>
+    <!-- update attendee modal -->
+    <b-modal
+      id="update_attendee"
+      title="참석자 정보 수정"
+      @ok="updateAttendee(attendeesDto.no)"
+      ok-title="수정"
+      cancel-title="취소"
+    >
+      <div class="form-row">
+        <div class="col-12 mb-3">
+          <label for="attendee_gender">성별</label>
+          <select
+            class="custom-select"
+            id="attendee_gender"
+            v-model="attendeesDto.gender"
+          >
+            <option
+              v-for="gender in genderSelect"
+              :key="gender.key"
+              :value="gender.key"
+              >{{ gender.value }}</option
+            >
+          </select>
+        </div>
+        <div class="col-12 mb-3">
+          <label for="attendee_attend">참석 여부</label>
+          <select
+            class="custom-select"
+            id="attendee_attend"
+            v-model="attendeesDto.isAttended"
+          >
+            <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
+              yn | enumTransformer
+            }}</option>
+          </select>
+        </div>
+        <div class="col-12 mb-3">
+          <label for="attendee_attend">계약 여부</label>
+          <select
+            class="custom-select"
+            id="attendee_attend"
+            v-model="attendeesDto.isContracted"
+          >
+            <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
+              yn | enumTransformer
+            }}</option>
+          </select>
+        </div>
+      </div>
+    </b-modal>
   </section>
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
 import { Component, Vue } from 'vue-property-decorator';
-import { PresentationEventDto } from '@/dto';
+import { AttendeesDto, PresentationEventDto } from '@/dto';
 import { CodeManagementDto } from '@/services/init/dto/index.js';
 import CodeManagementService from '../../../services/code-management.service';
 import PresentationEventService from '@/services/presentation-event.service';
+import AttendeesService from '@/services/attendees.service';
 import FileUploadService, {
   UPLOAD_TYPE,
 } from '@/services/shared/file-upload/file-upload.service';
@@ -232,18 +312,23 @@ import {
 } from '@/services/shared/file-upload';
 
 import toast from '../../../../resources/assets/js/services/toast.js';
+import router from '@/router';
+import { CONST_YN, YN } from '@/common';
 
 @Component({
   name: 'PresentationEventDetail',
 })
 export default class PresentationEventDetail extends BaseComponent {
+  private attendeesDto = new AttendeesDto();
   private presentationEventDto = new PresentationEventDto();
   private newAttachments: FileAttachmentDto[] = [];
   private newMobileAttachments: FileAttachmentDto[] = [];
   private eventTypeSelect: CodeManagementDto[] = [];
+  private genderSelect: CodeManagementDto[] = [];
   private scheduleList = ['11시 오전', '2시 오후'];
   private imageChanged = false;
   private mobieImageChanged = false;
+  private ynSelect: YN[] = [...CONST_YN];
 
   getCommonCodes() {
     CodeManagementService.findAnyCode('PRESENTATION_EVENT_TYPE').subscribe(
@@ -259,6 +344,28 @@ export default class PresentationEventDetail extends BaseComponent {
         this.presentationEventDto = res.data;
       }
     });
+  }
+
+  findOneAttendee(attendeeNo) {
+    AttendeesService.findOne(attendeeNo).subscribe(res => {
+      this.attendeesDto = res.data;
+    });
+  }
+
+  updateAttendee(attendeeNo) {
+    AttendeesService.update(attendeeNo, this.attendeesDto).subscribe(res => {
+      toast.success('참석자 수정 완료');
+      this.findOne(this.$route.params.id);
+    });
+  }
+
+  deleteOne() {
+    PresentationEventService.deleteForAdmin(this.$route.params.id).subscribe(
+      res => {
+        toast.success('설명회 삭제했습니다');
+        this.$router.push('/presentation-event');
+      },
+    );
   }
 
   // 이미지 업로드
@@ -332,9 +439,17 @@ export default class PresentationEventDetail extends BaseComponent {
     });
   }
 
+  // 성별
+  getGender() {
+    CodeManagementService.findGender().subscribe(res => {
+      this.genderSelect = res.data;
+    });
+  }
+
   created() {
     this.findOne(this.$route.params.id);
     this.getCommonCodes();
+    this.getGender();
   }
 }
 </script>

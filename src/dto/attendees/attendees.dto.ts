@@ -7,6 +7,7 @@ export class AttendeesDto extends BaseDto<AttendeesDto> {
   no?: number;
   name?: string;
   phone?: string;
+  eventNo?: number;
   isContracted?: YN;
   isContractedDate?: Date;
   isAttended?: YN;

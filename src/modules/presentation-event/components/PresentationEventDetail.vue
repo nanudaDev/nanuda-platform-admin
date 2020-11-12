@@ -168,63 +168,126 @@
         수정하기
       </b-button>
     </div>
-    <!-- TODO : 추후 API 로 불러와서 작업 -->
-    <div v-if="presentationEventDto.signedUpAttendees.length > 0" class="mt-4">
-      <div class="table-top">
-        <div class="title">
-          <h4>설명회 참석자</h4>
-        </div>
-      </div>
-      <table class="table table-hover table-sm">
-        <thead>
-          <tr>
-            <th scope="col">NO</th>
-            <th scope="col">이름</th>
-            <th scope="col">연락처</th>
-            <th scope="col">성별</th>
-            <th scope="col">계약 여부</th>
-            <th scope="col">이전 참석 여부</th>
-            <th scope="col">참석 시간대</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="attendee in presentationEventDto.signedUpAttendees"
-            :key="attendee.no"
+    <div class="divider my-4"></div>
+    <div class="title mb-4">
+      <h4>설명회 참석자</h4>
+    </div>
+    <div class="table-top">
+      <div class="total-count">
+        <h5>
+          <span>TOTAL</span>
+          <strong class="text-primary">{{ attendeesTotalCount }}</strong>
+        </h5>
+        <b-form-select
+          v-model="newLimit"
+          size="sm"
+          class="select-limit ml-3"
+          @change="search()"
+          v-if="attendeesTotalCount"
+        >
+          <b-form-select-option
+            v-for="count in paginationCount"
+            :key="count"
+            :value="count"
+            >{{ count }}개</b-form-select-option
           >
-            <td>
-              {{ attendee.no }}
-            </td>
-            <td>
-              {{ attendee.name }}
-            </td>
-            <td>
-              {{ attendee.phone | phoneTransformer }}
-            </td>
-            <td>
-              {{ attendee.gender | enumTransformer }}
-            </td>
-            <td>
-              {{ attendee.isContracted }}
-            </td>
-            <td>
-              {{ attendee.isAttended }}
-            </td>
-            <td>
-              {{ attendee.scheduleTime }}
-            </td>
-            <td>
-              <b-button
-                variant="secondary"
-                v-b-modal.update_attendee
-                @click="findOneAttendee(attendee.no)"
-                >수정</b-button
-              >
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        </b-form-select>
+      </div>
+      <div>
+        <download-excel
+          class="btn btn-outline-success"
+          :data="attendeesList"
+          :fields="fields"
+          :stringifyLongNum="true"
+          worksheet="창업 설명회 참석자 리스트"
+          :name="`창업_설명회_참석자_리스트_${newDate}.xls`"
+          v-if="attendeesTotalCount"
+        >
+          <b-icon icon="file-earmark-arrow-down"></b-icon>
+          엑셀 다운로드
+        </download-excel>
+        <b-button variant="primary" v-b-modal.add_attendee
+          >참석자 정보 추가</b-button
+        >
+      </div>
+    </div>
+    <div v-if="!dataLoading">
+      <div v-if="attendeesTotalCount" class="mt-4 bg-light">
+        <table class="table table-hover table-sm">
+          <thead>
+            <tr>
+              <th scope="col">NO</th>
+              <th scope="col">이름</th>
+              <th scope="col">연락처</th>
+              <th scope="col">성별</th>
+              <th scope="col">계약 여부</th>
+              <th scope="col">이전 참석 여부</th>
+              <th scope="col">참석 시간대</th>
+              <th scope="col">신청일</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="attendee in attendeesList" :key="attendee.no">
+              <th scope="row">
+                {{ attendee.no }}
+              </th>
+              <td>
+                {{ attendee.name }}
+                <span class="text-danger" v-if="attendee.isNanudaUser !== 'Y'"
+                  >(비회원)</span
+                >
+              </td>
+              <td>
+                {{ attendee.phone | phoneTransformer }}
+              </td>
+              <td>
+                {{ attendee.gender | enumTransformer }}
+              </td>
+              <td>
+                <b-badge
+                  :variant="
+                    attendee.isContracted === 'Y' ? 'success' : 'danger'
+                  "
+                  >{{ attendee.isContracted }}</b-badge
+                >
+              </td>
+              <td>
+                <b-badge
+                  :variant="attendee.isAttended === 'Y' ? 'success' : 'danger'"
+                  >{{ attendee.isAttended }}</b-badge
+                >
+              </td>
+              <td>
+                {{ attendee.scheduleTime }}
+              </td>
+              <td>{{ attendee.createdAt | dateTransformer }}</td>
+              <td>
+                <b-button
+                  variant="secondary"
+                  v-b-modal.update_attendee
+                  @click="findOneAttendee(attendee.no)"
+                  >수정</b-button
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-else class="empty-data border">검색결과가 없습니다.</div>
+      <b-pagination
+        v-model="pagination.page"
+        v-if="attendeesTotalCount"
+        pills
+        :total-rows="attendeesTotalCount"
+        :per-page="pagination.limit"
+        @input="paginateSearch()"
+        class="mt-4 justify-content-center"
+      ></b-pagination>
+    </div>
+    <div class="half-circle-spinner mt-5" v-if="dataLoading">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
     </div>
     <!-- 삭제 모달 -->
     <b-modal
@@ -240,6 +303,79 @@
         </p>
         <div class="mt-2 text-right">
           <b-button variant="danger" @click="deleteOne()">삭제</b-button>
+        </div>
+      </div>
+    </b-modal>
+    <b-modal
+      id="add_attendee"
+      title="참석자 정보 추가"
+      @ok="createAttendee()"
+      @cancel="clearOutCreateDto()"
+      ok-title="추가"
+      cancel-title="취소"
+    >
+      <div class="form-row">
+        <div class="col-12 mb-3">
+          <label for="attendee_gender">이름</label>
+          <b-form-input v-model="attendeesCreateDto.name"></b-form-input>
+        </div>
+        <div class="col-12 mb-3">
+          <label for="attendee_gender">연락처</label>
+          <b-form-input v-model="attendeesCreateDto.phone"></b-form-input>
+        </div>
+        <div class="col-12 mb-3">
+          <label for="attendee_gender">성별</label>
+          <select
+            class="custom-select"
+            id="attendee_gender"
+            v-model="attendeesCreateDto.gender"
+          >
+            <option
+              v-for="gender in genderSelect"
+              :key="gender.key"
+              :value="gender.key"
+              >{{ gender.value }}</option
+            >
+          </select>
+        </div>
+        <div class="col-12 mb-3">
+          <label for="attendee_attend">참석 여부</label>
+          <select
+            class="custom-select"
+            id="attendee_attend"
+            v-model="attendeesCreateDto.isAttended"
+          >
+            <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
+              yn | enumTransformer
+            }}</option>
+          </select>
+        </div>
+        <div class="col-12 mb-3">
+          <label for="attendee_attend">계약 여부</label>
+          <select
+            class="custom-select"
+            id="attendee_attend"
+            v-model="attendeesCreateDto.isContracted"
+          >
+            <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
+              yn | enumTransformer
+            }}</option>
+          </select>
+        </div>
+        <div class="col-12 mb-3">
+          <label for="attendee_attend">참석 시간대</label>
+          <select
+            class="custom-select"
+            id="attendee_attend"
+            v-model="attendeesCreateDto.scheduleTime"
+          >
+            <option
+              v-for="(time, index) in scheduleList"
+              :key="index"
+              :value="time"
+              >{{ time }}</option
+            >
+          </select>
         </div>
       </div>
     </b-modal>
@@ -298,7 +434,7 @@
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
 import { Component, Vue } from 'vue-property-decorator';
-import { AttendeesDto, PresentationEventDto } from '@/dto';
+import { AttendeesDto, AttendeesListDto, PresentationEventDto } from '@/dto';
 import { CodeManagementDto } from '@/services/init/dto/index.js';
 import CodeManagementService from '../../../services/code-management.service';
 import PresentationEventService from '@/services/presentation-event.service';
@@ -313,13 +449,20 @@ import {
 
 import toast from '../../../../resources/assets/js/services/toast.js';
 import router from '@/router';
-import { CONST_YN, YN } from '@/common';
+import { CONST_YN, Pagination, YN } from '@/common';
+import { CONST_PAGINATION_COUNT, PaginationCount } from '@/services/shared';
 
 @Component({
   name: 'PresentationEventDetail',
 })
 export default class PresentationEventDetail extends BaseComponent {
+  private attendeesList: AttendeesDto[] = [];
+  private attendeesTotalCount = null;
+  private attendeesSearchDto = new AttendeesListDto();
+  private attendeesCreateDto = new AttendeesDto();
   private attendeesDto = new AttendeesDto();
+  private pagination = new Pagination();
+
   private presentationEventDto = new PresentationEventDto();
   private newAttachments: FileAttachmentDto[] = [];
   private newMobileAttachments: FileAttachmentDto[] = [];
@@ -329,6 +472,28 @@ export default class PresentationEventDetail extends BaseComponent {
   private imageChanged = false;
   private mobieImageChanged = false;
   private ynSelect: YN[] = [...CONST_YN];
+  private dataLoading = false;
+  private newDate = new Date();
+  private newLimit = null;
+  private paginationCount: PaginationCount[] = [...CONST_PAGINATION_COUNT];
+  // excel options
+  private fields = {
+    회원여부: 'isNanudaUser',
+    이름: 'name',
+    연락처: 'phone',
+    성별: 'genderInfo.value',
+    계약여부: 'isContracted',
+    이전참석여부: 'isAttended',
+    참석시간대: 'scheduleTime',
+  };
+  private json_meta = [
+    [
+      {
+        key: 'charset',
+        value: 'utf-8',
+      },
+    ],
+  ];
 
   getCommonCodes() {
     CodeManagementService.findAnyCode('PRESENTATION_EVENT_TYPE').subscribe(
@@ -346,10 +511,47 @@ export default class PresentationEventDetail extends BaseComponent {
     });
   }
 
+  paginateSearch() {
+    this.search(true);
+  }
+
+  search(isPagination?: boolean) {
+    this.dataLoading = true;
+    if (!isPagination) {
+      this.pagination.page = 1;
+    }
+    this.pagination.limit = this.newLimit;
+    this.attendeesSearchDto.eventNo = parseInt(this.$route.params.id);
+    AttendeesService.findAll(
+      this.attendeesSearchDto,
+      this.pagination,
+    ).subscribe(res => {
+      if (res) {
+        this.dataLoading = false;
+        this.attendeesList = res.data.items;
+        this.attendeesTotalCount = res.data.totalCount;
+      }
+    });
+  }
+
   findOneAttendee(attendeeNo) {
     AttendeesService.findOne(attendeeNo).subscribe(res => {
       this.attendeesDto = res.data;
     });
+  }
+
+  createAttendee() {
+    this.attendeesCreateDto.eventNo = parseInt(this.$route.params.id);
+    AttendeesService.create(this.attendeesCreateDto).subscribe(res => {
+      if (res) {
+        toast.success('추가 완료');
+        this.search();
+      }
+    });
+  }
+
+  clearOutCreateDto() {
+    this.attendeesCreateDto = new AttendeesDto();
   }
 
   updateAttendee(attendeeNo) {
@@ -448,6 +650,10 @@ export default class PresentationEventDetail extends BaseComponent {
 
   created() {
     this.findOne(this.$route.params.id);
+
+    this.search();
+    this.newLimit = 50;
+    this.pagination.limit = this.newLimit;
     this.getCommonCodes();
     this.getGender();
   }

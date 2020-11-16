@@ -145,6 +145,17 @@
                 >{{ deliverySpaceDto.showYn }}</b-badge
               >
             </li>
+            <li v-if="deliverySpaceDto.isBested">
+              추천 공유주방 :
+              <b-badge
+                :variant="
+                  deliverySpaceDto.isBested.showYn === 'Y'
+                    ? 'success'
+                    : 'danger'
+                "
+                >{{ deliverySpaceDto.isBested.showYn }}</b-badge
+              >
+            </li>
           </ul>
           <div
             v-if="deliverySpaceDto.brands && deliverySpaceDto.brands.length > 0"

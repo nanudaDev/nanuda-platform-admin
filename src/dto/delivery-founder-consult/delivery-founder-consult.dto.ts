@@ -35,7 +35,7 @@ export class DeliveryFounderConsultDto extends BaseDto<
   deliveredAt?: Date;
   openedAt?: Date;
   admin?: AdminDto;
-  deliverySpace?: DeliverySpaceDto[];
+  deliverySpace?: DeliverySpaceDto;
   codeManagement?: CodeManagementDto;
   companyDecisionStatusCode?: CodeManagementDto;
   availableTime?: CodeManagementDto;

@@ -10,6 +10,7 @@
         >
       </template>
     </SectionTitle>
+    <div id="map" style="width:100%; height:420px"></div>
     <b-row align-h="start" align-v="stretch">
       <b-col md="6" class="my-3" v-if="founderConsultDto.nanudaUser">
         <BaseCard title="사용자 정보">
@@ -542,6 +543,51 @@ export default class FounderConsultDetail extends BaseComponent {
     });
   }
 
+  // 지도 가져오기
+  setMap(founderConsult: FounderConsultDto) {
+    const mapContainer = document.getElementById('map'),
+      mapOption = {
+        center: new window.kakao.maps.LatLng(
+          founderConsult.space.lat,
+          founderConsult.space.lon,
+        ),
+        level: 5,
+        maxLevel: 6,
+        minLevel: 3,
+        mapTypeId: window.kakao.maps.MapTypeId.ROADMAP,
+      };
+
+    const map = new window.kakao.maps.Map(mapContainer, mapOption);
+    const content = `<span class="badge badge-primary" style="font-size:21px;border-radius: 100px;opacity: 82%">Here</span>`;
+    const markerPosition = new window.kakao.maps.LatLng(
+      founderConsult.space.lat,
+      founderConsult.space.lon,
+    );
+
+    const customOverlay = new window.kakao.maps.CustomOverlay({
+      position: markerPosition,
+      content: content,
+      // image: markerImage,
+    });
+
+    const circle = new window.kakao.maps.Circle({
+      map: map,
+      center: new window.kakao.maps.LatLng(
+        founderConsult.space.lat,
+        founderConsult.space.lon,
+      ),
+      strokeWeight: 2,
+      strokeColor: '#FF00FF',
+      strokeOpacity: 0.8,
+      strokeStyle: 'dashed',
+      fillColor: '#00EEEE',
+      fillOpacity: 0.5,
+    });
+    circle.setRadius(400);
+    circle.setMap(map);
+    customOverlay.setMap(map);
+  }
+
   // 상담 내용 수정
   // updateConsultInfo() {
   //   this.founderConsultUpdateDto = this.founderConsultDto;
@@ -594,6 +640,7 @@ export default class FounderConsultDetail extends BaseComponent {
     FounderConsultService.findOne(id).subscribe(res => {
       this.founderConsultDto = res.data;
       this.deliveredTime = res.data.deliveredAt;
+      this.setMap(res.data);
       if (this.deliveredTime) {
         this.createdTime = new Date(res.data.createdAt);
         this.deliveredTime = new Date(res.data.deliveredAt);

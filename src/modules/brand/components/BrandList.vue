@@ -36,7 +36,7 @@
             <b-form-input v-model="brandSearchDto.nameKr"></b-form-input>
           </b-form-group>
         </div>
-        <div class="col-sm-4 col-lg-2 mb-3">
+        <div class="col-sm-4 col-lg-1 mb-3">
           <label>노출 여부</label>
           <select class="custom-select" v-model="brandSearchDto.showYn">
             <option value>전체</option>
@@ -78,6 +78,18 @@
               :key="storeCount.no"
               :value="storeCount.key"
               >{{ storeCount.value }}</option
+            >
+          </select>
+        </div>
+        <div class="col-sm-4 col-lg-1 mb-3">
+          <label>뷔페/플레이트</label>
+          <select class="custom-select" v-model="brandSearchDto.brandType">
+            <option value>전체</option>
+            <option
+              v-for="type in brandType"
+              :key="type.no"
+              :value="type.key"
+              >{{ type.value }}</option
             >
           </select>
         </div>
@@ -414,6 +426,7 @@ import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { CodeManagementDto } from '@/services/init/dto';
 import { ReverseQueryParamMapper } from '@/core';
+import { BRAND_TYPE } from '@/services/shared';
 
 @Component({
   name: 'BrandList',
@@ -434,6 +447,7 @@ export default class BrandList extends BaseComponent {
   private difficultyValues: CodeManagementDto[] = [];
   private brandCreateDto = new BrandDto();
   private brandLogo: FileAttachmentDto[] = [];
+  private brandType: CodeManagementDto[] = [];
 
   // get food category
   getFoodCategories() {
@@ -471,6 +485,9 @@ export default class BrandList extends BaseComponent {
     });
     CodeManagementService.findAnyCode('DIFFICULTY').subscribe(res => {
       this.difficultyValues = res.data;
+    });
+    CodeManagementService.findAnyCode('BRAND_TYPE').subscribe(res => {
+      this.brandType = res.data;
     });
   }
 

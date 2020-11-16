@@ -4,7 +4,7 @@ import { FoodCategoryDto } from '../food-category';
 import { FileAttachmentDto } from '@/services/shared/file-upload';
 import { YN } from '@/common';
 import { MenuDto } from '../menu';
-import { BRAND, DIFFICULTY, STORE_COUNT } from '@/services/shared';
+import { BRAND, BRAND_TYPE, DIFFICULTY, STORE_COUNT } from '@/services/shared';
 import { CodeManagementDto } from '@/services/init/dto';
 
 export class BrandDto extends BaseDto<BrandDto> {
@@ -32,4 +32,5 @@ export class BrandDto extends BaseDto<BrandDto> {
   isRecommendedYn?: YN;
   urlPath?: string;
   kioskNo?: number;
+  brandType?: BRAND_TYPE;
 }

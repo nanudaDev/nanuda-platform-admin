@@ -507,6 +507,7 @@ export default class PresentationEventDetail extends BaseComponent {
     PresentationEventService.findOne(this.$route.params.id).subscribe(res => {
       if (res) {
         this.presentationEventDto = res.data;
+        this.search();
       }
     });
   }

@@ -15,6 +15,7 @@
         >
       </template>
     </SectionTitle>
+    <div id="map" style="width:100%; height:420px"></div>
     <b-row align-h="start" align-v="stretch">
       <b-col md="4" class="my-3">
         <BaseCard title="사용자 정보">
@@ -597,6 +598,7 @@
                   </li> -->
                   </ul>
                 </div>
+                <div></div>
               </b-row>
             </div>
             <div v-else class="empty-data">상담 내역 없음</div>
@@ -828,6 +830,7 @@ import {
   DeliveryFounderConsultUpdateDto,
   FounderConsultManagementDto,
   AdminSendMessageDto,
+  CompanyDistrictDto,
 } from '../../../dto';
 import {
   FoodCategoryDto,
@@ -953,6 +956,7 @@ export default class FounderConsultDetail extends BaseComponent {
     // find founder consult detail
     DeliveryFounderConsultService.findOne(id).subscribe(res => {
       this.deliveryFounderConsultDto = res.data;
+      this.setMap(res.data);
       this.deliveredTime = res.data.deliveredAt;
       if (this.deliveredTime) {
         this.createdTime = new Date(res.data.createdAt);
@@ -1031,12 +1035,60 @@ export default class FounderConsultDetail extends BaseComponent {
     });
   }
 
+  // 지도 가져오기
+  setMap(deliveryFounderConsult: DeliveryFounderConsultDto) {
+    const mapContainer = document.getElementById('map'),
+      mapOption = {
+        center: new window.kakao.maps.LatLng(
+          deliveryFounderConsult.deliverySpace.companyDistrict.lat,
+          deliveryFounderConsult.deliverySpace.companyDistrict.lon,
+        ),
+        level: 5,
+        maxLevel: 6,
+        minLevel: 3,
+        mapTypeId: window.kakao.maps.MapTypeId.ROADMAP,
+      };
+
+    const map = new window.kakao.maps.Map(mapContainer, mapOption);
+    const content = `<span class="badge badge-primary" style="font-size:21px;border-radius: 100px;opacity: 82%">Here</span>`;
+    const markerPosition = new window.kakao.maps.LatLng(
+      deliveryFounderConsult.deliverySpace.companyDistrict.lat,
+      deliveryFounderConsult.deliverySpace.companyDistrict.lon,
+    );
+
+    const customOverlay = new window.kakao.maps.CustomOverlay({
+      position: markerPosition,
+      content: content,
+      // image: markerImage,
+    });
+
+    const circle = new window.kakao.maps.Circle({
+      map: map,
+      center: new window.kakao.maps.LatLng(
+        deliveryFounderConsult.deliverySpace.companyDistrict.lat,
+        deliveryFounderConsult.deliverySpace.companyDistrict.lon,
+      ),
+      strokeWeight: 2,
+      strokeColor: '#FF00FF',
+      strokeOpacity: 0.8,
+      strokeStyle: 'dashed',
+      fillColor: '#00EEEE',
+      fillOpacity: 0.5,
+    });
+    circle.setRadius(1000);
+    circle.setMap(map);
+    customOverlay.setMap(map);
+  }
+
   created() {
-    this.findOne(this.$route.params.id);
     this.getGender();
     this.getFoodCategories();
     this.getFounderConsultCodes();
     // this.getFounderConsultManagements(founderConsultId);
+  }
+
+  mounted() {
+    this.findOne(this.$route.params.id);
   }
 }
 </script>

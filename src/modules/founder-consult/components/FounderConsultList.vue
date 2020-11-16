@@ -346,7 +346,7 @@
             </td> -->
               <td>
                 <template v-if="founderConsult.spaceConsultEtc">
-                  {{ founderConsult.spaceConsultEtc }}
+                  <pre>{{ founderConsult.spaceConsultEtc }}</pre>
                 </template>
               </td>
               <td>

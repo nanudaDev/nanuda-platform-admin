@@ -540,7 +540,19 @@ export default class CompanyDistrictDetail extends BaseComponent {
       content: content,
       // image: markerImage,
     });
-    console.log(mapOption.level);
+
+    const circle = new window.kakao.maps.Circle({
+      map: map,
+      center: new window.kakao.maps.LatLng(district.lat, district.lon),
+      strokeWeight: 2,
+      strokeColor: '#FF00FF',
+      strokeOpacity: 0.8,
+      strokeStyle: 'dashed',
+      fillColor: '#00EEEE',
+      fillOpacity: 0.5,
+    });
+    circle.setRadius(1000);
+    circle.setMap(map);
     customOverlay.setMap(map);
   }
 

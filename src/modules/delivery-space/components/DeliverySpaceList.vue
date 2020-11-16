@@ -54,6 +54,24 @@
             ></b-form-input>
           </b-form-group>
         </b-col>
+        <div class="col-sm-4 col-lg-1 mb-3">
+          <label>업체 노출 여부</label>
+          <select class="custom-select" v-model="deliverySpaceSearchDto.showYn">
+            <option value>전체</option>
+            <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
+              yn | enumTransformer
+            }}</option>
+          </select>
+        </div>
+        <div class="col-sm-4 col-lg-1 mb-3">
+          <label>삭제 여부</label>
+          <select class="custom-select" v-model="deliverySpaceSearchDto.delYn">
+            <option value>전체</option>
+            <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
+              yn | enumTransformer
+            }}</option>
+          </select>
+        </div>
       </b-form-row>
       <!-- second row -->
       <b-row align-h="center">
@@ -227,7 +245,7 @@ import {
   DeliverySpaceListDto,
   CompanyDto,
 } from '../../../dto';
-import { Pagination } from '@/common';
+import { CONST_YN, Pagination, YN } from '@/common';
 
 import CompanyService from '../../../services/company.service';
 import DeliverSpaceService from '../../../services/delivery-space.service';
@@ -242,13 +260,14 @@ import { ReverseQueryParamMapper } from '@/core';
   },
 })
 export default class DeliverySpaceList extends BaseComponent {
-  private deliverySpaceList: DeliverySpaceDto[] = Array<DeliverySpaceDto>();
+  private deliverySpaceList: DeliverySpaceDto[] = [];
   private deliverySpaceSearchDto = new DeliverySpaceListDto();
   private deliverySpaceDto = new DeliverySpaceDto();
   private deliverySpaceListCount = 0;
   private pagination = new Pagination();
-  private companySelect: CompanyDto[] = Array<CompanyDto>();
+  private companySelect: CompanyDto[] = [];
   private dataLoading = false;
+  private ynSelect: YN[] = [...CONST_YN];
 
   // 업체 셀렉트 박스
   getCompanies() {

@@ -321,7 +321,7 @@
               </td>
               <td>
                 <template v-if="productConsult.pConsultEtc">
-                  {{ productConsult.pConsultEtc }}
+                  <pre>{{ productConsult.pConsultEtc }}</pre>
                 </template>
               </td>
               <td>

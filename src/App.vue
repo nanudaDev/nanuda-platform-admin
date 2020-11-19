@@ -114,8 +114,10 @@ h5 {
 img {
   max-width: 100%;
 }
-.custom-radio {
-  line-height: 2.2;
+.card {
+  .custom-radio {
+    line-height: 2.2;
+  }
 }
 
 .table {

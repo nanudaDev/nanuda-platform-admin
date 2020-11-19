@@ -1,7 +1,7 @@
 <template>
   <section>
     <SectionTitle title="시설 관리" divider></SectionTitle>
-    <b-row>
+    <b-row align-v="start">
       <b-col lg="6" class="my-3">
         <BaseCard title="공통 시설" no-body>
           <template v-slot:head>
@@ -15,12 +15,14 @@
           </template>
           <table class="table">
             <colgroup>
+              <col width="160" />
               <col width="auto" />
               <col width="auto" />
-              <col width="80" />
+              <col width="160" />
             </colgroup>
             <thead>
               <tr>
+                <th scope="col">이미지</th>
                 <th scope="col">시설 코드</th>
                 <th scope="col">시설 이름</th>
                 <th scope="col"></th>
@@ -31,6 +33,17 @@
                 v-for="amenity in amenityCommonList"
                 :key="amenity.amenityName"
               >
+                <td>
+                  <template v-if="amenity.image && amenity.image.length > 0">
+                    <img
+                      :src="image.endpoint"
+                      :alt="amenity.amenityName"
+                      v-for="image in amenity.image"
+                      :key="image.endpoint"
+                      style="max-height:50px"
+                    />
+                  </template>
+                </td>
                 <td>{{ amenity.amenityCode }}</td>
                 <td>{{ amenity.amenityName }}</td>
                 <td>
@@ -41,20 +54,20 @@
                   >
                     수정
                   </b-button>
-                  <!-- <b-button
+                  <b-button
                     variant="outline-danger"
                     v-b-modal.delete_amenity
-                    @click="showDeleteModal(amenity)"
+                    @click="showDeleteModal(amenity.no)"
                   >
                     삭제
-                  </b-button> -->
+                  </b-button>
                 </td>
               </tr>
             </tbody>
           </table>
           <b-pagination
             v-model="paginationCommon.page"
-            v-if="amenityCommonListCount"
+            v-if="false"
             pills
             :total-rows="amenityCommonListCount"
             :per-page="paginationCommon.limit"
@@ -76,12 +89,14 @@
           </template>
           <table class="table">
             <colgroup>
+              <col width="160" />
               <col width="auto" />
               <col width="auto" />
-              <col width="80" />
+              <col width="160" />
             </colgroup>
             <thead>
               <tr>
+                <th scope="col">이미지</th>
                 <th scope="col">시설 코드</th>
                 <th scope="col">시설 이름</th>
                 <th scope="col"></th>
@@ -92,6 +107,17 @@
                 v-for="amenity in amenityKitchenList"
                 :key="amenity.amenityName"
               >
+                <td>
+                  <template v-if="amenity.image && amenity.image.length > 0">
+                    <img
+                      :src="image.endpoint"
+                      :alt="amenity.amenityName"
+                      v-for="image in amenity.image"
+                      :key="image.endpoint"
+                      style="max-height:50px"
+                    />
+                  </template>
+                </td>
                 <td>{{ amenity.amenityCode }}</td>
                 <td>{{ amenity.amenityName }}</td>
                 <td>
@@ -102,20 +128,20 @@
                   >
                     수정
                   </b-button>
-                  <!-- <b-button
+                  <b-button
                     variant="outline-danger"
                     v-b-modal.delete_amenity
-                    @click="showDeleteModal(amenity)"
+                    @click="showDeleteModal(amenity.no)"
                   >
                     삭제
-                  </b-button> -->
+                  </b-button>
                 </td>
               </tr>
             </tbody>
           </table>
           <b-pagination
             v-model="paginationKitchen.page"
-            v-if="amenityKitchenListCount"
+            v-if="false"
             pills
             :total-rows="amenityKitchenListCount"
             :per-page="paginationKitchen.limit"
@@ -131,7 +157,7 @@
       title="시설 추가하기"
       @hide="clearOutCreateDto()"
       @cancel="clearOutCreateDto()"
-      @ok="create()"
+      @ok="createAmenity()"
     >
       <b-form-row>
         <b-col cols="12" class="d-none">
@@ -144,6 +170,47 @@
               name="amenity_code"
               >{{ code | enumTransformer }}</b-form-radio
             >
+          </b-form-group>
+        </b-col>
+        <b-col md="6">
+          <b-form-group label="공간 유형">
+            <b-form-radio
+              v-model="amenityCreateDto.spaceTypeNo"
+              v-for="type in spaceTypeSelect"
+              :key="type"
+              :value="type"
+              name="space_type"
+              >{{ type | spaceTypeTransformer }}</b-form-radio
+            >
+          </b-form-group>
+        </b-col>
+        <b-col md="6">
+          <b-form-group label="이미지 (180 * 180)">
+            <div class="text-center">
+              <template
+                v-if="attachments && attachments.length > 0 && imageChanged"
+              >
+                <div
+                  v-for="image in attachments"
+                  :key="image.endpoint"
+                  class="mb-2"
+                >
+                  <b-img-lazy :src="image.endpoint" style="max-height:80px" />
+                </div>
+                <div class="text-center mb-4">
+                  <b-button variant="danger" @click="removeImage()"
+                    >이미지 제거</b-button
+                  >
+                </div>
+              </template>
+            </div>
+            <div class="cutom-file">
+              <b-form-file
+                placeholder="파일 첨부"
+                ref="fileInput"
+                @input="upload($event)"
+              ></b-form-file>
+            </div>
           </b-form-group>
         </b-col>
         <b-col md="6">
@@ -162,8 +229,8 @@
     <b-modal
       id="update_aminity"
       title="시설 수정하기"
-      @hide="clearOutUpdateDto()"
-      @cancel="clearOutUpdateDto()"
+      @hide="clearOutUpdateDto(selectedAmenity)"
+      @cancel="clearOutUpdateDto(selectedAmenity)"
       @ok="updateAmenity(selectedAmenity)"
     >
       <b-form-row>
@@ -177,6 +244,64 @@
               name="amenity_code"
               >{{ code | enumTransformer }}</b-form-radio
             >
+          </b-form-group>
+        </b-col>
+        <b-col md="6">
+          <b-form-group label="공간 유형">
+            <b-form-radio
+              v-model="amenityUpdateDto.spaceTypeNo"
+              v-for="type in spaceTypeSelect"
+              :key="type"
+              :value="type"
+              name="space_type"
+              >{{ type | spaceTypeTransformer }}</b-form-radio
+            >
+          </b-form-group>
+        </b-col>
+        <b-col md="6">
+          <b-form-group label="이미지 (180 * 180)">
+            <div class="text-center">
+              <template
+                v-if="
+                  amenityUpdateDto.image &&
+                    amenityUpdateDto.image.length > 0 &&
+                    !newImageChanged
+                "
+              >
+                <div
+                  v-for="image in amenityUpdateDto.image"
+                  :key="image.endpoint"
+                  class="mb-2"
+                >
+                  <b-img-lazy :src="image.endpoint" style="max-height:80px" />
+                </div>
+              </template>
+              <template
+                v-if="
+                  newAttachments && newAttachments.length > 0 && newImageChanged
+                "
+              >
+                <div
+                  v-for="image in newAttachments"
+                  :key="image.endpoint"
+                  class="mb-2"
+                >
+                  <b-img-lazy :src="image.endpoint" style="max-height:80px" />
+                </div>
+                <div class="text-center mb-4">
+                  <b-button variant="danger" @click="removeUpdateImage()"
+                    >이미지 제거</b-button
+                  >
+                </div>
+              </template>
+            </div>
+            <div class="cutom-file">
+              <b-form-file
+                placeholder="파일 첨부"
+                ref="fileInputUpdate"
+                @input="uploadUpdate($event)"
+              ></b-form-file>
+            </div>
           </b-form-group>
         </b-col>
         <b-col md="6">
@@ -204,7 +329,7 @@
           <b>정말로 삭제하시겠습니까?</b>
         </p>
         <div class="mt-2 text-right">
-          <b-button variant="danger" @click="deleteAmenity()">삭제</b-button>
+          <b-button variant="danger" @click="deleteOne()">삭제</b-button>
         </div>
       </div>
     </b-modal>
@@ -215,11 +340,19 @@ import BaseComponent from '@/core/base.component';
 import Component from 'vue-class-component';
 import { AmenityDto, AmenityListDto } from '@/dto';
 import { Pagination } from '@/common';
-import { AMENITY, CONST_AMENITY } from '@/services/shared';
+import {
+  AMENITY,
+  CONST_AMENITY,
+  CONST_SPACE_TYPE,
+  SPACE_TYPE,
+} from '@/services/shared';
 
 import AmenityService from '@/services/amenity.service';
 import BaseCard from '../../_components/BaseCard.vue';
-
+import { FileAttachmentDto } from '@/services/shared/file-upload';
+import FileUploadService from '../../../services/shared/file-upload/file-upload.service';
+import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';
+import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 import toast from '../../../../resources/assets/js/services/toast.js';
 
 @Component({
@@ -241,14 +374,65 @@ export default class AmenityList extends BaseComponent {
   private amenityUpdateDto = new AmenityDto();
 
   private selectedAmenity: AmenityDto = new AmenityDto();
+  private selectedAmenityId = null;
+  private spaceTypeSelect = [1, 2];
+
+  private attachments: FileAttachmentDto[] = [];
+  private imageChanged = false;
+  private newAttachments: FileAttachmentDto[] = [];
+  private newImageChanged = false;
+
+  async upload(file: File) {
+    if (file) {
+      const attachments = await FileUploadService.upload(UPLOAD_TYPE.AMENITY, [
+        file,
+      ]);
+      this.attachments = [];
+      this.attachments.push(
+        ...attachments.filter(
+          fileUpload =>
+            fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
+        ),
+      );
+      this.imageChanged = true;
+    }
+  }
+
+  removeImage() {
+    this.attachments = [];
+    this.$refs['fileInput'].reset();
+    this.imageChanged = false;
+  }
+
+  async uploadUpdate(file: File) {
+    if (file) {
+      const attachments = await FileUploadService.upload(UPLOAD_TYPE.AMENITY, [
+        file,
+      ]);
+      this.newAttachments = [];
+      this.newAttachments.push(
+        ...attachments.filter(
+          fileUpload =>
+            fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
+        ),
+      );
+      this.newImageChanged = true;
+    }
+  }
+
+  removeUpdateImage() {
+    this.newAttachments = [];
+    this.$refs['fileInputUpdate'].reset();
+    this.newImageChanged = false;
+  }
 
   search(isPagination?: boolean) {
     if (!isPagination) {
       this.paginationCommon.page = 1;
       this.paginationKitchen.page = 1;
     }
-    this.paginationCommon.limit = 10;
-    this.paginationKitchen.limit = 10;
+    this.paginationCommon.limit = null;
+    this.paginationKitchen.limit = null;
 
     this.amenitySearchDto.amenityType = AMENITY.COMMON_FACILITY;
     AmenityService.findAll(
@@ -278,13 +462,18 @@ export default class AmenityList extends BaseComponent {
   }
 
   // create amenity
-  create() {
-    AmenityService.create(this.amenityCreateDto).subscribe(res => {
-      if (res) {
-        toast.success('추가완료');
-        this.search();
-      }
-    });
+  createAmenity() {
+    if (this.attachments.length > 0) {
+      this.amenityCreateDto.image = this.attachments;
+      AmenityService.create(this.amenityCreateDto).subscribe(res => {
+        if (res) {
+          toast.success('추가완료');
+          this.search();
+        }
+      });
+    } else {
+      toast.error('아이콘 이미지를 등록해주세요');
+    }
   }
 
   showCreateModal(amenityType) {
@@ -295,6 +484,7 @@ export default class AmenityList extends BaseComponent {
     if (amenityType === 'KITCHEN_FACILITY') {
       this.amenityCreateDto.amenityType = AMENITY.KITCHEN_FACILITY;
     }
+    this.imageChanged = false;
   }
 
   clearOutCreateDto() {
@@ -304,6 +494,11 @@ export default class AmenityList extends BaseComponent {
   // update amentiy
   updateAmenity(amenityNo) {
     amenityNo = this.selectedAmenity.no;
+    if (this.newAttachments.length > 0) {
+      this.amenityUpdateDto.image = this.newAttachments;
+    } else {
+      delete this.amenityUpdateDto.image;
+    }
     AmenityService.update(amenityNo, this.amenityUpdateDto).subscribe(res => {
       if (res) {
         toast.success('수정완료');
@@ -315,16 +510,27 @@ export default class AmenityList extends BaseComponent {
   showUpdateModal(amenityDto) {
     this.amenityUpdateDto = amenityDto;
     this.selectedAmenity = amenityDto;
-    this.search();
+    this.newImageChanged = false;
   }
 
-  clearOutUpdateDtoDto() {
+  showDeleteModal(amenityId) {
+    this.selectedAmenityId = amenityId;
+  }
+
+  clearOutUpdateDto() {
     this.amenityUpdateDto = new AmenityDto();
   }
 
   // delete amentiy
-  deleteAmenity() {
-    console.log('delete');
+  deleteOne() {
+    const id = this.selectedAmenityId;
+    AmenityService.deleteOne(id).subscribe(res => {
+      if (res) {
+        this.search();
+        this.$bvModal.hide('delete_amenity');
+        toast.success('삭제완료');
+      }
+    });
   }
 
   created() {

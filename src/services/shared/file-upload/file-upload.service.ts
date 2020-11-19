@@ -17,6 +17,7 @@ import {
 } from '../../../../environments';
 
 export enum UPLOAD_TYPE {
+  AMENITY = 'amenity',
   ARTICLE = 'article',
   DELIVERY_SPACE = 'delivery-space',
   BANNER = 'banner',
@@ -40,6 +41,14 @@ type UploadOptionConfig = {
 // TODO: Image resize
 class FileUploadService extends BaseService {
   private static UPLOAD_OPTIONS: UploadOptionConfig = {
+    [UPLOAD_TYPE.AMENITY]: {
+      path: 'article',
+      sizeLimit: 1024 * 1024 * 10,
+      fileType: FileType.IMAGE,
+      mimeType: FileType.IMAGE,
+      accessType: FileAccessType.PUBLIC,
+      acl: ACL.PUBLIC,
+    },
     [UPLOAD_TYPE.ARTICLE]: {
       path: 'article',
       sizeLimit: 1024 * 1024 * 10,

@@ -1,5 +1,6 @@
 import { BaseDto } from '@/core';
-import { AMENITY } from '@/services/shared';
+import { AMENITY, SPACE_TYPE } from '@/services/shared';
+import { FileAttachmentDto } from '@/services/shared/file-upload';
 import { SpaceDto } from '../space';
 
 export class AmenityDto extends BaseDto<AmenityDto> {
@@ -8,4 +9,6 @@ export class AmenityDto extends BaseDto<AmenityDto> {
   amenityCode?: string;
   amenityType?: AMENITY;
   spaces?: SpaceDto[];
+  spaceTypeNo?: SPACE_TYPE;
+  image: FileAttachmentDto[];
 }

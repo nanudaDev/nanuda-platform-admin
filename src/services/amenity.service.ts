@@ -35,6 +35,14 @@ class AmenityService extends BaseService {
   update(aminityNo, amenityDto: AmenityDto) {
     return super.patch<AmenityDto>(`admin/amenity/${aminityNo}`, amenityDto);
   }
+
+  /**
+   *
+   * @param id
+   */
+  deleteOne(id) {
+    return super.delete<AmenityDto>(`admin/amenity/${id}`);
+  }
 }
 
 export default new AmenityService();

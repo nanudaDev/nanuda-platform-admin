@@ -1,6 +1,7 @@
+import { SPACE_TYPE } from '@/services/shared';
 import { BaseUser } from '@/services/shared/auth';
 import { BrandDto } from '../brand/brand.dto';
-import { FounderConsultDto } from '../founder-consult';
+import { SpaceTypeDto } from '../space-type';
 
 export class AdminDto extends BaseUser {
   no: number;
@@ -9,4 +10,6 @@ export class AdminDto extends BaseUser {
   password: string;
   passwordConfirm: string;
   brands?: BrandDto[];
+  spaceTypeNo?: SPACE_TYPE;
+  spaceType?: SpaceTypeDto;
 }

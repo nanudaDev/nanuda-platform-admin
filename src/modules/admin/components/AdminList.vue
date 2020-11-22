@@ -18,6 +18,22 @@
             <b-form-input v-model="adminListDto.phone"></b-form-input>
           </b-form-group>
         </div>
+        <div class="col-sm-4 col-lg-3 mb-3">
+          <label for="space_type">담당 공유주방</label>
+          <select
+            class="custom-select"
+            id="space_type"
+            v-model="adminListDto.spaceTypeNo"
+          >
+            <option value selected>전체</option>
+            <option
+              v-for="spaceType in spaceTypes"
+              :key="spaceType.no"
+              :value="spaceType.no"
+              >{{ spaceType.name }}</option
+            >
+          </select>
+        </div>
       </b-form-row>
       <!-- second row -->
       <b-row align-h="center">
@@ -63,6 +79,14 @@
           >
             휴대폰 번호
           </th>
+          <th
+            scope="row"
+            v-bind:class="{
+              highlighted: adminListDto.spaceTypeNo,
+            }"
+          >
+            담당 공유주방
+          </th>
         </thead>
         <tbody>
           <tr
@@ -74,6 +98,14 @@
             <td>{{ admin.no }}</td>
             <td>{{ admin.name }}</td>
             <td>{{ admin.phone | phoneTransformer }}</td>
+            <td>
+              <div v-if="admin.spaceTypeNo">
+                {{ admin.spaceType.name }}
+              </div>
+              <div v-else>
+                -
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -157,7 +189,8 @@
 import BaseComponent from '@/core/base.component';
 import { Component, Vue } from 'vue-property-decorator';
 import AdminService from '@/services/admin.service';
-import { AdminDto, AdminListDto } from '@/dto';
+import SpaceTypeService from '@/services/space-type.service';
+import { AdminDto, AdminListDto, SpaceTypeDto } from '@/dto';
 import { Pagination } from '@/common';
 import { ReverseQueryParamMapper } from '@/core';
 import { BaseUser } from '@/services/shared/auth';
@@ -172,6 +205,7 @@ export default class AdminList extends BaseComponent {
   private adminCreateDto = new AdminDto(BaseUser);
   private adminTotalCount = null;
   private dataLoading = true;
+  private spaceTypes: SpaceTypeDto[] = [];
 
   search(isPagination?: boolean) {
     if (!isPagination) {
@@ -205,6 +239,12 @@ export default class AdminList extends BaseComponent {
     this.adminCreateDto = new AdminDto(BaseUser);
   }
 
+  findSpaceType() {
+    SpaceTypeService.findForSelect().subscribe(res => {
+      this.spaceTypes = res.data;
+    });
+  }
+
   create() {
     AdminService.create(this.adminCreateDto).subscribe(res => {
       this.adminCreateDto = new AdminDto(BaseUser);
@@ -218,6 +258,7 @@ export default class AdminList extends BaseComponent {
     if (query) {
       this.adminListDto = query;
     }
+    this.findSpaceType();
     this.search();
   }
 }

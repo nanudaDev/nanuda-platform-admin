@@ -56,7 +56,6 @@
                     :key="gender.no"
                     :value="gender.key"
                     name="gender"
-                    :disabled="statusDistComplete"
                     >{{ gender.value }}</b-form-radio
                   >
                 </li>

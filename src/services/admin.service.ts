@@ -22,6 +22,10 @@ class AdminService extends BaseService {
   create(adminCreateDto: AdminDto) {
     return super.post<AdminDto>('admin', adminCreateDto);
   }
+
+  update(adminNo, adminUpdateDto: AdminDto) {
+    return super.patch<AdminDto>(`admin/update/${adminNo}`, adminUpdateDto);
+  }
 }
 
 export default new AdminService();

@@ -5,37 +5,59 @@
         <router-link to="/admin" class="btn btn-secondary"
           >목록으로</router-link
         >
-        <b-button
-          variant="primary"
-          v-b-modal.update_admin
-          @click="showUpdateModal()"
-          >수정하기</b-button
-        >
+        <b-button variant="primary" @click="updateAdmin()">수정하기</b-button>
+        <b-button variant="danger" v-b-modal.delete_admin>영구삭제</b-button>
       </template>
     </SectionTitle>
     <b-row>
       <b-col lg="6" class="my-3">
         <BaseCard title="사용자 정보">
+          <template v-slot:head>
+            <b-button
+              variant="outline-info"
+              v-b-modal.update_password
+              @click="showUpdateModal()"
+              >비밀번호 변경</b-button
+            >
+          </template>
           <template v-slot:body>
             <div>
               <ul class="u-list">
                 <li v-if="adminDto.no">사용자 ID : {{ adminDto.no }}</li>
-                <li v-if="adminDto.name">사용자명 : {{ adminDto.name }}</li>
-                <li v-if="adminDto.phone">
-                  휴대폰 번호 :
-                  <span>{{ adminDto.phone | phoneTransformer }}</span>
+                <li>
+                  <b-form-group label="사용자명">
+                    <b-form-input v-model="adminDto.name"> </b-form-input>
+                  </b-form-group>
                 </li>
-
+                <li>
+                  <b-form-group label="휴대폰 번호">
+                    <b-form-input v-model="adminDto.phone"> </b-form-input>
+                  </b-form-group>
+                </li>
+                <li>
+                  <b-form-group>
+                    <label for="space_type">담당 공유주방</label>
+                    <select
+                      class="custom-select"
+                      id="space_type"
+                      v-model="adminDto.spaceTypeNo"
+                    >
+                      <option value selected>전체</option>
+                      <option
+                        v-for="spaceType in spaceTypes"
+                        :key="spaceType.no"
+                        :value="spaceType.no"
+                        >{{ spaceType.name }}</option
+                      >
+                    </select>
+                  </b-form-group>
+                </li>
                 <li v-if="adminDto.createdAt">
                   가입 일시 : {{ adminDto.createdAt | dateTransformer }}
                 </li>
                 <li v-if="adminDto.lastLoginAt">
                   마지막 로그인 일시 :
                   {{ adminDto.lastLoginAt | dateTransformer }}
-                </li>
-                <li v-if="adminDto.spaceTypeNo">
-                  담당 공유주방 :
-                  {{ adminDto.spaceType.name }}
                 </li>
               </ul>
             </div>
@@ -44,16 +66,15 @@
       </b-col>
     </b-row>
     <b-modal
-      id="update_admin"
-      title="관리자 수정"
-      ok-title="수정하기"
+      id="update_password"
+      title="비밀번호 변경"
+      ok-title="변경"
       cancel-title="취소"
-      size="sm"
-      @ok="updateAdmin()"
+      @ok="updatePassword()"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-row>
-          <b-col cols="6" class="mt-2">
+          <!-- <b-col cols="6" class="mt-2">
             <label>
               이름
               <span class="red-text">*</span>
@@ -74,7 +95,7 @@
               v-model="adminUpdateDto.phone"
               class="form-control"
             />
-          </b-col>
+          </b-col> -->
           <b-col cols="6" class="mt-2">
             <label>
               비밀번호
@@ -97,7 +118,7 @@
               class="form-control"
             />
           </b-col>
-          <b-col cols="12" class="mt-2">
+          <!-- <b-col cols="12" class="mt-2">
             <label for="space_type">담당 공유주방</label>
             <select
               class="custom-select"
@@ -112,20 +133,45 @@
                 >{{ spaceType.name }}</option
               >
             </select>
-          </b-col>
+          </b-col> -->
         </b-form-row>
       </form>
+    </b-modal>
+    <!-- 영구 삭제 모달 -->
+    <b-modal
+      id="delete_admin"
+      title="관리자 삭제"
+      header-bg-variant="danger"
+      header-text-variant="light"
+      hide-footer
+    >
+      <div class="text-center">
+        <p>
+          <b>정말로 삭제하시겠습니까?</b>
+        </p>
+        <div class="mt-2 text-right">
+          <b-button variant="danger" @click="deleteOne()">삭제</b-button>
+        </div>
+      </div>
     </b-modal>
   </section>
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
-import { AdminDto, SpaceTypeDto } from '@/dto';
+import {
+  AdminDto,
+  DeliveryFounderConsultDto,
+  DeliveryFounderConsultListDto,
+  SpaceTypeDto,
+} from '@/dto';
 import { BaseUser } from '@/services/shared/auth';
 import { Component, Vue } from 'vue-property-decorator';
 import AdminService from '@/services/admin.service';
 import SpaceTypeService from '@/services/space-type.service';
 import { SPACE_TYPE } from '@/services/shared';
+import toast from '../../../../resources/assets/js/services/toast.js';
+import DeliveryFounderConsultService from '../../../services/delivery-founder-consult.service';
+import { Pagination } from '@/common';
 
 @Component({
   name: 'AdminDetail',
@@ -154,10 +200,30 @@ export default class AdminDetail extends BaseComponent {
   }
 
   updateAdmin() {
+    AdminService.update(this.$route.params.id, this.adminDto).subscribe(res => {
+      if (res) {
+        toast.success('수정완료');
+        this.findOne();
+      }
+    });
+  }
+
+  deleteOne() {
+    AdminService.hardDelete(this.$route.params.id).subscribe(res => {
+      if (res) {
+        this.$router.push('/admin');
+        toast.success('삭제완료');
+      }
+    });
+  }
+
+  updatePassword() {
     AdminService.update(this.$route.params.id, this.adminUpdateDto).subscribe(
       res => {
-        this.findSpaceType();
-        this.findOne();
+        if (res) {
+          toast.success('수정완료');
+          this.findOne();
+        }
       },
     );
   }

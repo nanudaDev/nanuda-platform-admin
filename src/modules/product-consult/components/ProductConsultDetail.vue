@@ -24,7 +24,7 @@
               >
             </div>
             <div v-else>
-              <b-button variant="outline-info" v-b-modal.non_user_send_message>
+              <b-button variant="outline-info" v-b-modal.send_message>
                 <b-icon icon="envelope"></b-icon>
                 <span class="ml-2">문자전송</span>
               </b-button>
@@ -259,16 +259,26 @@
     </b-row>
     <!-- 문자 전송 모달 -->
     <b-modal
+      v-if="productConsultDto.nanudaUser || productConsultDto.nonUserName"
       id="send_message"
       ok-title="전송"
       cancel-title="취소"
-      :title="`${productConsultDto.nanudaUser.name} 사용자에게 문자하기`"
+      :title="
+        productConsultDto.nanudaUser
+          ? `${productConsultDto.nanudaUser.name} 사용자에게 문자하기`
+          : `${productConsultDto.nonUserName} (비회원) 사용자에게 문자하기`
+      "
       @ok="sendMessage()"
     >
       <p class="mb-2">
         휴대폰 번호 :
         <b class="text-primary">
-          {{ productConsultDto.nanudaUser.phone | phoneTransformer }}
+          <template v-if="productConsultDto.nanudaUser">
+            {{ productConsultDto.nanudaUser.phone | phoneTransformer }}
+          </template>
+          <template v-else-if="productConsultDto.nonUserPhone">
+            {{ productConsultDto.nonUserPhone | phoneTransformer }}
+          </template>
         </b>
       </p>
       <b-form-input
@@ -286,7 +296,7 @@
       ></b-form-textarea>
     </b-modal>
     <!-- 비회원 문자 -->
-    <b-modal
+    <!-- <b-modal
       id="non_user_send_message"
       ok-title="전송"
       cancel-title="취소"
@@ -312,7 +322,7 @@
         max-rows="6"
         v-model="adminSendMessageDto.message"
       ></b-form-textarea>
-    </b-modal>
+    </b-modal> -->
 
     <!-- 관리자 수정 모달 -->
     <b-modal

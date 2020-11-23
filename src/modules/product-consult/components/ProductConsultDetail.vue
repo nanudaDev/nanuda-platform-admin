@@ -259,7 +259,6 @@
     </b-row>
     <!-- 문자 전송 모달 -->
     <b-modal
-      v-if="productConsultDto.nanudaUser"
       id="send_message"
       ok-title="전송"
       cancel-title="취소"

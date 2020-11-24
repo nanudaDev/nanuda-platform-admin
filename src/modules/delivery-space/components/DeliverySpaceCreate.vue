@@ -12,48 +12,55 @@
     <b-form-row>
       <b-col lg="12" class="text-right mb-3">
         <b-row no-gutters align-h="end">
-          <b-form-group
-            label="오픈 활성화"
-            label-size="sm"
-            label-text-align="right"
-            label-cols="8"
-          >
-            <b-form-checkbox
-              switch
-              size="lg"
-              v-model="deliverySpaceCreateDto.isOpenedYn"
-              :value="yn[0]"
-              :unchecked-value="yn[1]"
-            ></b-form-checkbox>
-          </b-form-group>
-          <b-form-group
-            label="노출 활성화"
-            label-size="sm"
-            label-text-align="right"
-            label-cols="8"
-          >
-            <b-form-checkbox
-              switch
-              size="lg"
-              v-model="deliverySpaceCreateDto.delYn"
-              :value="yn[1]"
-              :unchecked-value="yn[0]"
-            ></b-form-checkbox>
-          </b-form-group>
-          <b-form-group
-            label="업체 측 노출 활성화"
-            label-size="sm"
-            label-text-align="right"
-            label-cols="10"
-          >
-            <b-form-checkbox
-              switch
-              size="lg"
-              v-model="deliverySpaceCreateDto.showYn"
-              :value="yn[0]"
-              :unchecked-value="yn[1]"
-            ></b-form-checkbox>
-          </b-form-group>
+          <b-col cols="12" lg="4">
+            <b-form-group
+              label="오픈 예정 활성화"
+              label-size="sm"
+              label-text-align="right"
+              label-cols="8"
+            >
+              <b-form-checkbox
+                switch
+                size="lg"
+                v-model="deliverySpaceCreateDto.isOpenedYn"
+                :value="yn[1]"
+                :unchecked-value="yn[0]"
+                :disabled="disabledYn"
+              ></b-form-checkbox>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" lg="4">
+            <b-form-group
+              label="노출 활성화"
+              label-size="sm"
+              label-text-align="right"
+              label-cols="8"
+            >
+              <b-form-checkbox
+                switch
+                size="lg"
+                v-model="deliverySpaceCreateDto.delYn"
+                :value="yn[1]"
+                :unchecked-value="yn[0]"
+              ></b-form-checkbox>
+            </b-form-group>
+          </b-col>
+          <b-col cols="12" lg="4">
+            <b-form-group
+              label="업체 측 노출 활성화"
+              label-size="sm"
+              label-text-align="right"
+              label-cols="10"
+            >
+              <b-form-checkbox
+                switch
+                size="lg"
+                v-model="deliverySpaceCreateDto.showYn"
+                :value="yn[0]"
+                :unchecked-value="yn[1]"
+              ></b-form-checkbox>
+            </b-form-group>
+          </b-col>
         </b-row>
       </b-col>
 
@@ -125,6 +132,7 @@
         <b-form-input
           type="number"
           v-model="deliverySpaceCreateDto.quantity"
+          @change="getQuantity($event)"
         ></b-form-input>
       </b-col>
       <b-col lg="3" class="mb-3">
@@ -298,6 +306,7 @@ export default class DeliverySpaceCreate extends BaseComponent {
   private districtSelect: CompanyDistrictDto[] = [];
   private spaceOptions: DeliverySpaceOptionDto[] = [];
   private yn: YN[] = [...CONST_YN];
+  private disabledYn = false;
 
   // delete images
   deleteImages(image) {
@@ -430,6 +439,15 @@ export default class DeliverySpaceCreate extends BaseComponent {
           fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
       ),
     );
+  }
+
+  getQuantity(value) {
+    if (value <= 0) {
+      this.disabledYn = true;
+      this.deliverySpaceCreateDto.isOpenedYn = this.yn[0];
+    } else {
+      this.disabledYn = false;
+    }
   }
 
   getAmenities() {

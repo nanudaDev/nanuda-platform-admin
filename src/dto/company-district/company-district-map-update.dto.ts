@@ -4,4 +4,6 @@ export class CompanyDistrictMapUpdateDto {
   region1DepthName?: string;
   region2DepthName?: string;
   region3DepthName?: string;
+  hCode?: string;
+  bCode?: string;
 }

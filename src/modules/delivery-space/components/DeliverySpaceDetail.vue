@@ -282,8 +282,6 @@ export default class DeliverySpaceList extends BaseComponent {
 
   // 타입 상세 보기
   findOne(id) {
-    console.log(id);
-    console.log(this.$route.params.id);
     this.findOnePrevious(id);
     this.findOneNext(id);
     if (id !== this.$route.params.id) {

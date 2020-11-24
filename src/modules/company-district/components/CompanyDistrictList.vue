@@ -345,6 +345,7 @@ import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 import { getStatusColor } from '../../../core/utils/status-color.util';
 import { ReverseQueryParamMapper } from '@/core';
+import { CompanyDistrictCreateDto } from '@/dto/company-district/company-district-create.dto';
 
 @Component({
   name: 'CompanyDistrictList',
@@ -357,7 +358,7 @@ export default class CompanyDistrictList extends BaseComponent {
   private companyDistrictSearchDto = new CompanyDistrictListDto();
   private pagination = new Pagination();
   private approvalStatus: APPROVAL_STATUS[] = [...CONST_APPROVAL_STATUS];
-  private companyDistrictCreateDto = new CompanyDistrictDto();
+  private companyDistrictCreateDto = new CompanyDistrictCreateDto();
   private companySelect: CompanyDto[] = [];
   private dataLoading = false;
   private addressData = {
@@ -405,6 +406,8 @@ export default class CompanyDistrictList extends BaseComponent {
           results[0].address.region_2depth_name;
         this.companyDistrictCreateDto.region3DepthName =
           results[0].address.region_3depth_name;
+        this.companyDistrictCreateDto.hCode = results[0].address.h_code;
+        this.companyDistrictCreateDto.bCode = results[0].address.b_code;
       }
     };
     geocoder.addressSearch(this.companyDistrictCreateDto.address, callback);

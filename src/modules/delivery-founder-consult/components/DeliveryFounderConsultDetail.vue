@@ -263,18 +263,24 @@
       <b-col md="4" class="my-3">
         <BaseCard title="타입 정보">
           <template v-slot:head>
-            <router-link
-              v-if="deliveryFounderConsultDto.deliverySpace"
-              variant="outline-info"
-              :to="{
-                name: 'DeliverySpaceDetail',
-                params: {
-                  id: deliveryFounderConsultDto.deliverySpace.no,
-                },
-              }"
-              class="btn btn-outline-info"
-              >상세보기</router-link
-            >
+            <div>
+              <b-button variant="success" @click="sendVicinityInfo()">
+                <b-icon icon="envelope"></b-icon>
+                <span class="ml-2">상권 문자</span></b-button
+              >
+              <router-link
+                v-if="deliveryFounderConsultDto.deliverySpace"
+                variant="outline-info"
+                :to="{
+                  name: 'DeliverySpaceDetail',
+                  params: {
+                    id: deliveryFounderConsultDto.deliverySpace.no,
+                  },
+                }"
+                class="btn btn-outline-info"
+                >상세보기</router-link
+              >
+            </div>
           </template>
           <template v-slot:body>
             <div v-if="deliveryFounderConsultDto.deliverySpace">
@@ -286,6 +292,52 @@
                 <li v-if="deliveryFounderConsultDto.deliverySpace.typeName">
                   타입명 :
                   <b>{{ deliveryFounderConsultDto.deliverySpace.typeName }}</b>
+                </li>
+                <li>
+                  업체명:
+                  <b>
+                    {{
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
+                        .company.nameKr
+                    }}
+                  </b>
+                </li>
+                <li>
+                  지점명:
+                  <b>
+                    {{
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
+                        .nameKr
+                    }}
+                  </b>
+                </li>
+                <li
+                  v-if="
+                    deliveryFounderConsultDto.deliverySpace.companyDistrict
+                      .hCode
+                  "
+                >
+                  행정동 코드:
+                  <b>
+                    {{
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
+                        .hCode
+                    }}
+                  </b>
+                </li>
+                <li
+                  v-if="
+                    deliveryFounderConsultDto.deliverySpace.companyDistrict
+                      .bCode
+                  "
+                >
+                  법정동 코드:
+                  <b>
+                    {{
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
+                        .bCode
+                    }}
+                  </b>
                 </li>
                 <li v-if="deliveryFounderConsultDto.deliverySpace.deposit">
                   보증금 :
@@ -805,6 +857,10 @@
         class="mt-4 justify-content-center"
       ></b-pagination>
     </b-modal>
+    <div class="half-circle-spinner mt-5" v-if="dataLoading">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+    </div>
   </section>
 </template>
 <script lang="ts">
@@ -876,6 +932,7 @@ export default class FounderConsultDetail extends BaseComponent {
   private createdTime = new Date();
   private statusDistComplete = false;
   private adminSendMessageDto = new AdminSendMessageDto();
+  private dataLoading = false;
 
   // get status color
   getStatusColor(
@@ -919,6 +976,16 @@ export default class FounderConsultDetail extends BaseComponent {
       } else {
         return;
       }
+    });
+  }
+
+  sendVicinityInfo() {
+    this.dataLoading = true;
+    DeliveryFounderConsultService.sendVicinityMessage(
+      this.$route.params.id,
+    ).subscribe(res => {
+      this.dataLoading = false;
+      toast.success('문자가 발송 되었습니다.');
     });
   }
 

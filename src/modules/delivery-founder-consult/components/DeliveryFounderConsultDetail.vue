@@ -232,6 +232,34 @@
                     }}
                   </b>
                 </li>
+                <li
+                  v-if="
+                    deliveryFounderConsultDto.deliverySpace.companyDistrict
+                      .hCode
+                  "
+                >
+                  행정동 코드:
+                  <b>
+                    {{
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
+                        .hCode
+                    }}
+                  </b>
+                </li>
+                <li
+                  v-if="
+                    deliveryFounderConsultDto.deliverySpace.companyDistrict
+                      .bCode
+                  "
+                >
+                  법정동 코드:
+                  <b>
+                    {{
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
+                        .bCode
+                    }}
+                  </b>
+                </li>
                 <li>
                   승인 상태 :
                   <b-badge
@@ -258,18 +286,28 @@
       <b-col md="4" class="my-3">
         <BaseCard title="타입 정보">
           <template v-slot:head>
-            <router-link
-              v-if="deliveryFounderConsultDto.deliverySpace"
-              variant="outline-info"
-              :to="{
-                name: 'DeliverySpaceDetail',
-                params: {
-                  id: deliveryFounderConsultDto.deliverySpace.no,
-                },
-              }"
-              class="btn btn-outline-info"
-              >상세보기</router-link
-            >
+            <div>
+              <b-button
+                variant="success"
+                @click="sendVicinityInfo()"
+                :disabled="!isSeoul"
+              >
+                <b-icon icon="envelope"></b-icon>
+                <span class="ml-2">상권 문자</span></b-button
+              >
+              <router-link
+                v-if="deliveryFounderConsultDto.deliverySpace"
+                variant="outline-info"
+                :to="{
+                  name: 'DeliverySpaceDetail',
+                  params: {
+                    id: deliveryFounderConsultDto.deliverySpace.no,
+                  },
+                }"
+                class="btn btn-outline-info"
+                >상세보기</router-link
+              >
+            </div>
           </template>
           <template v-slot:body>
             <div v-if="deliveryFounderConsultDto.deliverySpace">
@@ -282,6 +320,7 @@
                   타입명 :
                   <b>{{ deliveryFounderConsultDto.deliverySpace.typeName }}</b>
                 </li>
+
                 <li v-if="deliveryFounderConsultDto.deliverySpace.deposit">
                   보증금 :
                   <b
@@ -844,6 +883,10 @@
         class="mt-4 justify-content-center"
       ></b-pagination>
     </b-modal>
+    <div class="half-circle-spinner mt-5" v-if="dataLoading">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+    </div>
   </section>
 </template>
 <script lang="ts">
@@ -930,6 +973,8 @@ export default class FounderConsultDetail extends BaseComponent {
   private statusDistComplete = false;
   private adminSendMessageDto = new AdminSendMessageDto();
   private homepageSiteUrl = env.homepageSiteUrl;
+  private dataLoading = false;
+  private isSeoul = false;
 
   // get status color
   getStatusColor(
@@ -976,6 +1021,16 @@ export default class FounderConsultDetail extends BaseComponent {
     });
   }
 
+  sendVicinityInfo() {
+    this.dataLoading = true;
+    DeliveryFounderConsultService.sendVicinityMessage(
+      this.$route.params.id,
+    ).subscribe(res => {
+      this.dataLoading = false;
+      toast.success('문자가 발송 되었습니다.');
+    });
+  }
+
   // 담당자 본인으로 정하기
   assignYourselfAdmin() {
     DeliveryFounderConsultService.assignAdmin(
@@ -1019,6 +1074,13 @@ export default class FounderConsultDetail extends BaseComponent {
       }
       if (this.deliveryFounderConsultDto.status === 'F_DIST_COMPLETE') {
         this.statusDistComplete = true;
+      }
+      const withInSeoul = this.deliveryFounderConsultDto.deliverySpace.companyDistrict.hCode.slice(
+        0,
+        2,
+      );
+      if (withInSeoul === '11') {
+        this.isSeoul = true;
       }
     });
   }

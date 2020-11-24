@@ -10,13 +10,10 @@
       </template>
     </SectionTitle>
     <b-row>
-      <b-col lg="6" class="my-3">
+      <b-col lg="4" class="my-3">
         <BaseCard title="사용자 정보">
           <template v-slot:head>
-            <b-button
-              variant="outline-info"
-              v-b-modal.update_password
-              @click="showUpdateModal()"
+            <b-button variant="outline-info" v-b-modal.update_admin
               >비밀번호 변경</b-button
             >
           </template>
@@ -66,11 +63,11 @@
       </b-col>
     </b-row>
     <b-modal
-      id="update_password"
-      title="비밀번호 변경"
+      id="update_admin"
+      title="비밀변호 변경"
       ok-title="변경"
       cancel-title="취소"
-      @ok="updatePassword()"
+      @ok="updateAdmin()"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-row>
@@ -103,7 +100,7 @@
             </label>
             <input
               type="password"
-              v-model="adminUpdateDto.password"
+              v-model="adminDto.password"
               class="form-control"
             />
           </b-col>
@@ -114,7 +111,7 @@
             </label>
             <input
               type="password"
-              v-model="adminUpdateDto.passwordConfirm"
+              v-model="adminDto.passwordConfirm"
               class="form-control"
             />
           </b-col>
@@ -137,7 +134,7 @@
         </b-form-row>
       </form>
     </b-modal>
-    <!-- 영구 삭제 모달 -->
+    <!-- 관리자 삭제 하기 -->
     <b-modal
       id="delete_admin"
       title="관리자 삭제"
@@ -158,21 +155,13 @@
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
-import {
-  AdminDto,
-  DeliveryFounderConsultDto,
-  DeliveryFounderConsultListDto,
-  SpaceTypeDto,
-} from '@/dto';
+import { AdminDto, SpaceTypeDto } from '@/dto';
 import { BaseUser } from '@/services/shared/auth';
 import { Component, Vue } from 'vue-property-decorator';
 import AdminService from '@/services/admin.service';
 import SpaceTypeService from '@/services/space-type.service';
 import { SPACE_TYPE } from '@/services/shared';
 import toast from '../../../../resources/assets/js/services/toast.js';
-import DeliveryFounderConsultService from '../../../services/delivery-founder-consult.service';
-import { Pagination } from '@/common';
-
 @Component({
   name: 'AdminDetail',
 })
@@ -211,21 +200,10 @@ export default class AdminDetail extends BaseComponent {
   deleteOne() {
     AdminService.hardDelete(this.$route.params.id).subscribe(res => {
       if (res) {
-        this.$router.push('/admin');
         toast.success('삭제완료');
+        this.$router.push('/admin');
       }
     });
-  }
-
-  updatePassword() {
-    AdminService.update(this.$route.params.id, this.adminUpdateDto).subscribe(
-      res => {
-        if (res) {
-          toast.success('수정완료');
-          this.findOne();
-        }
-      },
-    );
   }
 
   created() {

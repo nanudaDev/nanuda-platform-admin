@@ -13,6 +13,20 @@
       <b-col lg="12" class="text-right mb-3">
         <b-row no-gutters align-h="end">
           <b-form-group
+            label="오픈 활성화"
+            label-size="sm"
+            label-text-align="right"
+            label-cols="8"
+          >
+            <b-form-checkbox
+              switch
+              size="lg"
+              v-model="deliverySpaceCreateDto.isOpenedYn"
+              :value="yn[0]"
+              :unchecked-value="yn[1]"
+            ></b-form-checkbox>
+          </b-form-group>
+          <b-form-group
             label="노출 활성화"
             label-size="sm"
             label-text-align="right"

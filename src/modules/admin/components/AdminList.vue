@@ -129,7 +129,6 @@
       title="관리자 추가"
       ok-title="추가"
       cancel-title="취소"
-      size="sm"
       @ok="create()"
       @cancel="clearOutCreateDto()"
       @hide="clearOutCreateDto()"

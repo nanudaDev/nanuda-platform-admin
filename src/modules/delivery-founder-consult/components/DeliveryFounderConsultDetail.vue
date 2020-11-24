@@ -237,80 +237,6 @@
                     }}
                   </b>
                 </li>
-                <li>
-                  승인 상태 :
-                  <b-badge
-                    :variant="
-                      getStatusColor(
-                        deliveryFounderConsultDto.deliverySpace.companyDistrict
-                          .companyDistrictStatus,
-                      )
-                    "
-                    class="badge-pill p-2 mr-2"
-                  >
-                    {{
-                      deliveryFounderConsultDto.deliverySpace.companyDistrict
-                        .companyDistrictStatus | enumTransformer
-                    }}
-                  </b-badge>
-                </li>
-              </ul>
-            </div>
-            <div v-else class="empty-data">업체 정보 없음</div>
-          </template>
-        </BaseCard>
-      </b-col>
-      <b-col md="4" class="my-3">
-        <BaseCard title="타입 정보">
-          <template v-slot:head>
-            <div>
-              <b-button variant="success" @click="sendVicinityInfo()">
-                <b-icon icon="envelope"></b-icon>
-                <span class="ml-2">상권 문자</span></b-button
-              >
-              <router-link
-                v-if="deliveryFounderConsultDto.deliverySpace"
-                variant="outline-info"
-                :to="{
-                  name: 'DeliverySpaceDetail',
-                  params: {
-                    id: deliveryFounderConsultDto.deliverySpace.no,
-                  },
-                }"
-                class="btn btn-outline-info"
-                >상세보기</router-link
-              >
-            </div>
-          </template>
-          <template v-slot:body>
-            <div v-if="deliveryFounderConsultDto.deliverySpace">
-              <ul>
-                <li v-if="deliveryFounderConsultDto.deliverySpace.no">
-                  타입 ID :
-                  <b>{{ deliveryFounderConsultDto.deliverySpace.no }}</b>
-                </li>
-                <li v-if="deliveryFounderConsultDto.deliverySpace.typeName">
-                  타입명 :
-                  <b>{{ deliveryFounderConsultDto.deliverySpace.typeName }}</b>
-                </li>
-                <li>
-                  업체명:
-                  <b>
-                    {{
-                      deliveryFounderConsultDto.deliverySpace.companyDistrict
-                        .company.nameKr
-                    }}
-                  </b>
-                </li>
-                <li>
-                  지점명:
-                  <b>
-                    {{
-                      deliveryFounderConsultDto.deliverySpace.companyDistrict
-                        .nameKr
-                    }}
-                  </b>
-                </li>
                 <li
                   v-if="
                     deliveryFounderConsultDto.deliverySpace.companyDistrict
@@ -339,6 +265,67 @@
                     }}
                   </b>
                 </li>
+                <li>
+                  승인 상태 :
+                  <b-badge
+                    :variant="
+                      getStatusColor(
+                        deliveryFounderConsultDto.deliverySpace.companyDistrict
+                          .companyDistrictStatus,
+                      )
+                    "
+                    class="badge-pill p-2 mr-2"
+                  >
+                    {{
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
+                        .companyDistrictStatus | enumTransformer
+                    }}
+                  </b-badge>
+                </li>
+              </ul>
+            </div>
+            <div v-else class="empty-data">업체 정보 없음</div>
+          </template>
+        </BaseCard>
+      </b-col>
+      <b-col md="4" class="my-3">
+        <BaseCard title="타입 정보">
+          <template v-slot:head>
+            <div>
+              <b-button
+                variant="success"
+                @click="sendVicinityInfo()"
+                :disabled="!isSeoul"
+              >
+                <b-icon icon="envelope"></b-icon>
+                <span class="ml-2">상권 문자</span></b-button
+              >
+              <router-link
+                v-if="deliveryFounderConsultDto.deliverySpace"
+                variant="outline-info"
+                :to="{
+                  name: 'DeliverySpaceDetail',
+                  params: {
+                    id: deliveryFounderConsultDto.deliverySpace.no,
+                  },
+                }"
+                class="btn btn-outline-info"
+                >상세보기</router-link
+              >
+            </div>
+          </template>
+          <template v-slot:body>
+            <div v-if="deliveryFounderConsultDto.deliverySpace">
+              <ul>
+                <li v-if="deliveryFounderConsultDto.deliverySpace.no">
+                  타입 ID :
+                  <b>{{ deliveryFounderConsultDto.deliverySpace.no }}</b>
+                </li>
+                <li v-if="deliveryFounderConsultDto.deliverySpace.typeName">
+                  타입명 :
+                  <b>{{ deliveryFounderConsultDto.deliverySpace.typeName }}</b>
+                </li>
+
                 <li v-if="deliveryFounderConsultDto.deliverySpace.deposit">
                   보증금 :
                   <b
@@ -933,6 +920,7 @@ export default class FounderConsultDetail extends BaseComponent {
   private statusDistComplete = false;
   private adminSendMessageDto = new AdminSendMessageDto();
   private dataLoading = false;
+  private isSeoul = false;
 
   // get status color
   getStatusColor(
@@ -1032,6 +1020,13 @@ export default class FounderConsultDetail extends BaseComponent {
       }
       if (this.deliveryFounderConsultDto.status === 'F_DIST_COMPLETE') {
         this.statusDistComplete = true;
+      }
+      const withInSeoul = this.deliveryFounderConsultDto.deliverySpace.companyDistrict.hCode.slice(
+        0,
+        2,
+      );
+      if (withInSeoul === '11') {
+        this.isSeoul = true;
       }
     });
   }

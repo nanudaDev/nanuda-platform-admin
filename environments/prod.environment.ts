@@ -8,4 +8,6 @@ export const ProductionEnvironment: Environment = {
   clientName: packageInfo.name,
   s3BaseUrl: 'https://kr.object.ncloudstorage.com/production-storage-nanuda',
   siteUrl: 'https://platform-admin.nanudakitchen.com/',
+  homepageBaseUrl: 'https://nanudakitchen.com/api',
+  homepageSiteUrl: 'https://nanudakitchen.com',
 };

@@ -43,12 +43,7 @@
                     </b>
                   </span>
                 </li>
-                <li
-                  v-if="
-                    founderConsultDto.nanudaUser &&
-                      founderConsultDto.nanudaUser.genderInfo
-                  "
-                >
+                <li v-if="founderConsultDto.nanudaUser">
                   <label for="">성별</label>
                   <b-form-radio
                     v-model="founderConsultDto.nanudaUser.gender"
@@ -74,13 +69,6 @@
               </ul>
             </div>
             <div v-else>사용자 없음</div>
-            <b-alert
-              show
-              variant="danger"
-              v-if="!founderConsultDto.nanudaUser.genderInfo"
-              class="mt-3"
-              >성별 미입력 상태</b-alert
-            >
           </template>
         </BaseCard>
       </b-col>
@@ -90,15 +78,15 @@
             <div>
               <b-button
                 v-if="!founderConsultDto.spaceConsultManager"
-                variant="info"
+                variant="outline-info"
                 @click="assignYourselfAdmin()"
                 >본인으로 정하기</b-button
               >
               <b-button
-                variant="primary"
+                variant="outline-primary"
                 @click="findAdmin()"
                 v-b-modal.admin_list
-                >수정하기</b-button
+                >담당저 변경</b-button
               >
             </div>
           </template>
@@ -133,7 +121,7 @@
             <div v-if="founderConsultDto.space">
               <ul>
                 <li>
-                  공간번호 :
+                  공간 ID :
                   <b>{{ founderConsultDto.space.no }}</b>
                 </li>
                 <li>
@@ -156,6 +144,10 @@
                   월 임대료 :
                   <b>{{ founderConsultDto.space.rentalFee }} 만원</b>
                 </li>
+                <li v-if="founderConsultDto.space.size">
+                  평수 :
+                  <b>{{ founderConsultDto.space.size }} 평</b>
+                </li>
                 <li v-if="founderConsultDto.space.amenities.length > 0">
                   공통시설 :
                   <b-badge
@@ -166,7 +158,40 @@
                     >{{ amenity.amenityName }}</b-badge
                   >
                 </li>
+                <li v-if="founderConsultDto.space.spaceInfo">
+                  공간설명:
+                  <b>{{ founderConsultDto.space.spaceInfo }}</b>
+                </li>
               </ul>
+              <b-carousel
+                v-if="
+                  founderConsultDto.space.images &&
+                    founderConsultDto.space.images.length > 0
+                "
+                :interval="3000"
+                controls
+                indicators
+                background="white"
+                img-width="500"
+                img-height="480"
+                class="mt-4"
+              >
+                <b-carousel-slide
+                  v-for="image in founderConsultDto.space.images"
+                  :key="image.no"
+                  :img-src="`${homepageBaseUrl}/${image.filePath}`"
+                ></b-carousel-slide>
+              </b-carousel>
+              <div class="text-right mt-4">
+                <a
+                  :href="
+                    `${homepageSiteUrl}/restaurant-kitchen/${founderConsultDto.space.no}`
+                  "
+                  target="_blank"
+                  class="btn btn-outline-info"
+                  >홈페이지 화면 보기</a
+                >
+              </div>
             </div>
             <div v-else class="empty-data">공간 정보 없음</div>
           </template>
@@ -187,82 +212,80 @@
           </template>
           <template v-slot:body>
             <div v-if="founderConsultDto && founderConsultDto.codeManagement">
-              <b-row no-gutters>
-                <ul class="col-12 col-md-6">
-                  <li>
-                    상담 신청일 :
-                    <b>{{ founderConsultDto.createdAt | dateTransformer }}</b>
-                  </li>
-                  <li>
-                    통화 가능 시간 :
-                    <b>{{ founderConsultDto.availableTime.value }}</b>
-                  </li>
-                  <li v-if="founderConsultDto.changUpExpYn">
-                    창업 경험 유무 :
-                    <b-badge
-                      :variant="
-                        founderConsultDto.changUpExpYn === 'Y'
-                          ? 'success'
-                          : 'danger'
-                      "
-                      >{{
-                        founderConsultDto.changUpExpYn | enumTransformer
-                      }}</b-badge
-                    >
-                  </li>
-                  <li>
-                    <label for="hope_food_category">희망 업종</label>
-                    <template>
-                      <b-form-input
-                        list="food-category-list"
-                        id="hope_food_category"
-                        v-model="founderConsultDto.hopeFoodCategory"
-                      ></b-form-input>
-                      <datalist id="food-category-list">
-                        <option
-                          v-for="category in foodCategorySelect"
-                          :key="category.code"
-                          :value="category.nameKr"
-                          >{{ category.nameKr }}</option
-                        >
-                      </datalist>
-                    </template>
-                  </li>
-                  <li>
-                    <label>신청 상태</label>
-                    <select
-                      class="custom-select"
-                      v-model="founderConsultDto.status"
-                    >
-                      <option value selected>전체</option>
+              <ul>
+                <li>
+                  상담 신청일 :
+                  <b>{{ founderConsultDto.createdAt | dateTransformer }}</b>
+                </li>
+                <li>
+                  통화 가능 시간 :
+                  <b>{{ founderConsultDto.availableTime.value }}</b>
+                </li>
+                <li v-if="founderConsultDto.changUpExpYn">
+                  창업 경험 유무 :
+                  <b-badge
+                    :variant="
+                      founderConsultDto.changUpExpYn === 'Y'
+                        ? 'success'
+                        : 'danger'
+                    "
+                    >{{
+                      founderConsultDto.changUpExpYn | enumTransformer
+                    }}</b-badge
+                  >
+                </li>
+                <li>
+                  <label for="hope_food_category">희망 업종</label>
+                  <template>
+                    <b-form-input
+                      list="food-category-list"
+                      id="hope_food_category"
+                      v-model="founderConsultDto.hopeFoodCategory"
+                    ></b-form-input>
+                    <datalist id="food-category-list">
                       <option
-                        v-for="status in founderConsultStatusSelect"
-                        :key="status.no"
-                        :value="status.key"
-                        >{{ status.value }}</option
+                        v-for="category in foodCategorySelect"
+                        :key="category.code"
+                        :value="category.nameKr"
+                        >{{ category.nameKr }}</option
                       >
-                    </select>
-                    <p class="text-right" v-if="founderConsultDto.updatedAt">
-                      ({{ founderConsultDto.updatedAt | dateTransformer }})
-                    </p>
-                  </li>
-                  <li>
-                    <label for="space_consult_etc">비고 내용</label>
-                    <b-form-textarea
-                      id="space_consult_etc"
-                      style="height:100px;"
-                      v-model="founderConsultDto.spaceConsultEtc"
-                    ></b-form-textarea>
-                  </li>
-                </ul>
-              </b-row>
+                    </datalist>
+                  </template>
+                </li>
+                <li>
+                  <label>신청 상태</label>
+                  <select
+                    class="custom-select"
+                    v-model="founderConsultDto.status"
+                  >
+                    <option value selected>전체</option>
+                    <option
+                      v-for="status in founderConsultStatusSelect"
+                      :key="status.no"
+                      :value="status.key"
+                      >{{ status.value }}</option
+                    >
+                  </select>
+                  <p class="text-right" v-if="founderConsultDto.updatedAt">
+                    ({{ founderConsultDto.updatedAt | dateTransformer }})
+                  </p>
+                </li>
+                <li>
+                  <label for="space_consult_etc">비고 내용</label>
+                  <b-form-textarea
+                    id="space_consult_etc"
+                    style="height:100px;"
+                    v-model="founderConsultDto.spaceConsultEtc"
+                  ></b-form-textarea>
+                </li>
+              </ul>
             </div>
             <div v-else class="empty-data">상담 내역 없음</div>
           </template>
         </BaseCard>
       </b-col>
     </b-row>
-    <div class="text-right">
+    <div class="text-right pb-3">
       <router-link to="/founder-consult" class="btn btn-secondary text-center"
         >목록으로</router-link
       >
@@ -387,7 +410,7 @@
         v-model="adminSendMessageDto.message"
       ></b-form-textarea>
     </b-modal>
-    <br />
+
     <!-- 열람 상태 미열람 모달 -->
     <b-modal
       id="reverse-read"
@@ -485,8 +508,22 @@ import {
   FOUNDER_CONSULT,
   CONST_FOUNDER_CONSULT,
 } from '../../../services/shared';
-
 import { getStatusColor } from '../../../core/utils/status-color.util';
+
+import {
+  ProductionEnvironment,
+  DevelopmentEnvironment,
+  EnvironmentType,
+  Environment,
+} from '../../../../environments';
+
+let env = new Environment();
+if (process.env.NODE_ENV === EnvironmentType.development) {
+  env = DevelopmentEnvironment;
+}
+if (process.env.NODE_ENV === EnvironmentType.production) {
+  env = ProductionEnvironment;
+}
 
 @Component({
   name: 'FounderConsultDetail',
@@ -515,6 +552,8 @@ export default class FounderConsultDetail extends BaseComponent {
   private deliveredTime = new Date();
   private createdTime = new Date();
   private adminSendMessageDto = new AdminSendMessageDto();
+  private homepageBaseUrl = env.homepageBaseUrl;
+  private homepageSiteUrl = env.homepageSiteUrl;
 
   // get status color
   getStatusColor(status: FOUNDER_CONSULT) {

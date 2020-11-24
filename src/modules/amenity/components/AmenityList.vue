@@ -185,7 +185,7 @@
           </b-form-group>
         </b-col>
         <b-col md="6">
-          <b-form-group label="이미지 (180 * 180)">
+          <b-form-group label="이미지 (86 * 86)">
             <div class="text-center">
               <template
                 v-if="attachments && attachments.length > 0 && imageChanged"
@@ -259,7 +259,7 @@
           </b-form-group>
         </b-col>
         <b-col md="6">
-          <b-form-group label="이미지 (180 * 180)">
+          <b-form-group label="이미지 (86 * 86)">
             <div class="text-center">
               <template
                 v-if="

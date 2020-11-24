@@ -26,6 +26,10 @@ class AdminService extends BaseService {
   update(adminNo, adminUpdateDto: AdminDto) {
     return super.patch<AdminDto>(`admin/update/${adminNo}`, adminUpdateDto);
   }
+
+  hardDelete(id) {
+    return super.delete<any>(`admin/hard-delete/${id}`);
+  }
 }
 
 export default new AdminService();

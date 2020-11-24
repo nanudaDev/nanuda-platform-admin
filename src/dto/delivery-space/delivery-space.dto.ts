@@ -29,4 +29,5 @@ export class DeliverySpaceDto extends BaseDto<DeliverySpaceDto> {
   contracts?: DeliveryFounderConsultContractDto[];
   isBestedYn?: YN;
   isBestedShowYn?: YN;
+  isOpenedYn?: YN;
 }

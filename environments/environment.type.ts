@@ -6,6 +6,8 @@ export class Environment {
   productionTip?: boolean;
   s3BaseUrl: string;
   siteUrl?: string;
+  homepageBaseUrl?: string;
+  homepageSiteUrl?: string;
 }
 
 export enum EnvironmentType {

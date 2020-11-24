@@ -58,12 +58,7 @@
                     </b>
                   </span>
                 </li>
-                <li
-                  v-if="
-                    deliveryFounderConsultDto.nanudaUser &&
-                      deliveryFounderConsultDto.nanudaUser.genderInfo
-                  "
-                >
+                <li v-if="deliveryFounderConsultDto.nanudaUser">
                   <label for="">성별</label>
                   <b-form-radio
                     v-model="deliveryFounderConsultDto.nanudaUser.gender"
@@ -111,15 +106,15 @@
             <div>
               <b-button
                 v-if="!deliveryFounderConsultDto.spaceConsultManager"
-                variant="info"
+                variant="outline-info"
                 @click="assignYourselfAdmin()"
                 >본인으로 정하기</b-button
               >
               <b-button
-                variant="primary"
+                variant="outline-primary"
                 @click="findAdmin()"
                 v-b-modal.admin_list
-                >수정하기</b-button
+                >담당자 변경</b-button
               >
             </div>
           </template>
@@ -318,6 +313,13 @@
                     만원
                   </b>
                 </li>
+                <li v-if="deliveryFounderConsultDto.deliverySpace.size">
+                  평수 :
+                  <b>
+                    {{ deliveryFounderConsultDto.deliverySpace.size }}
+                    평
+                  </b>
+                </li>
                 <li
                   v-if="
                     deliveryFounderConsultDto.deliverySpace &&
@@ -365,7 +367,44 @@
                     >{{ option.deliverySpaceOptionName }}</b-badge
                   >
                 </li>
+                <li v-if="deliveryFounderConsultDto.deliverySpace.desc">
+                  공간설명 :
+                  <b>
+                    {{ deliveryFounderConsultDto.deliverySpace.desc }}
+                    평
+                  </b>
+                </li>
               </ul>
+              <b-carousel
+                v-if="
+                  deliveryFounderConsultDto.deliverySpace.images &&
+                    deliveryFounderConsultDto.deliverySpace.images.length > 0
+                "
+                :interval="3000"
+                controls
+                indicators
+                background="white"
+                img-width="500"
+                img-height="480"
+                class="mt-4"
+              >
+                <b-carousel-slide
+                  v-for="image in deliveryFounderConsultDto.deliverySpace
+                    .images"
+                  :key="image.key"
+                  :img-src="image.endpoint"
+                ></b-carousel-slide>
+              </b-carousel>
+              <div class="text-right mt-4">
+                <a
+                  :href="
+                    `${homepageSiteUrl}/delivery-kitchen/${deliveryFounderConsultDto.deliverySpace.no}`
+                  "
+                  target="_blank"
+                  class="btn btn-outline-info"
+                  >홈페이지 화면 보기</a
+                >
+              </div>
             </div>
             <div v-else class="empty-data">공간 정보 없음</div>
           </template>
@@ -612,7 +651,7 @@
         <FounderConsultManagementHistory />
       </div>
     </b-modal>
-    <div class="text-right">
+    <div class="text-right pb-4">
       <router-link
         to="/delivery-founder-consult"
         class="btn btn-secondary text-center"
@@ -847,6 +886,20 @@ import {
 } from '../../../services/shared';
 import SmsService from '../../../services/sms.service';
 import { getStatusColor } from '../../../core/utils/status-color.util';
+import {
+  ProductionEnvironment,
+  DevelopmentEnvironment,
+  EnvironmentType,
+  Environment,
+} from '../../../../environments';
+
+let env = new Environment();
+if (process.env.NODE_ENV === EnvironmentType.development) {
+  env = DevelopmentEnvironment;
+}
+if (process.env.NODE_ENV === EnvironmentType.production) {
+  env = ProductionEnvironment;
+}
 
 @Component({
   name: 'DeliveryFounderConsultDetail',
@@ -876,6 +929,7 @@ export default class FounderConsultDetail extends BaseComponent {
   private createdTime = new Date();
   private statusDistComplete = false;
   private adminSendMessageDto = new AdminSendMessageDto();
+  private homepageSiteUrl = env.homepageSiteUrl;
 
   // get status color
   getStatusColor(

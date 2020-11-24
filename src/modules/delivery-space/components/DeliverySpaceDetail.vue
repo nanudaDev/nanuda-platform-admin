@@ -52,6 +52,9 @@
         <div v-if="deliverySpaceDto && deliverySpaceDto.companyDistrict">
           <h4 v-if="deliverySpaceDto.typeName" class="mb-3">
             [{{ deliverySpaceDto.no }}] {{ deliverySpaceDto.typeName }}
+            <b-badge variant="danger" v-if="deliverySpaceDto.isOpenedYn !== 'Y'"
+              >오픈 예정</b-badge
+            >
           </h4>
 
           <ul class="u-list">

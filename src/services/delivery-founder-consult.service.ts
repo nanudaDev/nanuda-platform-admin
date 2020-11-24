@@ -75,6 +75,16 @@ class DeliveryFounderConsultService extends BaseService {
       `admin/delivery-founder-consult/${deliveryFounderConsultNo}/assign`,
     );
   }
+
+  /**
+   * 상권분석 관련 문자 발송
+   * @param deliveryFounerConsultNo
+   */
+  sendVicinityMessage(deliveryFounerConsultNo) {
+    return super.get<any>(
+      `admin/message-delivery-space/${deliveryFounerConsultNo}`,
+    );
+  }
 }
 
 export default new DeliveryFounderConsultService();

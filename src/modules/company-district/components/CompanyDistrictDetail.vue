@@ -576,6 +576,8 @@ export default class CompanyDistrictDetail extends BaseComponent {
           results[0].address.region_2depth_name;
         this.companyDistrictMapUpdateDto.region3DepthName =
           results[0].address.region_3depth_name;
+        this.companyDistrictMapUpdateDto.hCode = results[0].address.h_code;
+        this.companyDistrictMapUpdateDto.bCode = results[0].address.b_code;
       }
       console.log(results);
     };

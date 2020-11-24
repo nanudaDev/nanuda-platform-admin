@@ -14,48 +14,55 @@
       <b-col lg="9">
         <b-col lg="12" class="text-right mb-3">
           <b-row no-gutters align-h="end">
-            <b-form-group
-              label="오픈 활성화"
-              label-size="sm"
-              label-text-align="right"
-              label-cols="8"
-            >
-              <b-form-checkbox
-                switch
-                size="lg"
-                v-model="deliverySpaceUpdateDto.isOpenedYn"
-                :value="showYn[0]"
-                :unchecked-value="showYn[1]"
-              ></b-form-checkbox>
-            </b-form-group>
-            <b-form-group
-              label="노출 활성화"
-              label-size="sm"
-              label-text-align="right"
-              label-cols="8"
-            >
-              <b-form-checkbox
-                switch
-                size="lg"
-                v-model="deliverySpaceUpdateDto.delYn"
-                :value="delYn[1]"
-                :unchecked-value="delYn[0]"
-              ></b-form-checkbox>
-            </b-form-group>
-            <b-form-group
-              label="업체 측 노출 활성화"
-              label-size="sm"
-              label-text-align="right"
-              label-cols="10"
-            >
-              <b-form-checkbox
-                switch
-                size="lg"
-                v-model="deliverySpaceUpdateDto.showYn"
-                :value="showYn[0]"
-                :unchecked-value="showYn[1]"
-              ></b-form-checkbox>
-            </b-form-group>
+            <b-col cols="12" lg="4">
+              <b-form-group
+                label="오픈 예정 활성화"
+                label-size="sm"
+                label-text-align="right"
+                label-cols="10"
+              >
+                <b-form-checkbox
+                  switch
+                  size="lg"
+                  v-model="deliverySpaceUpdateDto.isOpenedYn"
+                  :value="showYn[1]"
+                  :unchecked-value="showYn[0]"
+                  :disabled="disabledYn"
+                ></b-form-checkbox>
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" lg="4">
+              <b-form-group
+                label="노출 활성화"
+                label-size="sm"
+                label-text-align="right"
+                label-cols="10"
+              >
+                <b-form-checkbox
+                  switch
+                  size="lg"
+                  v-model="deliverySpaceUpdateDto.delYn"
+                  :value="delYn[1]"
+                  :unchecked-value="delYn[0]"
+                ></b-form-checkbox>
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" lg="4">
+              <b-form-group
+                label="업체 측 노출 활성화"
+                label-size="sm"
+                label-text-align="right"
+                label-cols="10"
+              >
+                <b-form-checkbox
+                  switch
+                  size="lg"
+                  v-model="deliverySpaceUpdateDto.showYn"
+                  :value="showYn[0]"
+                  :unchecked-value="showYn[1]"
+                ></b-form-checkbox>
+              </b-form-group>
+            </b-col>
           </b-row>
         </b-col>
         <b-form-row>
@@ -96,6 +103,7 @@
             <b-form-input
               type="number"
               v-model="deliverySpaceUpdateDto.quantity"
+              @change="getQuantity($event)"
             ></b-form-input>
           </b-col>
         </b-form-row>
@@ -329,6 +337,7 @@ export default class DeliverySpaceUpdate extends BaseComponent {
   private selectedImages = [];
   private changedImage = false;
   private dataLoading = false;
+  private disabledYn = false;
 
   // get common facility list
   getSpaceOptions() {
@@ -371,6 +380,15 @@ export default class DeliverySpaceUpdate extends BaseComponent {
       }
     } else {
       this.deliverySpaceOptionIds.unshift(parseInt(deliverySpaceOptionId));
+    }
+  }
+
+  getQuantity(value) {
+    if (value <= 0) {
+      this.disabledYn = true;
+      this.deliverySpaceUpdateDto.isOpenedYn = this.showYn[0];
+    } else {
+      this.disabledYn = false;
     }
   }
 
@@ -444,7 +462,6 @@ export default class DeliverySpaceUpdate extends BaseComponent {
     if (this.uploadImages.includes(image)) {
       index = this.uploadImages.indexOf(image);
       if (index > -1) {
-        console.log(index);
         this.uploadImages.splice(index, 1);
       }
     }

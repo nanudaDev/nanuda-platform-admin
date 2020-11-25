@@ -10,10 +10,16 @@
       </template>
     </SectionTitle>
     <b-row>
-      <b-col lg="4" class="my-3">
+      <b-col xl="4" class="my-3">
         <BaseCard title="사용자 정보">
           <template v-slot:head>
-            <b-button variant="outline-info" v-b-modal.update_admin
+            <b-button
+              variant="outline-info"
+              v-b-modal.update_admin
+              v-if="
+                (myPageDto.authCode && myPageDto.authCode.includes('SUPER')) ||
+                  adminDto.no === myPageDto.no
+              "
               >비밀번호 변경</b-button
             >
           </template>
@@ -169,6 +175,15 @@ export default class AdminDetail extends BaseComponent {
   private adminDto = new AdminDto(BaseUser);
   private spaceTypes: SpaceTypeDto[] = [];
   private adminUpdateDto: AdminDto = new AdminDto(BaseUser);
+  private myPageDto: AdminDto = new AdminDto(BaseUser);
+
+  findMe() {
+    AdminService.findMe().subscribe(res => {
+      if (res) {
+        this.myPageDto = res.data;
+      }
+    });
+  }
 
   findOne() {
     AdminService.findOne(this.$route.params.id).subscribe(res => {
@@ -209,6 +224,7 @@ export default class AdminDetail extends BaseComponent {
   created() {
     this.findSpaceType();
     this.findOne();
+    this.findMe();
   }
 }
 </script>

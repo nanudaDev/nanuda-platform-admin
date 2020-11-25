@@ -289,7 +289,7 @@
             <div>
               <b-button
                 variant="success"
-                @click="sendVicinityInfo()"
+                v-b-modal.send_analysis
                 :disabled="!isSeoul"
               >
                 <b-icon icon="envelope"></b-icon>
@@ -883,10 +883,22 @@
         class="mt-4 justify-content-center"
       ></b-pagination>
     </b-modal>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+    <b-modal id="send_analysis" title="상권분석 문자전송" hide-footer>
+      <div class="text-center">
+        <p v-if="!dataLoading">
+          <b>상권분석 문자를 전송하시겠습니까</b>
+        </p>
+        <div class="half-circle-spinner mt-5" v-else>
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+        <div class="mt-2 text-right">
+          <b-button variant="primary" @click="sendVicinityInfo()"
+            >전송</b-button
+          >
+        </div>
+      </div>
+    </b-modal>
   </section>
 </template>
 <script lang="ts">
@@ -1027,6 +1039,7 @@ export default class FounderConsultDetail extends BaseComponent {
       this.$route.params.id,
     ).subscribe(res => {
       this.dataLoading = false;
+      this.$bvModal.hide('send_analysis');
       toast.success('문자가 발송 되었습니다.');
     });
   }

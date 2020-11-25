@@ -467,6 +467,7 @@ export default class FounderConsult extends BaseComponent {
     신청상태: 'codeManagement.value',
     점포명: 'space.name',
     주소: 'space.address',
+    비고: 'spaceConsultEtc',
   };
   private json_meta = [
     [

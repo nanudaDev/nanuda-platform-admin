@@ -99,7 +99,7 @@
             <b-form-input
               list="admin_list"
               id="admin_user"
-              v-model="founderConsultSearchDto.adminName"
+              v-model="founderConsultSearchDto.adminUserName"
             ></b-form-input>
             <datalist id="admin_list">
               <option

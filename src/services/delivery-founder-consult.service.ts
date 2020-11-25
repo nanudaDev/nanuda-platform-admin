@@ -85,6 +85,18 @@ class DeliveryFounderConsultService extends BaseService {
       `admin/message-delivery-space/${deliveryFounerConsultNo}`,
     );
   }
+
+  /**
+   *
+   * @param pagination
+   */
+  findMyConsults(pagination: Pagination) {
+    return super.paginate<DeliveryFounderConsultDto>(
+      `admin/my-delivery-founder-consults`,
+      null,
+      pagination,
+    );
+  }
 }
 
 export default new DeliveryFounderConsultService();

@@ -25,9 +25,9 @@ export default class extends BaseComponent {
 <style lang="scss">
 html,
 body {
-  height: 100%;
+  // height: 100%;
   background-color: #f1f1f1;
-  padding: 10px 0 40px;
+  // padding: 10px 0 40px;
 }
 
 h1,

@@ -598,6 +598,47 @@ const componentsRouter: RouteConfig[] = [
       },
     ],
   },
+  {
+    path: '/company-district-promotion',
+    name: '프로모션',
+    component: () =>
+      import(
+        '../../modules/company-district-promotion/CompanyDistrictPromotion.vue'
+      ),
+    children: [
+      {
+        path: '/company-district-promotion',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/company-district-promotion/components/CompanyDistrictPromotionList.vue'
+          ),
+        name: 'CompanyDistrictPromotionList',
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          title: '프로모션 관리',
+        },
+      },
+      {
+        path: '/company-district-promotion/:id([0-9]+)',
+        name: 'CompanyDistrictPromotionDetail',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/company-district-promotion/components/CompanyDistrictPromotionDetail.vue'
+          ),
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          detailPage: true,
+          title: '프로모션 상세',
+        },
+      },
+    ],
+  },
   ...kioskComponentRouter,
 ];
 

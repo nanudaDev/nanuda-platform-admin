@@ -6,6 +6,7 @@ import {
   CompanyUpdateDto,
   CompanyUpdateRefusalDto,
 } from '@/dto';
+import { CompanyDistrictPromotionDto } from '@/dto/company-district-promotion';
 
 class CompanyService extends BaseService {
   /**
@@ -64,5 +65,32 @@ class CompanyService extends BaseService {
   deleteCompany(companyNo: string) {
     return super.delete<CompanyDto>(`admin/company/${companyNo}`);
   }
+
+  /**
+   * find ongoing promotions for company
+   * @param companyNo
+   * @param paginate
+   */
+  async findOngoingPromotions(companyNo, paginate: Pagination) {
+    return super.paginate<CompanyDistrictPromotionDto>(
+      `admin/company/${companyNo}/ongoing-promotions`,
+      null,
+      paginate,
+    );
+  }
+
+  /**
+   * find expired promotions for company
+   * @param companyNo
+   * @param paginate
+   */
+  async findExpiredPromotions(companyNo, paginate: Pagination) {
+    return super.paginate<CompanyDistrictPromotionDto>(
+      `admin/company/${companyNo}/expired-promotions`,
+      null,
+      paginate,
+    );
+  }
 }
+
 export default new CompanyService();

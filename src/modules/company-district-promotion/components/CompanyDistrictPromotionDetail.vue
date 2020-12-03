@@ -5,9 +5,9 @@
         <router-link to="/company-district-promotion" class="btn btn-secondary"
           >목록으로</router-link
         >
-        <!-- <b-button variant="primary" @click="updateOne()">
+        <b-button variant="primary" @click="updateOne()">
           수정하기
-        </b-button> -->
+        </b-button>
         <!-- <b-button variant="danger" v-b-modal.delete_promotion>
           삭제하기
         </b-button> -->
@@ -52,6 +52,18 @@
           <b-form-input v-model="promotionDto.displayTitle"></b-form-input>
         </b-form-group>
       </b-col>
+      <b-col cols="12" class="mb-4">
+        <label for="create_content">
+          내용
+          <span class="red-text">*</span>
+        </label>
+        <vue-editor
+          id="create_content"
+          class="bg-white"
+          v-model="promotionDto.desc"
+          :editorToolbar="editorToolbar"
+        ></vue-editor>
+      </b-col>
       <b-col cols="12" md="6">
         <b-form-group label="프로모션 시작 날짜">
           <b-form-datepicker
@@ -72,17 +84,15 @@
       <b-col cols="12">
         <b-form-group label="프로모션 지점 선택">
           <b-row>
-            <b-col
-              cols="12"
-              md="6"
-              lg="4"
-              v-for="district in companyDistirctSelect.items"
-              :key="district.no"
-              :value="district.no"
-              v-model="promotionDto.companyDistrictNo"
-            >
-              <b-form-checkbox>
-                {{ district.nameKr }}
+            <b-col cols="12" md="6" lg="4">
+              <b-form-checkbox
+                @change="addDistrict(district.no)"
+                v-for="district in companyDistrictSelect"
+                :key="district.no"
+                :value="district.no"
+                v-model="companyDistrictSelectedIds"
+              >
+                <b>{{ district.nameKr }}</b> ({{ district.company.nameKr }})
               </b-form-checkbox>
             </b-col>
           </b-row>
@@ -114,23 +124,36 @@ import { CompanyDistrictDto, CompanyDistrictPromotionDto } from '@/dto';
 import CompanyDistrictPromotionService from '@/services/company-district-promotion.service';
 import CompanyDistrictService from '@/services/company-district.service';
 import CodeManagementService from '@/services/code-management.service';
-import { CONST_YN, YN } from '@/common';
+import { CONST_YN, YN, Pagination } from '@/common';
 import toast from '../../../../resources/assets/js/services/toast.js';
+import { VueEditor } from 'vue2-editor';
+import { EditorConfig } from '../../../config';
 
 @Component({
-  name: 'PromotionDEtail',
+  name: 'PromotionDetail',
+  components: {
+    VueEditor,
+  },
 })
 export default class CompanyDistrictPromotionDetail extends BaseComponent {
   private promotionDto = new CompanyDistrictPromotionDto();
   private companyDistrictDto = new CompanyDistrictDto();
   private promitionTypeSelect = [];
-  private companyDistirctSelect = [];
+  private companyDistrictSelect = [];
   private showYn: YN[] = [...CONST_YN];
+  private companyDistrictIds: number[] = [];
+  private companyDistrictSelectedIds: number[] = [];
+  private editorToolbar = EditorConfig;
 
   findOne(id) {
     CompanyDistrictPromotionService.findOne(id).subscribe(res => {
       if (res) {
         this.promotionDto = res.data;
+        if (this.promotionDto.companyDistricts.length > 0) {
+          this.companyDistrictSelectedIds = this.promotionDto.companyDistricts.map(
+            v => v.no,
+          );
+        }
       }
     });
   }
@@ -144,22 +167,37 @@ export default class CompanyDistrictPromotionDetail extends BaseComponent {
   }
 
   getCompanyDistrict() {
-    CompanyDistrictService.findForSelect(this.companyDistrictDto).subscribe(
-      res => {
-        if (res) {
-          this.companyDistirctSelect = res.data;
-        }
-      },
-    );
+    const pagination = new Pagination();
+    pagination.limit = 100;
+    CompanyDistrictService.findForSelectOption(pagination).subscribe(res => {
+      if (res) {
+        this.companyDistrictSelect = res.data.items;
+      }
+    });
+  }
+
+  addDistrict(districtNo) {
+    if (this.companyDistrictIds.includes(parseInt(districtNo))) {
+      const index = this.companyDistrictIds.indexOf(parseInt(districtNo));
+      if (index > -1) {
+        this.companyDistrictIds.splice(index, 1);
+      }
+    } else {
+      this.companyDistrictIds.unshift(parseInt(districtNo));
+    }
   }
 
   updateOne() {
+    if (this.companyDistrictSelectedIds) {
+      this.promotionDto.companyDistrictIds = this.companyDistrictIds;
+    }
     CompanyDistrictPromotionService.update(
       this.$route.params.id,
       this.promotionDto,
     ).subscribe(res => {
       if (res) {
         toast.success('수정완료');
+        this.findOne(this.$route.params.id);
       }
     });
   }

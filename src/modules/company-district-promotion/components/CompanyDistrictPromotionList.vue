@@ -48,6 +48,7 @@
               <th scope="col">프로모션 제목</th>
               <th scope="col">프로모션 제목 (노출용)</th>
               <th scope="col">프로모션 기간</th>
+              <th scope="col">만료</th>
               <th scope="col"></th>
             </tr>
           </thead>
@@ -74,7 +75,12 @@
                 {{ promotion.started | dateTransformer }} ~
                 {{ promotion.ended | dateTransformer }}
               </td>
-              <td></td>
+              <td>
+                <span v-if="promotion.ended < new Date()">
+                  만료
+                </span>
+                <span v-else>진행중</span>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -95,7 +101,12 @@
       <div class="circle circle-1"></div>
       <div class="circle circle-2"></div>
     </div>
-    <b-modal id="add_promotion" title="프로모션 추가" @ok="createPromotion()">
+    <b-modal
+      size="lg"
+      id="add_promotion"
+      title="프로모션 추가"
+      @ok="createPromotion()"
+    >
       <b-form-row>
         <b-col lg="12" class="text-right mb-3">
           <b-row no-gutters align-h="end">
@@ -139,6 +150,18 @@
             ></b-form-input>
           </b-form-group>
         </b-col>
+        <b-col cols="12" class="mb-4">
+          <label for="create_content">
+            내용
+            <span class="red-text">*</span>
+          </label>
+          <vue-editor
+            id="create_content"
+            class="bg-white"
+            v-model="promotionCreateDto.desc"
+            :editorToolbar="editorToolbar"
+          ></vue-editor>
+        </b-col>
         <b-col cols="12" md="6">
           <b-form-group label="프로모션 시작 날짜">
             <b-form-datepicker
@@ -163,13 +186,15 @@
                 cols="12"
                 md="6"
                 lg="4"
-                v-for="district in companyDistirctSelect.items"
+                v-for="district in companyDistirctSelect"
                 :key="district.no"
                 :value="district.no"
-                v-model="promotionCreateDto.companyDistrictNo"
               >
-                <b-form-checkbox>
-                  {{ district.nameKr }}
+                <b-form-checkbox
+                  v-model="companyDistrictIds"
+                  @change="addDistrict(district.no)"
+                >
+                  <b>{{ district.nameKr }} </b> ({{ district.company.nameKr }})
                 </b-form-checkbox>
               </b-col>
             </b-row>
@@ -192,9 +217,15 @@ import { CONST_YN, Pagination, YN } from '@/common';
 import CodeManagementService from '@/services/code-management.service';
 import CompanyDistrictService from '@/services/company-district.service';
 import toast from '../../../../resources/assets/js/services/toast.js';
+import { APPROVAL_STATUS } from '@/services/shared';
+import { VueEditor } from 'vue2-editor';
+import { EditorConfig } from '../../../config';
 
 @Component({
   name: 'PromotionList',
+  components: {
+    VueEditor,
+  },
 })
 export default class PromotionList extends BaseComponent {
   private promotionSearchDto = new CompanyDistrictPromotionListDto();
@@ -207,6 +238,8 @@ export default class PromotionList extends BaseComponent {
   private companyDistirctSelect = [];
   private companyDistrictDto = new CompanyDistrictDto();
   private showYn: YN[] = [...CONST_YN];
+  private companyDistrictIds: number[] = [];
+  private editorToolbar = EditorConfig;
 
   search(isPagination?: boolean) {
     if (!isPagination) {
@@ -242,13 +275,27 @@ export default class PromotionList extends BaseComponent {
   }
 
   getCompanyDistrict() {
-    CompanyDistrictService.findForSelect(this.companyDistrictDto).subscribe(
-      res => {
-        if (res) {
-          this.companyDistirctSelect = res.data;
-        }
-      },
-    );
+    const pagination = new Pagination();
+    // 임시
+    pagination.limit = 100;
+    CompanyDistrictService.findForSelectOption(pagination).subscribe(res => {
+      if (res) {
+        this.companyDistirctSelect = res.data.items;
+      }
+    });
+  }
+
+  addDistrict(districtNo) {
+    console.log(districtNo);
+    if (this.companyDistrictIds.includes(parseInt(districtNo))) {
+      const index = this.companyDistrictIds.indexOf(parseInt(districtNo));
+      if (index > -1) {
+        this.companyDistrictIds.splice(index, 1);
+      }
+    } else {
+      this.companyDistrictIds.unshift(parseInt(districtNo));
+    }
+    console.log(this.companyDistrictIds);
   }
 
   paginateSearch() {
@@ -256,6 +303,7 @@ export default class PromotionList extends BaseComponent {
   }
 
   createPromotion() {
+    this.promotionCreateDto.companyDistrictIds = this.companyDistrictIds;
     CompanyDistrictPromotionService.create(this.promotionCreateDto).subscribe(
       res => {
         if (res) {

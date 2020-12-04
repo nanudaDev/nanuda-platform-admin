@@ -8,6 +8,7 @@ export class CompanyDistrictPromotionDto extends BaseDto<
 > {
   title: string;
   desc?: string;
+  summary?: string;
   displayTitle?: string;
   promotionType?: B2B_EVENT_TYPE;
   started?: Date;

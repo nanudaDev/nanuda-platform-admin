@@ -150,6 +150,11 @@
             ></b-form-input>
           </b-form-group>
         </b-col>
+        <b-col cols="12">
+          <b-form-group label="프로모션 내용 요약">
+            <b-form-input v-model="promotionCreateDto.summary"></b-form-input>
+          </b-form-group>
+        </b-col>
         <b-col cols="12" class="mb-4">
           <label for="create_content">
             내용
@@ -286,7 +291,6 @@ export default class PromotionList extends BaseComponent {
   }
 
   addDistrict(districtNo) {
-    console.log(districtNo);
     if (this.companyDistrictIds.includes(parseInt(districtNo))) {
       const index = this.companyDistrictIds.indexOf(parseInt(districtNo));
       if (index > -1) {
@@ -295,7 +299,6 @@ export default class PromotionList extends BaseComponent {
     } else {
       this.companyDistrictIds.unshift(parseInt(districtNo));
     }
-    console.log(this.companyDistrictIds);
   }
 
   paginateSearch() {

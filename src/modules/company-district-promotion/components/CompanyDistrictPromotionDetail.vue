@@ -51,6 +51,9 @@
         <b-form-group label="프로모션 제목 (노출용)">
           <b-form-input v-model="promotionDto.displayTitle"></b-form-input>
         </b-form-group>
+        <b-form-group label="프로모션 내용 요약">
+          <b-form-input v-model="promotionDto.summary"></b-form-input>
+        </b-form-group>
       </b-col>
       <b-col cols="12" class="mb-4">
         <label for="create_content">

@@ -192,7 +192,7 @@ export default class CompanyDistrictPromotionDetail extends BaseComponent {
 
   updateOne() {
     if (this.companyDistrictSelectedIds) {
-      this.promotionDto.companyDistrictIds = this.companyDistrictIds;
+      this.promotionDto.companyDistrictIds = this.companyDistrictSelectedIds;
     }
     CompanyDistrictPromotionService.update(
       this.$route.params.id,

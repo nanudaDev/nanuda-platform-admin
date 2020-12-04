@@ -47,9 +47,9 @@
               <th scope="col">프로모션 타입</th>
               <th scope="col">프로모션 제목</th>
               <th scope="col">프로모션 제목 (노출용)</th>
+              <th scope="col">프로모션 내용 요약</th>
               <th scope="col">프로모션 기간</th>
               <th scope="col">만료</th>
-              <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
@@ -70,6 +70,9 @@
               </td>
               <td>
                 {{ promotion.displayTitle }}
+              </td>
+              <td>
+                {{ promotion.summary }}
               </td>
               <td>
                 {{ promotion.started | dateTransformer }} ~

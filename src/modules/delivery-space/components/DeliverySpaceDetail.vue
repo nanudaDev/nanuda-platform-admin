@@ -134,18 +134,24 @@
             </li>
             <li>
               노출 여부 :
-              <b-badge
-                :variant="deliverySpaceDto.delYn === 'N' ? 'success' : 'danger'"
-                >{{ deliverySpaceDto.delYn }}</b-badge
+              <b
+                :class="
+                  deliverySpaceDto.delYn === 'N'
+                    ? 'text-success'
+                    : 'text-danger'
+                "
+                >{{ deliverySpaceDto.delYn === 'N' ? 'O' : 'X' }}</b
               >
             </li>
             <li>
               업체 노출 여부 :
-              <b-badge
-                :variant="
-                  deliverySpaceDto.showYn === 'Y' ? 'success' : 'danger'
+              <b
+                :class="
+                  deliverySpaceDto.showYn === 'Y'
+                    ? 'text-success'
+                    : 'text-danger'
                 "
-                >{{ deliverySpaceDto.showYn }}</b-badge
+                >{{ deliverySpaceDto.showYn === 'Y' ? 'O' : 'X' }}</b
               >
             </li>
             <li v-if="deliverySpaceDto.isBested">

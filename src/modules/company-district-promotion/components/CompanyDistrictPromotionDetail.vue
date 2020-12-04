@@ -71,7 +71,7 @@
         <b-form-group label="프로모션 시작 날짜">
           <b-form-datepicker
             id="started"
-            v-model="promotionDto.started"
+            v-model="startedDate"
           ></b-form-datepicker>
         </b-form-group>
       </b-col>
@@ -79,8 +79,8 @@
         <b-form-group label="프로모션 종료 날짜">
           <b-form-datepicker
             id="ended"
-            v-model="promotionDto.ended"
-            :disabled="promotionDto.started ? false : true"
+            v-model="endedDate"
+            :disabled="startedDate ? false : true"
           ></b-form-datepicker>
         </b-form-group>
       </b-col>
@@ -147,6 +147,8 @@ export default class CompanyDistrictPromotionDetail extends BaseComponent {
   private companyDistrictIds: number[] = [];
   private companyDistrictSelectedIds: number[] = [];
   private editorToolbar = EditorConfig;
+  private startedDate = new Date();
+  private endedDate = new Date();
 
   findOne(id) {
     CompanyDistrictPromotionService.findOne(id).subscribe(res => {
@@ -157,6 +159,8 @@ export default class CompanyDistrictPromotionDetail extends BaseComponent {
             v => v.no,
           );
         }
+        this.startedDate = this.promotionDto.started;
+        this.endedDate = this.promotionDto.ended;
       }
     });
   }
@@ -193,6 +197,12 @@ export default class CompanyDistrictPromotionDetail extends BaseComponent {
   updateOne() {
     if (this.companyDistrictSelectedIds) {
       this.promotionDto.companyDistrictIds = this.companyDistrictSelectedIds;
+    }
+    if (this.startedDate) {
+      this.promotionDto.started = this.startedDate;
+    }
+    if (this.endedDate) {
+      this.promotionDto.ended = this.endedDate;
     }
     CompanyDistrictPromotionService.update(
       this.$route.params.id,

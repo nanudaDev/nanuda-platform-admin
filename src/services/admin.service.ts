@@ -19,12 +19,16 @@ class AdminService extends BaseService {
     return super.get<AdminDto>(`admin/${id}`);
   }
 
-  create(adminCreateDto: AdminDto) {
-    return super.post<AdminDto>('admin', adminCreateDto);
+  updateSelf(id, body: AdminDto) {
+    return super.patch<AdminDto>(`admin/self-update/${id}`, body);
   }
 
-  update(adminNo, adminUpdateDto: AdminDto) {
-    return super.patch<AdminDto>(`admin/update/${adminNo}`, adminUpdateDto);
+  create(body: AdminDto) {
+    return super.post<AdminDto>('admin', body);
+  }
+
+  update(id, body: AdminDto) {
+    return super.patch<AdminDto>(`admin/update/${id}`, body);
   }
 
   hardDelete(id) {

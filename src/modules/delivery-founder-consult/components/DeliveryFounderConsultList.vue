@@ -89,7 +89,7 @@
         </div>
       </div>
       <div class="form-row">
-        <!-- <div class="col-6 col-lg-2 mb-3">
+        <div class="col-6 col-lg-2 mb-3">
           <label for="admin_user">관리자명</label>
           <template>
             <b-form-input
@@ -102,11 +102,11 @@
                 v-for="admin in adminList.items"
                 :key="admin.no"
                 :value="admin.name"
-              >{{ admin.name }}</option>
+                >{{ admin.name }}</option
+              >
             </datalist>
           </template>
-        </div>-->
-
+        </div>
         <div class="col-6 col-lg-2 mb-3">
           <label for="hope_time">희망 시간대</label>
           <select
@@ -152,7 +152,7 @@
             }}</option>
           </select>
         </div>
-        <div class="col-6 col-lg-3 mb-3">
+        <div class="col-6 col-lg-2 mb-3">
           <div>
             <label for="ended">시작 날짜</label>
             <b-form-datepicker
@@ -161,7 +161,7 @@
             ></b-form-datepicker>
           </div>
         </div>
-        <div class="col-6 col-md-3 mb-3">
+        <div class="col-6 col-md-2 mb-3">
           <div>
             <label for="ended">종료 날짜</label>
             <b-form-datepicker

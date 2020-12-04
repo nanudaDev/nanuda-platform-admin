@@ -7,6 +7,7 @@ import {
   CompanyDistrictUpdateDto,
 } from '@/dto';
 import { CompanyDistrictMapUpdateDto } from '@/dto/company-district/company-district-map-update.dto';
+import { CompanyDistrictPromotionDto } from '@/dto/company-district-promotion';
 
 class CompanyDistrictService extends BaseService {
   /**
@@ -87,6 +88,14 @@ class CompanyDistrictService extends BaseService {
     );
   }
 
+  findForSelectOption(pagination: Pagination) {
+    return super.paginate<CompanyDistrictDto>(
+      'admin/company-district/find-for-select',
+      null,
+      pagination,
+    );
+  }
+
   /**
    *
    * @param companyDistrictNo
@@ -109,6 +118,32 @@ class CompanyDistrictService extends BaseService {
   deleteOne(companyDistrictNo) {
     return super.delete<CompanyDistrictDto>(
       `admin/company-district/${companyDistrictNo}`,
+    );
+  }
+
+  /**
+   * find ongoing promotions for district
+   * @param companyDistrictNo
+   * @param pagination
+   */
+  findOngoingPromotions(companyDistrictNo, pagination: Pagination) {
+    return super.paginate<CompanyDistrictPromotionDto>(
+      `admin/company-district/${companyDistrictNo}/ongoing-promotions`,
+      null,
+      pagination,
+    );
+  }
+
+  /**
+   * find expired promotions for district
+   * @param companyDistrictNo
+   * @param pagination
+   */
+  findExpiredPromotions(companyDistrictNo, pagination: Pagination) {
+    return super.paginate<CompanyDistrictPromotionDto>(
+      `admin/company-district/${companyDistrictNo}/expired-promotions`,
+      null,
+      pagination,
     );
   }
 }

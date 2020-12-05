@@ -22,7 +22,6 @@
                 variant="primary"
                 v-b-modal.company_info
                 @click="showUpdateModal()"
-                v-if="companyDto.companyStatus === 'APPROVAL'"
                 >수정하기</b-button
               >
             </div>

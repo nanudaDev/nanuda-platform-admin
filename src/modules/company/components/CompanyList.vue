@@ -15,10 +15,10 @@
         <div class="col-md-3 mb-3">
           <b-form-group label="업체명">
             <b-form-input
-              list="company_lsit"
+              list="company_list"
               v-model="companySearchDto.nameKr"
             ></b-form-input>
-            <datalist id="company_lsit">
+            <datalist id="company_list">
               <option
                 v-for="company in companySelect"
                 :key="company.no"

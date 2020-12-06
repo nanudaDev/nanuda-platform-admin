@@ -375,7 +375,7 @@ export default class CompanyDistrictList extends BaseComponent {
 
   // get company list
   getCompanies() {
-    CompanyService.findForSelect().subscribe(res => {
+    CompanyService.findAllForSelect().subscribe(res => {
       this.companySelect = res.data;
     });
   }

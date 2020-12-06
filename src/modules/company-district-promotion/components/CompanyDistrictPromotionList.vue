@@ -283,14 +283,14 @@ export default class PromotionList extends BaseComponent {
   }
 
   getCompanyDistrict() {
-    const pagination = new Pagination();
-    // 임시
-    pagination.limit = 100;
-    CompanyDistrictService.findForSelectOption(pagination).subscribe(res => {
-      if (res) {
-        this.companyDistirctSelect = res.data.items;
-      }
-    });
+    const companyDistrictDto = new CompanyDistrictDto();
+    CompanyDistrictService.findForSelectOption(companyDistrictDto).subscribe(
+      res => {
+        if (res) {
+          this.companyDistirctSelect = res.data;
+        }
+      },
+    );
   }
 
   addDistrict(districtNo) {

@@ -406,7 +406,7 @@ export default class Company extends BaseComponent {
 
   // 업체 셀렉트 박스
   getCompanies() {
-    CompanyService.findForSelect().subscribe(res => {
+    CompanyService.findAllForSelect().subscribe(res => {
       this.companySelect = res.data;
     });
   }

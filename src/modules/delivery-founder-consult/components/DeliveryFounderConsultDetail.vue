@@ -283,7 +283,7 @@
           </template>
         </BaseCard>
       </b-col>
-      <b-col md="4" class="my-3">
+      <b-col md="5" class="my-3">
         <BaseCard title="타입 정보">
           <template v-slot:head>
             <div>
@@ -295,17 +295,20 @@
                 <b-icon icon="envelope"></b-icon>
                 <span class="ml-2">상권 문자</span></b-button
               >
-              <router-link
-                v-if="deliveryFounderConsultDto.deliverySpace"
-                variant="outline-info"
-                :to="{
-                  name: 'DeliverySpaceDetail',
-                  params: {
-                    id: deliveryFounderConsultDto.deliverySpace.no,
-                  },
-                }"
-                class="btn btn-outline-info"
-                >상세보기</router-link
+              <b-button variant="primary" v-b-modal.change_delivery_space>
+                <b-icon icon="house"></b-icon>
+                <span class="ml-2">주방 변경</span></b-button
+              >
+              <b-button
+                variant="secondary"
+                v-b-modal.space_change_record
+                @click="findSpaceChangeRecord()"
+              >
+                <b-icon
+                  icon="list-task
+"
+                ></b-icon>
+                <span class="ml-2">변경 이력</span></b-button
               >
             </div>
           </template>
@@ -435,6 +438,18 @@
                 ></b-carousel-slide>
               </b-carousel>
               <div class="text-right mt-4">
+                <router-link
+                  v-if="deliveryFounderConsultDto.deliverySpace"
+                  variant="outline-info"
+                  :to="{
+                    name: 'DeliverySpaceDetail',
+                    params: {
+                      id: deliveryFounderConsultDto.deliverySpace.no,
+                    },
+                  }"
+                  class="btn btn-outline-info"
+                  >상세보기</router-link
+                >
                 <a
                   :href="
                     `${homepageSiteUrl}/delivery-kitchen/${deliveryFounderConsultDto.deliverySpace.no}`
@@ -449,7 +464,7 @@
           </template>
         </BaseCard>
       </b-col>
-      <b-col md="8" class="my-3">
+      <b-col md="7" class="my-3">
         <BaseCard title="상담 상세 정보">
           <template v-slot:head>
             <div v-if="deliveryFounderConsultDto.createdAt">
@@ -899,24 +914,126 @@
         </div>
       </div>
     </b-modal>
+    <!-- 주방 변경 -->
+    <b-modal
+      id="change_delivery_space"
+      title="주방 변경하기"
+      @ok="changeDeliverySpace()"
+      ok-title="변경하기"
+      cancel-title="취소"
+    >
+      <div class="text-center">
+        <b-col cols="12">
+          <div class="mb-3">
+            <label>업체명</label>
+            <select
+              class="custom-select"
+              @change="changeCompany($event)"
+              v-model="companySelect"
+            >
+              <option
+                v-for="company in availableCompanies"
+                :key="company.no"
+                :value="company.no"
+                >{{ company.nameKr }}</option
+              >
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>지점명</label>
+            <select
+              class="custom-select"
+              @change="changeDistricts($event)"
+              v-model="districtSelect"
+            >
+              <option value selected disabled>업체를 선택해주세요</option>
+              <option
+                v-for="district in availableDistricts"
+                :key="district.no"
+                :value="district.no"
+                >{{ district.nameKr }}</option
+              >
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>타입명</label>
+            <select
+              class="custom-select"
+              v-model="deliveryFounderConsultUpdateDto.newDeliverySpaceNo"
+            >
+              <option value selected disabled>지점을 선택해주세요</option>
+              <option
+                v-for="space in availableSpaces"
+                :key="space.no"
+                :value="space.no"
+                >{{ space.typeName }}</option
+              >
+            </select>
+          </div>
+        </b-col>
+      </div>
+    </b-modal>
+    <!-- 주방 변경 이력 -->
+    <b-modal
+      id="space_change_record"
+      title="주방 변경 이력"
+      :hide-footer="true"
+      size="xl"
+    >
+      <table class="table table-hover table-sm text-center table-fixed">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th>기존 업체</th>
+            <th>기존 공간</th>
+            <th>현재 업체</th>
+            <th>현재 공간</th>
+            <th>현재 공간 공실 수</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="record in deliveryFounderConsultRecordDto"
+            :key="record.no"
+          >
+            <th>{{ record.no }}</th>
+            <th>
+              {{ record.prevDeliverySpace.companyDistrict.company.nameKr }}
+            </th>
+            <th>
+              {{ record.prevDeliverySpace.companyDistrict.nameKr }}
+              {{ record.prevDeliverySpace.name }}
+            </th>
+            <th>
+              {{ record.newDeliverySpace.companyDistrict.company.nameKr }}
+            </th>
+            <th>
+              {{ record.newDeliverySpace.companyDistrict.nameKr }}
+              {{ record.newDeliverySpace.name }}
+            </th>
+            <th>남은 공실: {{ record.newDeliverySpace.remainingCount }}개</th>
+          </tr>
+        </tbody>
+      </table>
+    </b-modal>
   </section>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import BaseComponent from '../../../core/base.component';
-import { CodeManagementDto } from '../../../services/init/dto';
+import BaseComponent from '@/core/base.component';
+import { CodeManagementDto } from '@/services/init/dto';
 import {
   GENDER,
   CONST_GENDER,
   APPROVAL_STATUS,
   B2B_FOUNDER_CONSULT,
-} from '../../../services/shared';
-import CodeManagementService from '../../../services/code-management.service';
-import FounderConsultService from '../../../services/founder-consult.service';
-import DeliveryFounderConsultService from '../../../services/delivery-founder-consult.service';
-import AdminService from '../../../services/admin.service';
-import FoodCategoryService from '../../../services/food-category.service';
-import FounderConsultManagementService from '../../../services/founder-consult-management.service';
+} from '@/services/shared';
+import CodeManagementService from '@/services/code-management.service';
+import FounderConsultService from '@/services/founder-consult.service';
+import DeliveryFounderConsultService from '@/services/delivery-founder-consult.service';
+import AdminService from '@/services/admin.service';
+import FoodCategoryService from '@/services/food-category.service';
+import FounderConsultManagementService from '@/services/founder-consult-management.service';
 import {
   AdminDto,
   AdminListDto,
@@ -925,29 +1042,31 @@ import {
   FounderConsultManagementDto,
   AdminSendMessageDto,
   CompanyDistrictDto,
-} from '../../../dto';
-import {
+  CompanyDto,
+  DeliverySpaceDto,
   FoodCategoryDto,
   FoodCategoryListDto,
-} from '../../../dto/food-category';
-import { Pagination, YN, CONST_YN } from '../../../common';
-import { BaseUser } from '../../../services/shared/auth';
+  DeliveryFounderConsultRecordDto,
+} from '@/dto';
+import { Pagination, YN, CONST_YN } from '@/common';
+import { BaseUser } from '@/services/shared/auth';
 import BaseCard from '../../_components/BaseCard.vue';
 import FounderConsultManagementHistory from './FounderConsultManagementHistory.vue';
 import toast from '../../../../resources/assets/js/services/toast.js';
-import {
-  FOUNDER_CONSULT,
-  CONST_FOUNDER_CONSULT,
-} from '../../../services/shared';
-import SmsService from '../../../services/sms.service';
-import { getStatusColor } from '../../../core/utils/status-color.util';
+import { FOUNDER_CONSULT, CONST_FOUNDER_CONSULT } from '@/services/shared';
+import SmsService from '@/services/sms.service';
+import { getStatusColor } from '@/core/utils/status-color.util';
 import {
   ProductionEnvironment,
   DevelopmentEnvironment,
   EnvironmentType,
   Environment,
 } from '../../../../environments';
+import CompanyService from '@/services/company.service';
+import CompanyDistrictService from '@/services/company-district.service';
+import DeliverySpaceService from '@/services/delivery-space.service';
 
+// environment variables
 let env = new Environment();
 if (process.env.NODE_ENV === EnvironmentType.development) {
   env = DevelopmentEnvironment;
@@ -987,6 +1106,12 @@ export default class FounderConsultDetail extends BaseComponent {
   private homepageSiteUrl = env.homepageSiteUrl;
   private dataLoading = false;
   private isSeoul = false;
+  private availableCompanies: CompanyDto[] = [];
+  private availableDistricts: CompanyDistrictDto[] = [];
+  private availableSpaces: DeliverySpaceDto[] = [];
+  private deliveryFounderConsultRecordDto: DeliveryFounderConsultRecordDto[] = [];
+  private companySelect = '';
+  private districtSelect = '';
 
   // get status color
   getStatusColor(
@@ -1067,10 +1192,42 @@ export default class FounderConsultDetail extends BaseComponent {
     });
   }
 
+  changeCompany(event) {
+    const companyNo = event.target.value;
+    this.getAvailableDistricts(companyNo);
+  }
+
+  changeDistricts(event) {
+    const companyDistrictNo = event.target.value;
+    this.getAvailableSpaces(companyDistrictNo);
+  }
+
   // 신청 상태 코드
   getFounderConsultCodes() {
     CodeManagementService.findCodesFounderConsult().subscribe(res => {
       this.deliveryFounderConsultStatusSelect = res.data;
+    });
+  }
+
+  getAvailableCompanies() {
+    CompanyService.findForSelect().subscribe(res => {
+      this.availableCompanies = res.data;
+    });
+  }
+
+  getAvailableDistricts(companyNo) {
+    const districtDto = new CompanyDistrictDto();
+    districtDto.companyNo = companyNo;
+    CompanyDistrictService.findForSelectOption(districtDto).subscribe(res => {
+      this.availableDistricts = res.data;
+    });
+  }
+
+  getAvailableSpaces(companyDistrictNo) {
+    const deliverySpaceDto = new DeliverySpaceDto();
+    deliverySpaceDto.companyDistrictNo = companyDistrictNo;
+    DeliverySpaceService.findForSelect(deliverySpaceDto).subscribe(res => {
+      this.availableSpaces = res.data;
     });
   }
 
@@ -1088,13 +1245,24 @@ export default class FounderConsultDetail extends BaseComponent {
       if (this.deliveryFounderConsultDto.status === 'F_DIST_COMPLETE') {
         this.statusDistComplete = true;
       }
-      const withInSeoul = this.deliveryFounderConsultDto.deliverySpace.companyDistrict.hCode.slice(
-        0,
-        2,
-      );
-      if (withInSeoul === '11') {
+      const withInSeoul = this.deliveryFounderConsultDto.deliverySpace
+        .companyDistrict.region1DepthName;
+      if (withInSeoul === '서울') {
         this.isSeoul = true;
       }
+    });
+  }
+
+  changeDeliverySpace() {
+    DeliveryFounderConsultService.changeDeliverySpace(
+      this.deliveryFounderConsultDto.no,
+      this.deliveryFounderConsultUpdateDto.newDeliverySpaceNo,
+    ).subscribe(res => {
+      toast.success('주방 변경 완료');
+      this.companySelect = null;
+      this.districtSelect = null;
+      this.deliveryFounderConsultUpdateDto.newDeliverySpaceNo = null;
+      this.findOne(this.deliveryFounderConsultDto.no);
     });
   }
 
@@ -1111,6 +1279,17 @@ export default class FounderConsultDetail extends BaseComponent {
     } else {
       this.elapsedTime = Math.ceil((timeDiff % inHours) / inMinutes) + '분';
     }
+  }
+
+  /**
+   * find space change records
+   */
+  findSpaceChangeRecord() {
+    DeliveryFounderConsultService.findSpaceChangeRecords(
+      this.deliveryFounderConsultDto.no,
+    ).subscribe(res => {
+      this.deliveryFounderConsultRecordDto = res.data;
+    });
   }
 
   paginateSearch() {
@@ -1210,6 +1389,7 @@ export default class FounderConsultDetail extends BaseComponent {
   }
 
   created() {
+    this.getAvailableCompanies();
     this.getGender();
     this.getFoodCategories();
     this.getFounderConsultCodes();

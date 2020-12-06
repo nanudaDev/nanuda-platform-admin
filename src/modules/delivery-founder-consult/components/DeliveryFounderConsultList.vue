@@ -619,7 +619,7 @@
             >
               <option value selected disabled>업체를 선택해주세요</option>
               <option
-                v-for="district in districtSelect.items"
+                v-for="district in districtSelect"
                 :key="district.no"
                 :value="district.no"
                 >{{ district.nameKr }}</option
@@ -634,7 +634,7 @@
             >
               <option value selected disabled>지점을 선택해주세요</option>
               <option
-                v-for="space in deliverySpaceSelect.items"
+                v-for="space in deliverySpaceSelect"
                 :key="space.no"
                 :value="space.no"
                 >{{ space.typeName }}</option
@@ -835,7 +835,7 @@ export default class DeliveryFounderConsult extends BaseComponent {
 
   changeDistrict(event) {
     const districtNo = event.target.value;
-    this.getDeliverSpace(districtNo);
+    this.getDeliverySpace(districtNo);
   }
 
   // 업체 사용자
@@ -851,17 +851,17 @@ export default class DeliveryFounderConsult extends BaseComponent {
   // 업체 지점
   getCompanyDistrict(companyNo) {
     this.companyDistrictDto.companyNo = companyNo;
-    CompanyDistrictService.findForSelect(this.companyDistrictDto).subscribe(
-      res => {
-        if (res) {
-          this.districtSelect = res.data;
-        }
-      },
-    );
+    CompanyDistrictService.findForSelectOption(
+      this.companyDistrictDto,
+    ).subscribe(res => {
+      if (res) {
+        this.districtSelect = res.data;
+      }
+    });
   }
 
   // 타입
-  getDeliverSpace(districtNo) {
+  getDeliverySpace(districtNo) {
     this.deliverySpaceDto.companyDistrictNo = districtNo;
     DeliverySpaceService.findForSelect(this.deliverySpaceDto).subscribe(res => {
       if (res) {

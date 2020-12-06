@@ -99,7 +99,7 @@ class DeliverySpaceService extends BaseService {
    */
   findForSelect(deliverySpaceDto: DeliverySpaceDto) {
     return super.get<DeliverySpaceDto[]>(
-      'admin/delivery-space',
+      'admin/delivery-space/find-for-select',
       deliverySpaceDto,
     );
   }

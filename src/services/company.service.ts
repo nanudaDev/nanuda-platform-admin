@@ -26,7 +26,11 @@ class CompanyService extends BaseService {
   }
 
   findForSelect() {
-    return super.get<CompanyDto[]>('admin/company/select-option');
+    return super.get<CompanyDto[]>('admin/company/find-for-select');
+  }
+
+  findAllForSelect() {
+    return super.get<CompanyDto[]>('admin/company/find-all-for-select');
   }
 
   update(companyNo, companyUpdateDto: CompanyUpdateDto) {

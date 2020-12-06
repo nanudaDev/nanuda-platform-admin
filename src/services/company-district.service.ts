@@ -88,11 +88,19 @@ class CompanyDistrictService extends BaseService {
     );
   }
 
-  findForSelectOption(pagination: Pagination) {
-    return super.paginate<CompanyDistrictDto>(
+  findForSelectOption(companyDistrictDto: CompanyDistrictDto) {
+    return super.get<CompanyDistrictDto[]>(
       'admin/company-district/find-for-select',
-      null,
-      pagination,
+      companyDistrictDto,
+    );
+  }
+
+  /**
+   * find all with no where clause
+   */
+  findAllForSelect() {
+    return super.get<CompanyDistrictDto[]>(
+      'admin/company-district/find-all-for-select',
     );
   }
 

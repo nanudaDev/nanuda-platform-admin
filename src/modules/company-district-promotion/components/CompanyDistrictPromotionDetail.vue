@@ -142,7 +142,7 @@ export default class CompanyDistrictPromotionDetail extends BaseComponent {
   private promotionDto = new CompanyDistrictPromotionDto();
   private companyDistrictDto = new CompanyDistrictDto();
   private promitionTypeSelect = [];
-  private companyDistrictSelect = [];
+  private companyDistrictSelect: CompanyDistrictDto[] = [];
   private showYn: YN[] = [...CONST_YN];
   private companyDistrictIds: number[] = [];
   private companyDistrictSelectedIds: number[] = [];
@@ -174,13 +174,14 @@ export default class CompanyDistrictPromotionDetail extends BaseComponent {
   }
 
   getCompanyDistrict() {
-    const pagination = new Pagination();
-    pagination.limit = 100;
-    CompanyDistrictService.findForSelectOption(pagination).subscribe(res => {
-      if (res) {
-        this.companyDistrictSelect = res.data.items;
-      }
-    });
+    const companyDistrictDto = new CompanyDistrictDto();
+    CompanyDistrictService.findForSelectOption(companyDistrictDto).subscribe(
+      res => {
+        if (res) {
+          this.companyDistrictSelect = res.data;
+        }
+      },
+    );
   }
 
   addDistrict(districtNo) {

@@ -3,6 +3,7 @@ import {
   DeliveryFounderConsultListDto,
   DeliveryFounderConsultDto,
   DeliveryFounderConsultUpdateDto,
+  DeliveryFounderConsultRecordDto,
 } from '@/dto';
 import { Pagination } from '@/common';
 
@@ -95,6 +96,18 @@ class DeliveryFounderConsultService extends BaseService {
       `admin/my-delivery-founder-consults`,
       null,
       pagination,
+    );
+  }
+
+  changeDeliverySpace(deliveryFounderCOnsultNo, newDeliverySpaceNo) {
+    return super.patch<DeliveryFounderConsultDto>(
+      `admin/delivery-founder-consult/${deliveryFounderCOnsultNo}/new-delivery-space/${newDeliverySpaceNo}`,
+    );
+  }
+
+  findSpaceChangeRecords(deliveryFounderConsultNo) {
+    return super.get<DeliveryFounderConsultRecordDto[]>(
+      `admin/delivery-founder-consult-record/delivery-founder-consult/${deliveryFounderConsultNo}`,
     );
   }
 }

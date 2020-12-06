@@ -16,4 +16,5 @@ export class DeliveryFounderConsultUpdateDto
   hopeDate?: Date;
   hopeTime?: AVAILABLE_TIME;
   hopeFoodCategory?: string;
+  newDeliverySpaceNo?: number;
 }

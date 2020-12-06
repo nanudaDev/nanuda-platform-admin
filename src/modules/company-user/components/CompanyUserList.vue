@@ -267,7 +267,7 @@
         </div>
         <div class="col-12 col-md-6">
           <label>
-            업체명
+            업체명 (등록 가능한)
             <span class="red-text">*</span>
           </label>
           <select
@@ -275,7 +275,7 @@
             v-model="companyUserCreateDto.companyNo"
           >
             <option
-              v-for="company in companySelect"
+              v-for="company in availableCompanySelect"
               :key="company.no"
               :value="company.no"
               >{{ company.nameKr }}</option
@@ -346,6 +346,7 @@ export default class Company extends BaseComponent {
   private companyUserListDto: CompanyUserDto[] = Array<CompanyUserDto>();
   private companyUserListTotalCount = null;
   private companySelect: CompanyDto[] = [];
+  private availableCompanySelect: CompanyDto[] = [];
   private companyUserCreateDto = new CompanyUserDto(BaseUser);
   private pagination = new Pagination();
   private approvalStatus: APPROVAL_STATUS[] = [...CONST_APPROVAL_STATUS];
@@ -360,8 +361,14 @@ export default class Company extends BaseComponent {
 
   // TODO: Create autocomplete box
   getCompanies() {
-    CompanyService.findForSelect().subscribe(res => {
+    CompanyService.findAllForSelect().subscribe(res => {
       this.companySelect = res.data;
+    });
+  }
+
+  getAvailableCompanies() {
+    CompanyService.findForSelect().subscribe(res => {
+      this.availableCompanySelect = res.data;
     });
   }
 
@@ -423,6 +430,7 @@ export default class Company extends BaseComponent {
     }
     this.search();
     this.getCompanies();
+    this.getAvailableCompanies();
   }
 }
 </script>

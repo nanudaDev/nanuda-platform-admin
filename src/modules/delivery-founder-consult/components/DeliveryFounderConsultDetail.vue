@@ -1265,11 +1265,17 @@ export default class FounderConsultDetail extends BaseComponent {
       this.deliveryFounderConsultDto.no,
       this.deliveryFounderConsultUpdateDto.newDeliverySpaceNo,
     ).subscribe(res => {
-      toast.success('주방 변경 완료');
-      this.companySelect = null;
-      this.districtSelect = null;
-      this.deliveryFounderConsultUpdateDto.newDeliverySpaceNo = null;
-      this.findOne(this.deliveryFounderConsultDto.no);
+      if (res) {
+        toast.success('주방 변경 완료');
+        this.companySelect = null;
+        this.districtSelect = null;
+        this.deliveryFounderConsultUpdateDto.newDeliverySpaceNo = null;
+        this.findOne(this.deliveryFounderConsultDto.no);
+      } else {
+        this.companySelect = null;
+        this.districtSelect = null;
+        this.deliveryFounderConsultUpdateDto.newDeliverySpaceNo = null;
+      }
     });
   }
 

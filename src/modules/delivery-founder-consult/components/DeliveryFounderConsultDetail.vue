@@ -295,7 +295,14 @@
                 <b-icon icon="envelope"></b-icon>
                 <span class="ml-2">상권 문자</span></b-button
               >
-              <b-button variant="primary" v-b-modal.change_delivery_space>
+              <b-button
+                variant="primary"
+                v-b-modal.change_delivery_space
+                :disabled="
+                  deliveryFounderConsultDto.status === 'F_DIST_COMPLETE' ||
+                    deliveryFounderConsultDto.status === 'F_DROP'
+                "
+              >
                 <b-icon icon="house"></b-icon>
                 <span class="ml-2">주방 변경</span></b-button
               >

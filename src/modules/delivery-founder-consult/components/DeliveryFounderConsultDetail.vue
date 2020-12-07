@@ -291,6 +291,7 @@
                 variant="success"
                 v-b-modal.send_analysis
                 :disabled="!isSeoul"
+                @click="showVicinityInfoModal()"
               >
                 <b-icon icon="envelope"></b-icon>
                 <span class="ml-2">상권 문자</span></b-button
@@ -906,14 +907,28 @@
     </b-modal>
     <b-modal id="send_analysis" title="상권분석 문자전송" hide-footer>
       <div class="text-center">
-        <p v-if="!dataLoading">
-          <b>상권분석 문자를 전송하시겠습니까</b>
-        </p>
-        <div class="half-circle-spinner mt-5" v-else>
-          <div class="circle circle-1"></div>
-          <div class="circle circle-2"></div>
-        </div>
-        <div class="mt-2 text-right">
+        <template v-if="!dataLoading">
+          <b-form-textarea
+            id="message"
+            placeholder="메세지를 입력해주세요.."
+            rows="3"
+            max-rows="16"
+            v-model="editedMessageDto.message"
+          ></b-form-textarea>
+          <p class="mt-2">
+            <b>상권분석 문자를 전송하시겠습니까</b>
+          </p>
+        </template>
+        <template v-else>
+          <div class="half-circle-spinner mt-5">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+          </div>
+          <div class="mt-2">
+            <p>상권정보를 분석중입니다</p>
+          </div>
+        </template>
+        <div class="mt-4 text-right">
           <b-button variant="primary" @click="sendVicinityInfo()"
             >전송</b-button
           >
@@ -928,7 +943,7 @@
       ok-title="변경하기"
       cancel-title="취소"
     >
-      <div class="text-center">
+      <div>
         <b-col cols="12">
           <div class="mb-3">
             <label>업체명</label>
@@ -985,8 +1000,12 @@
       title="주방 변경 이력"
       :hide-footer="true"
       size="xl"
+      no-body
     >
-      <table class="table table-hover table-sm text-center table-fixed">
+      <table
+        class="table table-hover table-sm text-center table-fixed"
+        v-if="deliveryFounderConsultRecordDto.length > 0"
+      >
         <thead>
           <tr>
             <th scope="col">ID</th>
@@ -1021,6 +1040,9 @@
           </tr>
         </tbody>
       </table>
+      <div class="empty-data border" v-else>
+        변경이력이 없습니다.
+      </div>
     </b-modal>
   </section>
 </template>
@@ -1053,6 +1075,7 @@ import {
   FoodCategoryDto,
   FoodCategoryListDto,
   DeliveryFounderConsultRecordDto,
+  EditedMessageDto,
 } from '@/dto';
 import { Pagination, YN, CONST_YN } from '@/common';
 import { BaseUser } from '@/services/shared/auth';
@@ -1091,6 +1114,7 @@ if (process.env.NODE_ENV === EnvironmentType.production) {
 export default class FounderConsultDetail extends BaseComponent {
   /* global kakao */
 
+  private editedMessageDto = new EditedMessageDto();
   private adminList: AdminDto[] = [];
   private adminListDto = new AdminListDto();
   private adminListCount = 0;
@@ -1164,14 +1188,28 @@ export default class FounderConsultDetail extends BaseComponent {
     });
   }
 
-  sendVicinityInfo() {
+  showVicinityInfoModal() {
     this.dataLoading = true;
-    DeliveryFounderConsultService.sendVicinityMessage(
+    DeliveryFounderConsultService.sendMessageAndPlaceInIndex(
       this.$route.params.id,
     ).subscribe(res => {
       this.dataLoading = false;
-      this.$bvModal.hide('send_analysis');
-      toast.success('문자가 발송 되었습니다.');
+      if (res) {
+        this.editedMessageDto.message = res.data;
+      }
+    });
+  }
+
+  sendVicinityInfo() {
+    DeliveryFounderConsultService.sendVicinityMessage(
+      this.deliveryFounderConsultDto.nanudaUser.no,
+      this.editedMessageDto,
+    ).subscribe(res => {
+      if (res) {
+        this.$bvModal.hide('send_analysis');
+        toast.success('문자가 발송 되었습니다.');
+        this.findOne(this.deliveryFounderConsultDto.no);
+      }
     });
   }
 

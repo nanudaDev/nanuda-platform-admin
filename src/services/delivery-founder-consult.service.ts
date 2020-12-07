@@ -4,6 +4,7 @@ import {
   DeliveryFounderConsultDto,
   DeliveryFounderConsultUpdateDto,
   DeliveryFounderConsultRecordDto,
+  EditedMessageDto,
 } from '@/dto';
 import { Pagination } from '@/common';
 
@@ -78,16 +79,6 @@ class DeliveryFounderConsultService extends BaseService {
   }
 
   /**
-   * 상권분석 관련 문자 발송
-   * @param deliveryFounerConsultNo
-   */
-  sendVicinityMessage(deliveryFounerConsultNo) {
-    return super.get<any>(
-      `admin/message-delivery-space/${deliveryFounerConsultNo}`,
-    );
-  }
-
-  /**
    *
    * @param pagination
    */
@@ -109,6 +100,20 @@ class DeliveryFounderConsultService extends BaseService {
     return super.get<DeliveryFounderConsultRecordDto[]>(
       `admin/delivery-founder-consult-record/delivery-founder-consult/${deliveryFounderConsultNo}`,
     );
+  }
+
+  /**
+   * 상권분석 관련 문자 발송
+   * @param deliveryFounerConsultNo
+   */
+  sendMessageAndPlaceInIndex(deliveryFounerConsultNo) {
+    return super.get<any>(
+      `admin/message-delivery-space/${deliveryFounerConsultNo}`,
+    );
+  }
+
+  sendVicinityMessage(nanudaUserNo, body: EditedMessageDto) {
+    return super.post<any>(`admin/send-message/${nanudaUserNo}`, body);
   }
 }
 

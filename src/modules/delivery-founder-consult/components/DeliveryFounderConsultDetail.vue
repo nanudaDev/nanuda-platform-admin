@@ -920,11 +920,16 @@
             <b>상권분석 문자를 전송하시겠습니까</b>
           </p>
         </template>
-        <div class="half-circle-spinner mt-5" v-else>
-          <div class="circle circle-1"></div>
-          <div class="circle circle-2"></div>
-        </div>
-        <div class="mt-2 text-right">
+        <template v-else>
+          <div class="half-circle-spinner mt-5">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+          </div>
+          <div class="mt-2">
+            <p>상권정보를 분석중입니다</p>
+          </div>
+        </template>
+        <div class="mt-4 text-right">
           <b-button variant="primary" @click="sendVicinityInfo()"
             >전송</b-button
           >
@@ -939,7 +944,7 @@
       ok-title="변경하기"
       cancel-title="취소"
     >
-      <div class="text-center">
+      <div>
         <b-col cols="12">
           <div class="mb-3">
             <label>업체명</label>
@@ -996,8 +1001,12 @@
       title="주방 변경 이력"
       :hide-footer="true"
       size="xl"
+      no-body
     >
-      <table class="table table-hover table-sm text-center table-fixed">
+      <table
+        class="table table-hover table-sm text-center table-fixed"
+        v-if="deliveryFounderConsultRecordDto.length > 0"
+      >
         <thead>
           <tr>
             <th scope="col">ID</th>
@@ -1032,6 +1041,9 @@
           </tr>
         </tbody>
       </table>
+      <div class="empty-data border" v-else>
+        변경이력이 없습니다.
+      </div>
     </b-modal>
   </section>
 </template>

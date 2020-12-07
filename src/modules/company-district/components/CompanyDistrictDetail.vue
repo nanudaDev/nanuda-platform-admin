@@ -233,14 +233,6 @@
           />
         </b-col>
         <b-col cols="12" md="6" class="mt-2">
-          <label>지점명</label>
-          <input
-            type="text"
-            v-model="companyDistrictUpdateDto.nameKr"
-            class="form-control"
-          />
-        </b-col>
-        <b-col cols="12" md="6" class="mt-2">
           <label>지점명(영문)</label>
           <input
             type="text"
@@ -248,8 +240,8 @@
             class="form-control"
           />
         </b-col>
-        <b-col cols="12" md="6" class="mt-2">
-          <label>주소</label>
+        <b-col cols="12" class="mt-2">
+          <label>지점 주소</label>
           <input
             type="text"
             v-model="addressData.address"

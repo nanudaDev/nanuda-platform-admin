@@ -1,7 +1,5 @@
 <template>
-  <div id="app" class="page-content">
-    <component :is="layout"></component>
-  </div>
+  <component :is="layout"></component>
 </template>
 <script lang="ts">
 declare global {

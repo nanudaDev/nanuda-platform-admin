@@ -50,6 +50,7 @@
               <th scope="col">프로모션 내용 요약</th>
               <th scope="col">프로모션 기간</th>
               <th scope="col">만료</th>
+              <th scope="col">노출 여부</th>
             </tr>
           </thead>
           <tbody>
@@ -83,6 +84,12 @@
                   만료
                 </span>
                 <span v-else>진행중</span>
+              </td>
+              <td>
+                <b-badge
+                  :variant="promotion.showYn === 'Y' ? 'success' : 'danger'"
+                  >{{ promotion.showYn }}</b-badge
+                >
               </td>
             </tr>
           </tbody>

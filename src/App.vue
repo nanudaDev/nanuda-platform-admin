@@ -136,11 +136,10 @@ img {
   td {
     vertical-align: middle;
     text-align: center;
-    height: 50px;
+    height: 40px;
   }
   thead {
     th {
-      border-top: 0;
       border-bottom: 0;
       vertical-align: middle;
     }

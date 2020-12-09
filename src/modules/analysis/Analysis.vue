@@ -172,6 +172,7 @@ export default class Analysis extends BaseComponent {
       height: calc(100% - 145px);
       background-color: #f8f9fa;
       .nav-tabs {
+        padding: 0 1.5em;
         .nav-link {
           padding: 0 0.5em;
           height: 45px;

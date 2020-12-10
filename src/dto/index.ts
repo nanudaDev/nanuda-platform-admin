@@ -1,6 +1,7 @@
 export * from './admin';
 export * from './amenity';
 export * from './article';
+export * from './analysis';
 export * from './attendees';
 export * from './banner';
 export * from './brand';

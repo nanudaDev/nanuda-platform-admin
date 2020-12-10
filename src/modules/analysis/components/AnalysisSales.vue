@@ -7,19 +7,41 @@
       <div class="section-content">
         <div class="bg-light p-4 mt-4">
           <p>카테고리별 매출 비중 (배달의민족 카테고리 기준)</p>
-          <div class="mt-3">
-            <img
-              src="@/assets/images/general/analysis/saleschart_01.png"
-              alt=""
-            />
+          <div class="d-flex align-items-start mt-4">
+            <div
+              v-for="(category, index) in revenueCategories"
+              :key="category.id"
+              :style="`width : ${category.w_total_amt_avg_ratio * 100}%`"
+            >
+              <div
+                class="bg-info"
+                style="height:20px;"
+                :style="`opacity:${1 / (index + 1)} `"
+              ></div>
+              <div class="text-center mt-2">
+                <p
+                  style="white-space:nowrap; font-size:20px; font-weight:bold;"
+                >
+                  {{ Math.round(category.w_total_amt_avg_ratio * 100) }}%
+                </p>
+                <span style="font-size:"
+                  >{{ category.baeminCategoryName }}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
         <div class="mt-4">
           <b-button
-            :variant="category.id === 1 ? 'secondary' : 'outline-secondary'"
+            :variant="
+              category.categoryNameKr === '한식'
+                ? 'secondary'
+                : 'outline-secondary'
+            "
             v-for="category in categories"
             :key="category.id"
             class="ml-0 mr-2 mb-2"
+            @click="findRevenueAnalysis(category.categoryNameKr)"
           >
             {{ category.categoryNameKr }}
           </b-button>
@@ -46,16 +68,16 @@
                 <b-row>
                   <b-col cols="6">
                     <p class="text-center mb-2"><b>매출 건수 비율</b></p>
-                    <img
-                      src="@/assets/images/general/analysis/saleschart_02.png"
-                      alt=""
+                    <DashboardPieChart
+                      :chartData="genderCountData"
+                      :options="genderOptions"
                     />
                   </b-col>
                   <b-col cols="6">
                     <p class="text-center mb-2"><b>매출 금액 비율</b></p>
-                    <img
-                      src="@/assets/images/general/analysis/saleschart_03.png"
-                      alt=""
+                    <DashboardPieChart
+                      :chartData="genderRevenueData"
+                      :options="genderOptions"
                     />
                   </b-col>
                 </b-row>
@@ -220,145 +242,77 @@
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
 import { Component, Vue } from 'vue-property-decorator';
+import AnalysisTabService from '@/services/analysis/analysis-tab.service';
+import BaeminCategoryService from '@/services/analysis/baemin-category.service';
+import {
+  BaeminCategoryCode,
+  CONST_BAEMIN_CATEGORY_CODE,
+} from '@/services/shared';
+import DashboardPieChart from '../../dashboard/add-on/DashboardPieChart.vue';
 
 @Component({
   name: 'AnalysisSales',
+  components: {
+    DashboardPieChart,
+  },
 })
 export default class AnalysisSales extends BaseComponent {
-  private categories = [
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 1,
-      categoryNameKr: '한식',
-      categoryCode: 'BM01',
-      categoryNameEng: 'Korean',
-      storeCount: '1195',
-      storeRate: '0.3201',
-      salseRate: '0.0982',
-      gap: '-0.2219',
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 7,
-      categoryNameKr: '아시안/양식',
-      categoryCode: 'BM07',
-      categoryNameEng: null,
-      storeCount: '91',
-      storeRate: '0.0244',
-      salseRate: '0.0063',
-      gap: '-0.0181',
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 13,
-      categoryNameKr: '패스트푸드',
-      categoryCode: 'BM13',
-      categoryNameEng: null,
-      storeCount: '112',
-      storeRate: '0.0300',
-      salseRate: '0.3042',
-      gap: '0.2742',
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 3,
-      categoryNameKr: '카페/디저트',
-      categoryCode: 'BM03',
-      categoryNameEng: null,
-      storeCount: '915',
-      storeRate: '0.2451',
-      salseRate: '0.0383',
-      gap: '-0.2068',
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 4,
-      categoryNameKr: '돈까스/회/일식',
-      categoryCode: 'BM04',
-      categoryNameEng: null,
-      storeCount: '606',
-      storeRate: '0.1623',
-      salseRate: '0.0175',
-      gap: '-0.1448',
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 10,
-      categoryNameKr: '야식',
-      categoryCode: 'BM10',
-      categoryNameEng: null,
-      storeCount: '214',
-      storeRate: '0.0573',
-      salseRate: '0.0484',
-      gap: '-0.0089',
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 11,
-      categoryNameKr: '찜/탕',
-      categoryCode: 'BM11',
-      categoryNameEng: null,
-      storeCount: '48',
-      storeRate: '0.0129',
-      salseRate: '0.0702',
-      gap: '0.0573',
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 2,
-      categoryNameKr: '분식',
-      categoryCode: 'BM02',
-      categoryNameEng: null,
-      storeCount: '264',
-      storeRate: '0.0707',
-      salseRate: '0.0145',
-      gap: '-0.0562',
-    },
+  private categories = [];
+  private revenueCategories = [];
+  private genderCountData = null;
+  private genderRevenueData = null;
+  private genderOptions = null;
 
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 6,
-      categoryNameKr: '피자',
-      categoryCode: 'BM06',
-      categoryNameEng: null,
-      storeCount: '30',
-      storeRate: '0.0080',
-      salseRate: '0.1217',
-      gap: '-0.1137',
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 5,
-      categoryNameKr: '치킨',
-      categoryCode: 'BM05',
-      categoryNameEng: null,
-      storeCount: '86',
-      storeRate: '0.0230',
-      salseRate: '0.1825',
-      gap: '-0.1595',
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 9,
-      categoryNameKr: '족발/보쌈',
-      categoryCode: 'BM09',
-      categoryNameEng: null,
-      storeCount: '28',
-      storeRate: '0.0075',
-      salseRate: '0.0839',
-      gap: '0.0764',
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 8,
-      categoryNameKr: '중국집',
-      categoryCode: 'BM08',
-      categoryNameEng: null,
-      storeCount: '120',
-      storeRate: '0.0321',
-      salseRate: '0.0142',
-      gap: '-0.0179',
-    },
-  ];
+  private parmas = {
+    bdongCode: '1168010100',
+    baeminCategoryName: '한식',
+  };
+
+  findRevenueAnalysis(categoryName) {
+    this.findBaeminCateogry();
+    this.findRevenueAnalysisGender();
+    this.findRevenueAnalysisAgeGroup();
+  }
+
+  findBaeminCateogry() {
+    BaeminCategoryService.findAll(null).subscribe(res => {
+      if (res) {
+        this.categories = res.data.items;
+      }
+    });
+  }
+
+  findCategoryRatio() {
+    AnalysisTabService.findCategoryRatio(this.parmas).subscribe(res => {
+      if (res) {
+        this.revenueCategories = res.data;
+      }
+    });
+  }
+
+  findRevenueAnalysisGender() {
+    AnalysisTabService.findRevenueAnalysisGender(this.parmas).subscribe(res => {
+      if (res) {
+        this.genderCountData = res.data[0].countData;
+        this.genderRevenueData = res.data[1];
+        this.genderOptions = { responsive: true, maintainAspectRatio: false };
+      }
+    });
+  }
+
+  findRevenueAnalysisAgeGroup() {
+    AnalysisTabService.findRevenueAnalysisAgeGroup(this.parmas).subscribe(
+      res => {
+        if (res) {
+          console.log(res);
+        }
+      },
+    );
+  }
+
+  created() {
+    this.findCategoryRatio();
+    this.findRevenueAnalysis(this.parmas);
+  }
 }
 </script>

@@ -60,7 +60,7 @@
     </div>
 
     <section id="map-section">
-      <AnalysisMap />
+      <!-- <AnalysisMap /> -->
     </section>
   </article>
 </template>
@@ -100,6 +100,13 @@ export default class Analysis extends BaseComponent {
 }
 </script>
 <style lang="scss">
+.loader {
+  text-align: center;
+  margin-top: 140px;
+  img {
+    height: 100px;
+  }
+}
 #main-article {
   position: relative;
   height: calc(100vh - 55px);

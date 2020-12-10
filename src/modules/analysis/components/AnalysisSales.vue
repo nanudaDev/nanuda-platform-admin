@@ -69,6 +69,7 @@
                   <b-col cols="6">
                     <p class="text-center mb-2"><b>매출 건수 비율</b></p>
                     <DashboardPieChart
+                      v-if="genderCountData"
                       :chartData="genderCountData"
                       :options="genderOptions"
                     />
@@ -76,6 +77,7 @@
                   <b-col cols="6">
                     <p class="text-center mb-2"><b>매출 금액 비율</b></p>
                     <DashboardPieChart
+                      v-if="genderRevenueData"
                       :chartData="genderRevenueData"
                       :options="genderOptions"
                     />
@@ -263,7 +265,7 @@ export default class AnalysisSales extends BaseComponent {
   private genderRevenueData = null;
   private genderOptions = null;
 
-  private parmas = {
+  private params = {
     bdongCode: '1168010100',
     baeminCategoryName: '한식',
   };
@@ -283,7 +285,7 @@ export default class AnalysisSales extends BaseComponent {
   }
 
   findCategoryRatio() {
-    AnalysisTabService.findCategoryRatio(this.parmas).subscribe(res => {
+    AnalysisTabService.findCategoryRatio(this.params).subscribe(res => {
       if (res) {
         this.revenueCategories = res.data;
       }
@@ -291,17 +293,17 @@ export default class AnalysisSales extends BaseComponent {
   }
 
   findRevenueAnalysisGender() {
-    AnalysisTabService.findRevenueAnalysisGender(this.parmas).subscribe(res => {
+    AnalysisTabService.findRevenueAnalysisGender(this.params).subscribe(res => {
       if (res) {
         this.genderCountData = res.data[0].countData;
-        this.genderRevenueData = res.data[1];
-        this.genderOptions = { responsive: true, maintainAspectRatio: false };
+        this.genderRevenueData = res.data[1].revenueData;
+        this.genderOptions = { responsive: true };
       }
     });
   }
 
   findRevenueAnalysisAgeGroup() {
-    AnalysisTabService.findRevenueAnalysisAgeGroup(this.parmas).subscribe(
+    AnalysisTabService.findRevenueAnalysisAgeGroup(this.params).subscribe(
       res => {
         if (res) {
           console.log(res);
@@ -312,7 +314,8 @@ export default class AnalysisSales extends BaseComponent {
 
   created() {
     this.findCategoryRatio();
-    this.findRevenueAnalysis(this.parmas);
+    this.findRevenueAnalysis(this.params);
+    this.findRevenueAnalysisGender();
   }
 }
 </script>

@@ -93,16 +93,19 @@ export class BaseService extends Vue {
     method: Method,
     path: string,
     params?: any,
+    analysis?: boolean,
   ): AxiosObservable<T> {
     let baseUrl;
     let siteUrl;
     let homepageBaseUrl;
     let homepageSiteUrl;
+    let analysisUrl;
     if (process.env.NODE_ENV === EnvironmentType.development) {
       baseUrl = DevelopmentEnvironment.baseURL;
       siteUrl = DevelopmentEnvironment.siteUrl;
       homepageBaseUrl = DevelopmentEnvironment.homepageBaseUrl;
       homepageSiteUrl = DevelopmentEnvironment.homepageSiteUrl;
+      analysisUrl = DevelopmentEnvironment.analysisUrl;
     }
     if (process.env.NODE_ENV === EnvironmentType.staging) {
       baseUrl = StagingEnvironment.baseURL;
@@ -150,11 +153,19 @@ export class BaseService extends Vue {
     if (path.indexOf('http') !== 0) {
       path = baseUrl + path;
     }
-    const headers: any = {
+    let headers: any = {
       'x-client-name': baseUrl.clientName,
       'Content-type': 'application/json',
       //   'Accept': 'application/json',
     };
+    if (analysis) {
+      path = analysisUrl + path;
+      headers = {
+        'x-client-name': analysisUrl.clientName,
+        'Content-type': 'application/json',
+        //   'Accept': 'application/json',
+      };
+    }
 
     const accessToken = JwtStorageService.getToken();
     if (accessToken) {

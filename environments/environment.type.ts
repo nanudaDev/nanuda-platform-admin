@@ -8,6 +8,7 @@ export class Environment {
   siteUrl?: string;
   homepageBaseUrl?: string;
   homepageSiteUrl?: string;
+  analysisUrl?: string;
 }
 
 export enum EnvironmentType {

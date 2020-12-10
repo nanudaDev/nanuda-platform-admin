@@ -150,23 +150,19 @@ export class BaseService extends Vue {
         }
       },
     );
+    if (analysis) {
+      baseUrl = analysisUrl;
+    }
     if (path.indexOf('http') !== 0) {
       path = baseUrl + path;
     }
-    let headers: any = {
-      'x-client-name': baseUrl.clientName,
+    const headers: any = {
+      'x-client-name': baseUrl,
       'Content-type': 'application/json',
       //   'Accept': 'application/json',
     };
-    if (analysis) {
-      path = analysisUrl + path;
-      headers = {
-        'x-client-name': analysisUrl.clientName,
-        'Content-type': 'application/json',
-        //   'Accept': 'application/json',
-      };
-    }
-
+    console.log(headers);
+    console.log(baseUrl);
     const accessToken = JwtStorageService.getToken();
     if (accessToken) {
       headers.Authorization = `Bearer ${accessToken}`;

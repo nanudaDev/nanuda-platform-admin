@@ -5,147 +5,142 @@
         <h3>매출분석</h3>
       </header>
       <div class="section-content">
-        <div class="bg-light p-4 mt-4">
-          <p>카테고리별 매출 비중 (배달의민족 카테고리 기준)</p>
-          <div class="d-flex align-items-start mt-4">
-            <div
-              v-for="(category, index) in revenueCategories"
-              :key="category.id"
-              :style="`width : ${category.w_total_amt_avg_ratio * 100}%`"
-            >
+        <template v-if="!dataLoading">
+          <div class="bg-light p-4 mt-4">
+            <p>카테고리별 매출 비중 (배달의민족 카테고리 기준)</p>
+            <div class="d-flex align-items-start mt-4">
               <div
-                class="bg-info"
-                style="height:20px;"
-                :style="`opacity:${1 / (index + 1)} `"
-              ></div>
-              <div class="text-center mt-2">
-                <p
-                  style="white-space:nowrap; font-size:20px; font-weight:bold;"
-                >
-                  {{ Math.round(category.w_total_amt_avg_ratio * 100) }}%
-                </p>
-                <span style="font-size:"
-                  >{{ category.baeminCategoryName }}
-                </span>
+                v-for="(category, index) in revenueCategories"
+                :key="category.id"
+                :style="`width : ${category.w_total_amt_avg_ratio * 100}%`"
+              >
+                <div
+                  class="bg-info"
+                  style="height:20px;"
+                  :style="`opacity:${1 / (index + 1)} `"
+                ></div>
+                <div class="text-center mt-2">
+                  <p
+                    style="white-space:nowrap; font-size:20px; font-weight:bold;"
+                  >
+                    {{ Math.round(category.w_total_amt_avg_ratio * 100) }}%
+                  </p>
+                  <span style="font-size:"
+                    >{{ category.baeminCategoryName }}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="mt-4">
-          <b-button
-            :variant="
-              category.categoryNameKr === '한식'
-                ? 'secondary'
-                : 'outline-secondary'
-            "
-            v-for="category in categories"
-            :key="category.id"
-            class="ml-0 mr-2 mb-2"
-            @click="findRevenueAnalysis(category.categoryNameKr)"
-          >
-            {{ category.categoryNameKr }}
-          </b-button>
-        </div>
-        <div class="mt-4 pt-4 border-top">
-          <div class="title-box text-center">
-            <h4>
-              <b>한식</b>
-            </h4>
+          <div class="mt-4">
+            <b-button
+              :variant="
+                category.categoryNameKr === '한식'
+                  ? 'secondary'
+                  : 'outline-secondary'
+              "
+              v-for="category in categories"
+              :key="category.id"
+              class="ml-0 mr-2 mb-2"
+              @click="findRevenueAnalysis(category.categoryNameKr)"
+            >
+              {{ category.categoryNameKr }}
+            </b-button>
           </div>
-          <div class="content-box">
-            <div class="mt-4">
-              <h5>
-                1) 성별
-                <b-icon
-                  icon="question-circle"
-                  variant="secondary"
-                  v-b-tooltip.hover.right="
-                    '남성은 자잘자잘하게 많이시키지만, 여성은 한번 시킬 때 매출액이 크다 등의 정보를 설명하게 됩니다.'
-                  "
-                ></b-icon>
-              </h5>
-              <div class="mt-4">
-                <b-row>
-                  <b-col cols="6">
-                    <p class="text-center mb-2"><b>매출 건수 비율</b></p>
-                    <DashboardPieChart
-                      v-if="genderCountData"
-                      :chartData="genderCountData"
-                      :options="genderOptions"
-                    />
-                  </b-col>
-                  <b-col cols="6">
-                    <p class="text-center mb-2"><b>매출 금액 비율</b></p>
-                    <DashboardPieChart
-                      v-if="genderRevenueData"
-                      :chartData="genderRevenueData"
-                      :options="genderOptions"
-                    />
-                  </b-col>
-                </b-row>
-              </div>
+          <div class="mt-4 pt-4 border-top">
+            <div class="title-box text-center">
+              <h4>
+                <b>{{ selectedCategory.baeminCategoryName }}</b>
+              </h4>
             </div>
-            <div class="mt-4">
-              <h5>
-                2) 연령별
-                <b-icon
-                  icon="question-circle"
-                  variant="secondary"
-                  v-b-tooltip.hover.right="
-                    '해당 동에서 배달음식을 주문시키는 사람의 주요 연령대를 나타내며, 지역의 소비력이 강한 연령대를 설명합니다.'
-                  "
-                ></b-icon>
-              </h5>
-              <div class=" mt-4">
-                <img
-                  src="@/assets/images/general/analysis/saleschart_04.png"
-                  alt=""
-                />
-              </div>
-            </div>
-            <div class="mt-4">
-              <h5>
-                3) 요일별
-                <b-icon
-                  icon="question-circle"
-                  variant="secondary"
-                  v-b-tooltip.hover.right="
-                    '요일별 15% 기준으로, 매출액의 평균추이를 설명하며, 평일이 주요한 타겟이지만, 토요일에는 풀타임 근무를 통해서 매출액을 증가시켜야 하는 부분을 강조하여 설명합니다.'
-                  "
-                ></b-icon>
-              </h5>
+            <div class="content-box">
               <div class="mt-4">
-                <div>
-                  <div class="mt-4">
-                    <p class="text-center mb-2"><b>매출 건수 비율</b></p>
-                    <img
-                      src="@/assets/images/general/analysis/saleschart_05.png"
-                      alt=""
-                    />
+                <h5>
+                  1) 성별
+                  <b-icon
+                    icon="question-circle"
+                    variant="secondary"
+                    v-b-tooltip.hover.right="
+                      '남성은 자잘자잘하게 많이시키지만, 여성은 한번 시킬 때 매출액이 크다 등의 정보를 설명하게 됩니다.'
+                    "
+                  ></b-icon>
+                </h5>
+                <div class="mt-4">
+                  <b-row>
+                    <b-col cols="6">
+                      <p class="text-center mb-2"><b>매출 건수 비율</b></p>
+                      <DashboardPieChart
+                        v-if="genderCountData"
+                        :chartData="genderCountData"
+                        :options="genderOptions"
+                      />
+                    </b-col>
+                    <b-col cols="6">
+                      <p class="text-center mb-2"><b>매출 금액 비율</b></p>
+                      <DashboardPieChart
+                        v-if="genderRevenueData"
+                        :chartData="genderRevenueData"
+                        :options="genderOptions"
+                      />
+                    </b-col>
+                  </b-row>
+                </div>
+              </div>
+              <div class="mt-4">
+                <h5>
+                  2) 연령별
+                  <b-icon
+                    icon="question-circle"
+                    variant="secondary"
+                    v-b-tooltip.hover.right="
+                      '해당 동에서 배달음식을 주문시키는 사람의 주요 연령대를 나타내며, 지역의 소비력이 강한 연령대를 설명합니다.'
+                    "
+                  ></b-icon>
+                </h5>
+                <div class=" mt-4">
+                  <DashboardBarChart
+                    v-if="ageRevenueData"
+                    :chartData="ageRevenueData"
+                    :options="ageOptions"
+                    :styles="{ height: '400px' }"
+                  />
+                </div>
+              </div>
+              <div class="mt-4">
+                <h5>
+                  3) 요일별
+                  <b-icon
+                    icon="question-circle"
+                    variant="secondary"
+                    v-b-tooltip.hover.right="
+                      '요일별 15% 기준으로, 매출액의 평균추이를 설명하며, 평일이 주요한 타겟이지만, 토요일에는 풀타임 근무를 통해서 매출액을 증가시켜야 하는 부분을 강조하여 설명합니다.'
+                    "
+                  ></b-icon>
+                </h5>
+                <div class="mt-4">
+                  <div>
                     <div class="mt-4">
-                      <img
-                        src="@/assets/images/general/analysis/saleschart_05_1.png"
-                        alt=""
+                      <p class="text-center mb-2"><b>매출 건수 비율</b></p>
+                      <DashboardBarChart
+                        v-if="dayCountData"
+                        :chartData="dayCountData"
+                        :options="ageOptions"
+                        :styles="{ height: '400px' }"
                       />
                     </div>
-                  </div>
-                  <div class="mt-4">
-                    <p class="text-center mb-2"><b>매출 금액 비율</b></p>
-                    <img
-                      src="@/assets/images/general/analysis/saleschart_06.png"
-                      alt=""
-                    />
                     <div class="mt-4">
-                      <img
-                        src="@/assets/images/general/analysis/saleschart_05_1.png"
-                        alt=""
+                      <p class="text-center mb-2"><b>매출 금액 비율</b></p>
+                      <DashboardBarChart
+                        v-if="dayRevenueData"
+                        :chartData="dayRevenueData"
+                        :options="ageOptions"
+                        :styles="{ height: '400px' }"
                       />
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <!-- <div class="mt-4">
+              <!-- <div class="mt-4">
               <h5>
                 4) 객단가
                 <b-icon
@@ -158,8 +153,20 @@
               </h5>
               <div class="bg-light mt-2" style="height:150px"></div>
             </div> -->
+            </div>
           </div>
-        </div>
+        </template>
+        <template v-else>
+          <div class="loader">
+            <div>
+              <img
+                src="@/assets/images/general/analysis/loading.gif"
+                alt="분석중"
+              />
+              <p>잠시만 기다려주세요 상권 분석 중입니다</p>
+            </div>
+          </div>
+        </template>
       </div>
     </section>
     <section class="section">
@@ -167,76 +174,89 @@
         <h3>시간대별 업종 매출 순위</h3>
       </header>
       <div class="section-content">
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              <th></th>
-              <th scope="col">순위</th>
-              <th scope="col">업종</th>
-              <th scope="col">성별</th>
-              <th scope="col">연령대</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row" rowspan="3">점심<br />11 ~ 14시</th>
-              <td>1</td>
-              <td>한식</td>
-              <td>남</td>
-              <td>30대</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>도시락</td>
-              <td>여</td>
-              <td>40대</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>도시락</td>
-              <td>여</td>
-              <td>40대</td>
-            </tr>
-            <tr>
-              <th scope="row" rowspan="3">저녁<br />17 ~ 21시</th>
-              <td>1</td>
-              <td>분식</td>
-              <td>남</td>
-              <td>20대</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>족발</td>
-              <td>여</td>
-              <td>30대</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>일식</td>
-              <td>남</td>
-              <td>40대</td>
-            </tr>
-            <tr>
-              <th scope="row" rowspan="3">야식<br />21 ~ 06시</th>
-              <td>1</td>
-              <td>야식</td>
-              <td>남</td>
-              <td>30대</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>한식</td>
-              <td>여</td>
-              <td>40대</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>치킨</td>
-              <td>남</td>
-              <td>20대</td>
-            </tr>
-          </tbody>
-        </table>
+        <template v-if="!dataLoading">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th></th>
+                <th scope="col">순위</th>
+                <th scope="col">업종</th>
+                <th scope="col">성별</th>
+                <th scope="col">연령대</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row" rowspan="3">점심<br />11 ~ 14시</th>
+                <td>1</td>
+                <td>한식</td>
+                <td>남</td>
+                <td>30대</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>도시락</td>
+                <td>여</td>
+                <td>40대</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>도시락</td>
+                <td>여</td>
+                <td>40대</td>
+              </tr>
+              <tr>
+                <th scope="row" rowspan="3">저녁<br />17 ~ 21시</th>
+                <td>1</td>
+                <td>분식</td>
+                <td>남</td>
+                <td>20대</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>족발</td>
+                <td>여</td>
+                <td>30대</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>일식</td>
+                <td>남</td>
+                <td>40대</td>
+              </tr>
+              <tr>
+                <th scope="row" rowspan="3">야식<br />21 ~ 06시</th>
+                <td>1</td>
+                <td>야식</td>
+                <td>남</td>
+                <td>30대</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>한식</td>
+                <td>여</td>
+                <td>40대</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>치킨</td>
+                <td>남</td>
+                <td>20대</td>
+              </tr>
+            </tbody>
+          </table>
+        </template>
+        <template v-else>
+          <div class="loader">
+            <div>
+              <img
+                src="@/assets/images/general/analysis/loading.gif"
+                alt="분석중"
+              />
+              <p>잠시만 기다려주세요 상권 분석 중입니다</p>
+            </div>
+          </div>
+        </template>
       </div>
     </section>
   </div>
@@ -251,29 +271,45 @@ import {
   CONST_BAEMIN_CATEGORY_CODE,
 } from '@/services/shared';
 import DashboardPieChart from '../../dashboard/add-on/DashboardPieChart.vue';
+import DashboardBarChart from '../../dashboard/add-on/DashboardBarChart.vue';
+import { AnalysisTabListDto } from '@/dto';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'AnalysisSales',
   components: {
     DashboardPieChart,
+    DashboardBarChart,
   },
 })
 export default class AnalysisSales extends BaseComponent {
   private categories = [];
+  private selectedCategory = null;
   private revenueCategories = [];
   private genderCountData = null;
   private genderRevenueData = null;
   private genderOptions = null;
-
-  private params = {
-    bdongCode: '1168010100',
-    baeminCategoryName: '한식',
-  };
+  private ageRevenueData = null;
+  private ageOptions = null;
+  private dayCountData = null;
+  private dayRevenueData = null;
+  private dataLoading = false;
+  private analysisTabSearchDto = new AnalysisTabListDto();
 
   findRevenueAnalysis(categoryName) {
-    this.findBaeminCateogry();
-    this.findRevenueAnalysisGender();
-    this.findRevenueAnalysisAgeGroup();
+    if (categoryName) {
+      this.analysisTabSearchDto.baeminCategoryName = categoryName;
+      this.$router.push({
+        query: Object.assign(this.analysisTabSearchDto),
+      });
+    }
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.findCategoryRatio(query);
+      this.findRevenueAnalysisGender(query);
+      this.findRevenueAnalysisAgeGroup(query);
+      this.findRevenueAnalysisByDay(query);
+    }
   }
 
   findBaeminCateogry() {
@@ -284,16 +320,18 @@ export default class AnalysisSales extends BaseComponent {
     });
   }
 
-  findCategoryRatio() {
-    AnalysisTabService.findCategoryRatio(this.params).subscribe(res => {
+  findCategoryRatio(params) {
+    this.dataLoading = true;
+    AnalysisTabService.findCategoryRatio(params).subscribe(res => {
       if (res) {
+        this.dataLoading = false;
         this.revenueCategories = res.data;
       }
     });
   }
 
-  findRevenueAnalysisGender() {
-    AnalysisTabService.findRevenueAnalysisGender(this.params).subscribe(res => {
+  findRevenueAnalysisGender(params) {
+    AnalysisTabService.findRevenueAnalysisGender(params).subscribe(res => {
       if (res) {
         this.genderCountData = res.data[0].countData;
         this.genderRevenueData = res.data[1].revenueData;
@@ -302,20 +340,40 @@ export default class AnalysisSales extends BaseComponent {
     });
   }
 
-  findRevenueAnalysisAgeGroup() {
-    AnalysisTabService.findRevenueAnalysisAgeGroup(this.params).subscribe(
-      res => {
-        if (res) {
-          console.log(res);
-        }
-      },
-    );
+  findRevenueAnalysisAgeGroup(params) {
+    AnalysisTabService.findRevenueAnalysisAgeGroup(params).subscribe(res => {
+      if (res) {
+        this.ageRevenueData = res.data[1].revenueData;
+        this.ageOptions = {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
+                },
+              },
+            ],
+          },
+        };
+      }
+    });
+  }
+
+  findRevenueAnalysisByDay(params) {
+    AnalysisTabService.findRevenueAnalysisByDay(params).subscribe(res => {
+      if (res) {
+        this.dayCountData = res.data[0].countData;
+        this.dayRevenueData = res.data[1].revenueData;
+      }
+    });
   }
 
   created() {
-    this.findCategoryRatio();
-    this.findRevenueAnalysis(this.params);
-    this.findRevenueAnalysisGender();
+    this.$root.$on('tabRevenue', () => {
+      this.findBaeminCateogry();
+    });
   }
 }
 </script>

@@ -8,19 +8,19 @@
             <b-col cols="10">
               <b-form-input
                 list="company_lsit"
-                v-model="address"
+                v-model="selectedBdongCode"
               ></b-form-input>
               <datalist id="company_lsit">
                 <option
-                  v-for="address in addressSelect"
-                  :key="address.code"
-                  :value="address.name"
-                  >{{ address.name }}</option
+                  v-for="address in addressKeywords"
+                  :key="address.bdongCode"
+                  :value="address.bdongCode"
+                  >{{ address.baeminCategoryName }}</option
                 >
               </datalist>
             </b-col>
             <b-col cols="2">
-              <b-button variant="info" size="lg" block>
+              <b-button variant="info" size="lg" block @click="search()">
                 검색
               </b-button>
             </b-col>
@@ -28,16 +28,16 @@
         </div>
       </header>
       <b-tabs fill>
-        <b-tab title="요약" active>
+        <b-tab title="요약" active @click="clickTabSummary()">
           <AnalysisSummary />
         </b-tab>
-        <b-tab title="매출분석">
+        <b-tab title="매출분석" @click="clickTabRevenue()">
           <AnalysisSales />
         </b-tab>
-        <b-tab title="업종분석">
+        <b-tab title="업종분석" @click="clickTabCategory()">
           <AnalysisCategory />
         </b-tab>
-        <b-tab title="인구분석">
+        <b-tab title="인구분석" @click="clickTabPopulation()">
           <AnalysisPopulation />
         </b-tab>
       </b-tabs>
@@ -72,6 +72,8 @@ import AnalysisSales from './components/AnalysisSales.vue';
 import AnalysisCategory from './components/AnalysisCategory.vue';
 import AnalysisPopulation from './components/AnalysisPopulation.vue';
 import AnalysisMap from './components/AnalysisMap.vue';
+import { AnalysisTabListDto } from '@/dto';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'Analysis',
@@ -85,24 +87,55 @@ import AnalysisMap from './components/AnalysisMap.vue';
 })
 export default class Analysis extends BaseComponent {
   private slidebarVisible = true;
-  private address = '';
+  private bdongCode = null;
+  private analysisTabSearchDto = new AnalysisTabListDto();
+  private selectedBdongCode = null;
 
-  private addressSelect = [
+  private addressKeywords = [
     {
-      code: '00100',
-      name: '역삼동',
+      bdongCode: '1168010100',
+      baeminCategoryName: '역삼동',
     },
     {
-      code: '00200',
-      name: '논현동',
+      bdongCode: '1168010800',
+      baeminCategoryName: '논현동',
     },
   ];
+  search() {
+    if (this.selectedBdongCode) {
+      this.analysisTabSearchDto.bdongCode = this.selectedBdongCode;
+    }
+    this.$router.push({
+      query: Object.assign(this.analysisTabSearchDto),
+    });
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.analysisTabSearchDto = query;
+      this.$root.$emit('search', query);
+    }
+  }
+  clickTabSummary() {
+    console.log('탭 요약');
+  }
+  clickTabRevenue() {
+    console.log('탭 매출분석');
+    this.$root.$emit('tabRevenue');
+  }
+  clickTabCategory() {
+    console.log('탭 업종분석');
+  }
+  clickTabPopulation() {
+    console.log('탭 안구분석');
+  }
+  created() {
+    this.search();
+  }
 }
 </script>
 <style lang="scss">
 .loader {
   text-align: center;
-  margin-top: 140px;
+  margin: 140px 0;
   img {
     height: 100px;
   }

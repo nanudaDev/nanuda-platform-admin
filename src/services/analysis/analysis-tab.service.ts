@@ -19,6 +19,17 @@ export class AnalysisTabService extends BaseService {
       true,
     );
   }
+  findRevenueAnalysisByDay(params) {
+    return super.get<any>('analysis-tab/revenue-analysis-by-day', params, true);
+  }
+
+  findFoodCategorySummary(params) {
+    return super.get<any>('analysis-tab/food-category-summary', params, true);
+  }
+
+  findSurvivalYears(params) {
+    return super.get<any>('analysis-tab/survival-years', params, true);
+  }
 }
 
 export default new AnalysisTabService();

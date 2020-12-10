@@ -1,11 +1,11 @@
 <template>
   <div class="article-content">
-    <template v-if="!dataLoading">
-      <section class="section">
-        <header class="section-header">
-          <h3>상권 요약</h3>
-        </header>
-        <div class="section-content">
+    <section class="section">
+      <header class="section-header">
+        <h3>상권 요약</h3>
+      </header>
+      <div class="section-content">
+        <template v-if="!dataLoading">
           <table class="table">
             <colgroup>
               <col width="25%" />
@@ -40,7 +40,19 @@
               </tr>
             </tbody>
           </table>
-
+        </template>
+        <template v-else>
+          <div class="loader">
+            <div>
+              <img
+                src="@/assets/images/general/analysis/loading.gif"
+                alt="분석중"
+              />
+              <p>잠시만 기다려주세요 상권 분석 중입니다</p>
+            </div>
+          </div>
+        </template>
+        <template v-if="!dataLoadingCategory">
           <div class="bg-light p-4 mt-4">
             <p>카테고리별 매출 비중 (배달의민족 카테고리 기준)</p>
             <div class="d-flex align-items-start mt-4">
@@ -93,20 +105,20 @@
               </b-col>
             </b-row>
           </div>
-        </div>
-      </section>
-    </template>
-    <template v-else>
-      <div class="loader">
-        <div>
-          <img
-            src="@/assets/images/general/analysis/loading.gif"
-            alt="분석중"
-          />
-          <p>잠시만 기다려주세요 상권 분석 중입니다</p>
-        </div>
+        </template>
+        <template v-else>
+          <div class="loader">
+            <div>
+              <img
+                src="@/assets/images/general/analysis/loading.gif"
+                alt="분석중"
+              />
+              <p>잠시만 기다려주세요 상권 분석 중입니다</p>
+            </div>
+          </div>
+        </template>
       </div>
-    </template>
+    </section>
   </div>
 </template>
 <script lang="ts">
@@ -114,6 +126,7 @@ import BaseComponent from '@/core/base.component';
 import { Component, Vue } from 'vue-property-decorator';
 import AnalysisTabService from '@/services/analysis/analysis-tab.service';
 import { AnalysisTabListDto } from '@/dto';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'AnalysisSummary',
@@ -121,12 +134,10 @@ import { AnalysisTabListDto } from '@/dto';
 export default class AnalysisSummary extends BaseComponent {
   private summary = {};
   private dataLoading = false;
+  private dataLoadingCategory = false;
   private categories = [];
-  private parmas = {
-    bdongCode: '1168010100',
-  };
-
   private recomeendCategory = [];
+  private parmas = null;
 
   recommendCategoryBgColor(idx) {
     if (idx === 0) return 'bg-primary';
@@ -134,9 +145,9 @@ export default class AnalysisSummary extends BaseComponent {
     if (idx === 2) return 'bg-success';
   }
 
-  findSummary() {
+  findSummary(parmas) {
     this.dataLoading = true;
-    AnalysisTabService.findSummary(this.parmas).subscribe(res => {
+    AnalysisTabService.findSummary(parmas).subscribe(res => {
       if (res) {
         this.dataLoading = false;
         this.summary = res.data;
@@ -144,17 +155,28 @@ export default class AnalysisSummary extends BaseComponent {
     });
   }
 
-  findCategoryRatio() {
-    AnalysisTabService.findCategoryRatio(this.parmas).subscribe(res => {
+  findCategoryRatio(parmas) {
+    this.dataLoadingCategory = true;
+    AnalysisTabService.findCategoryRatio(parmas).subscribe(res => {
       if (res) {
+        this.dataLoadingCategory = false;
         this.categories = res.data;
         this.recomeendCategory = this.categories.slice(0, 3);
       }
     });
   }
+
+  findAnalysisSummary(query) {
+    if (query) {
+      this.parmas = query;
+      this.findSummary(query);
+      this.findCategoryRatio(query);
+    }
+  }
   created() {
-    this.findSummary();
-    this.findCategoryRatio();
+    this.$root.$on('search', query => {
+      this.findAnalysisSummary(query);
+    });
   }
 }
 </script>

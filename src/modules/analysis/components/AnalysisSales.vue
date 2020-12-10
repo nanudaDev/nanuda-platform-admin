@@ -7,9 +7,16 @@
       <div class="section-content">
         <div class="bg-light p-4 mt-4">
           <p>카테고리별 매출 비중 (배달의민족 카테고리 기준)</p>
+          <div class="mt-3">
+            <img
+              src="@/assets/images/general/analysis/saleschart_01.png"
+              alt=""
+            />
+          </div>
         </div>
         <div class="mt-4">
           <b-button
+            :variant="category.id === 1 ? 'secondary' : 'outline-secondary'"
             v-for="category in categories"
             :key="category.id"
             class="ml-0 mr-2 mb-2"
@@ -35,13 +42,21 @@
                   "
                 ></b-icon>
               </h5>
-              <div class="mt-2">
+              <div class="mt-4">
                 <b-row>
                   <b-col cols="6">
-                    <div class="bg-light" style="height:250px"></div>
+                    <p class="text-center mb-2"><b>매출 건수 비율</b></p>
+                    <img
+                      src="@/assets/images/general/analysis/saleschart_02.png"
+                      alt=""
+                    />
                   </b-col>
                   <b-col cols="6">
-                    <div class="bg-light" style="height:250px"></div>
+                    <p class="text-center mb-2"><b>매출 금액 비율</b></p>
+                    <img
+                      src="@/assets/images/general/analysis/saleschart_03.png"
+                      alt=""
+                    />
                   </b-col>
                 </b-row>
               </div>
@@ -57,7 +72,12 @@
                   "
                 ></b-icon>
               </h5>
-              <div class="bg-light mt-2" style="height:150px"></div>
+              <div class=" mt-4">
+                <img
+                  src="@/assets/images/general/analysis/saleschart_04.png"
+                  alt=""
+                />
+              </div>
             </div>
             <div class="mt-4">
               <h5>
@@ -70,18 +90,38 @@
                   "
                 ></b-icon>
               </h5>
-              <div class="mt-2">
-                <b-row>
-                  <b-col cols="6">
-                    <div class="bg-light" style="height:250px"></div>
-                  </b-col>
-                  <b-col cols="6">
-                    <div class="bg-light" style="height:250px"></div>
-                  </b-col>
-                </b-row>
+              <div class="mt-4">
+                <div>
+                  <div class="mt-4">
+                    <p class="text-center mb-2"><b>매출 건수 비율</b></p>
+                    <img
+                      src="@/assets/images/general/analysis/saleschart_05.png"
+                      alt=""
+                    />
+                    <div class="mt-4">
+                      <img
+                        src="@/assets/images/general/analysis/saleschart_05_1.png"
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                  <div class="mt-4">
+                    <p class="text-center mb-2"><b>매출 금액 비율</b></p>
+                    <img
+                      src="@/assets/images/general/analysis/saleschart_06.png"
+                      alt=""
+                    />
+                    <div class="mt-4">
+                      <img
+                        src="@/assets/images/general/analysis/saleschart_05_1.png"
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="mt-4">
+            <!-- <div class="mt-4">
               <h5>
                 4) 객단가
                 <b-icon
@@ -93,7 +133,7 @@
                 ></b-icon>
               </h5>
               <div class="bg-light mt-2" style="height:150px"></div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -136,40 +176,40 @@
             <tr>
               <th scope="row" rowspan="3">저녁<br />17 ~ 21시</th>
               <td>1</td>
-              <td>한식</td>
+              <td>분식</td>
               <td>남</td>
-              <td>30대</td>
+              <td>20대</td>
             </tr>
             <tr>
               <td>2</td>
-              <td>도시락</td>
+              <td>족발</td>
               <td>여</td>
-              <td>40대</td>
+              <td>30대</td>
             </tr>
             <tr>
               <td>3</td>
-              <td>도시락</td>
-              <td>여</td>
+              <td>일식</td>
+              <td>남</td>
               <td>40대</td>
             </tr>
             <tr>
-              <th scope="row" rowspan="3">점심<br />21 ~ 06시</th>
+              <th scope="row" rowspan="3">야식<br />21 ~ 06시</th>
               <td>1</td>
-              <td>한식</td>
+              <td>야식</td>
               <td>남</td>
               <td>30대</td>
             </tr>
             <tr>
               <td>2</td>
-              <td>도시락</td>
+              <td>한식</td>
               <td>여</td>
               <td>40대</td>
             </tr>
             <tr>
               <td>3</td>
-              <td>도시락</td>
-              <td>여</td>
-              <td>40대</td>
+              <td>치킨</td>
+              <td>남</td>
+              <td>20대</td>
             </tr>
           </tbody>
         </table>
@@ -188,52 +228,14 @@ export default class AnalysisSales extends BaseComponent {
   private categories = [
     {
       created: '2020-11-26T03:34:01.000Z',
-      id: 14,
-      categoryNameKr: '채식',
-      categoryCode: 'BM14',
-      categoryNameEng: null,
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 13,
-      categoryNameKr: '페스트푸드',
-      categoryCode: 'BM13',
-      categoryNameEng: null,
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 12,
-      categoryNameKr: '도시락',
-      categoryCode: 'BM12',
-      categoryNameEng: null,
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 11,
-      categoryNameKr: '찜/탕',
-      categoryCode: 'BM11',
-      categoryNameEng: null,
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 10,
-      categoryNameKr: '야식',
-      categoryCode: 'BM10',
-      categoryNameEng: null,
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 9,
-      categoryNameKr: '족발/보쌈',
-      categoryCode: 'BM09',
-      categoryNameEng: null,
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 8,
-      categoryNameKr: '중국집',
-      categoryCode: 'BM08',
-      categoryNameEng: null,
+      id: 1,
+      categoryNameKr: '한식',
+      categoryCode: 'BM01',
+      categoryNameEng: 'Korean',
+      storeCount: '1195',
+      storeRate: '0.3201',
+      salseRate: '0.0982',
+      gap: '-0.2219',
     },
     {
       created: '2020-11-26T03:34:01.000Z',
@@ -241,27 +243,21 @@ export default class AnalysisSales extends BaseComponent {
       categoryNameKr: '아시안/양식',
       categoryCode: 'BM07',
       categoryNameEng: null,
+      storeCount: '91',
+      storeRate: '0.0244',
+      salseRate: '0.0063',
+      gap: '-0.0181',
     },
     {
       created: '2020-11-26T03:34:01.000Z',
-      id: 6,
-      categoryNameKr: '피자',
-      categoryCode: 'BM06',
+      id: 13,
+      categoryNameKr: '패스트푸드',
+      categoryCode: 'BM13',
       categoryNameEng: null,
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 5,
-      categoryNameKr: '치킨',
-      categoryCode: 'BM05',
-      categoryNameEng: null,
-    },
-    {
-      created: '2020-11-26T03:34:01.000Z',
-      id: 4,
-      categoryNameKr: '돈까스/회/일식',
-      categoryCode: 'BM04',
-      categoryNameEng: null,
+      storeCount: '112',
+      storeRate: '0.0300',
+      salseRate: '0.3042',
+      gap: '0.2742',
     },
     {
       created: '2020-11-26T03:34:01.000Z',
@@ -269,6 +265,43 @@ export default class AnalysisSales extends BaseComponent {
       categoryNameKr: '카페/디저트',
       categoryCode: 'BM03',
       categoryNameEng: null,
+      storeCount: '915',
+      storeRate: '0.2451',
+      salseRate: '0.0383',
+      gap: '-0.2068',
+    },
+    {
+      created: '2020-11-26T03:34:01.000Z',
+      id: 4,
+      categoryNameKr: '돈까스/회/일식',
+      categoryCode: 'BM04',
+      categoryNameEng: null,
+      storeCount: '606',
+      storeRate: '0.1623',
+      salseRate: '0.0175',
+      gap: '-0.1448',
+    },
+    {
+      created: '2020-11-26T03:34:01.000Z',
+      id: 10,
+      categoryNameKr: '야식',
+      categoryCode: 'BM10',
+      categoryNameEng: null,
+      storeCount: '214',
+      storeRate: '0.0573',
+      salseRate: '0.0484',
+      gap: '-0.0089',
+    },
+    {
+      created: '2020-11-26T03:34:01.000Z',
+      id: 11,
+      categoryNameKr: '찜/탕',
+      categoryCode: 'BM11',
+      categoryNameEng: null,
+      storeCount: '48',
+      storeRate: '0.0129',
+      salseRate: '0.0702',
+      gap: '0.0573',
     },
     {
       created: '2020-11-26T03:34:01.000Z',
@@ -276,13 +309,55 @@ export default class AnalysisSales extends BaseComponent {
       categoryNameKr: '분식',
       categoryCode: 'BM02',
       categoryNameEng: null,
+      storeCount: '264',
+      storeRate: '0.0707',
+      salseRate: '0.0145',
+      gap: '-0.0562',
+    },
+
+    {
+      created: '2020-11-26T03:34:01.000Z',
+      id: 6,
+      categoryNameKr: '피자',
+      categoryCode: 'BM06',
+      categoryNameEng: null,
+      storeCount: '30',
+      storeRate: '0.0080',
+      salseRate: '0.1217',
+      gap: '-0.1137',
     },
     {
       created: '2020-11-26T03:34:01.000Z',
-      id: 1,
-      categoryNameKr: '한식',
-      categoryCode: 'BM01',
-      categoryNameEng: 'Korean',
+      id: 5,
+      categoryNameKr: '치킨',
+      categoryCode: 'BM05',
+      categoryNameEng: null,
+      storeCount: '86',
+      storeRate: '0.0230',
+      salseRate: '0.1825',
+      gap: '-0.1595',
+    },
+    {
+      created: '2020-11-26T03:34:01.000Z',
+      id: 9,
+      categoryNameKr: '족발/보쌈',
+      categoryCode: 'BM09',
+      categoryNameEng: null,
+      storeCount: '28',
+      storeRate: '0.0075',
+      salseRate: '0.0839',
+      gap: '0.0764',
+    },
+    {
+      created: '2020-11-26T03:34:01.000Z',
+      id: 8,
+      categoryNameKr: '중국집',
+      categoryCode: 'BM08',
+      categoryNameEng: null,
+      storeCount: '120',
+      storeRate: '0.0321',
+      salseRate: '0.0142',
+      gap: '-0.0179',
     },
   ];
 }

@@ -117,20 +117,13 @@
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
 import { Component, Vue } from 'vue-property-decorator';
+import AnalysisTabService from '@/services/analysis/analysis-tab.service';
 
 @Component({
   name: 'AnalysisSummary',
 })
 export default class AnalysisSummary extends BaseComponent {
-  private summary = {
-    storeCount: '3733',
-    houseCount: '31407',
-    resPopulationCount: '123224',
-    employeeCount: '188444',
-    movingPopulationCount: '189547',
-    importantAgeGroup: '30대',
-    averageSurvivalYears: '4.53년',
-  };
+  private summary = {};
 
   private categories = [
     {
@@ -218,5 +211,16 @@ export default class AnalysisSummary extends BaseComponent {
       w_total_amt_avg_ratio: 0.0063,
     },
   ];
+
+  findSummary() {
+    AnalysisTabService.findSummary(null).subscribe(res => {
+      if (res) {
+        this.summary = res.data;
+      }
+    });
+  }
+  created() {
+    this.findSummary();
+  }
 }
 </script>

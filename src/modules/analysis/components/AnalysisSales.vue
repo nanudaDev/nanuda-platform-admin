@@ -73,7 +73,7 @@
                       <DashboardPieChart
                         v-if="genderCountData"
                         :chartData="genderCountData"
-                        :options="genderOptions"
+                        :options="pieOptions"
                       />
                     </b-col>
                     <b-col cols="6">
@@ -81,7 +81,7 @@
                       <DashboardPieChart
                         v-if="genderRevenueData"
                         :chartData="genderRevenueData"
-                        :options="genderOptions"
+                        :options="pieOptions"
                       />
                     </b-col>
                   </b-row>
@@ -102,7 +102,7 @@
                   <DashboardBarChart
                     v-if="ageRevenueData"
                     :chartData="ageRevenueData"
-                    :options="ageOptions"
+                    :options="barOptions"
                     :styles="{ height: '400px' }"
                   />
                 </div>
@@ -125,7 +125,7 @@
                       <DashboardBarChart
                         v-if="dayCountData"
                         :chartData="dayCountData"
-                        :options="ageOptions"
+                        :options="barOptions"
                         :styles="{ height: '400px' }"
                       />
                     </div>
@@ -134,7 +134,7 @@
                       <DashboardBarChart
                         v-if="dayRevenueData"
                         :chartData="dayRevenueData"
-                        :options="ageOptions"
+                        :options="barOptions"
                         :styles="{ height: '400px' }"
                       />
                     </div>
@@ -284,31 +284,40 @@ import { ReverseQueryParamMapper } from '@/core';
   },
 })
 export default class AnalysisSales extends BaseComponent {
+  private analysisTabSearchDto = new AnalysisTabListDto();
   private categories = [];
   private revenueCategories = [];
   private genderCountData = null;
   private genderRevenueData = null;
-  private genderOptions = null;
   private ageRevenueData = null;
-  private ageOptions = null;
   private dayCountData = null;
   private dayRevenueData = null;
   private dataLoading = false;
-  private analysisTabSearchDto = new AnalysisTabListDto();
+
+  private pieOptions = { responsive: true };
+  private barOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ],
+    },
+  };
 
   findRevenueAnalysis(categoryName) {
-    const query = ReverseQueryParamMapper(location.search);
-    if (query) {
-      this.analysisTabSearchDto = query;
-      this.analysisTabSearchDto.baeminCategoryName = categoryName;
-      this.$router.push({
-        query: Object.assign(this.analysisTabSearchDto),
-      });
-      this.findCategoryRatio(query);
-      this.findRevenueAnalysisGender(query);
-      this.findRevenueAnalysisAgeGroup(query);
-      this.findRevenueAnalysisByDay(query);
-    }
+    this.analysisTabSearchDto.baeminCategoryName = categoryName;
+    this.$router.push({
+      query: Object.assign(this.analysisTabSearchDto),
+    });
+    this.findCategoryRatio();
+    this.findRevenueAnalysisGender();
+    this.findRevenueAnalysisAgeGroup();
+    this.findRevenueAnalysisByDay();
   }
 
   findBaeminCateogry() {
@@ -320,49 +329,43 @@ export default class AnalysisSales extends BaseComponent {
     });
   }
 
-  findCategoryRatio(params) {
+  findCategoryRatio() {
     this.dataLoading = true;
-    AnalysisTabService.findCategoryRatio(params).subscribe(res => {
-      if (res) {
-        this.dataLoading = false;
-        this.revenueCategories = res.data;
-      }
-    });
+    AnalysisTabService.findCategoryRatio(this.analysisTabSearchDto).subscribe(
+      res => {
+        if (res) {
+          this.dataLoading = false;
+          this.revenueCategories = res.data;
+        }
+      },
+    );
   }
 
-  findRevenueAnalysisGender(params) {
-    AnalysisTabService.findRevenueAnalysisGender(params).subscribe(res => {
+  findRevenueAnalysisGender() {
+    AnalysisTabService.findRevenueAnalysisGender(
+      this.analysisTabSearchDto,
+    ).subscribe(res => {
       if (res) {
         this.genderCountData = res.data[0].countData;
         this.genderRevenueData = res.data[1].revenueData;
-        this.genderOptions = { responsive: true };
       }
     });
   }
 
-  findRevenueAnalysisAgeGroup(params) {
-    AnalysisTabService.findRevenueAnalysisAgeGroup(params).subscribe(res => {
+  findRevenueAnalysisAgeGroup() {
+    AnalysisTabService.findRevenueAnalysisAgeGroup(
+      this.analysisTabSearchDto,
+    ).subscribe(res => {
       if (res) {
         this.ageRevenueData = res.data[1].revenueData;
-        this.ageOptions = {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true,
-                },
-              },
-            ],
-          },
-        };
       }
     });
   }
 
-  findRevenueAnalysisByDay(params) {
-    AnalysisTabService.findRevenueAnalysisByDay(params).subscribe(res => {
+  findRevenueAnalysisByDay() {
+    AnalysisTabService.findRevenueAnalysisByDay(
+      this.analysisTabSearchDto,
+    ).subscribe(res => {
       if (res) {
         this.dayCountData = res.data[0].countData;
         this.dayRevenueData = res.data[1].revenueData;
@@ -372,13 +375,29 @@ export default class AnalysisSales extends BaseComponent {
 
   created() {
     this.findBaeminCateogry();
-  }
-  mounted() {
-    this.$root.$on('tabRevenue', () => {
-      if (this.$route.query.baeminCategoryName) {
-        this.findRevenueAnalysis(this.$route.query.baeminCategoryName);
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.analysisTabSearchDto = query;
+      if (this.analysisTabSearchDto) {
+        this.findRevenueAnalysis(this.analysisTabSearchDto.baeminCategoryName);
       } else {
         this.findRevenueAnalysis('한식');
+      }
+    }
+  }
+
+  mounted() {
+    this.$root.$on('tabRevenue', () => {
+      const query = ReverseQueryParamMapper(location.search);
+      if (query) {
+        this.analysisTabSearchDto = query;
+        if (this.analysisTabSearchDto) {
+          this.findRevenueAnalysis(
+            this.analysisTabSearchDto.baeminCategoryName,
+          );
+        } else {
+          this.findRevenueAnalysis('한식');
+        }
       }
     });
   }

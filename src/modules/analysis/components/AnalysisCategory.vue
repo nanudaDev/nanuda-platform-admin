@@ -147,17 +147,16 @@
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
+import { AnalysisTabListDto } from '@/dto';
 import AnalysisTabService from '@/services/analysis/analysis-tab.service';
 import { Component, Vue } from 'vue-property-decorator';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'AnalysisCategory',
 })
 export default class AnalysisCategory extends BaseComponent {
-  private params = {
-    bdongCode: '1168010100',
-    baeminCategoryName: '한식',
-  };
+  private analysisTabSearchDto = new AnalysisTabListDto();
   private categories = [];
   private survivalYears = [];
   private dataLoading = false;
@@ -169,7 +168,9 @@ export default class AnalysisCategory extends BaseComponent {
 
   findFoodCategorySummary() {
     this.dataLoadingFoodCategory = true;
-    AnalysisTabService.findFoodCategorySummary(this.params).subscribe(res => {
+    AnalysisTabService.findFoodCategorySummary(
+      this.analysisTabSearchDto,
+    ).subscribe(res => {
       if (res) {
         this.dataLoadingFoodCategory = false;
         this.categories = res.data;
@@ -191,12 +192,14 @@ export default class AnalysisCategory extends BaseComponent {
 
   findSurvivalYears() {
     this.dataLoadingSurvivalYears = true;
-    AnalysisTabService.findSurvivalYears(this.params).subscribe(res => {
-      if (res) {
-        this.dataLoadingSurvivalYears = false;
-        this.survivalYears = res.data;
-      }
-    });
+    AnalysisTabService.findSurvivalYears(this.analysisTabSearchDto).subscribe(
+      res => {
+        if (res) {
+          this.dataLoadingSurvivalYears = false;
+          this.survivalYears = res.data;
+        }
+      },
+    );
   }
 
   findAnalysisCategory() {
@@ -205,7 +208,21 @@ export default class AnalysisCategory extends BaseComponent {
   }
 
   created() {
-    this.findAnalysisCategory();
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.analysisTabSearchDto = query;
+      this.findAnalysisCategory();
+    }
+  }
+
+  mounted() {
+    this.$root.$on('tabCategory', () => {
+      const query = ReverseQueryParamMapper(location.search);
+      if (query) {
+        this.analysisTabSearchDto = query;
+        this.findAnalysisCategory();
+      }
+    });
   }
 }
 </script>

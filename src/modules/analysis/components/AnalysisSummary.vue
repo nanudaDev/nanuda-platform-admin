@@ -132,6 +132,7 @@ import { ReverseQueryParamMapper } from '@/core';
   name: 'AnalysisSummary',
 })
 export default class AnalysisSummary extends BaseComponent {
+  private analysisTabSearchDto = new AnalysisTabListDto();
   private summary = {};
   private dataLoading = false;
   private dataLoadingCategory = false;
@@ -145,9 +146,9 @@ export default class AnalysisSummary extends BaseComponent {
     if (idx === 2) return 'bg-success';
   }
 
-  findSummary(parmas) {
+  findSummary() {
     this.dataLoading = true;
-    AnalysisTabService.findSummary(parmas).subscribe(res => {
+    AnalysisTabService.findSummary(this.analysisTabSearchDto).subscribe(res => {
       if (res) {
         this.dataLoading = false;
         this.summary = res.data;
@@ -155,35 +156,36 @@ export default class AnalysisSummary extends BaseComponent {
     });
   }
 
-  findCategoryRatio(parmas) {
+  findCategoryRatio() {
     this.dataLoadingCategory = true;
-    AnalysisTabService.findCategoryRatio(parmas).subscribe(res => {
-      if (res) {
-        this.dataLoadingCategory = false;
-        this.categories = res.data;
-        this.recomeendCategory = this.categories.slice(0, 3);
-      }
-    });
+    AnalysisTabService.findCategoryRatio(this.analysisTabSearchDto).subscribe(
+      res => {
+        if (res) {
+          this.dataLoadingCategory = false;
+          this.categories = res.data;
+          this.recomeendCategory = this.categories.slice(0, 3);
+        }
+      },
+    );
   }
 
-  findAnalysisSummary(query) {
-    if (query) {
-      this.parmas = query;
-      this.findSummary(query);
-      this.findCategoryRatio(query);
-    }
+  findAnalysisSummary() {
+    this.findSummary();
+    this.findCategoryRatio();
   }
   created() {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
-      this.findAnalysisSummary(query);
+      this.analysisTabSearchDto = query;
+      this.findAnalysisSummary();
     }
   }
   mounted() {
     this.$root.$on('tabSummary', () => {
       const query = ReverseQueryParamMapper(location.search);
       if (query) {
-        this.findAnalysisSummary(query);
+        this.analysisTabSearchDto = query;
+        this.findAnalysisSummary();
       }
     });
   }

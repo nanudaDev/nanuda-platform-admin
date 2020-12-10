@@ -107,18 +107,16 @@ export default class Analysis extends BaseComponent {
     });
   }
   clickTabSummary() {
-    console.log('탭 요약');
     this.$root.$emit('tabSummary');
   }
   clickTabRevenue() {
-    console.log('탭 매출분석');
     this.$root.$emit('tabRevenue');
   }
   clickTabCategory() {
-    console.log('탭 업종분석');
+    this.$root.$emit('tabCategory');
   }
   clickTabPopulation() {
-    console.log('탭 안구분석');
+    this.$root.$emit('tabPopulation');
   }
   created() {
     const query = ReverseQueryParamMapper(location.search);

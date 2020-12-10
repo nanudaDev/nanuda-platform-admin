@@ -5,6 +5,22 @@
         <h3>매출분석</h3>
       </header>
       <div class="section-content">
+        <div class="mt-4">
+          <b-button
+            :variant="
+              analysisTabSearchDto.baeminCategoryName ===
+              category.categoryNameKr
+                ? 'secondary'
+                : 'outline-secondary'
+            "
+            v-for="category in categories"
+            :key="category.id"
+            class="ml-0 mr-2 mb-2"
+            @click="findRevenueAnalysis(category.categoryNameKr)"
+          >
+            {{ category.categoryNameKr }}
+          </b-button>
+        </div>
         <template v-if="!dataLoading">
           <div class="bg-light p-4 mt-4">
             <p>카테고리별 매출 비중 (배달의민족 카테고리 기준)</p>
@@ -32,25 +48,10 @@
               </div>
             </div>
           </div>
-          <div class="mt-4">
-            <b-button
-              :variant="
-                category.categoryNameKr === '한식'
-                  ? 'secondary'
-                  : 'outline-secondary'
-              "
-              v-for="category in categories"
-              :key="category.id"
-              class="ml-0 mr-2 mb-2"
-              @click="findRevenueAnalysis(category.categoryNameKr)"
-            >
-              {{ category.categoryNameKr }}
-            </b-button>
-          </div>
           <div class="mt-4 pt-4 border-top">
             <div class="title-box text-center">
               <h4>
-                <b>{{ selectedCategory.baeminCategoryName }}</b>
+                <b> {{ analysisTabSearchDto.baeminCategoryName }}</b>
               </h4>
             </div>
             <div class="content-box">
@@ -284,7 +285,6 @@ import { ReverseQueryParamMapper } from '@/core';
 })
 export default class AnalysisSales extends BaseComponent {
   private categories = [];
-  private selectedCategory = null;
   private revenueCategories = [];
   private genderCountData = null;
   private genderRevenueData = null;
@@ -297,14 +297,13 @@ export default class AnalysisSales extends BaseComponent {
   private analysisTabSearchDto = new AnalysisTabListDto();
 
   findRevenueAnalysis(categoryName) {
-    if (categoryName) {
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.analysisTabSearchDto = query;
       this.analysisTabSearchDto.baeminCategoryName = categoryName;
       this.$router.push({
         query: Object.assign(this.analysisTabSearchDto),
       });
-    }
-    const query = ReverseQueryParamMapper(location.search);
-    if (query) {
       this.findCategoryRatio(query);
       this.findRevenueAnalysisGender(query);
       this.findRevenueAnalysisAgeGroup(query);
@@ -316,6 +315,7 @@ export default class AnalysisSales extends BaseComponent {
     BaeminCategoryService.findAll(null).subscribe(res => {
       if (res) {
         this.categories = res.data.items;
+        console.log();
       }
     });
   }
@@ -371,8 +371,15 @@ export default class AnalysisSales extends BaseComponent {
   }
 
   created() {
+    this.findBaeminCateogry();
+  }
+  mounted() {
     this.$root.$on('tabRevenue', () => {
-      this.findBaeminCateogry();
+      if (this.$route.query.baeminCategoryName) {
+        this.findRevenueAnalysis(this.$route.query.baeminCategoryName);
+      } else {
+        this.findRevenueAnalysis('한식');
+      }
     });
   }
 }

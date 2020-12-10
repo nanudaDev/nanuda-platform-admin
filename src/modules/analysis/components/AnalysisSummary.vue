@@ -174,8 +174,17 @@ export default class AnalysisSummary extends BaseComponent {
     }
   }
   created() {
-    this.$root.$on('search', query => {
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
       this.findAnalysisSummary(query);
+    }
+  }
+  mounted() {
+    this.$root.$on('tabSummary', () => {
+      const query = ReverseQueryParamMapper(location.search);
+      if (query) {
+        this.findAnalysisSummary(query);
+      }
     });
   }
 }

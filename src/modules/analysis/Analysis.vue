@@ -8,7 +8,7 @@
             <b-col cols="10">
               <b-form-input
                 list="company_lsit"
-                v-model="selectedBdongCode"
+                v-model="analysisTabSearchDto.bdongCode"
               ></b-form-input>
               <datalist id="company_lsit">
                 <option
@@ -93,29 +93,22 @@ export default class Analysis extends BaseComponent {
 
   private addressKeywords = [
     {
-      bdongCode: '1168010100',
+      bdongCode: 1168010100,
       baeminCategoryName: '역삼동',
     },
     {
-      bdongCode: '1168010800',
+      bdongCode: 1168010800,
       baeminCategoryName: '논현동',
     },
   ];
   search() {
-    if (this.selectedBdongCode) {
-      this.analysisTabSearchDto.bdongCode = this.selectedBdongCode;
-    }
     this.$router.push({
       query: Object.assign(this.analysisTabSearchDto),
     });
-    const query = ReverseQueryParamMapper(location.search);
-    if (query) {
-      this.analysisTabSearchDto = query;
-      this.$root.$emit('search', query);
-    }
   }
   clickTabSummary() {
     console.log('탭 요약');
+    this.$root.$emit('tabSummary');
   }
   clickTabRevenue() {
     console.log('탭 매출분석');
@@ -128,7 +121,10 @@ export default class Analysis extends BaseComponent {
     console.log('탭 안구분석');
   }
   created() {
-    this.search();
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.analysisTabSearchDto = query;
+    }
   }
 }
 </script>

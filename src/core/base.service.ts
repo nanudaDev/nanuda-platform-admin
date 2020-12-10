@@ -223,8 +223,12 @@ export class BaseService extends Vue {
     return axios.put(path, params);
   }
 
-  protected get<T>(path: string, params?: any): AxiosObservable<T> {
-    return this.__api('get', path, params);
+  protected get<T>(
+    path: string,
+    params?: any,
+    analysis?: boolean,
+  ): AxiosObservable<T> {
+    return this.__api('get', path, params, analysis);
   }
 
   protected post<T>(path: string, params?: any): AxiosObservable<T> {

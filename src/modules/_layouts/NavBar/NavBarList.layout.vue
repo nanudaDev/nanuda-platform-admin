@@ -5,7 +5,10 @@
         <b-nav-item-dropdown :text="item.name" left>
           <template>
             <div v-for="children in item.children" :key="children.path">
-              <b-dropdown-item v-if="!children.meta.detailPage" :to="children.path">
+              <b-dropdown-item
+                v-if="!children.meta.detailPage"
+                :to="children.path"
+              >
                 <template>{{ children.meta.title }}</template>
               </b-dropdown-item>
             </div>
@@ -25,10 +28,14 @@
             aria-haspopup="true"
             aria-expanded="false"
             v-if="admin"
-          >{{ admin.name }}</a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+            >{{ admin.name }}</a
+          >
+          <div
+            class="dropdown-menu dropdown-menu-right"
+            aria-labelledby="navbarDropdown"
+          >
             <a class="dropdown-item" href="/my-page">마이 프로필</a>
-
+            <a class="dropdown-item" href="/analysis">상권분석</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click="logout()">로그아웃</a>
           </div>

@@ -106,15 +106,14 @@
         </template>
       </div>
     </section>
-    <section
-      class="section"
-      v-if="regidentialCountData && regidentialRatioData"
-    >
+    <section class="section">
       <header class="section-header">
         <h3>가구수</h3>
       </header>
       <div class="section-content">
-        <template v-if="!dataLoading">
+        <template
+          v-if="!dataLoading && regidentialCountData && regidentialRatioData"
+        >
           <DashboardBarChart
             v-if="regidentialRatioData"
             :chartData="regidentialRatioData"
@@ -201,7 +200,7 @@
         </template>
       </div>
     </section>
-    <section class="section">
+    <!-- <section class="section">
       <header class="section-header">
         <h3>유동인구</h3>
       </header>
@@ -271,7 +270,7 @@
           </div>
         </template>
       </div>
-    </section>
+    </section> -->
   </div>
 </template>
 <script lang="ts">
@@ -280,7 +279,7 @@ import { AnalysisTabListDto } from '@/dto';
 import AnalysisTabService from '@/services/analysis/analysis-tab.service';
 import DashboardPieChart from '../../dashboard/add-on/DashboardPieChart.vue';
 import DashboardBarChart from '../../dashboard/add-on/DashboardBarChart.vue';
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { ReverseQueryParamMapper } from '@/core';
 @Component({
   name: 'AnalysisPopulation',
@@ -290,6 +289,7 @@ import { ReverseQueryParamMapper } from '@/core';
   },
 })
 export default class AnalysisPopulation extends BaseComponent {
+  @Prop() bdongCode!: string;
   private analysisTabSearchDto = new AnalysisTabListDto();
   private residentCount = null;
   private genderCountData = null;
@@ -300,7 +300,7 @@ export default class AnalysisPopulation extends BaseComponent {
   private regidentialRatioData = null;
   private employeeCountData = null;
   private moviingPopulationCountData = null;
-  private dataLoading = false;
+  private dataLoading = true;
   private barOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -390,20 +390,10 @@ export default class AnalysisPopulation extends BaseComponent {
   }
 
   created() {
-    const query = ReverseQueryParamMapper(location.search);
-    if (query) {
-      this.analysisTabSearchDto = query;
+    setTimeout(() => {
+      this.analysisTabSearchDto.bdongCode = this.bdongCode;
       this.findAnalysisPopulation();
-    }
-  }
-  mounted() {
-    this.$root.$on('tabPopulation', () => {
-      const query = ReverseQueryParamMapper(location.search);
-      if (query) {
-        this.analysisTabSearchDto = query;
-        this.findAnalysisPopulation();
-      }
-    });
+    }, 1000);
   }
 }
 </script>

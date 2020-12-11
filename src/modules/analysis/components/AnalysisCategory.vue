@@ -160,8 +160,8 @@ export default class AnalysisCategory extends BaseComponent {
   private analysisTabSearchDto = new AnalysisTabListDto();
   private categories = [];
   private survivalYears = [];
-  private dataLoading = false;
-  private dataLoadingFoodCategory = false;
+  private dataLoading = true;
+  private dataLoadingFoodCategory = true;
   private dataLoadingSurvivalYears = false;
   private maxCntRatio = null;
   private maxAvgRatio = null;

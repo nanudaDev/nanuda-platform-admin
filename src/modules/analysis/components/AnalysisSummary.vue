@@ -5,7 +5,7 @@
         <h3>상권 요약</h3>
       </header>
       <div class="section-content">
-        <template v-if="!dataLoading">
+        <template v-if="!dataLoading && summary">
           <table class="table">
             <colgroup>
               <col width="25%" />
@@ -52,7 +52,7 @@
             </div>
           </div>
         </template>
-        <template v-if="!dataLoadingCategory">
+        <template v-if="!dataLoadingCategory && categories.length > 0">
           <div class="bg-light p-4 mt-4">
             <p>카테고리별 매출 비중 (배달의민족 카테고리 기준)</p>
             <div class="mt-4">
@@ -135,8 +135,8 @@ export default class AnalysisSummary extends BaseComponent {
   @Prop() bdongCode!: string;
   private analysisTabSearchDto = new AnalysisTabListDto();
   private summary = {};
-  private dataLoading = false;
-  private dataLoadingCategory = false;
+  private dataLoading = true;
+  private dataLoadingCategory = true;
   private categories = [];
   private recomeendCategory = [];
   private parmas = null;

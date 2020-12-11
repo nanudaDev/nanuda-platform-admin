@@ -7,14 +7,14 @@
       <div class="section-content">
         <template v-if="!dataLoading">
           <b-row>
-            <b-col cols="6">
+            <b-col cols="4">
               <DashboardBarChart
                 v-if="genderRatioData"
                 :chartData="genderRatioData"
                 :options="barOptions"
               />
             </b-col>
-            <b-col cols="6">
+            <b-col cols="8">
               <DashboardBarChart
                 v-if="ageGroupRatioData"
                 :chartData="ageGroupRatioData"
@@ -137,23 +137,28 @@
                 <tr>
                   <th scope="row">세대</th>
                   <td rowspan="2">
-                    {{ regidentialCountData.totalCount | numberTransfomer }}
+                    {{
+                      regidentialTotalCountData.totalCount | numberTransfomer
+                    }}
                   </td>
-                  <td>58,000</td>
-                  <td>58,000</td>
-                  <td>13,293</td>
-                  <td>38,522</td>
-                  <td>35,265</td>
-                  <td>11,021</td>
+                  <td
+                    v-for="(data, index) in regidentialCountData"
+                    :key="index"
+                  >
+                    {{ data | numberTransfomer }}
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">비율</th>
-                  <td>59%</td>
-                  <td>41%</td>
-                  <td>13%</td>
-                  <td>26%</td>
-                  <td>24%</td>
-                  <td>11%</td>
+                  <td
+                    v-for="(data, index) in regidentialCountData"
+                    :key="index"
+                  >
+                    {{
+                      (data / regidentialTotalCountData.totalCount).toFixed(2) *
+                        100
+                    }}%
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -172,7 +177,7 @@
         </template>
       </div>
     </section>
-    <section class="section" v-if="employeeCountData">
+    <section class="section">
       <header class="section-header">
         <h3>직장인 수</h3>
       </header>
@@ -296,6 +301,7 @@ export default class AnalysisPopulation extends BaseComponent {
   private genderRatioData = null;
   private ageGroupCountData = null;
   private ageGroupRatioData = null;
+  private regidentialTotalCountData = null;
   private regidentialCountData = null;
   private regidentialRatioData = null;
   private employeeCountData = null;
@@ -354,8 +360,10 @@ export default class AnalysisPopulation extends BaseComponent {
       this.analysisTabSearchDto,
     ).subscribe(res => {
       if (res) {
-        this.regidentialCountData = res.data[0];
+        this.regidentialTotalCountData = res.data[0];
+        this.regidentialCountData = res.data[1].datasets[0].data;
         this.regidentialRatioData = res.data[1];
+        console.log(this.regidentialRatioData);
       }
     });
   }

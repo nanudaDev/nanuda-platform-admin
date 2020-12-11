@@ -182,6 +182,11 @@ export default class Analysis extends BaseComponent {
     ).subscribe(res => {
       if (res) {
         this.propDistrict = res.data[0];
+        this.$root.$emit(
+          'changeDistrict',
+          this.propDistrict.lat,
+          this.propDistrict.lon,
+        );
       }
     });
   }
@@ -196,11 +201,6 @@ export default class Analysis extends BaseComponent {
         this.categoryClicked = false;
         this.bdongCode = res.data.items[0].bdongCode;
         await this.getReverseDistrict(this.bdongCode);
-        this.$root.$emit(
-          'changeDistrict',
-          this.propDistrict.lat,
-          this.propDistrict.lon,
-        );
       },
     );
   }

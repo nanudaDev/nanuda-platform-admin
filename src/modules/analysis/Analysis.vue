@@ -7,15 +7,15 @@
           <b-form-row>
             <b-col cols="10">
               <b-form-input
-                list="company_lsit"
-                v-model="analysisTabSearchDto.bdongCode"
+                list="district_list"
+                v-model="addressKeyword"
               ></b-form-input>
-              <datalist id="company_lsit">
+              <datalist id="district_list">
                 <option
-                  v-for="address in addressKeywords"
-                  :key="address.bdongCode"
-                  :value="address.bdongCode"
-                  >{{ address.baeminCategoryName }}</option
+                  v-for="district in districtSelect"
+                  :key="district.no"
+                  :value="district.bCode"
+                  >{{ district.region3DepthName }}</option
                 >
               </datalist>
             </b-col>
@@ -60,7 +60,7 @@
     </div>
 
     <section id="map-section">
-      <!-- <AnalysisMap /> -->
+      <AnalysisMap />
     </section>
   </article>
 </template>
@@ -72,8 +72,11 @@ import AnalysisSales from './components/AnalysisSales.vue';
 import AnalysisCategory from './components/AnalysisCategory.vue';
 import AnalysisPopulation from './components/AnalysisPopulation.vue';
 import AnalysisMap from './components/AnalysisMap.vue';
-import { AnalysisTabListDto } from '@/dto';
+import { AnalysisTabListDto, CompanyDistrictDto } from '@/dto';
 import { ReverseQueryParamMapper } from '@/core';
+import { BaeminCategoryCode } from '@/services/shared';
+import CompanyDistrictService from '@/services/company-district.service';
+import CodeBdongService from '@/services/analysis/code-bdong.service';
 
 @Component({
   name: 'Analysis',
@@ -89,18 +92,22 @@ export default class Analysis extends BaseComponent {
   private slidebarVisible = true;
   private bdongCode = null;
   private analysisTabSearchDto = new AnalysisTabListDto();
+  private addressKeyword = '';
   private selectedBdongCode = null;
 
-  private addressKeywords = [
-    {
-      bdongCode: 1168010100,
-      baeminCategoryName: '역삼동',
-    },
-    {
-      bdongCode: 1168010800,
-      baeminCategoryName: '논현동',
-    },
-  ];
+  private districtSelect = [];
+  private comapnyDistirctDto = new CompanyDistrictDto();
+
+  getDistrictAddress() {
+    CompanyDistrictService.findForSelectOption(
+      this.comapnyDistirctDto,
+    ).subscribe(res => {
+      if (res) {
+        this.districtSelect = res.data;
+      }
+    });
+  }
+
   search() {
     this.$router.push({
       query: Object.assign(this.analysisTabSearchDto),
@@ -118,10 +125,16 @@ export default class Analysis extends BaseComponent {
   clickTabPopulation() {
     this.$root.$emit('tabPopulation');
   }
+
   created() {
+    this.getDistrictAddress();
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.analysisTabSearchDto = query;
+      this.search();
+    } else {
+      this.analysisTabSearchDto.bdongCode = '1168010100';
+      this.search();
     }
   }
 }

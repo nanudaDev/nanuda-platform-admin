@@ -2,7 +2,8 @@ import { BaseService } from '@/core';
 
 export class CodeBdongService extends BaseService {
   findAll(params) {
-    return super.get('code-bdong', params, true);
+    console.log(params);
+    return super.get<any>('code-bdong', params, true);
   }
 }
 

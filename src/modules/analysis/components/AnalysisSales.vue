@@ -8,40 +8,43 @@
         <div class="mt-4">
           <b-button
             :variant="
-              analysisTabSearchDto.baeminCategoryName ===
-              category.categoryNameKr
+              analysisTabSearchDto.baeminCategoryName === category
                 ? 'secondary'
                 : 'outline-secondary'
             "
             v-for="category in categories"
-            :key="category.id"
+            :key="category"
             class="ml-0 mr-2 mb-2"
-            @click="findRevenueAnalysis(category.categoryNameKr)"
+            @click="findRevenueAnalysis(category)"
           >
-            {{ category.categoryNameKr }}
+            {{ category }}
           </b-button>
         </div>
-        <template v-if="!dataLoading">
+        <template v-if="!dataLoading || !revenueCategories">
           <div class="bg-light p-4 mt-4">
             <p>카테고리별 매출 비중 (배달의민족 카테고리 기준)</p>
-            <div class="d-flex align-items-start mt-4">
+            <div class="mt-4">
               <div
                 v-for="(category, index) in revenueCategories"
                 :key="category.id"
-                :style="`width : ${category.w_total_amt_avg_ratio * 100}%`"
+                class="d-flex align-items-center"
               >
                 <div
                   class="bg-info"
                   style="height:20px;"
-                  :style="`opacity:${1 / (index + 1)} `"
+                  :style="
+                    `width : ${(category.w_total_amt_avg_ratio * 100).toFixed(
+                      2,
+                    )}%; opacity:${1 / (index + 1)}`
+                  "
                 ></div>
-                <div class="text-center mt-2">
+                <div class="d-flex align-items-center ml-3">
                   <p
-                    style="white-space:nowrap; font-size:20px; font-weight:bold;"
+                    style="white-space:nowrap; font-size:16px; font-weight:bold; margin-right:8px;"
                   >
                     {{ Math.round(category.w_total_amt_avg_ratio * 100) }}%
                   </p>
-                  <span style="font-size:"
+                  <span style="font-size:12px"
                     >{{ category.baeminCategoryName }}
                   </span>
                 </div>
@@ -264,7 +267,7 @@
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import AnalysisTabService from '@/services/analysis/analysis-tab.service';
 import BaeminCategoryService from '@/services/analysis/baemin-category.service';
 import {
@@ -284,8 +287,9 @@ import { ReverseQueryParamMapper } from '@/core';
   },
 })
 export default class AnalysisSales extends BaseComponent {
+  @Prop() bdongCode!: string;
   private analysisTabSearchDto = new AnalysisTabListDto();
-  private categories = [];
+  private categories: BaeminCategoryCode[] = [...CONST_BAEMIN_CATEGORY_CODE];
   private revenueCategories = [];
   private genderCountData = null;
   private genderRevenueData = null;
@@ -309,24 +313,23 @@ export default class AnalysisSales extends BaseComponent {
     },
   };
 
-  findRevenueAnalysis(categoryName) {
-    this.analysisTabSearchDto.baeminCategoryName = categoryName;
-    this.$router.push({
-      query: Object.assign(this.analysisTabSearchDto),
-    });
-    this.findCategoryRatio();
-    this.findRevenueAnalysisGender();
-    this.findRevenueAnalysisAgeGroup();
-    this.findRevenueAnalysisByDay();
-  }
+  async findRevenueAnalysis(categoryName?: BaeminCategoryCode) {
+    if (!this.bdongCode) {
+      return;
+    }
+    this.analysisTabSearchDto.bdongCode = this.bdongCode;
 
-  findBaeminCateogry() {
-    BaeminCategoryService.findAll(null).subscribe(res => {
-      if (res) {
-        this.categories = res.data.items;
-        console.log();
-      }
-    });
+    this.analysisTabSearchDto.baeminCategoryName = categoryName;
+    if (!categoryName) {
+      this.analysisTabSearchDto.baeminCategoryName = BaeminCategoryCode.KOREAN;
+    }
+
+    await Promise.all([
+      await this.findCategoryRatio(),
+      await this.findRevenueAnalysisGender(),
+      await this.findRevenueAnalysisAgeGroup(),
+      await this.findRevenueAnalysisByDay(),
+    ]);
   }
 
   findCategoryRatio() {
@@ -373,33 +376,9 @@ export default class AnalysisSales extends BaseComponent {
     });
   }
 
-  created() {
-    this.findBaeminCateogry();
-    const query = ReverseQueryParamMapper(location.search);
-    if (query) {
-      this.analysisTabSearchDto = query;
-      if (this.analysisTabSearchDto) {
-        this.findRevenueAnalysis(this.analysisTabSearchDto.baeminCategoryName);
-      } else {
-        this.findRevenueAnalysis('한식');
-      }
-    }
-  }
-
-  mounted() {
-    this.$root.$on('tabRevenue', () => {
-      const query = ReverseQueryParamMapper(location.search);
-      if (query) {
-        this.analysisTabSearchDto = query;
-        if (this.analysisTabSearchDto) {
-          this.findRevenueAnalysis(
-            this.analysisTabSearchDto.baeminCategoryName,
-          );
-        } else {
-          this.findRevenueAnalysis('한식');
-        }
-      }
-    });
-  }
+  // created() {
+  //   this.findBaeminCateogry();
+  //   this.findRevenueAnalysis();
+  // }
 }
 </script>

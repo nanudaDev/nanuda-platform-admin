@@ -5,42 +5,50 @@
         <h2>나누다키친 상권분석</h2>
         <div class="mt-3">
           <b-form-row>
-            <b-col cols="10">
-              <b-form-input
-                list="district_list"
+            <b-col cols="12">
+              <select
+                id="district_list"
                 v-model="addressKeyword"
-              ></b-form-input>
-              <datalist id="district_list">
+                class="custom-select"
+                @change="findBdongCode()"
+              >
                 <option
                   v-for="district in districtSelect"
                   :key="district.no"
-                  :value="district.bCode"
+                  :value="district.region3DepthName"
                   >{{ district.region3DepthName }}</option
                 >
-              </datalist>
+              </select>
             </b-col>
-            <b-col cols="2">
-              <b-button variant="info" size="lg" block @click="search()">
+            <!-- <b-col cols="2">
+              <b-button
+                variant="info"
+                size="lg"
+                block
+                @click="search()"
+                :disabled="!addressKeyword"
+              >
                 검색
               </b-button>
-            </b-col>
+            </b-col> -->
           </b-form-row>
         </div>
       </header>
-      <b-tabs fill>
+      <b-tabs fill v-if="addressKeyword">
         <b-tab title="요약" active @click="clickTabSummary()">
-          <AnalysisSummary />
+          <AnalysisSummary v-if="summaryClicked" :bdongCode="bdongCode" />
         </b-tab>
         <b-tab title="매출분석" @click="clickTabRevenue()">
-          <AnalysisSales />
+          <AnalysisSales v-if="revenueClicked" :bdongCode="bdongCode" />
         </b-tab>
         <b-tab title="업종분석" @click="clickTabCategory()">
-          <AnalysisCategory />
+          <AnalysisCategory v-if="categoryClicked" :bdongCode="bdongCode" />
         </b-tab>
         <b-tab title="인구분석" @click="clickTabPopulation()">
-          <AnalysisPopulation />
+          <AnalysisPopulation v-if="populationClicked" />
         </b-tab>
       </b-tabs>
+
       <b-button
         variant="light"
         class="btn-toggle"
@@ -94,11 +102,18 @@ export default class Analysis extends BaseComponent {
   private analysisTabSearchDto = new AnalysisTabListDto();
   private addressKeyword = '';
   private selectedBdongCode = null;
-
+  private searched = false;
   private districtSelect = [];
   private comapnyDistirctDto = new CompanyDistrictDto();
+  private queryParam: any;
+  private summaryClicked = false;
+  private revenueClicked = false;
+  private categoryClicked = false;
+  private populationClicked = false;
+  private propDistrict = new CompanyDistrictDto();
 
   getDistrictAddress() {
+    this.comapnyDistirctDto.region1DepthName = '서울';
     CompanyDistrictService.findForSelectOption(
       this.comapnyDistirctDto,
     ).subscribe(res => {
@@ -108,34 +123,75 @@ export default class Analysis extends BaseComponent {
     });
   }
 
-  search() {
-    this.$router.push({
-      query: Object.assign(this.analysisTabSearchDto),
+  async getReverseDistrict(bdongCode) {
+    this.comapnyDistirctDto.region1DepthName = '서울';
+    this.comapnyDistirctDto.bCode = bdongCode;
+    await CompanyDistrictService.findForSelectOption(
+      this.comapnyDistirctDto,
+    ).subscribe(res => {
+      if (res) {
+        this.propDistrict = res.data[0];
+      }
     });
   }
+
+  findBdongCode() {
+    this.searched = false;
+    CodeBdongService.findAll({ bdongName: this.addressKeyword }).subscribe(
+      async res => {
+        this.populationClicked = false;
+        this.revenueClicked = false;
+        this.summaryClicked = false;
+        this.categoryClicked = false;
+        this.bdongCode = res.data.items[0].bdongCode;
+        await this.getReverseDistrict(this.bdongCode);
+        this.$root.$emit(
+          'changeDistrict',
+          this.propDistrict.lat,
+          this.propDistrict.lon,
+        );
+      },
+    );
+  }
+
+  async search() {
+    this.$router
+      .push({
+        query: Object.assign({
+          bdongCode: this.bdongCode,
+        }),
+      })
+      .catch(() => {
+        console.log('dsadsad');
+      });
+    this.searched = true;
+  }
   clickTabSummary() {
-    this.$root.$emit('tabSummary');
+    this.summaryClicked = true;
+    // this.$root.$emit('tabSummary');
   }
   clickTabRevenue() {
-    this.$root.$emit('tabRevenue');
+    this.revenueClicked = true;
+    // this.$root.$emit('tabRevenue');
   }
   clickTabCategory() {
-    this.$root.$emit('tabCategory');
+    this.categoryClicked = true;
+    // this.$root.$emit('tabCategory');
   }
   clickTabPopulation() {
-    this.$root.$emit('tabPopulation');
+    // this.$root.$emit('tabPopulation');
   }
 
   created() {
     this.getDistrictAddress();
-    const query = ReverseQueryParamMapper(location.search);
-    if (query) {
-      this.analysisTabSearchDto = query;
-      this.search();
-    } else {
-      this.analysisTabSearchDto.bdongCode = '1168010100';
-      this.search();
-    }
+    // this.queryParam = ReverseQueryParamMapper(location.search);
+    // if (this.queryParam) {
+    //   this.searched = true;
+    //   this.search();
+    //   this.clickTabSummary();
+    // } else {
+    //   this.searched = false;
+    // }
   }
 }
 </script>

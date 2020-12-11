@@ -149,13 +149,14 @@
 import BaseComponent from '@/core/base.component';
 import { AnalysisTabListDto } from '@/dto';
 import AnalysisTabService from '@/services/analysis/analysis-tab.service';
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'AnalysisCategory',
 })
 export default class AnalysisCategory extends BaseComponent {
+  @Prop() bdongCode!: string;
   private analysisTabSearchDto = new AnalysisTabListDto();
   private categories = [];
   private survivalYears = [];
@@ -207,22 +208,19 @@ export default class AnalysisCategory extends BaseComponent {
     this.findSurvivalYears();
   }
 
-  created() {
-    const query = ReverseQueryParamMapper(location.search);
-    if (query) {
-      this.analysisTabSearchDto = query;
-      this.findAnalysisCategory();
-    }
-  }
+  // created() {
+  //   const query = ReverseQueryParamMapper(location.search);
+  //   if (query) {
+  //     this.analysisTabSearchDto = query;
+  //     this.findAnalysisCategory();
+  //   }
+  // }
 
-  mounted() {
-    this.$root.$on('tabCategory', () => {
-      const query = ReverseQueryParamMapper(location.search);
-      if (query) {
-        this.analysisTabSearchDto = query;
-        this.findAnalysisCategory();
-      }
-    });
+  created() {
+    setTimeout(() => {
+      this.analysisTabSearchDto.bdongCode = this.bdongCode;
+      this.findAnalysisCategory();
+    }, 1000);
   }
 }
 </script>

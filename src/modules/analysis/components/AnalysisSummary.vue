@@ -55,28 +55,28 @@
         <template v-if="!dataLoadingCategory">
           <div class="bg-light p-4 mt-4">
             <p>카테고리별 매출 비중 (배달의민족 카테고리 기준)</p>
-            <div class="d-flex align-items-start mt-4">
+            <div class="mt-4">
               <div
                 v-for="(category, index) in categories"
                 :key="category.id"
-                :style="
-                  `width : ${(category.w_total_amt_avg_ratio * 100).toFixed(
-                    2,
-                  )}%`
-                "
+                class="d-flex align-items-center"
               >
                 <div
                   class="bg-info"
                   style="height:20px;"
-                  :style="`opacity:${1 / (index + 1)} `"
+                  :style="
+                    `width : ${(category.w_total_amt_avg_ratio * 100).toFixed(
+                      2,
+                    )}%; opacity:${1 / (index + 1)}`
+                  "
                 ></div>
-                <div class="text-center mt-2">
+                <div class="d-flex align-items-center ml-3">
                   <p
-                    style="white-space:nowrap; font-size:20px; font-weight:bold;"
+                    style="white-space:nowrap; font-size:16px; font-weight:bold; margin-right:8px;"
                   >
                     {{ Math.round(category.w_total_amt_avg_ratio * 100) }}%
                   </p>
-                  <span style="font-size:"
+                  <span style="font-size:12px"
                     >{{ category.baeminCategoryName }}
                   </span>
                 </div>
@@ -123,7 +123,7 @@
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import AnalysisTabService from '@/services/analysis/analysis-tab.service';
 import { AnalysisTabListDto } from '@/dto';
 import { ReverseQueryParamMapper } from '@/core';
@@ -132,6 +132,7 @@ import { ReverseQueryParamMapper } from '@/core';
   name: 'AnalysisSummary',
 })
 export default class AnalysisSummary extends BaseComponent {
+  @Prop() bdongCode!: string;
   private analysisTabSearchDto = new AnalysisTabListDto();
   private summary = {};
   private dataLoading = false;
@@ -146,48 +147,40 @@ export default class AnalysisSummary extends BaseComponent {
     if (idx === 2) return 'bg-success';
   }
 
-  findSummary() {
+  async findSummary() {
+    this.summary = {};
     this.dataLoading = true;
-    AnalysisTabService.findSummary(this.analysisTabSearchDto).subscribe(res => {
-      if (res) {
+    await AnalysisTabService.findSummary(this.analysisTabSearchDto).subscribe(
+      res => {
         this.dataLoading = false;
         this.summary = res.data;
-      }
-    });
-  }
-
-  findCategoryRatio() {
-    this.dataLoadingCategory = true;
-    AnalysisTabService.findCategoryRatio(this.analysisTabSearchDto).subscribe(
-      res => {
-        if (res) {
-          this.dataLoadingCategory = false;
-          this.categories = res.data;
-          this.recomeendCategory = this.categories.slice(0, 3);
-        }
       },
     );
   }
 
-  findAnalysisSummary() {
-    this.findSummary();
-    this.findCategoryRatio();
-  }
-  created() {
-    const query = ReverseQueryParamMapper(location.search);
-    if (query) {
-      this.analysisTabSearchDto = query;
-      this.findAnalysisSummary();
-    }
-  }
-  mounted() {
-    this.$root.$on('tabSummary', () => {
-      const query = ReverseQueryParamMapper(location.search);
-      if (query) {
-        this.analysisTabSearchDto = query;
-        this.findAnalysisSummary();
+  async findCategoryRatio() {
+    this.dataLoadingCategory = true;
+    await AnalysisTabService.findCategoryRatio(
+      this.analysisTabSearchDto,
+    ).subscribe(res => {
+      if (res) {
+        this.dataLoadingCategory = false;
+        this.categories = res.data;
+        this.recomeendCategory = this.categories.slice(0, 3);
       }
     });
+  }
+
+  async findAnalysisSummary() {
+    await this.findCategoryRatio();
+    await this.findSummary();
+  }
+  // created() {
+  //   setTimeout(() => this.findAnalysisSummary(), 2000);
+  // }
+  created() {
+    this.analysisTabSearchDto.bdongCode = this.bdongCode;
+    setTimeout(() => this.findAnalysisSummary(), 1000);
   }
 }
 </script>

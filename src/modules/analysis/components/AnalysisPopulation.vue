@@ -237,8 +237,10 @@
                     :key="index"
                   >
                     {{
-                      (data / regidentialTotalCountData.totalCount).toFixed(2) *
+                      (
+                        (data / regidentialTotalCountData.totalCount) *
                         100
+                      ).toFixed(2)
                     }}%
                   </td>
                 </tr>

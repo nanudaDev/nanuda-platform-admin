@@ -12,6 +12,7 @@
                 class="custom-select"
                 @change="findBdongCode()"
               >
+                <option value="" hidden>지역 선택</option>
                 <option
                   v-for="district in districtSelect"
                   :key="district.no"
@@ -19,9 +20,6 @@
                   >{{ district.region3DepthName }}</option
                 >
               </select>
-              <p v-if="!addressKeyword" class="mt-2">
-                분석하려는 지역을 선택해주세요
-              </p>
             </b-col>
             <!-- <b-col cols="2">
               <b-button
@@ -37,68 +35,93 @@
           </b-form-row>
         </div>
       </header>
-      <b-tabs fill v-if="addressKeyword">
-        <b-tab title="요약" active>
-          <AnalysisSummary v-if="summaryClicked" :bdongCode="bdongCode" />
-          <template v-else>
-            <div class="px-4 mt-4">
-              <b-button
-                variant="outline-info"
-                block
-                size="lg"
-                @click="clickTabSummary()"
-              >
-                상권요약 정보 보기
-              </b-button>
+      <template v-if="addressKeyword">
+        <b-tabs fill>
+          <b-tab title="요약" active>
+            <AnalysisSummary v-if="summaryClicked" :bdongCode="bdongCode" />
+            <template v-else>
+              <div class="px-4 mt-4">
+                <b-button
+                  variant="outline-info"
+                  block
+                  size="lg"
+                  @click="clickTabSummary()"
+                >
+                  상권요약 정보 보기
+                </b-button>
+              </div>
+            </template>
+          </b-tab>
+          <b-tab title="매출분석">
+            <AnalysisSales v-if="revenueClicked" :bdongCode="bdongCode" />
+            <template v-else>
+              <div class="px-4 mt-4">
+                <b-button
+                  variant="outline-info"
+                  block
+                  size="lg"
+                  @click="clickTabRevenue()"
+                >
+                  매출분석 정보 보기
+                </b-button>
+              </div>
+            </template>
+          </b-tab>
+          <b-tab title="업종분석">
+            <AnalysisCategory v-if="categoryClicked" :bdongCode="bdongCode" />
+            <template v-else>
+              <div class="px-4 mt-4">
+                <b-button
+                  variant="outline-info"
+                  block
+                  size="lg"
+                  @click="clickTabCategory()"
+                >
+                  업종분석 정보 보기
+                </b-button>
+              </div>
+            </template>
+          </b-tab>
+          <b-tab title="인구분석">
+            <AnalysisPopulation
+              v-if="populationClicked"
+              :bdongCode="bdongCode"
+            />
+            <template v-else>
+              <div class="px-4 mt-4">
+                <b-button
+                  variant="outline-info"
+                  block
+                  size="lg"
+                  @click="clickTabPopulation()"
+                >
+                  인구분석 정보 보기
+                </b-button>
+              </div>
+            </template>
+          </b-tab>
+        </b-tabs>
+      </template>
+      <template v-else>
+        <div class="tabs">
+          <b-row
+            no-gutters
+            align-v="center"
+            align-h="center"
+            style="height:100%"
+            class="bg-white"
+          >
+            <div class="text-center">
+              <p style="font-size:30px">
+                <b-icon icon="geo-alt" variant="info"></b-icon>
+              </p>
+              <p class="mt-2">
+                분석하려는 지역을 선택해주세요
+              </p>
             </div>
-          </template>
-        </b-tab>
-        <b-tab title="매출분석">
-          <AnalysisSales v-if="revenueClicked" :bdongCode="bdongCode" />
-          <template v-else>
-            <div class="px-4 mt-4">
-              <b-button
-                variant="outline-info"
-                block
-                size="lg"
-                @click="clickTabRevenue()"
-              >
-                매출분석 정보 보기
-              </b-button>
-            </div>
-          </template>
-        </b-tab>
-        <b-tab title="업종분석">
-          <AnalysisCategory v-if="categoryClicked" :bdongCode="bdongCode" />
-          <template v-else>
-            <div class="px-4 mt-4">
-              <b-button
-                variant="outline-info"
-                block
-                size="lg"
-                @click="clickTabCategory()"
-              >
-                업종분석 정보 보기
-              </b-button>
-            </div>
-          </template>
-        </b-tab>
-        <b-tab title="인구분석">
-          <AnalysisPopulation v-if="populationClicked" :bdongCode="bdongCode" />
-          <template v-else>
-            <div class="px-4 mt-4">
-              <b-button
-                variant="outline-info"
-                block
-                size="lg"
-                @click="clickTabPopulation()"
-              >
-                인구분석 정보 보기
-              </b-button>
-            </div>
-          </template>
-        </b-tab>
-      </b-tabs>
+          </b-row>
+        </div>
+      </template>
     </div>
     <section id="map-section">
       <AnalysisMap :slidebarVisible="slidebarVisible" />
@@ -334,7 +357,7 @@ export default class Analysis extends BaseComponent {
   }
   #map-section {
     position: relative;
-    width: 100%;
+    width: calc(100% - 600px);
     height: 100%;
   }
 

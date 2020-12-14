@@ -46,7 +46,7 @@ export default class AnalysisMap extends BaseComponent {
     //     position: new window.kakao.maps.LatLng(item.lat, item.lon),
     //   });
     // });
-    const content = '';
+    let content = '';
     const customOverlay = new window.kakao.maps.CustomOverlay({
       position: markerPosition,
       content: content,
@@ -58,7 +58,7 @@ export default class AnalysisMap extends BaseComponent {
       strokeColor: '#ffffff',
       strokeOpacity: 0.8,
       strokeStyle: 'dashed',
-      fillColor: '#00EEEE',
+      fillColor: '#17a2b8',
       fillOpacity: 0.5,
     });
 
@@ -89,8 +89,8 @@ export default class AnalysisMap extends BaseComponent {
         // 그려지고 있는 원의 반경을 표시할 선 객체를 생성합니다
         if (!drawingLine) {
           drawingLine = new window.kakao.maps.Polyline({
-            strokeWeight: 3, // 선의 두께입니다
-            strokeColor: '#00a0e9', // 선의 색깔입니다
+            strokeWeight: 2, // 선의 두께 입니다
+            strokeColor: '#ffffff', // 선의 색깔입니다
             strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
             strokeStyle: 'solid', // 선의 스타일입니다
           });
@@ -99,12 +99,12 @@ export default class AnalysisMap extends BaseComponent {
         // 그려지고 있는 원을 표시할 원 객체를 생성합니다
         if (!drawingCircle) {
           drawingCircle = new window.kakao.maps.Circle({
-            strokeWeight: 1, // 선의 두께입니다
-            strokeColor: '#00a0e9', // 선의 색깔입니다
-            strokeOpacity: 0.1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
-            strokeStyle: 'solid', // 선의 스타일입니다
-            fillColor: '#00a0e9', // 채우기 색깔입니다
-            fillOpacity: 0.2, // 채우기 불투명도입니다
+            strokeWeight: 2, // 선의 두께입니다
+            strokeColor: '#ffffff', // 선의 색깔입니다
+            strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+            strokeStyle: 'dashed', // 선의 스타일입니다
+            fillColor: '#e85d47', // 채우기 색깔입니다
+            fillOpacity: 0.5, // 채우기 불투명도입니다
           });
         }
 
@@ -175,6 +175,58 @@ export default class AnalysisMap extends BaseComponent {
       }
     });
 
+    // 마우스 우클릭 하여 원 그리기가 종료됐을 때 호출하여
+    // 그려진 원의 반경 정보와 반경에 대한 도보, 자전거 시간을 계산하여
+    // HTML Content를 만들어 리턴하는 함수입니다
+    function getTimeHTML(distance) {
+      // 도보의 시속은 평균 4km/h 이고 도보의 분속은 67m/min입니다
+      const walkkTime = (distance / 67) | 0;
+      let walkHour = '',
+        walkMin = '';
+
+      // 계산한 도보 시간이 60분 보다 크면 시간으로 표시합니다
+      if (walkkTime > 60) {
+        walkHour =
+          '<span class="number">' + Math.floor(walkkTime / 60) + '</span>시간 ';
+      }
+      walkMin = '<span class="number">' + (walkkTime % 60) + '</span>분';
+
+      // 자전거의 평균 시속은 16km/h 이고 이것을 기준으로 자전거의 분속은 267m/min입니다
+      const bycicleTime = (distance / 227) | 0;
+      let bycicleHour = '',
+        bycicleMin = '';
+
+      // 계산한 자전거 시간이 60분 보다 크면 시간으로 표출합니다
+      if (bycicleTime > 60) {
+        bycicleHour =
+          '<span class="number">' +
+          Math.floor(bycicleTime / 60) +
+          '</span>시간 ';
+      }
+      bycicleMin = '<span class="number">' + (bycicleTime % 60) + '</span>분';
+
+      // 거리와 도보 시간, 자전거 시간을 가지고 HTML Content를 만들어 리턴합니다
+      let content = '<ul class="info">';
+      content += '<li>';
+      content +=
+        '<span class="label">총거리</span><span class="number">' +
+        distance +
+        '</span>m';
+      content += '</li>';
+      content += '<li>';
+      content += '<span class="label">도보</span>' + walkHour + walkMin;
+      content += '</li>';
+      content += '<li>';
+      content += '<span class="label">자전거</span>' + bycicleHour + bycicleMin;
+      content += '</li>';
+      content += '</ul>';
+
+      // circle.setMap(map);
+      customOverlay.setMap(map);
+      // clusterer.addMarkers(markers);
+
+      return content;
+    }
     // 지도에 마우스 오른쪽 클릭이벤트를 등록합니다
     // 원을 그리고있는 상태에서 마우스 오른쪽 클릭 이벤트가 발생하면
     // 마우스 오른쪽 클릭한 위치를 기준으로 원과 원의 반경정보를 표시하는 선과 커스텀 오버레이를 표시하고 그리기를 종료합니다
@@ -186,8 +238,8 @@ export default class AnalysisMap extends BaseComponent {
         // 원의 반경을 표시할 선 객체를 생성합니다
         const polyline = new window.kakao.maps.Polyline({
           path: [centerPosition, rClickPosition], // 선을 구성하는 좌표 배열입니다. 원의 중심좌표와 클릭한 위치로 설정합니다
-          strokeWeight: 3, // 선의 두께 입니다
-          strokeColor: '#00a0e9', // 선의 색깔입니다
+          strokeWeight: 2, // 선의 두께 입니다
+          strokeColor: '#ffffff', // 선의 색깔입니다
           strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
           strokeStyle: 'solid', // 선의 스타일입니다
         });
@@ -196,16 +248,16 @@ export default class AnalysisMap extends BaseComponent {
         const circle = new window.kakao.maps.Circle({
           center: centerPosition, // 원의 중심좌표입니다
           radius: polyline.getLength(), // 원의 반지름입니다 m 단위 이며 선 객체를 이용해서 얻어옵니다
-          strokeWeight: 1, // 선의 두께입니다
-          strokeColor: '#00a0e9', // 선의 색깔입니다
-          strokeOpacity: 0.1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
-          strokeStyle: 'solid', // 선의 스타일입니다
-          fillColor: '#00a0e9', // 채우기 색깔입니다
-          fillOpacity: 0.2, // 채우기 불투명도입니다
+          strokeWeight: 2, // 선의 두께입니다
+          strokeColor: '#ffffff', // 선의 색깔입니다
+          strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+          strokeStyle: 'dashed', // 선의 스타일입니다
+          fillColor: '#e85d47', // 채우기 색깔입니다
+          fillOpacity: 0.5, // 채우기 불투명도입니다
         });
 
         const radius = Math.round(circle.getRadius()); // 원의 반경 정보를 얻어옵니다
-        // content = getTimeHTML(radius); // 커스텀 오버레이에 표시할 반경 정보입니다
+        content = getTimeHTML(radius); // 커스텀 오버레이에 표시할 반경 정보입니다
 
         // 반경정보를 표시할 커스텀 오버레이를 생성합니다
         const radiusOverlay = new window.kakao.maps.CustomOverlay({
@@ -264,66 +316,10 @@ export default class AnalysisMap extends BaseComponent {
       removeCircles();
     });
 
-    // 마우스 우클릭 하여 원 그리기가 종료됐을 때 호출하여
-    // 그려진 원의 반경 정보와 반경에 대한 도보, 자전거 시간을 계산하여
-    // HTML Content를 만들어 리턴하는 함수입니다
-    function getTimeHTML(distance) {
-      // 도보의 시속은 평균 4km/h 이고 도보의 분속은 67m/min입니다
-      const walkkTime = (distance / 67) | 0;
-      let walkHour = '',
-        walkMin = '';
-
-      // 계산한 도보 시간이 60분 보다 크면 시간으로 표시합니다
-      if (walkkTime > 60) {
-        walkHour =
-          '<span class="number">' + Math.floor(walkkTime / 60) + '</span>시간 ';
-      }
-      walkMin = '<span class="number">' + (walkkTime % 60) + '</span>분';
-
-      // 자전거의 평균 시속은 16km/h 이고 이것을 기준으로 자전거의 분속은 267m/min입니다
-      const bycicleTime = (distance / 227) | 0;
-      let bycicleHour = '',
-        bycicleMin = '';
-
-      // 계산한 자전거 시간이 60분 보다 크면 시간으로 표출합니다
-      if (bycicleTime > 60) {
-        bycicleHour =
-          '<span class="number">' +
-          Math.floor(bycicleTime / 60) +
-          '</span>시간 ';
-      }
-      bycicleMin = '<span class="number">' + (bycicleTime % 60) + '</span>분';
-
-      // 거리와 도보 시간, 자전거 시간을 가지고 HTML Content를 만들어 리턴합니다
-      let content = '<ul class="info">';
-      content += '<li>';
-      content +=
-        '<span class="label">총거리</span><span class="number">' +
-        distance +
-        '</span>m';
-      content += '</li>';
-      content += '<li>';
-      content += '<span class="label">도보</span>' + walkHour + walkMin;
-      content += '</li>';
-      content += '<li>';
-      content += '<span class="label">자전거</span>' + bycicleHour + bycicleMin;
-      content += '</li>';
-      content += '</ul>';
-
-      // circle.setMap(map);
-      customOverlay.setMap(map);
-      // clusterer.addMarkers(markers);
-
-      return content;
-    }
     this.map = map;
   }
-
   mounted() {
-    // if (!this.district) {
-    //   this.district.lat = '37.5640455';
-    //   this.district.lon = '126.8340033';
-    // }
+    this.setMap('37.5012283', '127.0334121');
     // emit 함수 추가
     this.$root.$on('changeDistrict', (lat?: string, lon?: string) => {
       this.setMap(lat, lon);
@@ -356,6 +352,6 @@ export default class AnalysisMap extends BaseComponent {
 }
 .number {
   font-weight: bold;
-  color: #00a0e9;
+  color: #e85d47;
 }
 </style>

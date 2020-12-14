@@ -192,13 +192,13 @@
         <template
           v-if="
             !dataLoadingResidential &&
-              regidentialCountData &&
-              regidentialRatioData
+              residentialCountData &&
+              residentialRatioData
           "
         >
           <DashboardBarChart
-            v-if="regidentialRatioData"
-            :chartData="regidentialRatioData"
+            v-if="residentialRatioData"
+            :chartData="residentialRatioData"
             :options="barOptions"
           />
           <div class="mt-4">
@@ -220,11 +220,11 @@
                   <th scope="row">세대</th>
                   <td rowspan="2">
                     {{
-                      regidentialTotalCountData.totalCount | numberTransformer
+                      residentialTotalCountData.totalCount | numberTransformer
                     }}
                   </td>
                   <td
-                    v-for="(data, index) in regidentialCountData"
+                    v-for="(data, index) in residentialCountData"
                     :key="index"
                   >
                     {{ data | numberTransformer }}
@@ -233,12 +233,12 @@
                 <tr>
                   <th scope="row">비율</th>
                   <td
-                    v-for="(data, index) in regidentialCountData"
+                    v-for="(data, index) in residentialCountData"
                     :key="index"
                   >
                     {{
                       (
-                        (data / regidentialTotalCountData.totalCount) *
+                        (data / residentialTotalCountData.totalCount) *
                         100
                       ).toFixed(2)
                     }}%
@@ -530,9 +530,9 @@ export default class AnalysisPopulation extends BaseComponent {
   private residentGenderRatioData = null;
   private residentAgeGroupCountData = null;
   private residentAgeGroupRatioData = null;
-  private regidentialTotalCountData = null;
-  private regidentialCountData = null;
-  private regidentialRatioData = null;
+  private residentialTotalCountData = null;
+  private residentialCountData = null;
+  private residentialRatioData = null;
   private employeeTotalCount = null;
   private movingPopulationTotalCount = null;
   private movingPopulationGenderData = null;
@@ -589,16 +589,16 @@ export default class AnalysisPopulation extends BaseComponent {
     );
   }
 
-  findPopulationRegidentialRatio() {
+  findPopulationResidentialRatio() {
     this.dataLoadingResidential = true;
-    AnalysisTabService.findPopulationRegidentialRatio(
+    AnalysisTabService.findPopulationResidentialRatio(
       this.analysisTabSearchDto,
     ).subscribe(res => {
       if (res) {
         this.dataLoadingResidential = false;
-        this.regidentialTotalCountData = res.data[0];
-        this.regidentialCountData = res.data[1].datasets[0].data;
-        this.regidentialRatioData = res.data[1];
+        this.residentialTotalCountData = res.data[0];
+        this.residentialCountData = res.data[1].datasets[0].data;
+        this.residentialRatioData = res.data[1];
       }
     });
   }
@@ -641,7 +641,7 @@ export default class AnalysisPopulation extends BaseComponent {
     this.findPopulationResidentCount();
     this.findPopulationGenderRatio();
     this.findAgeGroupRatio();
-    this.findPopulationRegidentialRatio();
+    this.findPopulationResidentialRatio();
     this.findPopulationEmployeeCount();
     this.findMovingPopulationCount();
     this.findMovingPopulationGenderAndAgeRatio();

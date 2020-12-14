@@ -73,7 +73,7 @@ export class AnalysisTabService extends BaseService {
       true,
     );
   }
-  findPopulationRegidentialRatio(analysisTabListdto: AnalysisTabListDto) {
+  findPopulationResidentialRatio(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/population/residential-ratio',
       analysisTabListdto,

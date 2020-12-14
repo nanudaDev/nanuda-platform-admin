@@ -101,7 +101,7 @@
       </b-tabs>
     </div>
     <section id="map-section">
-      <AnalysisMap />
+      <AnalysisMap :slidebarVisible="slidebarVisible" />
       <b-button
         variant="light"
         class="btn-toggle"

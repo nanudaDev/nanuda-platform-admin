@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import { CompanyDistrictDto } from '@/dto';
 
 @Component({
@@ -13,6 +13,13 @@ export default class AnalysisMap extends BaseComponent {
   // @Prop() district?: CompanyDistrictDto;
   // private lat = this.district.lat;
   // private lon = this.district.lon;
+  private map;
+  @Prop() slidebarVisible?: boolean;
+  @Watch('slidebarVisible')
+  slidebarVisibleChanged() {
+    this.map.relayout();
+  }
+
   // 지도 가져오기
   setMap(lat?: string, lon?: string) {
     const container = document.getElementById('map');
@@ -21,11 +28,12 @@ export default class AnalysisMap extends BaseComponent {
     const markerPosition = new window.kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치입니다
     const options = {
       center: markerPosition,
-      level: 4,
-      maxLevel: 6,
+      level: 7,
+      maxLevel: 9,
       minLevel: 3,
     };
     const map = new window.kakao.maps.Map(container, options); // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
+
     const mapTypeControl = new window.kakao.maps.MapTypeControl(); // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
     const zoomControl = new window.kakao.maps.ZoomControl(); // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
 
@@ -54,8 +62,9 @@ export default class AnalysisMap extends BaseComponent {
       fillOpacity: 0.5,
     });
 
-    map.addControl(mapTypeControl, window.kakao.maps.ControlPosition.TOPRIGHT);
-    map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
+    circle.setRadius(1000);
+    // map.addControl(mapTypeControl, window.kakao.maps.ControlPosition.TOPRIGHT);
+    // map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
     map.relayout();
 
     let drawingFlag = false; // 원이 그려지고 있는 상태를 가지고 있을 변수입니다
@@ -68,7 +77,7 @@ export default class AnalysisMap extends BaseComponent {
     let circles = []; // 클릭으로 그려진 원과 반경 정보를 표시하는 선과 커스텀오버레이를 가지고 있을 배열입니다
 
     // 지도에 클릭 이벤트를 등록합니다
-    window.kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+    window.kakao.maps.event.addListener(map, 'click', mouseEvent => {
       // 클릭 이벤트가 발생했을 때 원을 그리고 있는 상태가 아니면 중심좌표를 클릭한 지점으로 설정합니다
       if (!drawingFlag) {
         // 상태를 그리고있는 상태로 변경합니다
@@ -112,7 +121,7 @@ export default class AnalysisMap extends BaseComponent {
 
     // 지도에 마우스무브 이벤트를 등록합니다
     // 원을 그리고있는 상태에서 마우스무브 이벤트가 발생하면 그려질 원의 위치와 반경정보를 동적으로 보여주도록 합니다
-    window.kakao.maps.event.addListener(map, 'mousemove', function(mouseEvent) {
+    window.kakao.maps.event.addListener(map, 'mousemove', mouseEvent => {
       // 마우스무브 이벤트가 발생했을 때 원을 그리고있는 상태이면
       if (drawingFlag) {
         // 마우스 커서의 현재 위치를 얻어옵니다
@@ -169,9 +178,7 @@ export default class AnalysisMap extends BaseComponent {
     // 지도에 마우스 오른쪽 클릭이벤트를 등록합니다
     // 원을 그리고있는 상태에서 마우스 오른쪽 클릭 이벤트가 발생하면
     // 마우스 오른쪽 클릭한 위치를 기준으로 원과 원의 반경정보를 표시하는 선과 커스텀 오버레이를 표시하고 그리기를 종료합니다
-    window.kakao.maps.event.addListener(map, 'rightclick', function(
-      mouseEvent,
-    ) {
+    window.kakao.maps.event.addListener(map, 'rightclick', mouseEvent => {
       if (drawingFlag) {
         // 마우스로 오른쪽 클릭한 위치입니다
         const rClickPosition = mouseEvent.latLng;
@@ -303,13 +310,13 @@ export default class AnalysisMap extends BaseComponent {
       content += '</li>';
       content += '</ul>';
 
-      // circle.setRadius(1000);
       // circle.setMap(map);
       customOverlay.setMap(map);
       // clusterer.addMarkers(markers);
 
       return content;
     }
+    this.map = map;
   }
 
   mounted() {

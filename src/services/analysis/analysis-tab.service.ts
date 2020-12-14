@@ -2,97 +2,131 @@ import { BaseService } from '@/core';
 import { AnalysisTabListDto } from '@/dto';
 
 export class AnalysisTabService extends BaseService {
-  findSummary(params: AnalysisTabListDto) {
-    return super.get<any>('analysis-tab/get-summary', params, true);
+  findSummary(analysisTabListdto: AnalysisTabListDto) {
+    return super.get<any>('analysis-tab/get-summary', analysisTabListdto, true);
   }
-  findCategoryRatio(params: AnalysisTabListDto) {
-    return super.get<any>('analysis-tab/category-ratio', params, true);
+  findCategoryRatio(analysisTabListdto: AnalysisTabListDto) {
+    return super.get<any>(
+      'analysis-tab/category-ratio',
+      analysisTabListdto,
+      true,
+    );
   }
 
-  findRevenueAnalysisGender(params: AnalysisTabListDto) {
-    return super.get<any>('analysis-tab/revenue-analysis-gender', params, true);
+  findRevenueAnalysisGender(analysisTabListdto: AnalysisTabListDto) {
+    return super.get<any>(
+      'analysis-tab/revenue-analysis-gender',
+      analysisTabListdto,
+      true,
+    );
   }
 
-  findRevenueAnalysisAgeGroup(params: AnalysisTabListDto) {
+  findRevenueAnalysisAgeGroup(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/revenue-analysis-age-group',
-      params,
+      analysisTabListdto,
       true,
     );
   }
-  findRevenueAnalysisByDay(params: AnalysisTabListDto) {
-    return super.get<any>('analysis-tab/revenue-analysis-by-day', params, true);
+  findRevenueAnalysisByDay(analysisTabListdto: AnalysisTabListDto) {
+    return super.get<any>(
+      'analysis-tab/revenue-analysis-by-day',
+      analysisTabListdto,
+      true,
+    );
   }
 
-  findFoodCategorySummary(params: AnalysisTabListDto) {
-    return super.get<any>('analysis-tab/food-category-summary', params, true);
+  findFoodCategorySummary(analysisTabListdto: AnalysisTabListDto) {
+    return super.get<any>(
+      'analysis-tab/food-category-summary',
+      analysisTabListdto,
+      true,
+    );
   }
 
-  findSurvivalYears(params: AnalysisTabListDto) {
-    return super.get<any>('analysis-tab/survival-years', params, true);
+  findSurvivalYears(analysisTabListdto: AnalysisTabListDto) {
+    return super.get<any>(
+      'analysis-tab/survival-years',
+      analysisTabListdto,
+      true,
+    );
   }
 
-  findPopulationResidentCount(params: AnalysisTabListDto) {
+  findPopulationResidentCount(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/population/resident-count',
-      params,
+      analysisTabListdto,
       true,
     );
   }
-  findPopulationGenderRatio(params: AnalysisTabListDto) {
-    return super.get<any>('analysis-tab/population/gender-ratio', params, true);
+  findPopulationGenderRatio(analysisTabListdto: AnalysisTabListDto) {
+    return super.get<any>(
+      'analysis-tab/population/gender-ratio',
+      analysisTabListdto,
+      true,
+    );
   }
-  findAgeGroupRatio(params) {
+  findAgeGroupRatio(analysisTabListdto) {
     return super.get<any>(
       'analysis-tab/population/age-group-ratio',
-      params,
+      analysisTabListdto,
       true,
     );
   }
-  findPopulationRegidentialRatio(params: AnalysisTabListDto) {
+  findPopulationRegidentialRatio(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/population/residential-ratio',
-      params,
+      analysisTabListdto,
       true,
     );
   }
 
-  findPopulationEmployeeCount(params: AnalysisTabListDto) {
+  findPopulationEmployeeCount(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/population/employee-count',
-      params,
+      analysisTabListdto,
       true,
     );
   }
 
-  findMovingPopulationCount(params: AnalysisTabListDto) {
+  findMovingPopulationCount(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/population/moving-population-count',
-      params,
+      analysisTabListdto,
       true,
     );
   }
 
-  findBestCatByLunch(params: AnalysisTabListDto) {
+  findBestCatByLunch(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/revenue-analysis-by-lunch',
-      params,
+      analysisTabListdto,
       true,
     );
   }
 
-  findBestCatByDinner(params: AnalysisTabListDto) {
+  findBestCatByDinner(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/revenue-analysis-by-dinner',
-      params,
+      analysisTabListdto,
       true,
     );
   }
 
-  findBestCatByLateNight(params: AnalysisTabListDto) {
+  findBestCatByLateNight(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/revenue-analysis-by-late-night',
-      params,
+      analysisTabListdto,
+      true,
+    );
+  }
+
+  findMovingPopulationGenderAndAgeRatio(
+    analysisTabListdto: AnalysisTabListDto,
+  ) {
+    return super.get<any>(
+      'analysis-tab/population/moving-population-gender-and-age-ratio',
+      analysisTabListdto,
       true,
     );
   }

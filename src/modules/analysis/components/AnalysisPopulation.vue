@@ -5,92 +5,170 @@
         <h3>주거인구</h3>
       </header>
       <div class="section-content">
-        <template v-if="!dataLoading">
-          <b-row>
-            <b-col cols="4">
-              <DashboardBarChart
-                v-if="genderRatioData"
-                :chartData="genderRatioData"
-                :options="barOptions"
-              />
-            </b-col>
-            <b-col cols="8">
-              <DashboardBarChart
-                v-if="ageGroupRatioData"
-                :chartData="ageGroupRatioData"
-                :options="barOptions"
-              />
-            </b-col>
-          </b-row>
+        <template v-if="!dataLoadingResident && residentGenderCountData">
           <div class="mt-4">
-            <table
-              class="table table-sm"
-              v-if="genderCountData && ageGroupCountData && residentCount"
-            >
-              <thead>
-                <tr>
-                  <th scope="col" rowspan="2">구분</th>
-                  <th scope="col" rowspan="2">총 인구</th>
-                  <th scope="colgroup" colspan="2">성별</th>
-                  <th scope="colgroup" colspan="4">연령별</th>
-                </tr>
-                <tr>
-                  <th scope="col">남성</th>
-                  <th scope="col">여성</th>
-                  <th scope="col">10대</th>
-                  <th scope="col">20대</th>
-                  <th scope="col">30대</th>
-                  <th scope="col">40대</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">명</th>
-                  <td rowspan="2">{{ residentCount | numberTransformer }}</td>
-                  <td>{{ genderCountData['남성'] | numberTransformer }}</td>
-                  <td>{{ genderCountData['여성'] | numberTransformer }}</td>
-                  <td>{{ ageGroupCountData.A10 | numberTransformer }}</td>
-                  <td>{{ ageGroupCountData.A20 | numberTransformer }}</td>
-                  <td>{{ ageGroupCountData.A30 | numberTransformer }}</td>
-                  <td>{{ ageGroupCountData.A40 | numberTransformer }}</td>
-                </tr>
-                <tr>
-                  <th scope="row">비율</th>
-                  <td>
-                    {{
-                      (genderCountData['남성'] / residentCount).toFixed(2) *
-                        100
-                    }}%
-                  </td>
-                  <td>
-                    {{
-                      (genderCountData['여성'] / residentCount).toFixed(2) *
-                        100
-                    }}%
-                  </td>
-                  <td>
-                    {{
-                      (ageGroupCountData.A10 / residentCount).toFixed(2) * 100
-                    }}%
-                  </td>
-                  <td>
-                    {{
-                      (ageGroupCountData.A20 / residentCount).toFixed(2) * 100
-                    }}%
-                  </td>
-                  <td>
-                    {{
-                      (ageGroupCountData.A30 / residentCount).toFixed(2) * 100
-                    }}%
-                  </td>
-                  <td>
-                    {{
-                      (ageGroupCountData.A40 / residentCount).toFixed(2) * 100
-                    }}%
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="horizontal-stacked-bars">
+              <div
+                class="horizontal-stacked-bar bar-gender-male"
+                :style="
+                  `width:${(residentGenderCountData['남성'] /
+                    residentTotalCount) *
+                    100}%`
+                "
+              >
+                <p>
+                  {{
+                    (
+                      (residentGenderCountData['남성'] / residentTotalCount) *
+                      100
+                    ).toFixed(2)
+                  }}%
+                </p>
+                <span>남성</span>
+              </div>
+              <div
+                class="horizontal-stacked-bar bar-gender-female"
+                :style="
+                  `width:${(residentGenderCountData['여성'] /
+                    residentTotalCount) *
+                    100}%`
+                "
+              >
+                <p>
+                  {{
+                    (
+                      (residentGenderCountData['여성'] / residentTotalCount) *
+                      100
+                    ).toFixed(2)
+                  }}%
+                </p>
+                <span>여성</span>
+              </div>
+              <div
+                class="horizontal-stacked-bar bar-gender-etc"
+                :style="
+                  `width:${((residentTotalCount -
+                    (+residentGenderCountData['남성'] +
+                      +residentGenderCountData['여성'])) /
+                    residentTotalCount) *
+                    100}%`
+                "
+              ></div>
+            </div>
+
+            <div class="mt-4">
+              <table
+                class="table table-sm"
+                v-if="residentGenderRatioData && residentTotalCount"
+              >
+                <thead>
+                  <tr>
+                    <th scope="col" rowspan="2">구분</th>
+                    <th scope="col" rowspan="2">총 인구</th>
+                    <th
+                      scope="colgroup"
+                      :colspan="residentGenderRatioData.labels.length"
+                    >
+                      성별
+                    </th>
+                  </tr>
+                  <tr>
+                    <th
+                      scope="col"
+                      v-for="(label, index) in residentGenderRatioData.labels"
+                      :key="index"
+                    >
+                      {{ label }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody v-if="residentGenderRatioData.datasets[0]">
+                  <tr>
+                    <th scope="row">명</th>
+                    <td rowspan="2">
+                      {{ residentTotalCount | numberTransformer }}
+                    </td>
+                    <td
+                      v-for="(data, index) in residentGenderRatioData
+                        .datasets[0].data"
+                      :key="index"
+                    >
+                      {{ data | numberTransformer }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">비율</th>
+                    <td
+                      v-for="(data, index) in residentGenderRatioData
+                        .datasets[0].data"
+                      :key="index"
+                    >
+                      {{ ((data / residentTotalCount) * 100).toFixed(2) }}%
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="mt-4">
+            <DashboardBarChart
+              v-if="residentAgeGroupRatioData"
+              :chartData="residentAgeGroupRatioData"
+              :options="barOptions"
+            />
+            <div class="mt-4">
+              <table
+                class="table table-sm"
+                v-if="residentAgeGroupCountData && residentTotalCount"
+              >
+                <thead>
+                  <tr>
+                    <th scope="col" rowspan="2">구분</th>
+                    <th scope="col" rowspan="2">총 인구</th>
+                    <th
+                      scope="colgroup"
+                      :colspan="residentAgeGroupRatioData.labels.length"
+                    >
+                      연령별
+                    </th>
+                  </tr>
+                  <tr>
+                    <th
+                      scope="col"
+                      v-for="(label, index) in residentAgeGroupRatioData.labels"
+                      :key="index"
+                    >
+                      {{ label }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody v-if="residentAgeGroupRatioData.datasets[0]">
+                  <tr>
+                    <th scope="row">명</th>
+                    <td rowspan="2">
+                      {{ residentTotalCount | numberTransformer }}
+                    </td>
+                    <td
+                      v-for="(data, index) in residentAgeGroupRatioData
+                        .datasets[0].data"
+                      :key="index"
+                    >
+                      {{ data | numberTransformer }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">비율</th>
+                    <td
+                      v-for="(data, index) in residentAgeGroupRatioData
+                        .datasets[0].data"
+                      :key="index"
+                    >
+                      {{ ((data / residentTotalCount) * 100).toFixed(2) }}%
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </template>
         <template v-else>
@@ -112,7 +190,11 @@
       </header>
       <div class="section-content">
         <template
-          v-if="!dataLoading && regidentialCountData && regidentialRatioData"
+          v-if="
+            !dataLoadingResidential &&
+              regidentialCountData &&
+              regidentialRatioData
+          "
         >
           <DashboardBarChart
             v-if="regidentialRatioData"
@@ -182,11 +264,11 @@
         <h3>직장인 수</h3>
       </header>
       <div class="section-content">
-        <template v-if="!dataLoading">
+        <template v-if="!dataLoadingEmplyee">
           <div class="text-center">
             <p>
               <strong style="font-family: fantasy;" class="display-4">{{
-                employeeCountData | numberTransformer
+                employeeTotalCount | numberTransformer
               }}</strong>
               <span>명</span>
             </p>
@@ -205,62 +287,207 @@
         </template>
       </div>
     </section>
-    <!-- <section class="section">
+    <section class="section">
       <header class="section-header">
         <h3>유동인구</h3>
       </header>
       <div class="section-content">
-        <template v-if="!dataLoading">
-          <b-row>
-            <b-col cols="6">
-              <div class="bg-light" style="width:100%; height:250px"></div>
-            </b-col>
-            <b-col cols="6">
-              <div class="bg-light" style="width:100%; height:250px"></div>
-            </b-col>
-          </b-row>
+        <template
+          v-if="!dataLoadingMovingPopulation && movingPopulationGenderData"
+        >
+          <div
+            class="mt-4"
+            v-if="
+              movingPopulationGenderData['남성'] &&
+                movingPopulationGenderData['여성']
+            "
+          >
+            <h5>
+              1) 성별
+            </h5>
+            <div class="mt-4">
+              <div>
+                <div class="horizontal-stacked-bars">
+                  <div
+                    class="horizontal-stacked-bar bar-gender-male"
+                    :style="
+                      `width:${(movingPopulationGenderData['남성'] /
+                        movingPopulationTotalCount) *
+                        100}%`
+                    "
+                  >
+                    <p>
+                      {{
+                        (
+                          (movingPopulationGenderData['남성'] /
+                            movingPopulationTotalCount) *
+                          100
+                        ).toFixed(2)
+                      }}%
+                    </p>
+                    <span>남성</span>
+                  </div>
+                  <div
+                    class="horizontal-stacked-bar bar-gender-female"
+                    :style="
+                      `width:${(movingPopulationGenderData['여성'] /
+                        movingPopulationTotalCount) *
+                        100}%`
+                    "
+                  >
+                    <p>
+                      {{
+                        (
+                          (movingPopulationGenderData['여성'] /
+                            movingPopulationTotalCount) *
+                          100
+                        ).toFixed(2)
+                      }}%
+                    </p>
+                    <span>여성</span>
+                  </div>
+                  <div
+                    class="horizontal-stacked-bar bar-gender-etc"
+                    :style="
+                      `width:${((movingPopulationTotalCount -
+                        (+movingPopulationGenderData['남성'] +
+                          +movingPopulationGenderData['여성'])) /
+                        movingPopulationTotalCount) *
+                        100}%`
+                    "
+                  ></div>
+                </div>
+              </div>
+              <div class="mt-4">
+                <table class="table table-sm" v-if="movingPopulationTotalCount">
+                  <thead>
+                    <tr>
+                      <th scope="col" rowspan="2">구분</th>
+                      <th scope="col" rowspan="2">총 인구</th>
+                      <th scope="colgroup" colspan="2">
+                        셩별
+                      </th>
+                    </tr>
+                    <tr>
+                      <th
+                        scope="col"
+                        v-for="(label, index) in Object.keys(
+                          movingPopulationGenderData,
+                        )"
+                        :key="index"
+                      >
+                        {{ label }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">명</th>
+                      <td rowspan="2">
+                        {{ movingPopulationTotalCount | numberTransformer }}
+                      </td>
+                      <template v-if="movingPopulationAgeData.datasets[0]">
+                        <td
+                          v-for="(data, index) in Object.values(
+                            movingPopulationGenderData,
+                          )"
+                          :key="index"
+                        >
+                          {{ data | numberTransformer }}
+                        </td>
+                      </template>
+                    </tr>
+                    <tr>
+                      <th scope="row">비율</th>
+                      <template v-if="movingPopulationAgeData.datasets[0]">
+                        <td
+                          v-for="(data, index) in Object.values(
+                            movingPopulationGenderData,
+                          )"
+                          :key="index"
+                        >
+                          {{
+                            ((data / movingPopulationTotalCount) * 100).toFixed(
+                              2,
+                            )
+                          }}%
+                        </td>
+                      </template>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
           <div class="mt-4">
-            <table class="table table-sm" v-if="moviingPopulationCountData">
-              <thead>
-                <tr>
-                  <th scope="col" rowspan="2">구분</th>
-                  <th scope="col" rowspan="2">총 인구</th>
-                  <th scope="colgroup" colspan="2">성별</th>
-                  <th scope="colgroup" colspan="4">연령별</th>
-                </tr>
-                <tr>
-                  <th scope="col">남성</th>
-                  <th scope="col">여성</th>
-                  <th scope="col">10대</th>
-                  <th scope="col">20대</th>
-                  <th scope="col">30대</th>
-                  <th scope="col">40대</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">명</th>
-                  <td rowspan="2">
-                    {{ moviingPopulationCountData | numberTransformer }}
-                  </td>
-                  <td></td>
-                  <td>58,000</td>
-                  <td>13,293</td>
-                  <td>38,522</td>
-                  <td>35,265</td>
-                  <td>11,021</td>
-                </tr>
-                <tr>
-                  <th scope="row">비율</th>
-                  <td>59%</td>
-                  <td>41%</td>
-                  <td>13%</td>
-                  <td>26%</td>
-                  <td>24%</td>
-                  <td>11%</td>
-                </tr>
-              </tbody>
-            </table>
+            <h5>
+              2) 연령별
+            </h5>
+            <div class="mt-4">
+              <DashboardBarChart
+                v-if="movingPopulationAgeData"
+                :chartData="movingPopulationAgeData"
+                :options="barOptions"
+              />
+              <div class="mt-4">
+                <table class="table table-sm" v-if="movingPopulationTotalCount">
+                  <thead>
+                    <tr>
+                      <th scope="col" rowspan="2">구분</th>
+                      <th scope="col" rowspan="2">총 인구</th>
+                      <th
+                        scope="colgroup"
+                        :colspan="movingPopulationAgeData.labels.length"
+                      >
+                        연령별
+                      </th>
+                    </tr>
+                    <tr>
+                      <th
+                        scope="col"
+                        v-for="(label, index) in movingPopulationAgeData.labels"
+                        :key="index"
+                      >
+                        {{ label }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">명</th>
+                      <td rowspan="2">
+                        {{ movingPopulationTotalCount | numberTransformer }}
+                      </td>
+                      <template v-if="movingPopulationAgeData.datasets[0]">
+                        <td
+                          v-for="(data, index) in movingPopulationAgeData
+                            .datasets[0].data"
+                          :key="index"
+                        >
+                          {{ data | numberTransformer }}
+                        </td>
+                      </template>
+                    </tr>
+                    <tr>
+                      <th scope="row">비율</th>
+                      <template v-if="movingPopulationAgeData.datasets[0]">
+                        <td
+                          v-for="(data, index) in movingPopulationAgeData
+                            .datasets[0].data"
+                          :key="index"
+                        >
+                          {{
+                            ((data / movingPopulationTotalCount) * 100).toFixed(
+                              2,
+                            )
+                          }}%
+                        </td>
+                      </template>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </template>
         <template v-else>
@@ -275,7 +502,7 @@
           </div>
         </template>
       </div>
-    </section> -->
+    </section>
   </div>
 </template>
 <script lang="ts">
@@ -296,17 +523,22 @@ import { ReverseQueryParamMapper } from '@/core';
 export default class AnalysisPopulation extends BaseComponent {
   @Prop() bdongCode!: string;
   private analysisTabSearchDto = new AnalysisTabListDto();
-  private residentCount = null;
-  private genderCountData = null;
-  private genderRatioData = null;
-  private ageGroupCountData = null;
-  private ageGroupRatioData = null;
+  private residentTotalCount = null;
+  private residentGenderCountData = null;
+  private residentGenderRatioData = null;
+  private residentAgeGroupCountData = null;
+  private residentAgeGroupRatioData = null;
   private regidentialTotalCountData = null;
   private regidentialCountData = null;
   private regidentialRatioData = null;
-  private employeeCountData = null;
-  private moviingPopulationCountData = null;
-  private dataLoading = true;
+  private employeeTotalCount = null;
+  private movingPopulationTotalCount = null;
+  private movingPopulationGenderData = null;
+  private movingPopulationAgeData = null;
+  private dataLoadingResident = true;
+  private dataLoadingResidential = true;
+  private dataLoadingEmplyee = true;
+  private dataLoadingMovingPopulation = true;
   private barOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -326,7 +558,7 @@ export default class AnalysisPopulation extends BaseComponent {
       this.analysisTabSearchDto,
     ).subscribe(res => {
       if (res) {
-        this.residentCount = res.data.residentialPopulationCount;
+        this.residentTotalCount = res.data.residentialPopulationCount;
       }
     });
   }
@@ -336,44 +568,47 @@ export default class AnalysisPopulation extends BaseComponent {
       this.analysisTabSearchDto,
     ).subscribe(res => {
       if (res) {
-        this.genderCountData = res.data[0];
-        this.genderRatioData = res.data[1];
+        this.residentGenderCountData = res.data[0];
+        this.residentGenderRatioData = res.data[1];
       }
     });
   }
 
   findAgeGroupRatio() {
-    this.dataLoading = true;
+    this.dataLoadingResident = true;
     AnalysisTabService.findAgeGroupRatio(this.analysisTabSearchDto).subscribe(
       res => {
         if (res) {
-          this.dataLoading = false;
-          this.ageGroupCountData = res.data[0];
-          this.ageGroupRatioData = res.data[1];
+          this.dataLoadingResident = false;
+          this.residentAgeGroupCountData = res.data[0];
+          this.residentAgeGroupRatioData = res.data[1];
         }
       },
     );
   }
 
   findPopulationRegidentialRatio() {
+    this.dataLoadingResidential = true;
     AnalysisTabService.findPopulationRegidentialRatio(
       this.analysisTabSearchDto,
     ).subscribe(res => {
       if (res) {
+        this.dataLoadingResidential = false;
         this.regidentialTotalCountData = res.data[0];
         this.regidentialCountData = res.data[1].datasets[0].data;
         this.regidentialRatioData = res.data[1];
-        console.log(this.regidentialRatioData);
       }
     });
   }
 
   findPopulationEmployeeCount() {
+    this.dataLoadingEmplyee = true;
     AnalysisTabService.findPopulationEmployeeCount(
       this.analysisTabSearchDto,
     ).subscribe(res => {
       if (res) {
-        this.employeeCountData = res.data.totalCount;
+        this.dataLoadingEmplyee = false;
+        this.employeeTotalCount = res.data.totalCount;
       }
     });
   }
@@ -382,19 +617,32 @@ export default class AnalysisPopulation extends BaseComponent {
       this.analysisTabSearchDto,
     ).subscribe(res => {
       if (res) {
-        this.moviingPopulationCountData = res.data.totalCount;
+        this.movingPopulationTotalCount = res.data.totalCount;
+      }
+    });
+  }
+
+  findMovingPopulationGenderAndAgeRatio() {
+    this.dataLoadingMovingPopulation = true;
+    AnalysisTabService.findMovingPopulationGenderAndAgeRatio(
+      this.analysisTabSearchDto,
+    ).subscribe(res => {
+      if (res) {
+        this.dataLoadingMovingPopulation = false;
+        this.movingPopulationGenderData = res.data[0];
+        this.movingPopulationAgeData = res.data[1];
       }
     });
   }
 
   findAnalysisPopulation() {
-    this.dataLoading = true;
     this.findPopulationResidentCount();
     this.findPopulationGenderRatio();
     this.findAgeGroupRatio();
     this.findPopulationRegidentialRatio();
     this.findPopulationEmployeeCount();
     this.findMovingPopulationCount();
+    this.findMovingPopulationGenderAndAgeRatio();
   }
 
   created() {

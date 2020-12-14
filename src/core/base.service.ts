@@ -93,28 +93,33 @@ export class BaseService extends Vue {
     method: Method,
     path: string,
     params?: any,
+    analysis?: boolean,
   ): AxiosObservable<T> {
     let baseUrl;
     let siteUrl;
     let homepageBaseUrl;
     let homepageSiteUrl;
+    let analysisUrl;
     if (process.env.NODE_ENV === EnvironmentType.development) {
       baseUrl = DevelopmentEnvironment.baseURL;
       siteUrl = DevelopmentEnvironment.siteUrl;
       homepageBaseUrl = DevelopmentEnvironment.homepageBaseUrl;
       homepageSiteUrl = DevelopmentEnvironment.homepageSiteUrl;
+      analysisUrl = DevelopmentEnvironment.analysisUrl;
     }
     if (process.env.NODE_ENV === EnvironmentType.staging) {
       baseUrl = StagingEnvironment.baseURL;
       siteUrl = StagingEnvironment.siteUrl;
-      homepageBaseUrl = DevelopmentEnvironment.homepageBaseUrl;
-      homepageSiteUrl = DevelopmentEnvironment.homepageSiteUrl;
+      homepageBaseUrl = StagingEnvironment.homepageBaseUrl;
+      homepageSiteUrl = StagingEnvironment.homepageSiteUrl;
+      analysisUrl = StagingEnvironment.analysisUrl;
     }
     if (process.env.NODE_ENV === EnvironmentType.production) {
       baseUrl = ProductionEnvironment.baseURL;
       siteUrl = ProductionEnvironment.siteUrl;
-      homepageBaseUrl = DevelopmentEnvironment.homepageBaseUrl;
-      homepageSiteUrl = DevelopmentEnvironment.homepageSiteUrl;
+      homepageBaseUrl = ProductionEnvironment.homepageBaseUrl;
+      homepageSiteUrl = ProductionEnvironment.homepageSiteUrl;
+      analysisUrl = ProductionEnvironment.analysisUrl;
     }
     // axios observable에서 글로벌 에러 catch하는 코드
     Axios.interceptors.response.use(
@@ -147,15 +152,19 @@ export class BaseService extends Vue {
         }
       },
     );
+    if (analysis) {
+      baseUrl = analysisUrl;
+    }
     if (path.indexOf('http') !== 0) {
       path = baseUrl + path;
     }
     const headers: any = {
-      'x-client-name': baseUrl.clientName,
+      'x-client-name': baseUrl,
       'Content-type': 'application/json',
       //   'Accept': 'application/json',
     };
-
+    console.log(headers);
+    console.log(baseUrl);
     const accessToken = JwtStorageService.getToken();
     if (accessToken) {
       headers.Authorization = `Bearer ${accessToken}`;
@@ -212,8 +221,12 @@ export class BaseService extends Vue {
     return axios.put(path, params);
   }
 
-  protected get<T>(path: string, params?: any): AxiosObservable<T> {
-    return this.__api('get', path, params);
+  protected get<T>(
+    path: string,
+    params?: any,
+    analysis?: boolean,
+  ): AxiosObservable<T> {
+    return this.__api('get', path, params, analysis);
   }
 
   protected post<T>(path: string, params?: any): AxiosObservable<T> {

@@ -1,6 +1,8 @@
 <template>
-  <div class="body">
-    <router-view />
+  <div id="app" class="page-content">
+    <div class="body">
+      <router-view />
+    </div>
   </div>
 </template>
 <script lang="ts">

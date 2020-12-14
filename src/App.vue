@@ -1,7 +1,5 @@
 <template>
-  <div id="app" class="page-content">
-    <component :is="layout"></component>
-  </div>
+  <component :is="layout"></component>
 </template>
 <script lang="ts">
 declare global {
@@ -138,11 +136,10 @@ img {
   td {
     vertical-align: middle;
     text-align: center;
-    height: 50px;
+    height: 40px;
   }
   thead {
     th {
-      border-top: 0;
       border-bottom: 0;
       vertical-align: middle;
     }

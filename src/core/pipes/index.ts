@@ -8,3 +8,4 @@ export * from './bizno-filter.pipe';
 export * from './string-inquiry-filter.pipe';
 export * from './currency-filter.pipe';
 export * from './space-type-filter.pipe';
+export * from './number-filter.pipe';

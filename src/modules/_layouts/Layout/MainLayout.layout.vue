@@ -1,10 +1,12 @@
 <template>
-  <section :id="this.$route.name">
-    <NavBar />
-    <div id="app-main" class="container-fluid">
-      <router-view />
-    </div>
-  </section>
+  <div id="app" class="page-content">
+    <section :id="this.$route.name">
+      <NavBar />
+      <div id="app-main" class="container-fluid">
+        <router-view />
+      </div>
+    </section>
+  </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';

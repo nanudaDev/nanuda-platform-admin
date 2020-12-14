@@ -11,5 +11,5 @@ export const StagingEnvironment: Environment = {
   siteUrl: 'https://nanuda-platform-admin-test-nnh3.onrender.com/',
   homepageBaseUrl: 'http://211.249.62.165:8185',
   homepageSiteUrl: 'http://211.249.62.165:3000',
-  analysisUrl: 'https://platform-analysis-test.nanudakitchen.com',
+  analysisUrl: 'https://platform-analysis-test.nanudakitchen.com/',
 };

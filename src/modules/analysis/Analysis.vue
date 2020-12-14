@@ -1,6 +1,6 @@
 <template>
   <article id="main-article" :class="{ 'is-collpased': !slidebarVisible }">
-    <div id="tab-section">
+    <div id="tab-section" v-if="slidebarVisible">
       <header class="article-header">
         <h2>나누다키친 상권분석</h2>
         <div class="mt-3">
@@ -99,7 +99,9 @@
           </template>
         </b-tab>
       </b-tabs>
-
+    </div>
+    <section id="map-section">
+      <AnalysisMap />
       <b-button
         variant="light"
         class="btn-toggle"
@@ -116,10 +118,9 @@
           ></b-icon-chevron-right>
         </template>
       </b-button>
-    </div>
-
-    <section id="map-section">
-      <AnalysisMap />
+      <div class="map-controls">
+        <b-button id="remove-circles">모두 지우기</b-button>
+      </div>
     </section>
   </article>
 </template>
@@ -234,6 +235,10 @@ export default class Analysis extends BaseComponent {
     // this.$root.$emit('tabPopulation');
   }
 
+  removeCircles() {
+    this.$root.$emit('removeCircles');
+  }
+
   created() {
     this.getDistrictAddress();
     // this.queryParam = ReverseQueryParamMapper(location.search);
@@ -257,6 +262,7 @@ export default class Analysis extends BaseComponent {
 }
 #main-article {
   position: relative;
+  display: flex;
   height: calc(100vh - 55px);
   &.is-collpased {
     #tab-section {
@@ -268,9 +274,9 @@ export default class Analysis extends BaseComponent {
     }
   }
   #tab-section {
-    position: absolute;
-    left: 0;
-    top: 0;
+    position: relative;
+    // left: 0;
+    // top: 0;
     width: 600px;
     height: 100%;
     background-color: #f5f5f5;
@@ -289,23 +295,7 @@ export default class Analysis extends BaseComponent {
     .article-content {
       overflow-y: auto;
     }
-    .btn-toggle {
-      position: absolute;
-      left: 100%;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 40px;
-      height: 80px;
-      z-index: 99;
-      background-color: white;
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      border: 0;
-      padding: 0;
-      span {
-        font-size: 0;
-      }
-    }
+
     .section {
       background-color: #fff;
       padding: 3em 1.5em;
@@ -343,6 +333,7 @@ export default class Analysis extends BaseComponent {
     }
   }
   #map-section {
+    position: relative;
     width: 100%;
     height: 100%;
   }
@@ -350,6 +341,63 @@ export default class Analysis extends BaseComponent {
   .table {
     th {
       background-color: #f8f9fa;
+    }
+  }
+  .btn-toggle {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 80px;
+    z-index: 99;
+    background-color: white;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border: 0;
+    padding: 0;
+    span {
+      font-size: 0;
+    }
+  }
+}
+.graph-label {
+  background: #f5f5f5;
+  padding: 0.25em 0.5em;
+  border: 1px solid #dedede;
+}
+.map-controls {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  z-index: 100;
+}
+.horizontal-stacked-bars {
+  display: flex;
+  height: 40px;
+  .horizontal-stacked-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 16px;
+    color: #fff;
+    &.bar-gender-male {
+      background-color: #17a2b8;
+    }
+    &.bar-gender-female {
+      background-color: #e85d47;
+    }
+
+    &.bar-gender-etc {
+      background-color: #646464;
+    }
+    p {
+      font-weight: bold;
+    }
+    span {
+      font-size: 12px;
+      margin-left: 8px;
     }
   }
 }

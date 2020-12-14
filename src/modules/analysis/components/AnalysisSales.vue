@@ -73,7 +73,9 @@
                   <div class="mt-4">
                     <b-row>
                       <b-col cols="6">
-                        <p class="text-center mb-2"><b>매출 건수 비율</b></p>
+                        <p class="text-center mb-2">
+                          <b class="graph-label">매출 건수 비율</b>
+                        </p>
                         <DashboardPieChart
                           v-if="genderCountData"
                           :chartData="genderCountData"
@@ -81,7 +83,9 @@
                         />
                       </b-col>
                       <b-col cols="6">
-                        <p class="text-center mb-2"><b>매출 금액 비율</b></p>
+                        <p class="text-center mb-2">
+                          <b class="graph-label">매출 금액 비율</b>
+                        </p>
                         <DashboardPieChart
                           v-if="genderRevenueData"
                           :chartData="genderRevenueData"
@@ -125,7 +129,9 @@
                   <div class="mt-4">
                     <div>
                       <div class="mt-4">
-                        <p class="text-center mb-2"><b>매출 건수 비율</b></p>
+                        <p class="text-center mb-2">
+                          <b class="graph-label">매출 건수 비율</b>
+                        </p>
                         <DashboardBarChart
                           v-if="dayCountData"
                           :chartData="dayCountData"
@@ -134,7 +140,9 @@
                         />
                       </div>
                       <div class="mt-4">
-                        <p class="text-center mb-2"><b>매출 금액 비율</b></p>
+                        <p class="text-center mb-2">
+                          <b class="graph-label">매출 금액 비율</b>
+                        </p>
                         <DashboardBarChart
                           v-if="dayRevenueData"
                           :chartData="dayRevenueData"
@@ -189,7 +197,7 @@
         <h3>시간대별 업종 매출 순위</h3>
       </header>
       <div class="section-content">
-        <template v-if="!dataLoading">
+        <template v-if="!dataLoadingByTime">
           <table class="table table-sm">
             <thead>
               <tr>
@@ -201,63 +209,52 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th scope="row" rowspan="3">점심<br />11 ~ 14시</th>
-                <td>1</td>
-                <td>한식</td>
-                <td>남</td>
-                <td>30대</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>도시락</td>
-                <td>여</td>
-                <td>40대</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>도시락</td>
-                <td>여</td>
-                <td>40대</td>
-              </tr>
-              <tr>
-                <th scope="row" rowspan="3">저녁<br />17 ~ 21시</th>
-                <td>1</td>
-                <td>분식</td>
-                <td>남</td>
-                <td>20대</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>족발</td>
-                <td>여</td>
-                <td>30대</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>일식</td>
-                <td>남</td>
-                <td>40대</td>
-              </tr>
-              <tr>
-                <th scope="row" rowspan="3">야식<br />21 ~ 06시</th>
-                <td>1</td>
-                <td>야식</td>
-                <td>남</td>
-                <td>30대</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>한식</td>
-                <td>여</td>
-                <td>40대</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>치킨</td>
-                <td>남</td>
-                <td>20대</td>
-              </tr>
+              <template v-if="lunchData">
+                <tr
+                  v-for="(data, index) in lunchData"
+                  :key="`${index + 'lunchData'}`"
+                >
+                  <th
+                    scope="row"
+                    :rowspan="lunchData.length"
+                    v-if="index === 0"
+                  >
+                    점심<br />11 ~ 14시
+                  </th>
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ data.rank_1_bm }}</td>
+                  <td>{{ data.gender }}</td>
+                  <td>{{ data.age }}</td>
+                </tr>
+              </template>
+              <template v-if="dinnerData">
+                <tr
+                  v-for="(data, index) in dinnerData"
+                  :key="`${index + 'dinnerData'}`"
+                >
+                  <th scope="row" rowspan="3" v-if="index === 0">
+                    저녁<br />17 ~ 21시
+                  </th>
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ data.rank_1_bm }}</td>
+                  <td>{{ data.gender }}</td>
+                  <td>{{ data.age }}</td>
+                </tr>
+              </template>
+              <template v-if="lateNightData">
+                <tr
+                  v-for="(data, index) in lateNightData"
+                  :key="`${index + 'lateNightData'}`"
+                >
+                  <th scope="row" rowspan="3" v-if="index === 0">
+                    야식<br />21 ~ 06시
+                  </th>
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ data.rank_1_bm }}</td>
+                  <td>{{ data.gender }}</td>
+                  <td>{{ data.age }}</td>
+                </tr>
+              </template>
             </tbody>
           </table>
         </template>
@@ -308,6 +305,7 @@ export default class AnalysisSales extends BaseComponent {
   private dayCountData = null;
   private dayRevenueData = null;
   private dataLoading = false;
+  private dataLoadingByTime = false;
   private clickedCategory = false;
   private lunchData = [];
   private dinnerData = [];
@@ -345,9 +343,6 @@ export default class AnalysisSales extends BaseComponent {
       await this.findRevenueAnalysisGender(),
       await this.findRevenueAnalysisAgeGroup(),
       await this.findRevenueAnalysisByDay(),
-      await this.findBestByDinner(),
-      await this.findBestByLunch(),
-      await this.findBestByLateNight(),
     ]);
   }
 
@@ -395,6 +390,19 @@ export default class AnalysisSales extends BaseComponent {
     });
   }
 
+  async findRevenueAnalysisByTime() {
+    if (!this.bdongCode) {
+      return;
+    }
+    this.analysisTabSearchDto.bdongCode = this.bdongCode;
+
+    await Promise.all([
+      await this.findBestByDinner(),
+      await this.findBestByLunch(),
+      await this.findBestByLateNight(),
+    ]);
+  }
+
   findBestByLunch() {
     AnalysisTabService.findBestCatByLunch(this.analysisTabSearchDto).subscribe(
       res => {
@@ -412,15 +420,17 @@ export default class AnalysisSales extends BaseComponent {
   }
 
   findBestByLateNight() {
+    this.dataLoadingByTime = true;
     AnalysisTabService.findBestCatByLateNight(
       this.analysisTabSearchDto,
     ).subscribe(res => {
+      this.dataLoadingByTime = false;
       this.lateNightData = res.data;
     });
   }
-  // created() {
-  //   this.findBaeminCateogry();
-  //   this.findRevenueAnalysis();
-  // }
+  created() {
+    // this.findRevenueAnalysis();
+    this.findRevenueAnalysisByTime();
+  }
 }
 </script>

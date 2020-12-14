@@ -21,8 +21,8 @@ export default class AnalysisMap extends BaseComponent {
     const markerPosition = new window.kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치입니다
     const options = {
       center: markerPosition,
-      level: 4,
-      maxLevel: 6,
+      level: 7,
+      maxLevel: 9,
       minLevel: 3,
     };
     const map = new window.kakao.maps.Map(container, options); // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
@@ -54,8 +54,9 @@ export default class AnalysisMap extends BaseComponent {
       fillOpacity: 0.5,
     });
 
-    map.addControl(mapTypeControl, window.kakao.maps.ControlPosition.TOPRIGHT);
-    map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
+    circle.setRadius(1000);
+    // map.addControl(mapTypeControl, window.kakao.maps.ControlPosition.TOPRIGHT);
+    // map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
     map.relayout();
 
     let drawingFlag = false; // 원이 그려지고 있는 상태를 가지고 있을 변수입니다
@@ -303,7 +304,6 @@ export default class AnalysisMap extends BaseComponent {
       content += '</li>';
       content += '</ul>';
 
-      // circle.setRadius(1000);
       // circle.setMap(map);
       customOverlay.setMap(map);
       // clusterer.addMarkers(markers);

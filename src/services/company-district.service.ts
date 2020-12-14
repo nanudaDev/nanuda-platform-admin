@@ -95,6 +95,13 @@ class CompanyDistrictService extends BaseService {
     );
   }
 
+  findForSelectOptionAnalysis(companyDistrictDto: CompanyDistrictDto) {
+    return super.get<CompanyDistrictDto[]>(
+      'admin/company-district/find-for-select-analysis',
+      companyDistrictDto,
+    );
+  }
+
   /**
    * find all with no where clause
    */

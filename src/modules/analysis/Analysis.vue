@@ -189,7 +189,7 @@ export default class Analysis extends BaseComponent {
 
   getDistrictAddress() {
     this.comapnyDistirctDto.region1DepthName = '서울';
-    CompanyDistrictService.findForSelectOption(
+    CompanyDistrictService.findForSelectOptionAnalysis(
       this.comapnyDistirctDto,
     ).subscribe(res => {
       if (res) {

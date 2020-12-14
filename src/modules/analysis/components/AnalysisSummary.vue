@@ -18,7 +18,7 @@
                 <th scope="row">음식점수(개)</th>
                 <td>{{ summary.storeCount | numberTransformer }}</td>
                 <th scope="row">주거인구(명)</th>
-                <td>{{ summary.resPopulationCount }}</td>
+                <td>{{ summary.resPopulationCount | numberTransformer }}</td>
               </tr>
               <tr>
                 <th scope="row">총세대수(세대)</th>

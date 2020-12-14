@@ -46,13 +46,13 @@
               <tbody>
                 <tr>
                   <th scope="row">명</th>
-                  <td rowspan="2">{{ residentCount | numberTransfomer }}</td>
-                  <td>{{ genderCountData['남성'] | numberTransfomer }}</td>
-                  <td>{{ genderCountData['여성'] | numberTransfomer }}</td>
-                  <td>{{ ageGroupCountData.A10 | numberTransfomer }}</td>
-                  <td>{{ ageGroupCountData.A20 | numberTransfomer }}</td>
-                  <td>{{ ageGroupCountData.A30 | numberTransfomer }}</td>
-                  <td>{{ ageGroupCountData.A40 | numberTransfomer }}</td>
+                  <td rowspan="2">{{ residentCount | numberTransformer }}</td>
+                  <td>{{ genderCountData['남성'] | numberTransformer }}</td>
+                  <td>{{ genderCountData['여성'] | numberTransformer }}</td>
+                  <td>{{ ageGroupCountData.A10 | numberTransformer }}</td>
+                  <td>{{ ageGroupCountData.A20 | numberTransformer }}</td>
+                  <td>{{ ageGroupCountData.A30 | numberTransformer }}</td>
+                  <td>{{ ageGroupCountData.A40 | numberTransformer }}</td>
                 </tr>
                 <tr>
                   <th scope="row">비율</th>
@@ -138,14 +138,14 @@
                   <th scope="row">세대</th>
                   <td rowspan="2">
                     {{
-                      regidentialTotalCountData.totalCount | numberTransfomer
+                      regidentialTotalCountData.totalCount | numberTransformer
                     }}
                   </td>
                   <td
                     v-for="(data, index) in regidentialCountData"
                     :key="index"
                   >
-                    {{ data | numberTransfomer }}
+                    {{ data | numberTransformer }}
                   </td>
                 </tr>
                 <tr>
@@ -186,7 +186,7 @@
           <div class="text-center">
             <p>
               <strong style="font-family: fantasy;" class="display-4">{{
-                employeeCountData | numberTransfomer
+                employeeCountData | numberTransformer
               }}</strong>
               <span>명</span>
             </p>
@@ -241,7 +241,7 @@
                 <tr>
                   <th scope="row">명</th>
                   <td rowspan="2">
-                    {{ moviingPopulationCountData | numberTransfomer }}
+                    {{ moviingPopulationCountData | numberTransformer }}
                   </td>
                   <td></td>
                   <td>58,000</td>

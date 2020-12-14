@@ -109,7 +109,7 @@
       </header>
       <div class="section-content">
         <template v-if="!dataLoadingSurvivalYears">
-          <table class="table">
+          <table class="table" v-if="survivalYears.length > 0">
             <thead>
               <tr>
                 <th></th>

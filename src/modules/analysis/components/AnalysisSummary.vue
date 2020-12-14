@@ -16,21 +16,21 @@
             <tbody>
               <tr>
                 <th scope="row">음식점수(개)</th>
-                <td>{{ summary.storeCount }}</td>
+                <td>{{ summary.storeCount | numberTransformer }}</td>
                 <th scope="row">주거인구(명)</th>
                 <td>{{ summary.resPopulationCount }}</td>
               </tr>
               <tr>
                 <th scope="row">총세대수(세대)</th>
-                <td>{{ summary.houseCount }}</td>
+                <td>{{ summary.houseCount | numberTransformer }}</td>
                 <th scope="row">직장인구(명)</th>
-                <td>{{ summary.employeeCount }}</td>
+                <td>{{ summary.employeeCount | numberTransformer }}</td>
               </tr>
               <tr>
                 <th scope="row">평균 영업기간(년)</th>
-                <td>{{ summary.averageSurvivalYears }}</td>
+                <td>{{ summary.averageSurvivalYears | numberTransformer }}</td>
                 <th scope="row">유동인구(명)</th>
-                <td>{{ summary.movingPopulationCount }}</td>
+                <td>{{ summary.movingPopulationCount | numberTransformer }}</td>
               </tr>
               <tr>
                 <th scope="row">주요 연령대</th>
@@ -95,9 +95,9 @@
                   class="d-flex align-items-center justify-content-center"
                   :class="recommendCategoryBgColor(index)"
                 >
-                  <p class="text-center text-white" style="font-size:16px">
+                  <p class="text-center text-white" style="font-size:14px">
                     추천 {{ index + 1 }}<br />
-                    <strong style="font-size:25px">{{
+                    <strong style="font-size:20px">{{
                       category.baeminCategoryName
                     }}</strong>
                   </p>

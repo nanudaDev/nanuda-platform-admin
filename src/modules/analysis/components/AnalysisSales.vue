@@ -309,6 +309,9 @@ export default class AnalysisSales extends BaseComponent {
   private dayRevenueData = null;
   private dataLoading = false;
   private clickedCategory = false;
+  private lunchData = [];
+  private dinnerData = [];
+  private lateNightData = [];
 
   private pieOptions = { responsive: true };
   private barOptions = {
@@ -342,6 +345,9 @@ export default class AnalysisSales extends BaseComponent {
       await this.findRevenueAnalysisGender(),
       await this.findRevenueAnalysisAgeGroup(),
       await this.findRevenueAnalysisByDay(),
+      await this.findBestByDinner(),
+      await this.findBestByLunch(),
+      await this.findBestByLateNight(),
     ]);
   }
 
@@ -389,6 +395,29 @@ export default class AnalysisSales extends BaseComponent {
     });
   }
 
+  findBestByLunch() {
+    AnalysisTabService.findBestCatByLunch(this.analysisTabSearchDto).subscribe(
+      res => {
+        this.lunchData = res.data;
+      },
+    );
+  }
+
+  findBestByDinner() {
+    AnalysisTabService.findBestCatByDinner(this.analysisTabSearchDto).subscribe(
+      res => {
+        this.dinnerData = res.data;
+      },
+    );
+  }
+
+  findBestByLateNight() {
+    AnalysisTabService.findBestCatByLateNight(
+      this.analysisTabSearchDto,
+    ).subscribe(res => {
+      this.lateNightData = res.data;
+    });
+  }
   // created() {
   //   this.findBaeminCateogry();
   //   this.findRevenueAnalysis();

@@ -10,7 +10,7 @@ import { CompanyDistrictDto } from '@/dto';
   name: 'AnalysisMap',
 })
 export default class AnalysisMap extends BaseComponent {
-  // @Prop() district?: CompanyDistrictDto;
+  @Prop() district?: CompanyDistrictDto;
   // private lat = this.district.lat;
   // private lon = this.district.lon;
   private map;
@@ -19,7 +19,19 @@ export default class AnalysisMap extends BaseComponent {
   slidebarVisibleChanged() {
     this.map.relayout();
   }
+  @Watch('district', {
+    deep: true,
+  })
+  coordsChanged() {
+    // 이동할 위도 경도 위치를 생성합니다
+    const moveLatLon = new window.kakao.maps.LatLng(
+      this.district.lat,
+      this.district.lon,
+    );
 
+    // 지도 중심을 이동 시킵니다
+    this.map.setCenter(moveLatLon);
+  }
   // 지도 가져오기
   setMap(lat?: string, lon?: string) {
     const container = document.getElementById('map');
@@ -29,8 +41,6 @@ export default class AnalysisMap extends BaseComponent {
     const options = {
       center: markerPosition,
       level: 7,
-      maxLevel: 9,
-      minLevel: 3,
     };
     const map = new window.kakao.maps.Map(container, options); // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
 
@@ -318,12 +328,13 @@ export default class AnalysisMap extends BaseComponent {
 
     this.map = map;
   }
+
   mounted() {
-    this.setMap('37.5012283', '127.0334121');
+    this.setMap(this.district.lat, this.district.lon);
     // emit 함수 추가
-    this.$root.$on('changeDistrict', (lat?: string, lon?: string) => {
-      this.setMap(lat, lon);
-    });
+    // this.$root.$on('changeDistrict', (lat?: string, lon?: string) => {
+    //   this.setMap(lat, lon);
+    // });
     // this.setMap();
   }
 }

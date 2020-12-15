@@ -648,10 +648,8 @@ export default class AnalysisPopulation extends BaseComponent {
   }
 
   created() {
-    setTimeout(() => {
-      this.analysisTabSearchDto.bdongCode = this.bdongCode;
-      this.findAnalysisPopulation();
-    }, 1000);
+    this.analysisTabSearchDto.bdongCode = this.bdongCode;
+    this.findAnalysisPopulation();
   }
 }
 </script>

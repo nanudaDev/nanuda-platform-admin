@@ -143,7 +143,7 @@ export default class AnalysisSummary extends BaseComponent {
   @Watch('bdongCode')
   bdongCodeChanged() {
     this.analysisTabSearchDto.bdongCode = this.bdongCode;
-    setTimeout(() => this.findAnalysisSummary(), 1000);
+    this.findAnalysisSummary();
   }
 
   recommendCategoryBgColor(idx) {

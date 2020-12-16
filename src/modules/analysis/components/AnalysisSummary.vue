@@ -157,7 +157,7 @@ export default class AnalysisSummary extends BaseComponent {
     this.dataLoading = true;
     await AnalysisTabService.findSummary(this.analysisTabSearchDto).subscribe(
       res => {
-        console.log('findSummary res', res);
+        // console.log('findSummary res', res);
         this.dataLoading = false;
         this.summary = res.data;
       },
@@ -170,7 +170,7 @@ export default class AnalysisSummary extends BaseComponent {
       this.analysisTabSearchDto,
     ).subscribe(res => {
       if (res) {
-        console.log('findCategoryRatio res', res);
+        // console.log('findCategoryRatio res', res);
         this.dataLoadingCategory = false;
         this.categories = res.data;
         this.recomeendCategory = this.categories.slice(0, 3);

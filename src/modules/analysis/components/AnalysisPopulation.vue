@@ -5,169 +5,207 @@
         <h3>주거인구</h3>
       </header>
       <div class="section-content">
-        <template v-if="!dataLoadingResident && residentGenderCountData">
+        <template v-if="!dataLoadingResident">
           <div class="mt-4">
-            <div class="horizontal-stacked-bars">
-              <div
-                class="horizontal-stacked-bar bar-gender-male"
-                :style="
-                  `width:${(residentGenderCountData['남성'] /
-                    residentTotalCount) *
-                    100}%`
-                "
-              >
-                <p>
-                  {{
-                    (
-                      (residentGenderCountData['남성'] / residentTotalCount) *
-                      100
-                    ).toFixed(2)
-                  }}%
-                </p>
-                <span>남성</span>
-              </div>
-              <div
-                class="horizontal-stacked-bar bar-gender-female"
-                :style="
-                  `width:${(residentGenderCountData['여성'] /
-                    residentTotalCount) *
-                    100}%`
-                "
-              >
-                <p>
-                  {{
-                    (
-                      (residentGenderCountData['여성'] / residentTotalCount) *
-                      100
-                    ).toFixed(2)
-                  }}%
-                </p>
-                <span>여성</span>
-              </div>
-              <div
-                class="horizontal-stacked-bar bar-gender-etc"
-                :style="
-                  `width:${((residentTotalCount -
-                    (+residentGenderCountData['남성'] +
-                      +residentGenderCountData['여성'])) /
-                    residentTotalCount) *
-                    100}%`
-                "
-              ></div>
-            </div>
-
+            <h5>
+              1) 성별
+            </h5>
             <div class="mt-4">
-              <table
-                class="table table-sm"
-                v-if="residentGenderRatioData && residentTotalCount"
+              <template
+                v-if="
+                  residentGenderCountData &&
+                    residentGenderCountData['남성'] &&
+                    residentGenderCountData['여성']
+                "
               >
-                <thead>
-                  <tr>
-                    <th scope="col" rowspan="2">구분</th>
-                    <th scope="col" rowspan="2">총 인구</th>
-                    <th
-                      scope="colgroup"
-                      :colspan="residentGenderRatioData.labels.length"
-                    >
-                      성별
-                    </th>
-                  </tr>
-                  <tr>
-                    <th
-                      scope="col"
-                      v-for="(label, index) in residentGenderRatioData.labels"
-                      :key="index"
-                    >
-                      {{ label }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody v-if="residentGenderRatioData.datasets[0]">
-                  <tr>
-                    <th scope="row">명</th>
-                    <td rowspan="2">
-                      {{ residentTotalCount | numberTransformer }}
-                    </td>
-                    <td
-                      v-for="(data, index) in residentGenderRatioData
-                        .datasets[0].data"
-                      :key="index"
-                    >
-                      {{ data | numberTransformer }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">비율</th>
-                    <td
-                      v-for="(data, index) in residentGenderRatioData
-                        .datasets[0].data"
-                      :key="index"
-                    >
-                      {{ ((data / residentTotalCount) * 100).toFixed(2) }}%
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                <div class="horizontal-stacked-bars">
+                  <div
+                    class="horizontal-stacked-bar bar-gender-male"
+                    :style="
+                      `width:${(residentGenderCountData['남성'] /
+                        residentTotalCount) *
+                        100}%`
+                    "
+                  >
+                    <p>
+                      {{
+                        (
+                          (residentGenderCountData['남성'] /
+                            residentTotalCount) *
+                          100
+                        ).toFixed(2)
+                      }}%
+                    </p>
+                    <span>남성</span>
+                  </div>
+                  <div
+                    class="horizontal-stacked-bar bar-gender-female"
+                    :style="
+                      `width:${(residentGenderCountData['여성'] /
+                        residentTotalCount) *
+                        100}%`
+                    "
+                  >
+                    <p>
+                      {{
+                        (
+                          (residentGenderCountData['여성'] /
+                            residentTotalCount) *
+                          100
+                        ).toFixed(2)
+                      }}%
+                    </p>
+                    <span>여성</span>
+                  </div>
+                  <div
+                    class="horizontal-stacked-bar bar-gender-etc"
+                    :style="
+                      `width:${((residentTotalCount -
+                        (+residentGenderCountData['남성'] +
+                          +residentGenderCountData['여성'])) /
+                        residentTotalCount) *
+                        100}%`
+                    "
+                  ></div>
+                </div>
+                <div class="mt-4">
+                  <table
+                    class="table table-sm"
+                    v-if="residentGenderRatioData && residentTotalCount"
+                  >
+                    <thead>
+                      <tr>
+                        <th scope="col" rowspan="2">구분</th>
+                        <th scope="col" rowspan="2">총 인구</th>
+                        <th
+                          scope="colgroup"
+                          :colspan="residentGenderRatioData.labels.length"
+                        >
+                          성별
+                        </th>
+                      </tr>
+                      <tr>
+                        <th
+                          scope="col"
+                          v-for="(label,
+                          index) in residentGenderRatioData.labels"
+                          :key="index"
+                        >
+                          {{ label }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody v-if="residentGenderRatioData.datasets[0]">
+                      <tr>
+                        <th scope="row">명</th>
+                        <td rowspan="2">
+                          {{ residentTotalCount | numberTransformer }}
+                        </td>
+                        <td
+                          v-for="(data, index) in residentGenderRatioData
+                            .datasets[0].data"
+                          :key="index"
+                        >
+                          {{ data | numberTransformer }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th scope="row">비율</th>
+                        <td
+                          v-for="(data, index) in residentGenderRatioData
+                            .datasets[0].data"
+                          :key="index"
+                        >
+                          {{ ((data / residentTotalCount) * 100).toFixed(2) }}%
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </template>
+              <template v-else>
+                <div class="text-center py-4 bg-light">
+                  <p>해당하는 데이터가 없습니다</p>
+                </div>
+              </template>
             </div>
           </div>
           <div class="mt-4">
-            <DashboardBarChart
-              v-if="residentAgeGroupRatioData"
-              :chartData="residentAgeGroupRatioData"
-              :options="barOptions"
-            />
+            <h5>
+              2) 연령별
+            </h5>
             <div class="mt-4">
-              <table
-                class="table table-sm"
-                v-if="residentAgeGroupCountData && residentTotalCount"
+              <template
+                v-if="
+                  residentAgeGroupRatioData &&
+                    residentAgeGroupRatioData.datasets[0].data[0]
+                "
               >
-                <thead>
-                  <tr>
-                    <th scope="col" rowspan="2">구분</th>
-                    <th scope="col" rowspan="2">총 인구</th>
-                    <th
-                      scope="colgroup"
-                      :colspan="residentAgeGroupRatioData.labels.length"
-                    >
-                      연령별
-                    </th>
-                  </tr>
-                  <tr>
-                    <th
-                      scope="col"
-                      v-for="(label, index) in residentAgeGroupRatioData.labels"
-                      :key="index"
-                    >
-                      {{ label }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody v-if="residentAgeGroupRatioData.datasets[0]">
-                  <tr>
-                    <th scope="row">명</th>
-                    <td rowspan="2">
-                      {{ residentTotalCount | numberTransformer }}
-                    </td>
-                    <td
-                      v-for="(data, index) in residentAgeGroupRatioData
-                        .datasets[0].data"
-                      :key="index"
-                    >
-                      {{ data | numberTransformer }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">비율</th>
-                    <td
-                      v-for="(data, index) in residentAgeGroupRatioData
-                        .datasets[0].data"
-                      :key="index"
-                    >
-                      {{ ((data / residentTotalCount) * 100).toFixed(2) }}%
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                <DashboardBarChart
+                  v-if="residentAgeGroupRatioData"
+                  :chartData="residentAgeGroupRatioData"
+                  :options="barOptions"
+                />
+                <div class="mt-4">
+                  <table
+                    class="table table-sm"
+                    v-if="residentAgeGroupCountData && residentTotalCount"
+                  >
+                    <thead>
+                      <tr>
+                        <th scope="col" rowspan="2">구분</th>
+                        <th scope="col" rowspan="2">총 인구</th>
+                        <th
+                          scope="colgroup"
+                          :colspan="residentAgeGroupRatioData.labels.length"
+                        >
+                          연령별
+                        </th>
+                      </tr>
+                      <tr>
+                        <th
+                          scope="col"
+                          v-for="(label,
+                          index) in residentAgeGroupRatioData.labels"
+                          :key="index"
+                        >
+                          {{ label }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody v-if="residentAgeGroupRatioData.datasets[0]">
+                      <tr>
+                        <th scope="row">명</th>
+                        <td rowspan="2">
+                          {{ residentTotalCount | numberTransformer }}
+                        </td>
+                        <td
+                          v-for="(data, index) in residentAgeGroupRatioData
+                            .datasets[0].data"
+                          :key="index"
+                        >
+                          {{ data | numberTransformer }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th scope="row">비율</th>
+                        <td
+                          v-for="(data, index) in residentAgeGroupRatioData
+                            .datasets[0].data"
+                          :key="index"
+                        >
+                          {{ ((data / residentTotalCount) * 100).toFixed(2) }}%
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </template>
+              <template v-else>
+                <div class="text-center py-4 bg-light">
+                  <p>해당하는 데이터가 없습니다</p>
+                </div>
+              </template>
             </div>
           </div>
         </template>
@@ -189,64 +227,71 @@
         <h3>가구수</h3>
       </header>
       <div class="section-content">
-        <template
-          v-if="
-            !dataLoadingResidential &&
+        <template v-if="!dataLoadingResidential">
+          <template
+            v-if="
               residentialCountData &&
-              residentialRatioData
-          "
-        >
-          <DashboardBarChart
-            v-if="residentialRatioData"
-            :chartData="residentialRatioData"
-            :options="barOptions"
-          />
-          <div class="mt-4">
-            <table class="table table-sm">
-              <thead>
-                <tr>
-                  <th scope="col">구분</th>
-                  <th scope="col">총 가구수</th>
-                  <th scope="col">1인</th>
-                  <th scope="col">2인</th>
-                  <th scope="col">3인</th>
-                  <th scope="col">4인</th>
-                  <th scope="col">5인</th>
-                  <th scope="col">6인 이상</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">세대</th>
-                  <td rowspan="2">
-                    {{
-                      residentialTotalCountData.totalCount | numberTransformer
-                    }}
-                  </td>
-                  <td
-                    v-for="(data, index) in residentialCountData"
-                    :key="index"
-                  >
-                    {{ data | numberTransformer }}
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">비율</th>
-                  <td
-                    v-for="(data, index) in residentialCountData"
-                    :key="index"
-                  >
-                    {{
-                      (
-                        (data / residentialTotalCountData.totalCount) *
-                        100
-                      ).toFixed(2)
-                    }}%
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                residentialRatioData &&
+                residentialRatioData.datasets[0].data[0]
+            "
+          >
+            <DashboardBarChart
+              v-if="residentialRatioData"
+              :chartData="residentialRatioData"
+              :options="barOptions"
+            />
+            <div class="mt-4">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th scope="col">구분</th>
+                    <th scope="col">총 가구수</th>
+                    <th scope="col">1인</th>
+                    <th scope="col">2인</th>
+                    <th scope="col">3인</th>
+                    <th scope="col">4인</th>
+                    <th scope="col">5인</th>
+                    <th scope="col">6인 이상</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">세대</th>
+                    <td rowspan="2">
+                      {{
+                        residentialTotalCountData.totalCount | numberTransformer
+                      }}
+                    </td>
+                    <td
+                      v-for="(data, index) in residentialCountData"
+                      :key="index"
+                    >
+                      {{ data | numberTransformer }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">비율</th>
+                    <td
+                      v-for="(data, index) in residentialCountData"
+                      :key="index"
+                    >
+                      {{
+                        (
+                          (data / residentialTotalCountData.totalCount) *
+                          100
+                        ).toFixed(2)
+                      }}%
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </template>
+          <template v-else>
+            <div class="text-center py-4 bg-light">
+              <p>해당하는 데이터가 없습니다</p>
+            </div>
+          </template>
         </template>
         <template v-else>
           <div class="loader">
@@ -267,14 +312,19 @@
       </header>
       <div class="section-content">
         <template v-if="!dataLoadingEmplyee">
-          <div class="text-center">
+          <div class="text-center mt-4" v-if="employeeTotalCount">
             <p>
-              <strong style="font-family: fantasy;" class="display-4">{{
+              <strong class="display-4" style="font-weight:600">{{
                 employeeTotalCount | numberTransformer
               }}</strong>
-              <span>명</span>
+              <span class="ml-2">명</span>
             </p>
           </div>
+          <template v-else>
+            <div class="text-center py-4 bg-light">
+              <p>해당하는 데이터가 없습니다</p>
+            </div>
+          </template>
         </template>
         <template v-else>
           <div class="loader">
@@ -294,21 +344,19 @@
         <h3>유동인구</h3>
       </header>
       <div class="section-content">
-        <template
-          v-if="!dataLoadingMovingPopulation && movingPopulationGenderData"
-        >
-          <div
-            class="mt-4"
-            v-if="
-              movingPopulationGenderData['남성'] &&
-                movingPopulationGenderData['여성']
-            "
-          >
+        <template v-if="!dataLoadingMovingPopulation">
+          <div class="mt-4">
             <h5>
               1) 성별
             </h5>
             <div class="mt-4">
-              <div>
+              <template
+                v-if="
+                  movingPopulationGenderData &&
+                    movingPopulationGenderData['남성'] &&
+                    movingPopulationGenderData['여성']
+                "
+              >
                 <div class="horizontal-stacked-bars">
                   <div
                     class="horizontal-stacked-bar bar-gender-male"
@@ -359,36 +407,37 @@
                     "
                   ></div>
                 </div>
-              </div>
-              <div class="mt-4">
-                <table class="table table-sm" v-if="movingPopulationTotalCount">
-                  <thead>
-                    <tr>
-                      <th scope="col" rowspan="2">구분</th>
-                      <th scope="col" rowspan="2">총 인구</th>
-                      <th scope="colgroup" colspan="2">
-                        셩별
-                      </th>
-                    </tr>
-                    <tr>
-                      <th
-                        scope="col"
-                        v-for="(label, index) in Object.keys(
-                          movingPopulationGenderData,
-                        )"
-                        :key="index"
-                      >
-                        {{ label }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">명</th>
-                      <td rowspan="2">
-                        {{ movingPopulationTotalCount | numberTransformer }}
-                      </td>
-                      <template v-if="movingPopulationAgeData.datasets[0]">
+                <div class="mt-4">
+                  <table
+                    class="table table-sm"
+                    v-if="movingPopulationTotalCount"
+                  >
+                    <thead>
+                      <tr>
+                        <th scope="col" rowspan="2">구분</th>
+                        <th scope="col" rowspan="2">총 인구</th>
+                        <th scope="colgroup" colspan="2">
+                          셩별
+                        </th>
+                      </tr>
+                      <tr>
+                        <th
+                          scope="col"
+                          v-for="(label, index) in Object.keys(
+                            movingPopulationGenderData,
+                          )"
+                          :key="index"
+                        >
+                          {{ label }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">명</th>
+                        <td rowspan="2">
+                          {{ movingPopulationTotalCount | numberTransformer }}
+                        </td>
                         <td
                           v-for="(data, index) in Object.values(
                             movingPopulationGenderData,
@@ -397,11 +446,9 @@
                         >
                           {{ data | numberTransformer }}
                         </td>
-                      </template>
-                    </tr>
-                    <tr>
-                      <th scope="row">비율</th>
-                      <template v-if="movingPopulationAgeData.datasets[0]">
+                      </tr>
+                      <tr>
+                        <th scope="row">비율</th>
                         <td
                           v-for="(data, index) in Object.values(
                             movingPopulationGenderData,
@@ -414,11 +461,16 @@
                             )
                           }}%
                         </td>
-                      </template>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </template>
+              <template v-else>
+                <div class="text-center py-4 bg-light">
+                  <p>해당하는 데이터가 없습니다</p>
+                </div>
+              </template>
             </div>
           </div>
           <div class="mt-4">
@@ -426,41 +478,50 @@
               2) 연령별
             </h5>
             <div class="mt-4">
-              <DashboardBarChart
-                v-if="movingPopulationAgeData"
-                :chartData="movingPopulationAgeData"
-                :options="barOptions"
-              />
-              <div class="mt-4">
-                <table class="table table-sm" v-if="movingPopulationTotalCount">
-                  <thead>
-                    <tr>
-                      <th scope="col" rowspan="2">구분</th>
-                      <th scope="col" rowspan="2">총 인구</th>
-                      <th
-                        scope="colgroup"
-                        :colspan="movingPopulationAgeData.labels.length"
-                      >
-                        연령별
-                      </th>
-                    </tr>
-                    <tr>
-                      <th
-                        scope="col"
-                        v-for="(label, index) in movingPopulationAgeData.labels"
-                        :key="index"
-                      >
-                        {{ label }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">명</th>
-                      <td rowspan="2">
-                        {{ movingPopulationTotalCount | numberTransformer }}
-                      </td>
-                      <template v-if="movingPopulationAgeData.datasets[0]">
+              <template
+                v-if="
+                  movingPopulationAgeData &&
+                    movingPopulationAgeData.datasets[0].data[0]
+                "
+              >
+                <DashboardBarChart
+                  v-if="movingPopulationAgeData"
+                  :chartData="movingPopulationAgeData"
+                  :options="barOptions"
+                />
+                <div class="mt-4">
+                  <table
+                    class="table table-sm"
+                    v-if="movingPopulationTotalCount"
+                  >
+                    <thead>
+                      <tr>
+                        <th scope="col" rowspan="2">구분</th>
+                        <th scope="col" rowspan="2">총 인구</th>
+                        <th
+                          scope="colgroup"
+                          :colspan="movingPopulationAgeData.labels.length"
+                        >
+                          연령별
+                        </th>
+                      </tr>
+                      <tr>
+                        <th
+                          scope="col"
+                          v-for="(label,
+                          index) in movingPopulationAgeData.labels"
+                          :key="index"
+                        >
+                          {{ label }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">명</th>
+                        <td rowspan="2">
+                          {{ movingPopulationTotalCount | numberTransformer }}
+                        </td>
                         <td
                           v-for="(data, index) in movingPopulationAgeData
                             .datasets[0].data"
@@ -468,11 +529,9 @@
                         >
                           {{ data | numberTransformer }}
                         </td>
-                      </template>
-                    </tr>
-                    <tr>
-                      <th scope="row">비율</th>
-                      <template v-if="movingPopulationAgeData.datasets[0]">
+                      </tr>
+                      <tr>
+                        <th scope="row">비율</th>
                         <td
                           v-for="(data, index) in movingPopulationAgeData
                             .datasets[0].data"
@@ -484,11 +543,16 @@
                             )
                           }}%
                         </td>
-                      </template>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </template>
+              <template v-else>
+                <div class="text-center py-4 bg-light">
+                  <p>해당하는 데이터가 없습니다</p>
+                </div>
+              </template>
             </div>
           </div>
         </template>
@@ -629,10 +693,10 @@ export default class AnalysisPopulation extends BaseComponent {
     AnalysisTabService.findMovingPopulationGenderAndAgeRatio(
       this.analysisTabSearchDto,
     ).subscribe(res => {
-      if (res) {
+      if (res && res.data) {
         this.dataLoadingMovingPopulation = false;
-        this.movingPopulationGenderData = res.data[0];
-        this.movingPopulationAgeData = res.data[1];
+        if (res.data[0]) this.movingPopulationGenderData = res.data[0];
+        if (res.data[1]) this.movingPopulationAgeData = res.data[1];
       }
     });
   }

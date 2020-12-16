@@ -6,7 +6,7 @@
       </header>
       <div class="section-content">
         <template v-if="!dataLoadingFoodCategory">
-          <table class="table">
+          <table class="table" v-if="categories.length > 0">
             <thead>
               <tr>
                 <th scope="col">카테고리</th>
@@ -67,7 +67,7 @@
                       :style="`width: ${(category.gapPer / maxGapPer) * 50}%`"
                     ></div>
                     <span
-                      style="position:relative; z-index:2; padding-left:50%; text-align:left;"
+                      style="position:relative; z-index:2; padding-left:calc(50% + 4px); text-align:left;"
                     >
                       {{ category.gapPer.toFixed(2) }}%
                     </span>
@@ -79,7 +79,7 @@
                       :style="`width: ${(-category.gapPer / maxGapPer) * 50}%`"
                     ></div>
                     <span
-                      style="position:relative; z-index:2; padding-left:50%; text-align:left;"
+                      style="position:relative; z-index:2; padding-left:calc(50% + 4px); text-align:left;"
                     >
                       {{ category.gapPer.toFixed(2) }}%
                     </span>
@@ -89,6 +89,11 @@
               </tr>
             </tbody>
           </table>
+          <template v-else>
+            <div class="text-center py-4 bg-light">
+              <p>해당하는 데이터가 없습니다</p>
+            </div>
+          </template>
         </template>
         <template v-else>
           <div class="loader">
@@ -129,6 +134,11 @@
               </tr>
             </tbody>
           </table>
+          <template v-else>
+            <div class="text-center py-4 bg-light">
+              <p>해당하는 데이터가 없습니다</p>
+            </div>
+          </template>
         </template>
         <template v-else>
           <div class="loader">

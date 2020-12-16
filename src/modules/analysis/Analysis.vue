@@ -1,8 +1,18 @@
 <template>
-  <article id="main-article" :class="{ 'is-collpased': !slidebarVisible }">
-    <div id="tab-section" v-if="slidebarVisible">
+  <article id="main-article" :class="{ 'is-collapsed': !slidebarVisible }">
+    <div id="tab-section">
       <header class="article-header">
-        <h2>나누다키친 상권분석</h2>
+        <b-row no-gutters align-v="center" align-h="between">
+          <h2 class="mb-0">나누다키친 상권분석</h2>
+          <b-button
+            variant="dark"
+            @click="slidebarVisible = !slidebarVisible"
+            class="btn-open-map"
+          >
+            <b-icon icon="map" class="mr-2"></b-icon>
+            지도 보기
+          </b-button>
+        </b-row>
         <div class="mt-3">
           <b-form-row>
             <b-col cols="12">
@@ -110,6 +120,12 @@
         </template>
       </b-button>
       <div class="map-controls">
+        <b-button
+          variant="dark"
+          @click="slidebarVisible = !slidebarVisible"
+          class="btn-close-map"
+          >닫기</b-button
+        >
         <b-button id="remove-circles">모두 지우기</b-button>
       </div>
     </section>
@@ -146,7 +162,7 @@ export default class Analysis extends BaseComponent {
   private addressKeyword = '';
   private searched = false;
   private districtSelect = [];
-  private comapnyDistirctDto = new CompanyDistrictDto();
+  private comapnyDistrictDto = new CompanyDistrictDto();
   private queryParam: any;
   private summaryClicked = false;
   private revenueClicked = false;
@@ -156,11 +172,11 @@ export default class Analysis extends BaseComponent {
 
   //서울에 있는 상권분석가능한 지역 동을 받아옴
   getDistrictAddress() {
-    this.comapnyDistirctDto.region1DepthName = '서울';
+    this.comapnyDistrictDto.region1DepthName = '서울';
     CompanyDistrictService.findForSelectOptionAnalysis(
-      this.comapnyDistirctDto,
+      this.comapnyDistrictDto,
     ).subscribe(res => {
-      console.log('getDistrictAddress res', res);
+      // console.log('getDistrictAddress res', res);
       if (res) {
         this.districtSelect = res.data;
       }
@@ -168,15 +184,17 @@ export default class Analysis extends BaseComponent {
   }
   //법정동코드로 지역정보를 받아옴
   getReverseDistrict(bdongCode) {
-    this.comapnyDistirctDto.region1DepthName = '서울';
-    this.comapnyDistirctDto.bCode = bdongCode;
+    this.comapnyDistrictDto.region1DepthName = '서울';
+    this.comapnyDistrictDto.bCode = bdongCode;
     CompanyDistrictService.findForSelectOption(
-      this.comapnyDistirctDto,
+      this.comapnyDistrictDto,
     ).subscribe(res => {
       if (res) {
-        console.log('getReverseDistrict res', res);
-        this.$set(this.propDistrict, 'lat', res.data[0].lat);
-        this.$set(this.propDistrict, 'lon', res.data[0].lon);
+        // console.log('getReverseDistrict res', res);
+        if (res.data && res.data[0]) {
+          this.$set(this.propDistrict, 'lat', res.data[0].lat);
+          this.$set(this.propDistrict, 'lon', res.data[0].lon);
+        }
       }
     });
   }
@@ -190,7 +208,7 @@ export default class Analysis extends BaseComponent {
         this.summaryClicked = false;
         this.categoryClicked = false;
         this.bdongCode = res.data.items[0].bdongCode;
-        console.log('this.bdongCode', this.bdongCode);
+        // console.log('this.bdongCode', this.bdongCode);
         this.getReverseDistrict(this.bdongCode);
       },
     );
@@ -204,7 +222,7 @@ export default class Analysis extends BaseComponent {
         }),
       })
       .catch(() => {
-        console.log('dsadsad');
+        console.log('search failed');
       });
     this.searched = true;
   }
@@ -254,15 +272,20 @@ export default class Analysis extends BaseComponent {
   position: relative;
   display: flex;
   height: calc(100vh - 55px);
-  &.is-collpased {
+  &.is-collapsed {
     #tab-section {
-      transform: translateX(-100%);
+      display: none;
     }
 
     #map-section {
       width: 100%;
     }
   }
+  .btn-open-map,
+  .btn-close-map {
+    display: none;
+  }
+
   #tab-section {
     position: relative;
     // left: 0;
@@ -388,6 +411,44 @@ export default class Analysis extends BaseComponent {
     span {
       font-size: 12px;
       margin-left: 8px;
+    }
+  }
+}
+
+.no-data {
+  text-align: center;
+  padding: 140px 0;
+}
+
+@media screen and (max-width: 1024px) {
+  #main-article {
+    display: block;
+
+    &.is-collapsed {
+      #map-section {
+        display: block;
+      }
+    }
+
+    .btn-open-map,
+    .btn-close-map {
+      display: inline-block;
+    }
+    #tab-section {
+      width: 100%;
+    }
+
+    #map-section {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+
+      .btn-toggle {
+        display: none;
+        width: 100%;
+      }
     }
   }
 }

@@ -1,8 +1,18 @@
 <template>
-  <article id="main-article" :class="{ 'is-collpased': !slidebarVisible }">
-    <div id="tab-section" v-if="slidebarVisible">
+  <article id="main-article" :class="{ 'is-collapsed': !slidebarVisible }">
+    <div id="tab-section">
       <header class="article-header">
-        <h2>나누다키친 상권분석</h2>
+        <b-row no-gutters align-v="center" align-h="between">
+          <h2 class="mb-0">나누다키친 상권분석</h2>
+          <b-button
+            variant="dark"
+            @click="slidebarVisible = !slidebarVisible"
+            class="btn-open-map"
+          >
+            <b-icon icon="map" class="mr-2"></b-icon>
+            지도 보기
+          </b-button>
+        </b-row>
         <div class="mt-3">
           <b-form-row>
             <b-col cols="12">
@@ -37,71 +47,36 @@
       </header>
       <template v-if="addressKeyword">
         <b-tabs fill>
-          <b-tab title="요약" active>
-            <AnalysisSummary v-if="summaryClicked" :bdongCode="bdongCode" />
-            <template v-else>
-              <div class="px-4 mt-4">
-                <b-button
-                  variant="outline-info"
-                  block
-                  size="lg"
-                  @click="clickTabSummary()"
-                >
-                  상권요약 정보 보기
-                </b-button>
-              </div>
-            </template>
+          <b-tab title="요약" :active="summaryClicked">
+            <AnalysisSummary :bdongCode="bdongCode" v-if="bdongCode" />
           </b-tab>
-          <b-tab title="매출분석">
+          <b-tab
+            title="매출분석"
+            @click="clickTabRevenue()"
+            :active="revenueClicked"
+          >
             <AnalysisSales v-if="revenueClicked" :bdongCode="bdongCode" />
-            <template v-else>
-              <div class="px-4 mt-4">
-                <b-button
-                  variant="outline-info"
-                  block
-                  size="lg"
-                  @click="clickTabRevenue()"
-                >
-                  매출분석 정보 보기
-                </b-button>
-              </div>
-            </template>
           </b-tab>
-          <b-tab title="업종분석">
+          <b-tab
+            title="업종분석"
+            @click="clickTabCategory()"
+            :active="categoryClicked"
+          >
             <AnalysisCategory v-if="categoryClicked" :bdongCode="bdongCode" />
-            <template v-else>
-              <div class="px-4 mt-4">
-                <b-button
-                  variant="outline-info"
-                  block
-                  size="lg"
-                  @click="clickTabCategory()"
-                >
-                  업종분석 정보 보기
-                </b-button>
-              </div>
-            </template>
           </b-tab>
-          <b-tab title="인구분석">
+          <b-tab
+            title="인구분석"
+            @click="clickTabPopulation()"
+            :active="populationClicked"
+          >
             <AnalysisPopulation
               v-if="populationClicked"
               :bdongCode="bdongCode"
             />
-            <template v-else>
-              <div class="px-4 mt-4">
-                <b-button
-                  variant="outline-info"
-                  block
-                  size="lg"
-                  @click="clickTabPopulation()"
-                >
-                  인구분석 정보 보기
-                </b-button>
-              </div>
-            </template>
           </b-tab>
         </b-tabs>
       </template>
+      <!-- <template v-else-if=""></template> -->
       <template v-else>
         <div class="tabs">
           <b-row
@@ -124,7 +99,10 @@
       </template>
     </div>
     <section id="map-section">
-      <AnalysisMap :slidebarVisible="slidebarVisible" />
+      <AnalysisMap
+        :slidebarVisible="slidebarVisible"
+        :district="propDistrict"
+      />
       <b-button
         variant="light"
         class="btn-toggle"
@@ -142,6 +120,12 @@
         </template>
       </b-button>
       <div class="map-controls">
+        <b-button
+          variant="dark"
+          @click="slidebarVisible = !slidebarVisible"
+          class="btn-close-map"
+          >닫기</b-button
+        >
         <b-button id="remove-circles">모두 지우기</b-button>
       </div>
     </section>
@@ -176,55 +160,56 @@ export default class Analysis extends BaseComponent {
   private bdongCode = null;
   private analysisTabSearchDto = new AnalysisTabListDto();
   private addressKeyword = '';
-  private selectedBdongCode = null;
   private searched = false;
   private districtSelect = [];
-  private comapnyDistirctDto = new CompanyDistrictDto();
+  private comapnyDistrictDto = new CompanyDistrictDto();
   private queryParam: any;
   private summaryClicked = false;
   private revenueClicked = false;
   private categoryClicked = false;
   private populationClicked = false;
-  private propDistrict = new CompanyDistrictDto();
+  private propDistrict = { lat: '37.5012283', lon: '127.0334121' };
 
+  //서울에 있는 상권분석가능한 지역 동을 받아옴
   getDistrictAddress() {
-    this.comapnyDistirctDto.region1DepthName = '서울';
+    this.comapnyDistrictDto.region1DepthName = '서울';
     CompanyDistrictService.findForSelectOptionAnalysis(
-      this.comapnyDistirctDto,
+      this.comapnyDistrictDto,
     ).subscribe(res => {
+      // console.log('getDistrictAddress res', res);
       if (res) {
         this.districtSelect = res.data;
       }
     });
   }
-
-  async getReverseDistrict(bdongCode) {
-    this.comapnyDistirctDto.region1DepthName = '서울';
-    this.comapnyDistirctDto.bCode = bdongCode;
-    await CompanyDistrictService.findForSelectOption(
-      this.comapnyDistirctDto,
+  //법정동코드로 지역정보를 받아옴
+  getReverseDistrict(bdongCode) {
+    this.comapnyDistrictDto.region1DepthName = '서울';
+    this.comapnyDistrictDto.bCode = bdongCode;
+    CompanyDistrictService.findForSelectOption(
+      this.comapnyDistrictDto,
     ).subscribe(res => {
       if (res) {
-        this.propDistrict = res.data[0];
-        this.$root.$emit(
-          'changeDistrict',
-          this.propDistrict.lat,
-          this.propDistrict.lon,
-        );
+        // console.log('getReverseDistrict res', res);
+        if (res.data && res.data[0]) {
+          this.$set(this.propDistrict, 'lat', res.data[0].lat);
+          this.$set(this.propDistrict, 'lon', res.data[0].lon);
+        }
       }
     });
   }
-
+  //주소를 법정동 코드로 바꿔줌
   findBdongCode() {
     this.searched = false;
     CodeBdongService.findAll({ bdongName: this.addressKeyword }).subscribe(
-      async res => {
+      res => {
         this.populationClicked = false;
         this.revenueClicked = false;
         this.summaryClicked = false;
         this.categoryClicked = false;
         this.bdongCode = res.data.items[0].bdongCode;
-        await this.getReverseDistrict(this.bdongCode);
+        // console.log('this.bdongCode', this.bdongCode);
+        this.getReverseDistrict(this.bdongCode);
       },
     );
   }
@@ -237,7 +222,7 @@ export default class Analysis extends BaseComponent {
         }),
       })
       .catch(() => {
-        console.log('dsadsad');
+        console.log('search failed');
       });
     this.searched = true;
   }
@@ -287,15 +272,20 @@ export default class Analysis extends BaseComponent {
   position: relative;
   display: flex;
   height: calc(100vh - 55px);
-  &.is-collpased {
+  &.is-collapsed {
     #tab-section {
-      transform: translateX(-100%);
+      display: none;
     }
 
     #map-section {
       width: 100%;
     }
   }
+  .btn-open-map,
+  .btn-close-map {
+    display: none;
+  }
+
   #tab-section {
     position: relative;
     // left: 0;
@@ -421,6 +411,44 @@ export default class Analysis extends BaseComponent {
     span {
       font-size: 12px;
       margin-left: 8px;
+    }
+  }
+}
+
+.no-data {
+  text-align: center;
+  padding: 140px 0;
+}
+
+@media screen and (max-width: 1024px) {
+  #main-article {
+    display: block;
+
+    &.is-collapsed {
+      #map-section {
+        display: block;
+      }
+    }
+
+    .btn-open-map,
+    .btn-close-map {
+      display: inline-block;
+    }
+    #tab-section {
+      width: 100%;
+    }
+
+    #map-section {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+
+      .btn-toggle {
+        display: none;
+        width: 100%;
+      }
     }
   }
 }

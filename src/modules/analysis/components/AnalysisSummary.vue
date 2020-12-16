@@ -123,7 +123,7 @@
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import AnalysisTabService from '@/services/analysis/analysis-tab.service';
 import { AnalysisTabListDto } from '@/dto';
 import { ReverseQueryParamMapper } from '@/core';
@@ -140,6 +140,11 @@ export default class AnalysisSummary extends BaseComponent {
   private categories = [];
   private recomeendCategory = [];
   private parmas = null;
+  @Watch('bdongCode')
+  bdongCodeChanged() {
+    this.analysisTabSearchDto.bdongCode = this.bdongCode;
+    this.findAnalysisSummary();
+  }
 
   recommendCategoryBgColor(idx) {
     if (idx === 0) return 'bg-primary';
@@ -152,6 +157,7 @@ export default class AnalysisSummary extends BaseComponent {
     this.dataLoading = true;
     await AnalysisTabService.findSummary(this.analysisTabSearchDto).subscribe(
       res => {
+        // console.log('findSummary res', res);
         this.dataLoading = false;
         this.summary = res.data;
       },
@@ -164,9 +170,12 @@ export default class AnalysisSummary extends BaseComponent {
       this.analysisTabSearchDto,
     ).subscribe(res => {
       if (res) {
+        // console.log('findCategoryRatio res', res);
         this.dataLoadingCategory = false;
         this.categories = res.data;
         this.recomeendCategory = this.categories.slice(0, 3);
+      } else {
+        console.log('findCategoryRatio failed');
       }
     });
   }

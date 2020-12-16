@@ -84,28 +84,91 @@
                     ></b-icon>
                   </h5>
                   <div class="mt-4">
-                    <b-row>
-                      <b-col cols="6">
-                        <p class="text-center mb-2">
-                          <b class="graph-label">매출 건수 비율</b>
-                        </p>
-                        <DashboardPieChart
-                          v-if="genderCountData"
-                          :chartData="genderCountData"
-                          :options="pieOptions"
-                        />
-                      </b-col>
-                      <b-col cols="6">
-                        <p class="text-center mb-2">
-                          <b class="graph-label">매출 금액 비율</b>
-                        </p>
-                        <DashboardPieChart
-                          v-if="genderRevenueData"
-                          :chartData="genderRevenueData"
-                          :options="pieOptions"
-                        />
-                      </b-col>
-                    </b-row>
+                    <template v-if="genderCountData && genderRevenueData">
+                      <b-row>
+                        <b-col cols="6">
+                          <p class="text-center mb-2">
+                            <b class="graph-label">매출 건수 비율</b>
+                          </p>
+                          <DashboardPieChart
+                            v-if="genderCountData"
+                            :chartData="genderCountData"
+                            :options="pieOptions"
+                          />
+                          <div class="mt-4">
+                            <table class="table table-sm">
+                              <thead>
+                                <tr>
+                                  <th>구분</th>
+                                  <th
+                                    v-for="(label,
+                                    index) in genderCountData.labels"
+                                    :key="index"
+                                  >
+                                    {{ label }}
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <th>비율</th>
+                                  <td
+                                    v-for="(data, index) in genderCountData
+                                      .datasets[0].data"
+                                    :key="index"
+                                  >
+                                    {{ Math.round(data) }}%
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </b-col>
+                        <b-col cols="6">
+                          <p class="text-center mb-2">
+                            <b class="graph-label">매출 금액 비율</b>
+                          </p>
+                          <DashboardPieChart
+                            v-if="genderRevenueData"
+                            :chartData="genderRevenueData"
+                            :options="pieOptions"
+                          />
+                          <div class="mt-4">
+                            <table class="table table-sm">
+                              <thead>
+                                <tr>
+                                  <th>구분</th>
+                                  <th
+                                    v-for="(label,
+                                    index) in genderRevenueData.labels"
+                                    :key="index"
+                                  >
+                                    {{ label }}
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <th>비율</th>
+                                  <td
+                                    v-for="(data, index) in genderRevenueData
+                                      .datasets[0].data"
+                                    :key="index"
+                                  >
+                                    {{ Math.round(data) }}%
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </b-col>
+                      </b-row>
+                    </template>
+                    <template v-else>
+                      <div class="text-center py-4 bg-light">
+                        <p>해당하는 데이터가 없습니다</p>
+                      </div>
+                    </template>
                   </div>
                 </div>
                 <div class="mt-4">
@@ -120,12 +183,46 @@
                     ></b-icon>
                   </h5>
                   <div class=" mt-4">
-                    <DashboardBarChart
-                      v-if="ageRevenueData"
-                      :chartData="ageRevenueData"
-                      :options="barOptions"
-                      :styles="{ height: '400px' }"
-                    />
+                    <template v-if="ageRevenueData">
+                      <DashboardBarChart
+                        v-if="ageRevenueData"
+                        :chartData="ageRevenueData"
+                        :options="barOptions"
+                        :styles="{ height: '400px' }"
+                      />
+                      <div class="mt-4">
+                        <table class="table table-sm">
+                          <thead>
+                            <tr>
+                              <th>구분</th>
+                              <th
+                                v-for="(label, index) in ageRevenueData.labels"
+                                :key="index"
+                              >
+                                {{ label }}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <th>비율</th>
+                              <td
+                                v-for="(data, index) in ageRevenueData
+                                  .datasets[0].data"
+                                :key="index"
+                              >
+                                {{ Math.round(data) }}%
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </template>
+                    <template v-else>
+                      <div class="text-center py-4 bg-light">
+                        <p>해당하는 데이터가 없습니다</p>
+                      </div>
+                    </template>
                   </div>
                 </div>
                 <div class="mt-4">
@@ -140,7 +237,7 @@
                     ></b-icon>
                   </h5>
                   <div class="mt-4">
-                    <div>
+                    <template v-if="dayCountData && dayRevenueData">
                       <div class="mt-4">
                         <p class="text-center mb-2">
                           <b class="graph-label">매출 건수 비율</b>
@@ -151,6 +248,33 @@
                           :options="barOptions"
                           :styles="{ height: '400px' }"
                         />
+                        <div class="mt-4">
+                          <table class="table table-sm">
+                            <thead>
+                              <tr>
+                                <th>구분</th>
+                                <th
+                                  v-for="(label, index) in dayCountData.labels"
+                                  :key="index"
+                                >
+                                  {{ label }}
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th>비율</th>
+                                <td
+                                  v-for="(data, index) in dayCountData
+                                    .datasets[0].data"
+                                  :key="index"
+                                >
+                                  {{ Math.round(data) }}%
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                       <div class="mt-4">
                         <p class="text-center mb-2">
@@ -162,8 +286,41 @@
                           :options="barOptions"
                           :styles="{ height: '400px' }"
                         />
+                        <div class="mt-4">
+                          <table class="table table-sm">
+                            <thead>
+                              <tr>
+                                <th>구분</th>
+                                <th
+                                  v-for="(label,
+                                  index) in dayRevenueData.labels"
+                                  :key="index"
+                                >
+                                  {{ label }}
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th>비율</th>
+                                <td
+                                  v-for="(data, index) in dayRevenueData
+                                    .datasets[0].data"
+                                  :key="index"
+                                >
+                                  {{ Math.round(data) }}%
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
-                    </div>
+                    </template>
+                    <template v-else>
+                      <div class="text-center py-4 bg-light">
+                        <p>해당하는 데이터가 없습니다</p>
+                      </div>
+                    </template>
                   </div>
                 </div>
                 <!-- <div class="mt-4">
@@ -196,7 +353,7 @@
         </template>
         <template v-else>
           <div class="bg-light">
-            <div class="text-center" style="padding:140px 0">
+            <div class="no-data">
               <p>
                 카테고리를 선택해주세요
               </p>
@@ -211,7 +368,10 @@
       </header>
       <div class="section-content">
         <template v-if="!dataLoadingByTime">
-          <table class="table table-sm">
+          <table
+            class="table table-sm"
+            v-if="lunchData && dinnerData && lateNightData"
+          >
             <thead>
               <tr>
                 <th></th>
@@ -222,54 +382,51 @@
               </tr>
             </thead>
             <tbody>
-              <template v-if="lunchData">
-                <tr
-                  v-for="(data, index) in lunchData"
-                  :key="`${index + 'lunchData'}`"
-                >
-                  <th
-                    scope="row"
-                    :rowspan="lunchData.length"
-                    v-if="index === 0"
-                  >
-                    점심<br />11 ~ 14시
-                  </th>
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ data.rank_1_bm }}</td>
-                  <td>{{ data.gender }}</td>
-                  <td>{{ data.age }}</td>
-                </tr>
-              </template>
-              <template v-if="dinnerData">
-                <tr
-                  v-for="(data, index) in dinnerData"
-                  :key="`${index + 'dinnerData'}`"
-                >
-                  <th scope="row" rowspan="3" v-if="index === 0">
-                    저녁<br />17 ~ 21시
-                  </th>
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ data.rank_1_bm }}</td>
-                  <td>{{ data.gender }}</td>
-                  <td>{{ data.age }}</td>
-                </tr>
-              </template>
-              <template v-if="lateNightData">
-                <tr
-                  v-for="(data, index) in lateNightData"
-                  :key="`${index + 'lateNightData'}`"
-                >
-                  <th scope="row" rowspan="3" v-if="index === 0">
-                    야식<br />21 ~ 06시
-                  </th>
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ data.rank_1_bm }}</td>
-                  <td>{{ data.gender }}</td>
-                  <td>{{ data.age }}</td>
-                </tr>
-              </template>
+              <tr
+                v-for="(data, index) in lunchData"
+                :key="`${index + 'lunchData'}`"
+              >
+                <th scope="row" :rowspan="lunchData.length" v-if="index === 0">
+                  점심<br />11 ~ 14시
+                </th>
+                <td>{{ index + 1 }}</td>
+                <td>{{ data.rank_1_bm }}</td>
+                <td>{{ data.gender }}</td>
+                <td>{{ data.age }}</td>
+              </tr>
+
+              <tr
+                v-for="(data, index) in dinnerData"
+                :key="`${index + 'dinnerData'}`"
+              >
+                <th scope="row" rowspan="3" v-if="index === 0">
+                  저녁<br />17 ~ 21시
+                </th>
+                <td>{{ index + 1 }}</td>
+                <td>{{ data.rank_1_bm }}</td>
+                <td>{{ data.gender }}</td>
+                <td>{{ data.age }}</td>
+              </tr>
+
+              <tr
+                v-for="(data, index) in lateNightData"
+                :key="`${index + 'lateNightData'}`"
+              >
+                <th scope="row" rowspan="3" v-if="index === 0">
+                  야식<br />21 ~ 06시
+                </th>
+                <td>{{ index + 1 }}</td>
+                <td>{{ data.rank_1_bm }}</td>
+                <td>{{ data.gender }}</td>
+                <td>{{ data.age }}</td>
+              </tr>
             </tbody>
           </table>
+          <template v-else>
+            <div class="no-data bg-light">
+              <p>해당하는 데이터가 없습니다</p>
+            </div>
+          </template>
         </template>
         <template v-else>
           <div class="loader">
@@ -299,6 +456,7 @@ import DashboardPieChart from '../../dashboard/add-on/DashboardPieChart.vue';
 import DashboardBarChart from '../../dashboard/add-on/DashboardBarChart.vue';
 import { AnalysisTabListDto } from '@/dto';
 import { ReverseQueryParamMapper } from '@/core';
+import toast from '../../../../resources/assets/js/services/toast.js';
 
 @Component({
   name: 'AnalysisSales',
@@ -341,11 +499,18 @@ export default class AnalysisSales extends BaseComponent {
       ],
     },
   };
-
+  resetData() {
+    this.genderCountData = null;
+    this.genderRevenueData = null;
+    this.ageRevenueData = null;
+    this.dayCountData = null;
+    this.dayRevenueData = null;
+  }
   async findRevenueAnalysis(categoryName?: BaeminCategoryCode) {
     if (!this.bdongCode) {
       return;
     }
+    this.resetData();
     this.clickedCategory = true;
     this.analysisTabSearchDto.bdongCode = this.bdongCode;
 
@@ -378,10 +543,10 @@ export default class AnalysisSales extends BaseComponent {
     AnalysisTabService.findRevenueAnalysisGender(
       this.analysisTabSearchDto,
     ).subscribe(res => {
-      if (res) {
+      if (res && res.data) {
         this.dataLoading = false;
-        this.genderCountData = res.data[0].countData;
-        this.genderRevenueData = res.data[1].revenueData;
+        if (res.data[0]) this.genderCountData = res.data[0].countData;
+        if (res.data[1]) this.genderRevenueData = res.data[1].revenueData;
       }
     });
   }
@@ -390,8 +555,8 @@ export default class AnalysisSales extends BaseComponent {
     AnalysisTabService.findRevenueAnalysisAgeGroup(
       this.analysisTabSearchDto,
     ).subscribe(res => {
-      if (res) {
-        this.ageRevenueData = res.data[1].revenueData;
+      if (res && res.data) {
+        if (res.data[1]) this.ageRevenueData = res.data[1].revenueData;
       }
     });
   }
@@ -400,9 +565,9 @@ export default class AnalysisSales extends BaseComponent {
     AnalysisTabService.findRevenueAnalysisByDay(
       this.analysisTabSearchDto,
     ).subscribe(res => {
-      if (res) {
-        this.dayCountData = res.data[0].countData;
-        this.dayRevenueData = res.data[1].revenueData;
+      if (res && res.data) {
+        if (res.data[0]) this.dayCountData = res.data[0].countData;
+        if (res.data[1]) this.dayRevenueData = res.data[1].revenueData;
       }
     });
   }

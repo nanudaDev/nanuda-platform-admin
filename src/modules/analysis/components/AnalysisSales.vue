@@ -299,6 +299,7 @@ import DashboardPieChart from '../../dashboard/add-on/DashboardPieChart.vue';
 import DashboardBarChart from '../../dashboard/add-on/DashboardBarChart.vue';
 import { AnalysisTabListDto } from '@/dto';
 import { ReverseQueryParamMapper } from '@/core';
+import toast from '../../../../resources/assets/js/services/toast.js';
 
 @Component({
   name: 'AnalysisSales',
@@ -341,11 +342,18 @@ export default class AnalysisSales extends BaseComponent {
       ],
     },
   };
-
+  resetData() {
+    this.genderCountData = null;
+    this.genderRevenueData = null;
+    this.ageRevenueData = null;
+    this.dayCountData = null;
+    this.dayRevenueData = null;
+  }
   async findRevenueAnalysis(categoryName?: BaeminCategoryCode) {
     if (!this.bdongCode) {
       return;
     }
+    this.resetData();
     this.clickedCategory = true;
     this.analysisTabSearchDto.bdongCode = this.bdongCode;
 

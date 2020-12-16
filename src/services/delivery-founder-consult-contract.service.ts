@@ -40,11 +40,11 @@ class DeliveryFounderConsultContractService extends BaseService {
 
   /**
    *
-   * @param contarctNo
+   * @param contractNo
    */
-  deleteContract(contarctNo) {
+  deleteContract(contractNo) {
     return super.delete<DeliveryFounderConsultContractDto>(
-      `admin/delivery-founder-consult-contract/${contarctNo}`,
+      `admin/delivery-founder-consult-contract/${contractNo}`,
     );
   }
 }

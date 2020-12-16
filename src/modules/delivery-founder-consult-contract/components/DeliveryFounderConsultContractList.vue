@@ -219,7 +219,7 @@ import {
 
 import AmenityService from '../../../services/amenity.service';
 import { getStatusColor } from '../../../core/utils/status-color.util';
-import deliveryFounderConsultContarctService from '@/services/delivery-founder-consult-contarct.service';
+import deliveryFounderConsultContractService from '@/services/delivery-founder-consult-contract.service';
 import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
@@ -252,7 +252,7 @@ export default class DeliveryFounderConsultContractList extends BaseComponent {
     if (!isPagination) {
       this.pagination.page = 1;
     }
-    deliveryFounderConsultContarctService
+    deliveryFounderConsultContractService
       .findAll(this.deliveryFounderConsultContractSearchDto, this.pagination)
       .subscribe(res => {
         this.dataLoading = false;

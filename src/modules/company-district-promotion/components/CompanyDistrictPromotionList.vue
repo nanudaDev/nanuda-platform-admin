@@ -201,7 +201,7 @@
                 cols="12"
                 md="6"
                 lg="4"
-                v-for="district in companyDistirctSelect"
+                v-for="district in companyDistrictSelect"
                 :key="district.no"
                 :value="district.no"
               >
@@ -250,7 +250,7 @@ export default class PromotionList extends BaseComponent {
   private pagination = new Pagination();
   private dataLoading = false;
   private promitionTypeSelect = [];
-  private companyDistirctSelect = [];
+  private companyDistrictSelect = [];
   private companyDistrictDto = new CompanyDistrictDto();
   private showYn: YN[] = [...CONST_YN];
   private companyDistrictIds: number[] = [];
@@ -294,7 +294,7 @@ export default class PromotionList extends BaseComponent {
     CompanyDistrictService.findForSelectOption(companyDistrictDto).subscribe(
       res => {
         if (res) {
-          this.companyDistirctSelect = res.data;
+          this.companyDistrictSelect = res.data;
         }
       },
     );

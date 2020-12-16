@@ -55,7 +55,7 @@
               <b-button
                 variant="danger"
                 size="sm"
-                v-b-modal.delete_contarct
+                v-b-modal.delete_contract
                 @click="selectContract(contract)"
               >
                 삭제
@@ -79,7 +79,7 @@
       <div class="circle circle-2"></div>
     </div>
     <b-modal
-      id="delete_contarct"
+      id="delete_contract"
       title="계약 삭제"
       header-bg-variant="danger"
       header-text-variant="light"
@@ -114,7 +114,7 @@ import {
   DeliveryFounderConsultContractListDto,
   DeliveryFounderConsultUpdateDto,
 } from '../../../dto';
-import DeliveryFounderConsultContractService from '../../../services/delivery-founder-consult-contarct.service';
+import DeliveryFounderConsultContractService from '../../../services/delivery-founder-consult-contract.service';
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { Pagination } from '@/common';
 import deliverySpaceService from '@/services/delivery-space.service';
@@ -165,7 +165,7 @@ export default class DeliverySpaceDetailContractList extends BaseComponent {
       ).subscribe(res => {
         if (res) {
           this.search();
-          this.$bvModal.hide('delete_contarct');
+          this.$bvModal.hide('delete_contract');
           this.$root.$emit('delete_contract_list');
           toast.success('삭제완료');
         }

@@ -10,16 +10,46 @@ import { CompanyDistrictDto } from '@/dto';
   name: 'AnalysisMap',
 })
 export default class AnalysisMap extends BaseComponent {
-  // @Prop() district?: CompanyDistrictDto;
+  @Prop() district?: CompanyDistrictDto;
   // private lat = this.district.lat;
   // private lon = this.district.lon;
   private map;
+  private theCircle;
   @Prop() slidebarVisible?: boolean;
   @Watch('slidebarVisible')
   slidebarVisibleChanged() {
     this.map.relayout();
   }
+  @Watch('district', {
+    deep: true,
+  })
+  coordsChanged() {
+    // 전에있던 원 삭제
+    if (this.theCircle) {
+      this.theCircle.setMap(null);
+    }
+    // 이동할 위도 경도 위치를 생성합니다
+    const moveLatLon = new window.kakao.maps.LatLng(
+      this.district.lat,
+      this.district.lon,
+    );
+    this.theCircle = new window.kakao.maps.Circle({
+      map: this.map,
+      center: moveLatLon,
+      strokeWeight: 2,
+      strokeColor: '#ffffff',
+      strokeOpacity: 0.8,
+      strokeStyle: 'dashed',
+      fillColor: '#17a2b8',
+      fillOpacity: 0.5,
+    });
 
+    this.theCircle.setRadius(1000);
+
+    // 지도 중심을 이동 시킵니다
+    this.theCircle.setMap(this.map);
+    this.map.setCenter(moveLatLon);
+  }
   // 지도 가져오기
   setMap(lat?: string, lon?: string) {
     const container = document.getElementById('map');
@@ -29,8 +59,6 @@ export default class AnalysisMap extends BaseComponent {
     const options = {
       center: markerPosition,
       level: 7,
-      maxLevel: 9,
-      minLevel: 3,
     };
     const map = new window.kakao.maps.Map(container, options); // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
 
@@ -51,21 +79,10 @@ export default class AnalysisMap extends BaseComponent {
       position: markerPosition,
       content: content,
     });
-    const circle = new window.kakao.maps.Circle({
-      map: map,
-      center: markerPosition,
-      strokeWeight: 2,
-      strokeColor: '#ffffff',
-      strokeOpacity: 0.8,
-      strokeStyle: 'dashed',
-      fillColor: '#17a2b8',
-      fillOpacity: 0.5,
-    });
 
-    circle.setRadius(1000);
     // map.addControl(mapTypeControl, window.kakao.maps.ControlPosition.TOPRIGHT);
     // map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
-    map.relayout();
+    // map.relayout();
 
     let drawingFlag = false; // 원이 그려지고 있는 상태를 가지고 있을 변수입니다
     let centerPosition; // 원의 중심좌표 입니다
@@ -318,12 +335,13 @@ export default class AnalysisMap extends BaseComponent {
 
     this.map = map;
   }
+
   mounted() {
-    this.setMap('37.5012283', '127.0334121');
+    this.setMap(this.district.lat, this.district.lon);
     // emit 함수 추가
-    this.$root.$on('changeDistrict', (lat?: string, lon?: string) => {
-      this.setMap(lat, lon);
-    });
+    // this.$root.$on('changeDistrict', (lat?: string, lon?: string) => {
+    //   this.setMap(lat, lon);
+    // });
     // this.setMap();
   }
 }

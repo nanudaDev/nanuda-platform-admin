@@ -84,6 +84,17 @@
                 {{ deliverySpaceDto.companyDistrict.nameKr }}
               </router-link>
             </li>
+            <li v-if="deliverySpaceDto.companyDistrict.bCode">
+              법정동 코드 : {{ deliverySpaceDto.companyDistrict.bCode }}
+            </li>
+            <li v-if="deliverySpaceDto.companyDistrict.hCode">
+              행정동 코드 : {{ deliverySpaceDto.companyDistrict.hCode }}
+            </li>
+            <li v-if="deliverySpaceDto.companyDistrict.region1DepthName">
+              주소 : {{ deliverySpaceDto.companyDistrict.region1DepthName }}
+              {{ deliverySpaceDto.companyDistrict.region2DepthName }}
+              {{ deliverySpaceDto.companyDistrict.region3DepthName }}
+            </li>
             <li v-if="deliverySpaceDto.buildingName">
               건물명 : {{ deliverySpaceDto.buildingName }}
             </li>

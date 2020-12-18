@@ -49,9 +49,9 @@ export default class AnalysisMap extends BaseComponent {
   // private lon = this.district.lon;
   private map;
   private customOverlay;
-  private polygons;
+  private polygons = [];
   private theCircle;
-  private circles;
+  private circles = [];
   private hdongAreaVisible = false;
 
   @Prop() slidebarVisible?: boolean;
@@ -447,12 +447,13 @@ export default class AnalysisMap extends BaseComponent {
         drawingCircle.setMap(null);
         drawingLine.setMap(null);
         drawingOverlay.setMap(null);
+
+        //데이터에 저장
+        this.circles = circles;
       }
     });
-
-    this.map = map;
     this.customOverlay = customOverlay;
-    this.circles = circles;
+    this.map = map;
   }
 
   removeCircles() {

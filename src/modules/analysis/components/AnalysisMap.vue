@@ -447,12 +447,13 @@ export default class AnalysisMap extends BaseComponent {
         drawingCircle.setMap(null);
         drawingLine.setMap(null);
         drawingOverlay.setMap(null);
+
+        this.circles = circles;
       }
     });
 
     this.map = map;
     this.customOverlay = customOverlay;
-    this.circles = circles;
   }
 
   removeCircles() {

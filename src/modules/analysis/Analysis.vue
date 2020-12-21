@@ -119,15 +119,6 @@
           ></b-icon-chevron-right>
         </template>
       </b-button>
-      <div class="map-controls">
-        <b-button
-          variant="dark"
-          @click="slidebarVisible = !slidebarVisible"
-          class="btn-close-map"
-          >닫기</b-button
-        >
-        <b-button id="remove-circles">모두 지우기</b-button>
-      </div>
     </section>
   </article>
 </template>
@@ -378,12 +369,6 @@ export default class Analysis extends BaseComponent {
   background: #f5f5f5;
   padding: 0.25em 0.5em;
   border: 1px solid #dedede;
-}
-.map-controls {
-  position: absolute;
-  left: 20px;
-  top: 20px;
-  z-index: 100;
 }
 .horizontal-stacked-bars {
   display: flex;

@@ -216,7 +216,7 @@
             <col width="100" />
             <col width="100" />
             <col width="150" />
-            <col width="100" />
+            <!-- <col width="100" /> -->
           </colgroup>
           <thead>
             <tr>
@@ -291,7 +291,7 @@
                 신청 상태
               </th>
               <th scope="col">생성날짜</th>
-              <th scope="col"></th>
+              <!-- <th scope="col"></th> -->
             </tr>
           </thead>
 
@@ -299,6 +299,8 @@
             <tr
               v-for="founderConsult in founderConsultList"
               :key="founderConsult.no"
+              @click="$router.push(`/founder-consult/${founderConsult.no}`)"
+              style="cursor:pointer;"
             >
               <th scope="row">{{ founderConsult.no }}</th>
               <td>{{ founderConsult.spaceNo }}</td>
@@ -363,7 +365,7 @@
                 >
               </td>
               <td>{{ founderConsult.createdAt | dateTransformer }}</td>
-              <td>
+              <!-- <td>
                 <router-link
                   v-if="founderConsult.space"
                   class="btn btn-sm btn-secondary text-nowrap"
@@ -375,7 +377,7 @@
                   }"
                   >상세보기</router-link
                 >
-              </td>
+              </td> -->
             </tr>
           </tbody>
         </table>

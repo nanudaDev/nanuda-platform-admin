@@ -1,10 +1,44 @@
 <template>
-  <div id="map" style="width:100%;height:100%;"></div>
+  <div class="map-area">
+    <div id="map" style="width:100%;height:100%;"></div>
+    <!-- 맵 컨트롤 -->
+    <div class="map-controls">
+      <b-button
+        variant="dark"
+        @click="slidebarVisible = !slidebarVisible"
+        class="btn-close-map"
+        >닫기</b-button
+      >
+      <b-row no-gutters align-v="center">
+        <b-form-group
+          label="행정구역 보기"
+          label-size="sm"
+          label-text-align="right"
+          label-cols="8"
+          class="mb-0"
+        >
+          <b-form-checkbox
+            switch
+            size="lg"
+            v-model="hdongAreaVisible"
+          ></b-form-checkbox>
+        </b-form-group>
+        <b-button
+          variant="danger"
+          id="remove-circles"
+          class="ml-2"
+          @click="removeCircles()"
+          >반경 모두 지우기</b-button
+        >
+      </b-row>
+    </div>
+  </div>
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import { CompanyDistrictDto } from '@/dto';
+import HdongCoords from '../../../../resources/assets/json/hdong_boundary.json';
 
 @Component({
   name: 'AnalysisMap',
@@ -14,7 +48,12 @@ export default class AnalysisMap extends BaseComponent {
   // private lat = this.district.lat;
   // private lon = this.district.lon;
   private map;
+  private customOverlay;
+  private polygons;
   private theCircle;
+  private circles;
+  private hdongAreaVisible = false;
+
   @Prop() slidebarVisible?: boolean;
   @Watch('slidebarVisible')
   slidebarVisibleChanged() {
@@ -50,10 +89,103 @@ export default class AnalysisMap extends BaseComponent {
     this.theCircle.setMap(this.map);
     this.map.setCenter(moveLatLon);
   }
+
+  @Watch('hdongAreaVisible')
+  switchHdongArea() {
+    console.log(this.hdongAreaVisible);
+    if (this.hdongAreaVisible) {
+      this.getCoordPolygons(this.map, this.customOverlay);
+    } else {
+      this.removeCoordPolygons(this.polygons);
+    }
+  }
+  // 행정구역 가져오기
+  getCoordPolygons(map, customOverlay) {
+    // 폴리곤
+    const infowindow = new window.kakao.maps.InfoWindow({ removable: true });
+    const data = HdongCoords.features;
+    let coordinates = [];
+    let name = '';
+    const polygons = [];
+
+    // 다각형을 생상하고 이벤트를 등록하는 함수입니다
+    function displayArea(coordinates, name) {
+      const path = [];
+      const points = [];
+      coordinates.map(coord => {
+        const point = new Object();
+        points.push(point);
+        path.push(new window.kakao.maps.LatLng(coord[1], coord[0]));
+      });
+
+      // 다각형을 생성합니다
+      const polygon = new window.kakao.maps.Polygon({
+        map: map, // 다각형을 표시할 지도 객체
+        path: path,
+        strokeWeight: 1,
+        strokeColor: '#004c80',
+        strokeOpacity: 1,
+        fillColor: '#fff',
+        fillOpacity: 0.3,
+      });
+
+      // 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다
+      // 지역명을 표시하는 커스텀오버레이를 지도위에 표시합니다
+      window.kakao.maps.event.addListener(polygon, 'mouseover', mouseEvent => {
+        polygon.setOptions({ fillColor: '#09f' });
+
+        customOverlay.setContent('<div class="area">' + name + '</div>');
+
+        customOverlay.setPosition(mouseEvent.latLng);
+        customOverlay.setMap(map);
+      });
+
+      // 다각형에 mousemove 이벤트를 등록하고 이벤트가 발생하면 커스텀 오버레이의 위치를 변경합니다
+      window.kakao.maps.event.addListener(polygon, 'mousemove', mouseEvent => {
+        customOverlay.setPosition(mouseEvent.latLng);
+      });
+
+      // 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
+      // 커스텀 오버레이를 지도에서 제거합니다
+      window.kakao.maps.event.addListener(polygon, 'mouseout', () => {
+        polygon.setOptions({ fillColor: '#fff' });
+        customOverlay.setMap(null);
+      });
+
+      window.kakao.maps.event.addListener(polygon, 'click', mouseEvent => {
+        const level = map.getLevel() - 2;
+
+        map.setLevel(level, {
+          animate: {
+            duration: 350,
+          },
+        });
+      });
+
+      polygons.push(polygon);
+    }
+
+    data.map((v, i) => {
+      coordinates = v.geometry.coordinates[0][0];
+      name = v.properties.ADM_NM;
+      displayArea(coordinates, name);
+    });
+
+    this.polygons = polygons;
+  }
+
+  // 행정구역 지우기
+  removeCoordPolygons(polygons) {
+    for (let i = 0; i < polygons.length; i++) {
+      polygons[i].setMap(null);
+    }
+    polygons = [];
+  }
+
   // 지도 가져오기
   setMap(lat?: string, lon?: string) {
     const container = document.getElementById('map');
-    const removeButton = document.getElementById('remove-circles');
+    // const removeButton = document.getElementById('remove-circles');
 
     const markerPosition = new window.kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치입니다
     const options = {
@@ -91,12 +223,12 @@ export default class AnalysisMap extends BaseComponent {
     let drawingOverlay; // 그려지고 있는 원의 반경을 표시할 커스텀오버레이 입니다
     let drawingDot; // 그려지고 있는 원의 중심점을 표시할 커스텀오버레이 입니다
 
-    let circles = []; // 클릭으로 그려진 원과 반경 정보를 표시하는 선과 커스텀오버레이를 가지고 있을 배열입니다
+    const circles = []; // 클릭으로 그려진 원과 반경 정보를 표시하는 선과 커스텀오버레이를 가지고 있을 배열입니다
 
     // 지도에 클릭 이벤트를 등록합니다
     window.kakao.maps.event.addListener(map, 'click', mouseEvent => {
       // 클릭 이벤트가 발생했을 때 원을 그리고 있는 상태가 아니면 중심좌표를 클릭한 지점으로 설정합니다
-      if (!drawingFlag) {
+      if (!drawingFlag && !this.hdongAreaVisible) {
         // 상태를 그리고있는 상태로 변경합니다
         drawingFlag = true;
 
@@ -315,25 +447,22 @@ export default class AnalysisMap extends BaseComponent {
         drawingCircle.setMap(null);
         drawingLine.setMap(null);
         drawingOverlay.setMap(null);
+
+        this.circles = circles;
       }
-    });
-
-    // 지도에 표시되어 있는 모든 원과 반경정보를 표시하는 선, 커스텀 오버레이를 지도에서 제거합니다
-
-    function removeCircles() {
-      for (let i = 0; i < circles.length; i++) {
-        circles[i].circle.setMap(null);
-        circles[i].polyline.setMap(null);
-        circles[i].overlay.setMap(null);
-      }
-      circles = [];
-    }
-
-    removeButton.addEventListener('click', () => {
-      removeCircles();
     });
 
     this.map = map;
+    this.customOverlay = customOverlay;
+  }
+
+  removeCircles() {
+    for (let i = 0; i < this.circles.length; i++) {
+      this.circles[i].circle.setMap(null);
+      this.circles[i].polyline.setMap(null);
+      this.circles[i].overlay.setMap(null);
+    }
+    this.circles = [];
   }
 
   mounted() {
@@ -347,6 +476,23 @@ export default class AnalysisMap extends BaseComponent {
 }
 </script>
 <style lang="scss">
+.map-area {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  .map-controls {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    z-index: 5;
+    background: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+  }
+}
 .info {
   position: relative;
   top: 5px;
@@ -371,5 +517,24 @@ export default class AnalysisMap extends BaseComponent {
 .number {
   font-weight: bold;
   color: #e85d47;
+}
+
+.area {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #888;
+  border-radius: 3px;
+  font-size: 12px;
+  top: -5px;
+  left: 15px;
+  padding: 2px;
+
+  .info {
+    font-size: 12px;
+    padding: 5px;
+  }
+  .info .title {
+    font-weight: bold;
+  }
 }
 </style>

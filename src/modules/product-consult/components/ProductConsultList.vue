@@ -15,7 +15,7 @@
             v-model="productConsultSearchDto.nanudaUserPhone"
           ></b-form-input>
         </b-col>
-        <b-col cols="4" xl="1" class="mb-3">
+        <b-col cols="6" xl="1" class="mb-3">
           <label for="user_gender">성별</label>
           <select
             class="custom-select"
@@ -31,23 +31,7 @@
             >
           </select>
         </b-col>
-        <b-col cols="4" xl="2" class="mb-3">
-          <b-form-group label="브랜드명">
-            <b-form-input
-              list="brand_list"
-              v-model="productConsultSearchDto.brandName"
-            ></b-form-input>
-            <datalist id="brand_list">
-              <option
-                v-for="brand in brandList"
-                :key="brand.nameKr"
-                :value="brand.nameKr"
-                >{{ brand.nameKr }}</option
-              >
-            </datalist>
-          </b-form-group>
-        </b-col>
-        <b-col cols="4" xl="2" class="mb-3">
+        <b-col cols="6" xl="1" class="mb-3">
           <label for="hope_time">희망 시간대</label>
           <select
             class="custom-select"
@@ -63,7 +47,22 @@
             >
           </select>
         </b-col>
-        <b-col cols="4" xl="1">
+        <b-col cols="12" xl="2" class="mb-3">
+          <label for="brand_list">브랜드명</label>
+          <b-form-input
+            list="brand_list"
+            v-model="productConsultSearchDto.brandName"
+          ></b-form-input>
+          <datalist id="brand_list">
+            <option
+              v-for="brand in brandList"
+              :key="brand.nameKr"
+              :value="brand.nameKr"
+              >{{ brand.nameKr }}</option
+            >
+          </datalist>
+        </b-col>
+        <b-col cols="12" md="4" xl="1" class="mb-3">
           <label for="changup_exp_yn">창업 경험</label>
           <select
             class="custom-select"
@@ -77,7 +76,7 @@
           </select>
         </b-col>
 
-        <b-col cols="12" md="6" xl="2" class="mb-3">
+        <b-col cols="12" md="4" xl="2" class="mb-3">
           <label>담당자</label>
           <template>
             <b-form-input
@@ -95,7 +94,7 @@
             </datalist>
           </template>
         </b-col>
-        <b-col cols="12" md="6" xl="2" class="mb-3">
+        <b-col cols="12" md="4" xl="1" class="mb-3">
           <label for="product_approve_status">신청 상태</label>
           <b-form-select
             id="product_approve_status"
@@ -164,10 +163,10 @@
           </download-excel>
         </div>
       </div>
-      <div class="table-responsive" v-if="productConsultTotalCount">
+      <div class="table-responsive border" v-if="productConsultTotalCount">
         <table
           v-if="productConsultTotalCount"
-          class="table table-hover table-sm border table-fixed"
+          class="table table-hover table-sm table-fixed"
         >
           <colgroup>
             <col width="60" />
@@ -182,7 +181,7 @@
             <col width="100" />
             <col width="150" />
             <col width="100" />
-            <col width="100" />
+            <!-- <col width="100" /> -->
           </colgroup>
           <thead>
             <tr>
@@ -248,13 +247,15 @@
               <th scope="col">
                 신청 상태
               </th>
-              <th></th>
+              <!-- <th></th> -->
             </tr>
           </thead>
           <tbody>
             <tr
               v-for="productConsult in productConsultListDto"
               :key="productConsult.no"
+              @click="$router.push(`/product-consult/${productConsult.no}`)"
+              style="cursor:pointer;"
             >
               <td>
                 <b-form-checkbox
@@ -344,7 +345,7 @@
                   ><b>{{ productConsult.codeManagement.value }}</b></b-button
                 >
               </td>
-              <td>
+              <!-- <td>
                 <router-link
                   class="btn btn-sm btn-secondary text-nowrap"
                   :to="{
@@ -355,7 +356,7 @@
                   }"
                   >상세보기</router-link
                 >
-              </td>
+              </td> -->
             </tr>
           </tbody>
         </table>

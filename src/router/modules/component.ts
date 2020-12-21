@@ -309,7 +309,7 @@ const componentsRouter: RouteConfig[] = [
         },
       },
       {
-        path: '/delivery-founder-consult-contract-detail/:id([0-9]+)',
+        path: '/delivery-founder-consult-contract/:id([0-9]+)',
         name: 'DeliveryFounderConsultContractDetail',
         component: () =>
           import(

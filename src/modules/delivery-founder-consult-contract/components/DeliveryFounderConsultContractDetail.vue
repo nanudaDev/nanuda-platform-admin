@@ -178,7 +178,7 @@ import { DeliveryFounderConsultContractDto } from '@/dto';
 import Component from 'vue-class-component';
 import BaseCard from '../../_components/BaseCard.vue';
 
-import DeliveryFounderConsultContractService from '../../../services/delivery-founder-consult-contarct.service';
+import DeliveryFounderConsultContractService from '../../../services/delivery-founder-consult-contract.service';
 
 @Component({
   name: 'DeliveryFounderConsultContractDetail',

@@ -11,4 +11,5 @@ export const DevelopmentEnvironment: Environment = {
   siteUrl: 'http://localhost:4301/',
   homepageBaseUrl: 'http://localhost:8185',
   homepageSiteUrl: 'http://localhost:3000',
+  analysisUrl: 'http://localhost:4400/',
 };

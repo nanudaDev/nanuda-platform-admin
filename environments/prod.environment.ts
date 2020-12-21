@@ -10,4 +10,5 @@ export const ProductionEnvironment: Environment = {
   siteUrl: 'https://platform-admin.nanudakitchen.com/',
   homepageBaseUrl: 'https://nanudakitchen.com/api',
   homepageSiteUrl: 'https://nanudakitchen.com',
+  analysisUrl: 'https://platform-analysis.nanudakitchen.com/',
 };

@@ -168,7 +168,7 @@
                   founderConsultDto.space.images &&
                     founderConsultDto.space.images.length > 0
                 "
-                :interval="3000"
+                :interval="0"
                 controls
                 indicators
                 background="white"
@@ -274,7 +274,7 @@
                   <label for="space_consult_etc">비고 내용</label>
                   <b-form-textarea
                     id="space_consult_etc"
-                    style="height:100px;"
+                    style="height:500px;"
                     v-model="founderConsultDto.spaceConsultEtc"
                   ></b-form-textarea>
                 </li>

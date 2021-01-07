@@ -584,18 +584,7 @@
                         1차 상담이 완료 경우 더이상 수정이 불가능합니다
                       </b-alert>
                     </li>
-                    <li>
-                      <label for="space_consult_etc">비고 내용</label>
-                      <b-form-textarea
-                        id="space_consult_etc"
-                        style="height:500px;"
-                        v-model="deliveryFounderConsultDto.spaceConsultEtc"
-                        :disabled="statusDistComplete"
-                      ></b-form-textarea>
-                    </li>
                   </ul>
-                </div>
-                <div class="col-12 col-md-6">
                   <ul>
                     <li v-if="elapsedTime">
                       전달 완료일 :
@@ -698,7 +687,34 @@
                   </li> -->
                   </ul>
                 </div>
-                <div></div>
+                <div class="col-12 col-md-6">
+                  <ul>
+                    <li>
+                      <label for="space_consult_etc">비고 내용</label>
+                      <b-form-textarea
+                        id="space_consult_etc"
+                        style="height:420px;"
+                        v-model="deliveryFounderConsultDto.spaceConsultEtc"
+                        :disabled="statusDistComplete"
+                      ></b-form-textarea>
+                    </li>
+                  </ul>
+                  <br />
+                  <div
+                    v-for="reply in deliveryFounderConsultReplyDto"
+                    :key="reply.no"
+                  >
+                    <b-card
+                      border-variant="secondary"
+                      header="Secondary"
+                      header-border-variant="secondary"
+                    >
+                      <b-card-text>
+                        {{ reply.desc }}
+                      </b-card-text>
+                    </b-card>
+                  </div>
+                </div>
               </b-row>
             </div>
             <div v-else class="empty-data">상담 내역 없음</div>
@@ -1076,6 +1092,7 @@ import {
   FoodCategoryListDto,
   DeliveryFounderConsultRecordDto,
   EditedMessageDto,
+  DeliveryFounderConsultReplyDto,
 } from '@/dto';
 import { Pagination, YN, CONST_YN } from '@/common';
 import { BaseUser } from '@/services/shared/auth';
@@ -1094,6 +1111,7 @@ import {
 import CompanyService from '@/services/company.service';
 import CompanyDistrictService from '@/services/company-district.service';
 import DeliverySpaceService from '@/services/delivery-space.service';
+import DeliveryFounderConsultReplyService from '@/services/delivery-founder-consult-reply.service';
 
 // environment variables
 let env = new Environment();
@@ -1142,6 +1160,9 @@ export default class FounderConsultDetail extends BaseComponent {
   private deliveryFounderConsultRecordDto: DeliveryFounderConsultRecordDto[] = [];
   private companySelect = '';
   private districtSelect = '';
+  private deliveryFounderConsultReplyDto: DeliveryFounderConsultReplyDto[] = [];
+  private deliveryFounderConsultReplyListDto = new DeliveryFounderConsultReplyDto();
+  private replyPagination = new Pagination();
 
   // get status color
   getStatusColor(
@@ -1438,11 +1459,25 @@ export default class FounderConsultDetail extends BaseComponent {
     customOverlay.setMap(map);
   }
 
+  findReplies() {
+    DeliveryFounderConsultReplyService.findAllForConsult(
+      this.$route.params.id,
+      this.deliveryFounderConsultReplyListDto,
+      this.replyPagination,
+    ).subscribe(res => {
+      if (res) {
+        this.deliveryFounderConsultReplyDto = res.data.items;
+        console.log(this.deliveryFounderConsultReplyDto);
+      }
+    });
+  }
+
   created() {
     this.getAvailableCompanies();
     this.getGender();
     this.getFoodCategories();
     this.getFounderConsultCodes();
+    this.findReplies();
     // this.getFounderConsultManagements(founderConsultId);
   }
 

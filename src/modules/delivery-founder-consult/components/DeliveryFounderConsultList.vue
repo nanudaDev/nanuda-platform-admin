@@ -1,9 +1,6 @@
 <template>
   <section>
-    <div class="title pb-2 mb-2">
-      <h3>배달형 상담 신청</h3>
-    </div>
-    <div class="divider"></div>
+    <SectionTitle title="배달형 상담 신청" divider />
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <div class="form-row">
         <div class="col-6 col-lg-1 mb-3">
@@ -243,7 +240,7 @@
             <col width="80" />
             <col width="100" />
             <col width="150" />
-            <col width="100" />
+            <!-- <col width="100" /> -->
           </colgroup>
           <thead>
             <tr>
@@ -345,7 +342,7 @@
               </th>
               <th scope="col">공간 공실 수</th>
               <th scope="col">생성날짜</th>
-              <th scope="col"></th>
+              <!-- <th scope="col"></th> -->
             </tr>
           </thead>
 
@@ -353,6 +350,12 @@
             <tr
               v-for="deliveryFounderConsult in deliveryFounderConsultListDto"
               :key="deliveryFounderConsult.no"
+              @click="
+                $router.push(
+                  `/delivery-founder-consult/${deliveryFounderConsult.no}`,
+                )
+              "
+              style="cursor:pointer"
             >
               <th scope="row">{{ deliveryFounderConsult.no }}</th>
               <td>{{ deliveryFounderConsult.deliverySpaceNo }}</td>
@@ -475,7 +478,7 @@
                 </template>
               </td>
               <td>{{ deliveryFounderConsult.createdAt | dateTransformer }}</td>
-              <td>
+              <!-- <td>
                 <router-link
                   v-if="deliveryFounderConsult.no"
                   class="btn btn-sm btn-secondary text-nowrap"
@@ -487,7 +490,7 @@
                   }"
                   >상세보기</router-link
                 >
-              </td>
+              </td> -->
             </tr>
           </tbody>
         </table>

@@ -40,10 +40,10 @@
         </b-col>
       </b-form-row>
       <b-row align-h="center">
-        <b-btn-group>
-          <b-button variant="primary" @click="clearOut()">초기화</b-button>
-          <b-button variant="success" @click="search()">검색</b-button>
-        </b-btn-group>
+        <div>
+          <b-button variant="secondary" @click="clearOut()">초기화</b-button>
+          <b-button variant="primary" @click="search()">검색</b-button>
+        </div>
       </b-row>
     </div>
     <div class="table-top">
@@ -51,15 +51,29 @@
         <h5>
           <span>TOTAL</span>
           <strong class="text-primary">{{
-            deliveryFounderConsultContractListCount
+            deliveryFounderConsultContractTotalCount
           }}</strong>
         </h5>
       </div>
+      <div>
+        <download-excel
+          class="btn btn-outline-success"
+          :data="deliveryFounderConsultContractList"
+          :fields="fields"
+          :stringifyLongNum="true"
+          worksheet="배달형 계약 리스트"
+          :name="`delivery_founder_consult_contract_${newDate}.xls`"
+          v-if="deliveryFounderConsultContractTotalCount"
+        >
+          <b-icon icon="file-earmark-arrow-down"></b-icon>
+          엑셀 다운로드
+        </download-excel>
+      </div>
     </div>
-    <div v-if="!dataLoading" class="table-bordered  table-responsive">
+    <div v-if="!dataLoading" class="border table-responsive">
       <table
         class="table table-sm table-hover table-nowrap"
-        v-if="deliveryFounderConsultContractListCount"
+        v-if="deliveryFounderConsultContractTotalCount"
       >
         <thead>
           <tr>
@@ -133,13 +147,17 @@
             >
               CREATED
             </th> -->
-            <th scope="col"></th>
+            <!-- <th scope="col"></th> -->
           </tr>
         </thead>
         <tbody>
           <tr
             v-for="contract in deliveryFounderConsultContractList"
             :key="contract.no"
+            @click="
+              $router.push(`/delivery-founder-consult-contract/${contract.no}`)
+            "
+            style="cursor:pointer;"
           >
             <th scope="row">{{ contract.no }}</th>
             <td>
@@ -164,7 +182,7 @@
             <!-- <td>
               {{ contract.createdAt | dateTransformer }}
             </td> -->
-            <td>
+            <!-- <td>
               <router-link
                 class="btn btn-sm btn-secondary text-nowrap"
                 :to="{
@@ -176,7 +194,7 @@
               >
                 상세보기
               </router-link>
-            </td>
+            </td> -->
           </tr>
         </tbody>
       </table>
@@ -186,9 +204,9 @@
     </div>
     <b-pagination
       v-model="pagination.page"
-      v-if="deliveryFounderConsultContractListCount"
+      v-if="deliveryFounderConsultContractTotalCount"
       pills
-      :total-rows="deliveryFounderConsultContractListCount"
+      :total-rows="deliveryFounderConsultContractTotalCount"
       :per-page="pagination.limit"
       @input="search(true)"
       class="mt-4 justify-content-center"
@@ -229,7 +247,7 @@ export default class DeliveryFounderConsultContractList extends BaseComponent {
   private deliveryFounderConsultContractList: CompanyDistrictDto[] = Array<
     CompanyDistrictDto
   >();
-  private deliveryFounderConsultContractListCount = 0;
+  private deliveryFounderConsultContractTotalCount = 0;
   private deliveryFounderConsultContractSearchDto = new DeliveryFounderConsultContractListDto();
   private pagination = new Pagination();
   private approvalStatus: APPROVAL_STATUS[] = [...CONST_APPROVAL_STATUS];
@@ -240,6 +258,25 @@ export default class DeliveryFounderConsultContractList extends BaseComponent {
   };
 
   private commonAmenityList = [];
+
+  private newDate = new Date();
+  // excel options
+  private fields = {
+    이름: 'nanudaUser.name',
+    연락처: 'nanudaUser.phone',
+    업체: 'deliverySpace.companyDistrict.company.nameKr',
+    지점: 'deliverySpace.companyDistrict.nameKr',
+    타입: 'deliverySpace.typeName',
+    상담신청ID: 'deliveryFounderConsultNo',
+  };
+  private json_meta = [
+    [
+      {
+        key: 'charset',
+        value: 'utf-8',
+      },
+    ],
+  ];
 
   getCompanies() {
     CompanyService.findForSelect().subscribe(res => {
@@ -257,7 +294,7 @@ export default class DeliveryFounderConsultContractList extends BaseComponent {
       .subscribe(res => {
         this.dataLoading = false;
         this.deliveryFounderConsultContractList = res.data.items;
-        this.deliveryFounderConsultContractListCount = res.data.totalCount;
+        this.deliveryFounderConsultContractTotalCount = res.data.totalCount;
         this.$router.push({
           query: Object.assign(this.deliveryFounderConsultContractSearchDto),
         });

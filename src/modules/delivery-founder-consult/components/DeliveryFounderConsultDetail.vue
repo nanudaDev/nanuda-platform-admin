@@ -1218,6 +1218,7 @@ export default class FounderConsultDetail extends BaseComponent {
   private districtSelect = '';
   private paginationReply = new Pagination();
   private deliveryFounderConsultReplyTotalCount = null;
+  private deliveryFounderConsultReplyDto: DeliveryFounderConsultReplyDto = new DeliveryFounderConsultReplyDto();
   private deliveryFounderConsultReplyList: DeliveryFounderConsultReplyDto[] = [];
   private deliveryFounderconsultReplyListDto = new DeliveryFounderConsultReplyListDto();
   private deliveryFounderConsultReplyCreateDto = new DeliveryFounderConsultReplyDto();
@@ -1564,7 +1565,6 @@ export default class FounderConsultDetail extends BaseComponent {
     this.getGender();
     this.getFoodCategories();
     this.getFounderConsultCodes();
-    this.findConsultReply();
     // this.getFounderConsultManagements(founderConsultId);
   }
 

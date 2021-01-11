@@ -448,18 +448,12 @@ export default class AnalysisMap extends BaseComponent {
         drawingLine.setMap(null);
         drawingOverlay.setMap(null);
 
-<<<<<<< HEAD
         //데이터에 저장
-=======
->>>>>>> origin/platform-admin-ria
         this.circles = circles;
       }
     });
     this.customOverlay = customOverlay;
-<<<<<<< HEAD
     this.map = map;
-=======
->>>>>>> origin/platform-admin-ria
   }
 
   removeCircles() {

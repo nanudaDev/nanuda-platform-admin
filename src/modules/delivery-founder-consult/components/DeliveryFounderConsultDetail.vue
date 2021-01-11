@@ -637,6 +637,58 @@
                         }}
                       </b-badge>
                     </li>
+                    <!-- <li
+                    v-if="
+                      deliveryFounderConsultManagements &&
+                        deliveryFounderConsultManagements.memo
+                    "
+                  >
+                    업체 메모
+                    <div class="mt-2">
+                      <div class="bg-light border rounded p-3">
+                        <b-row no-gutters align-h="between" align-v="end">
+                          <div
+                            v-if="deliveryFounderConsultManagements.companyUser"
+                          >
+                            <span>
+                              <strong class="user-name">
+                                {{
+                                  deliveryFounderConsultManagements.companyUser
+                                    .name
+                                }}
+                              </strong>
+                            </span>
+                          </div>
+                          <div>
+                            <span>
+                              {{
+                                deliveryFounderConsultManagements.createdAt
+                                  | dateTransformer
+                              }}
+                            </span>
+                          </div>
+                        </b-row>
+                        <div
+                          class="mt-2 pt-1 border-top"
+                          v-if="deliveryFounderConsultManagements.memo"
+                        >
+                          {{ deliveryFounderConsultManagements.memo }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mt-2 text-right">
+                      <b-button
+                        variant="outline-info"
+                        size="sm"
+                        v-b-modal.managemnt_history
+                        >메모 이력 보기</b-button
+                      >
+                    </div>
+                  </li> -->
+                  </ul>
+                </div>
+                <div class="col-12 col-md-6">
+                  <ul>
                     <li>
                       <label for="space_consult_etc">비고 내용</label>
                       <b-form-textarea
@@ -699,67 +751,6 @@
                           ></b-pagination>
                         </div>
                       </template>
-                    </li>
-                    <!-- <li
-                    v-if="
-                      deliveryFounderConsultManagements &&
-                        deliveryFounderConsultManagements.memo
-                    "
-                  >
-                    업체 메모
-                    <div class="mt-2">
-                      <div class="bg-light border rounded p-3">
-                        <b-row no-gutters align-h="between" align-v="end">
-                          <div
-                            v-if="deliveryFounderConsultManagements.companyUser"
-                          >
-                            <span>
-                              <strong class="user-name">
-                                {{
-                                  deliveryFounderConsultManagements.companyUser
-                                    .name
-                                }}
-                              </strong>
-                            </span>
-                          </div>
-                          <div>
-                            <span>
-                              {{
-                                deliveryFounderConsultManagements.createdAt
-                                  | dateTransformer
-                              }}
-                            </span>
-                          </div>
-                        </b-row>
-                        <div
-                          class="mt-2 pt-1 border-top"
-                          v-if="deliveryFounderConsultManagements.memo"
-                        >
-                          {{ deliveryFounderConsultManagements.memo }}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="mt-2 text-right">
-                      <b-button
-                        variant="outline-info"
-                        size="sm"
-                        v-b-modal.managemnt_history
-                        >메모 이력 보기</b-button
-                      >
-                    </div>
-                  </li> -->
-                  </ul>
-                </div>
-                <div class="col-12 col-md-6">
-                  <ul>
-                    <li>
-                      <label for="space_consult_etc">비고 내용</label>
-                      <b-form-textarea
-                        id="space_consult_etc"
-                        style="height:420px;"
-                        v-model="deliveryFounderConsultDto.spaceConsultEtc"
-                        :disabled="statusDistComplete"
-                      ></b-form-textarea>
                     </li>
                   </ul>
                   <br />
@@ -1568,25 +1559,12 @@ export default class FounderConsultDetail extends BaseComponent {
     customOverlay.setMap(map);
   }
 
-  findReplies() {
-    DeliveryFounderConsultReplyService.findAllForConsult(
-      this.$route.params.id,
-      this.deliveryFounderConsultReplyListDto,
-      this.replyPagination,
-    ).subscribe(res => {
-      if (res) {
-        this.deliveryFounderConsultReplyDto = res.data.items;
-        console.log(this.deliveryFounderConsultReplyDto);
-      }
-    });
-  }
-
   created() {
     this.getAvailableCompanies();
     this.getGender();
     this.getFoodCategories();
     this.getFounderConsultCodes();
-    this.findReplies();
+    this.findConsultReply();
     // this.getFounderConsultManagements(founderConsultId);
   }
 

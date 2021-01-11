@@ -1,11 +1,12 @@
-import { YN } from '@/common';
+import { OrderByValue, YN } from '@/common';
 import { BaseDto } from '@/core';
 import { ADMIN_USER, COMPANY_USER } from '@/services/shared';
-import { DeliveryFounderConsultDto } from '../delivery-founder-consult/delivery-founder-consult.dto';
+import { DeliveryFounderConsultReplyDto } from '.';
+import { DeliveryFounderConsultDto } from '..';
 
-export class DeliveryFounderConsultReplyDto extends BaseDto<
-  DeliveryFounderConsultReplyDto
-> {
+export class DeliveryFounderConsultReplyListDto
+  extends BaseDto<DeliveryFounderConsultReplyListDto>
+  implements Partial<DeliveryFounderConsultReplyDto> {
   no: number;
   deliveryFounderConsultNo: number;
   adminNo?: number;
@@ -16,4 +17,5 @@ export class DeliveryFounderConsultReplyDto extends BaseDto<
   companyUser?: COMPANY_USER;
   admin?: ADMIN_USER;
   deliveryFounderConsult?: DeliveryFounderConsultDto;
+  orderbyNo?: OrderByValue;
 }

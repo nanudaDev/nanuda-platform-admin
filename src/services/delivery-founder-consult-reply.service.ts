@@ -1,62 +1,35 @@
 import { Pagination } from '@/common';
 import { BaseService } from '@/core';
-import { DeliveryFounderConsultDto } from '@/dto';
-import { DeliveryFounderConsultReplyDto } from '@/dto/delivery-founder-consult-reply';
+import {
+  DeliveryFounderConsultReplyDto,
+  DeliveryFounderConsultReplyListDto,
+} from '@/dto';
 
-class DeliveryFounderConsultService extends BaseService {
-  constructor() {
-    super();
-  }
-
-  /**
-   * find replies
-   * @param deliveryFounderConsultNo
-   * @param deliveryFounderConsultReplyDto
-   * @param pagination
-   */
-  findAllForConsult(
-    deliveryFounderConsultNo,
-    deliveryFounderConsultReplyDto: DeliveryFounderConsultReplyDto,
-    pagination: Pagination,
-  ) {
-    return super.paginate<DeliveryFounderConsultDto>(
-      `admin/delivery-founder-consult/${deliveryFounderConsultNo}/delivery-founder-consult-reply`,
-      deliveryFounderConsultReplyDto,
-      pagination,
-    );
-  }
-
-  /**
-   * create for admin
-   * @param deliveryFounderConsultNo
-   * @param deliveryFounderConsultReplyDto
-   */
-  createForAdmin(
-    deliveryFounderConsultNo,
-    deliveryFounderConsultReplyDto: DeliveryFounderConsultReplyDto,
+export class DeliveryFounderConsultReplyService extends BaseService {
+  findAll(
+    id,
+    filter: DeliveryFounderConsultReplyListDto,
+    paginate: Pagination,
   ) {
     return super.paginate<DeliveryFounderConsultReplyDto>(
-      `admin/delivery-founder-consult/${deliveryFounderConsultNo}/delivery-founder-consult-reply`,
-      deliveryFounderConsultReplyDto,
+      `admin/delivery-founder-consult/${id}/delivery-founder-consult-reply`,
+      filter,
+      paginate,
     );
   }
 
-  /**
-   * update for admin
-   * @param deliveryFounderConsultNo
-   * @param deliveryFounderConsultReplyNo
-   * @param deliveryFounderConsultReplyDto
-   */
-  updateForAdmin(
-    deliveryFounderConsultNo,
-    deliveryFounderConsultReplyNo,
-    deliveryFounderConsultReplyDto: DeliveryFounderConsultReplyDto,
-  ) {
-    return super.patch<DeliveryFounderConsultReplyDto>(
-      `admin/delivery-founder-consult/${deliveryFounderConsultNo}/delivery-founder-consult-reply/${deliveryFounderConsultReplyNo}`,
-      deliveryFounderConsultReplyDto,
+  findOne(id) {
+    return super.get<DeliveryFounderConsultReplyDto>(
+      `admin/delivery-founder-consult/${id}/delivery-founder-consult-reply`,
+    );
+  }
+
+  create(id, body: DeliveryFounderConsultReplyDto) {
+    return super.post<DeliveryFounderConsultReplyDto>(
+      `admin/delivery-founder-consult/${id}/delivery-founder-consult-reply`,
+      body,
     );
   }
 }
 
-export default new DeliveryFounderConsultService();
+export default new DeliveryFounderConsultReplyService();

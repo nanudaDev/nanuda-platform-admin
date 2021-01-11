@@ -637,6 +637,69 @@
                         }}
                       </b-badge>
                     </li>
+                    <li>
+                      <label for="space_consult_etc">비고 내용</label>
+                      <b-form-textarea
+                        id="space_consult_etc"
+                        style="height:300px;"
+                        v-model="deliveryFounderConsultDto.spaceConsultEtc"
+                        :disabled="statusDistComplete"
+                      ></b-form-textarea>
+                      <template v-if="statusDistComplete">
+                        <div class="mt-2">
+                          <div>
+                            <label for="consult_reply">추가 비고 내용</label>
+                            <b-form-textarea
+                              id="consult_reply"
+                              style="height:150px"
+                              v-model="
+                                deliveryFounderConsultReplyCreateDto.desc
+                              "
+                            >
+                            </b-form-textarea>
+                            <div class="text-right my-2">
+                              <b-button
+                                variant="primary"
+                                @click="createConsultReply()"
+                                >작성</b-button
+                              >
+                            </div>
+                          </div>
+                          <ul
+                            v-if="deliveryFounderConsultReplyList.length > 0"
+                            class="mt-2"
+                          >
+                            <li
+                              v-for="reply in deliveryFounderConsultReplyList"
+                              :key="reply.no"
+                            >
+                              <div class="border rounded p-3">
+                                <p v-if="reply.admin">
+                                  <strong class="user-name">
+                                    {{ reply.admin.name }}
+                                  </strong>
+                                  <span v-if="reply.createdAt">
+                                    ({{ reply.createdAt | dateTransformer }})
+                                  </span>
+                                </p>
+                                <p v-html="reply.desc" class="mt-2">
+                                  {{ reply.desc }}
+                                </p>
+                              </div>
+                            </li>
+                          </ul>
+                          <b-pagination
+                            v-model="paginationReply.page"
+                            v-if="deliveryFounderConsultReplyTotalCount"
+                            pills
+                            :total-rows="deliveryFounderConsultReplyTotalCount"
+                            :per-page="paginationReply.limit"
+                            @input="paginateReply"
+                            class="mt-4 justify-content-center"
+                          ></b-pagination>
+                        </div>
+                      </template>
+                    </li>
                     <!-- <li
                     v-if="
                       deliveryFounderConsultManagements &&
@@ -1093,6 +1156,8 @@ import {
   DeliveryFounderConsultRecordDto,
   EditedMessageDto,
   DeliveryFounderConsultReplyDto,
+  DeliveryFounderConsultReplyListDto,
+  DeliverySpaceCreateDto,
 } from '@/dto';
 import { Pagination, YN, CONST_YN } from '@/common';
 import { BaseUser } from '@/services/shared/auth';
@@ -1160,9 +1225,11 @@ export default class FounderConsultDetail extends BaseComponent {
   private deliveryFounderConsultRecordDto: DeliveryFounderConsultRecordDto[] = [];
   private companySelect = '';
   private districtSelect = '';
-  private deliveryFounderConsultReplyDto: DeliveryFounderConsultReplyDto[] = [];
-  private deliveryFounderConsultReplyListDto = new DeliveryFounderConsultReplyDto();
-  private replyPagination = new Pagination();
+  private paginationReply = new Pagination();
+  private deliveryFounderConsultReplyTotalCount = null;
+  private deliveryFounderConsultReplyList: DeliveryFounderConsultReplyDto[] = [];
+  private deliveryFounderconsultReplyListDto = new DeliveryFounderConsultReplyListDto();
+  private deliveryFounderConsultReplyCreateDto = new DeliveryFounderConsultReplyDto();
 
   // get status color
   getStatusColor(
@@ -1315,6 +1382,7 @@ export default class FounderConsultDetail extends BaseComponent {
       if (withInSeoul === '서울') {
         this.isSeoul = true;
       }
+      this.findConsultReply();
     });
   }
 
@@ -1363,10 +1431,47 @@ export default class FounderConsultDetail extends BaseComponent {
     });
   }
 
-  paginateSearch() {
-    this.findAdmin(true);
+  /**
+   * find delivery founder consult reply
+   */
+
+  findConsultReply(isPagination?: boolean) {
+    this.paginationReply.limit = 5;
+    if (!isPagination) {
+      this.paginationReply.page = 1;
+    }
+    DeliveryFounderConsultReplyService.findAll(
+      this.deliveryFounderConsultDto.no,
+      this.deliveryFounderconsultReplyListDto,
+      this.paginationReply,
+    ).subscribe(res => {
+      if (res) {
+        this.deliveryFounderConsultReplyList = res.data.items;
+        this.deliveryFounderConsultReplyTotalCount = res.data.totalCount;
+      }
+    });
   }
 
+  createConsultReply() {
+    DeliveryFounderConsultReplyService.create(
+      this.deliveryFounderConsultDto.no,
+      this.deliveryFounderConsultReplyCreateDto,
+    ).subscribe(res => {
+      if (res) {
+        toast.success('작성완료');
+        this.deliveryFounderConsultReplyCreateDto = new DeliveryFounderConsultReplyDto();
+        this.findOne(this.$route.params.id);
+      }
+    });
+  }
+
+  paginateReply() {
+    this.findConsultReply(true);
+  }
+
+  /**
+   * find admin
+   */
   selectAdmin(admin: AdminDto) {
     this.selectedAdmin = admin;
   }
@@ -1384,6 +1489,10 @@ export default class FounderConsultDetail extends BaseComponent {
       this.adminList = res.data.items;
       this.adminListCount = res.data.totalCount;
     });
+  }
+
+  paginateSearch() {
+    this.findAdmin(true);
   }
 
   // 음식 업종

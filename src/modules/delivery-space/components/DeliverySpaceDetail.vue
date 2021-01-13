@@ -352,20 +352,20 @@
             name="update_op_brand"
           >
             <b-form-checkbox
-              v-for="brand in brandList"
-              :key="brand.no"
-              :value="brand.no"
+              v-for="brand in newBrandList"
+              :key="brand.brandNo"
+              :value="brand.brandNo"
             >
               <b-card>
                 <img
-                  :src="brand.logo[0].endpoint"
-                  :alt="brand.nameKr"
-                  v-if="brand.logo && brand.logo[0]"
+                  :src="brand.brand.logo[0].endpoint"
+                  :alt="brand.brand.nameKr"
+                  v-if="brand.brand.logo && brand.brand.logo[0]"
                   height="80"
                 />
                 <template #footer>
                   <b-form-radio-group
-                    :id="brand.no"
+                    :id="`${brand.brandNo}`"
                     v-model="brand.isOperatedYn"
                     :options="opYn"
                     buttons
@@ -428,6 +428,7 @@ export default class DeliverySpaceList extends BaseComponent {
   private opYn: YN[] = [...CONST_YN];
   private brandList: BrandDto[] = [];
   private brandRecords: DeliverySpaceNndBrandOpRecordDto[] = [];
+  private newBrandList = [];
 
   // 타입 상세 보기
   findOne(id) {
@@ -477,6 +478,14 @@ export default class DeliverySpaceList extends BaseComponent {
     BrandService.findNanudaBrand().subscribe(res => {
       if (res) {
         this.brandList = res.data;
+        this.brandList.map(brand => {
+          const newBrandRecord = new DeliverySpaceNndBrandOpRecordDto();
+          newBrandRecord.brandNo = brand.no;
+          newBrandRecord.isOperatedYn = YN.NO;
+          newBrandRecord.brand = brand;
+          this.newBrandList.push(newBrandRecord);
+        });
+        console.log(this.newBrandList);
       }
     });
   }

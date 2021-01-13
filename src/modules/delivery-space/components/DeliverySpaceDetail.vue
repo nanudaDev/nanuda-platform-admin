@@ -47,6 +47,42 @@
           rounded
           style="max-width:100%"
         />
+        <template
+          v-if="
+            deliverySpaceDto.nndOpRecord &&
+              deliverySpaceDto.nndOpRecord.length > 0
+          "
+        >
+          <h4>운영중인 브랜드</h4>
+          <table class="table mt-4">
+            <tbody>
+              <tr
+                v-for="record in deliverySpaceDto.nndOpRecord"
+                :key="record.no"
+              >
+                <td>{{ record.no }}</td>
+                <td>
+                  {{ record.started | dateTransformer }} ~
+                  {{ record.ended | dateTransformer }}
+                </td>
+                <td>
+                  <div
+                    v-for="brandRecord in record.nndBrandOpRecord"
+                    :key="brandRecord.no"
+                  >
+                    {{ brandRecord.brand.name }}
+                    <b-badge
+                      :variant="
+                        brandRecord.isOperatedYn === 'Y' ? 'success' : 'danger'
+                      "
+                      >{{ brandRecord.isOperatedYn }}</b-badge
+                    >
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </template>
       </b-col>
       <b-col cols="12" md="8">
         <div v-if="deliverySpaceDto && deliverySpaceDto.companyDistrict">
@@ -253,11 +289,7 @@
           >
         </div>
       </b-col>
-      <b-col cols="12" lg="6" v-if="brandRecords.length > 0">
-        <h4>운영중인 브랜드</h4>
-        <div class="mb-4"></div>
-      </b-col>
-      <b-col cols="12" lg="6">
+      <b-col>
         <DeliverySpaceDetailContractList />
       </b-col>
     </b-row>
@@ -292,11 +324,7 @@
       </div>
     </b-modal>
     <!-- 직영점 -->
-    <b-modal
-      id="update_delivery_space_op_record"
-      title="직영점"
-      @ok="updateOPBrandRecord()"
-    >
+    <b-modal id="update_delivery_space_op_record" title="직영점" hide-footer>
       <b-form-row>
         <b-col cols="12">
           <b-form-group label-cols="3" label="직영점 여부">
@@ -333,46 +361,40 @@
         <b-col cols="12">
           <label for="update_op_brand">운영 브랜드</label>
           <b-form-checkbox-group id="update_op_brand" name="update_op_brand">
-            <b-form-checkbox
-              v-for="brand in brandList"
-              :key="brand.no"
-              :value="brand"
-              @change="onSelectBrand(brand)"
-            >
-              <b-card class="mb-3">
+            <b-form-checkbox v-for="brand in newBrandList" :key="brand.brandNo">
+              <b-card>
                 <img
-                  :src="brand.logo[0].endpoint"
-                  :alt="brand.nameKr"
-                  v-if="brand.logo && brand.logo[0]"
+                  :src="brand.brand.logo[0].endpoint"
+                  :alt="brand.brand.nameKr"
+                  v-if="brand.brand.logo && brand.brand.logo[0]"
                   height="80"
                 />
-                <!-- <template #footer>
-                 <b-form-radio-group
-                    :id="`${brand.no}`"
+                <template #footer>
+                  <b-form-radio-group
+                    :id="`${brand.brandNo}`"
                     v-model="brand.isOperatedYn"
                     :options="opYn"
                     buttons
                   >
                   </b-form-radio-group>
-                  <v-form-checkbox
-                    :id="`${brand.no}`"
-                    @change="onBrandOpCheckbox(brand.no)"
-                    :options="opYn"
-                  >
-                  </v-form-checkbox>
-                </template> -->
+                </template>
               </b-card>
             </b-form-checkbox>
           </b-form-checkbox-group>
         </b-col>
       </b-form-row>
+      <div class="text-right">
+        <b-button variant="primary" @click="updateOPBrandRecord()">
+          수정
+        </b-button>
+      </div>
     </b-modal>
   </section>
 </template>
 <script lang="ts">
 import BaseCard from '../../_components/BaseCard.vue';
 import BaseComponent from '@/core/base.component';
-import { Prop, Vue, Component } from 'vue-property-decorator';
+import { Prop, Vue, Component, Watch } from 'vue-property-decorator';
 import {
   BrandDto,
   DeliverySpaceDto,
@@ -406,11 +428,13 @@ export default class DeliverySpaceList extends BaseComponent {
   private prevNo = null;
   private nextNo = null;
 
+  private deliverySpaceUpdateDto = new DeliverySpaceDto();
+  private deliverySpaceNndBrandOpRecordDto = new DeliverySpaceNndBrandOpRecordDto();
   private deliverySpaceNndOpRecordCreateDto = new DeliverySpaceNndOpRecordDto();
   private opYn: YN[] = [...CONST_YN];
   private brandList: BrandDto[] = [];
   private brandRecords: DeliverySpaceNndBrandOpRecordDto[] = [];
-  private selectedOpBrand = [];
+  private newBrandList = [];
 
   // 타입 상세 보기
   findOne(id) {
@@ -453,46 +477,44 @@ export default class DeliverySpaceList extends BaseComponent {
 
   showUpdateOPRecordModal() {
     this.getNndBrand();
-    this.deliverySpaceNndOpRecordCreateDto = this.deliverySpaceDto;
-    this.selectedOpBrand = [];
+    this.deliverySpaceUpdateDto = this.deliverySpaceDto;
+    this.newBrandList = [];
   }
 
-  onSelectBrand(brand) {
-    const index = this.selectedOpBrand.findIndex(e => e.brandNo === brand.no);
-    if (index !== -1) {
-      this.selectedOpBrand.splice(index, 1);
-    } else {
-      const opBrand = new DeliverySpaceNndBrandOpRecordDto();
-      opBrand.brandNo = brand.no;
-      opBrand.isOperatedYn = YN.YES;
-      this.selectedOpBrand.push(opBrand);
-    }
-  }
-
-  onBrandOpCheckbox(brandNo) {
-    const index = this.selectedOpBrand.findIndex(e => e.brandNo == brandNo);
-    console.log('index', index);
+  @Watch('newBrandList', {
+    deep: true,
+  })
+  onChangeBrand() {
+    console.log('onChangedBrand');
   }
 
   getNndBrand() {
     BrandService.findNanudaBrand().subscribe(res => {
       if (res) {
         this.brandList = res.data;
+        this.brandList.map(brand => {
+          // const newBrandRecord = new DeliverySpaceNndBrandOpRecordDto();
+          const newBrandRecord: any = {};
+          newBrandRecord.brandNo = brand.no;
+          newBrandRecord.isOperatedYn = YN.NO;
+          newBrandRecord.isSelected = false;
+          newBrandRecord.brand = brand;
+          this.newBrandList.push(newBrandRecord);
+        });
       }
     });
   }
 
   updateOPBrandRecord() {
-    if (this.selectedOpBrand && this.selectedOpBrand.length > 0) {
-      this.deliverySpaceNndOpRecordCreateDto.deliverySpaceNndBrandOpRecords = this.selectedOpBrand;
-    }
-
+    this.deliverySpaceNndOpRecordCreateDto.deliverySpaceNndBrandOpRecords.push(
+      this.deliverySpaceNndBrandOpRecordDto,
+    );
     DeliverySpaceService.update(
       this.$route.params.id,
       this.deliverySpaceNndOpRecordCreateDto,
     ).subscribe(res => {
       toast.success('수정완료');
-      this.findOne(this.$route.params.id);
+      // this.findOne(this.$route.params.id);
     });
   }
 

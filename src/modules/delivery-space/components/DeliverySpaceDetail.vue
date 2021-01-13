@@ -253,7 +253,11 @@
           >
         </div>
       </b-col>
-      <b-col>
+      <b-col cols="12" lg="6" v-if="brandRecords.length > 0">
+        <h4>운영중인 브랜드</h4>
+        <div class="mb-4"></div>
+      </b-col>
+      <b-col cols="12" lg="6">
         <DeliverySpaceDetailContractList />
       </b-col>
     </b-row>
@@ -327,7 +331,6 @@
           </b-form-group>
         </b-col>
         <b-col cols="12">
-          {{ selectedOpBrand }}
           <label for="update_op_brand">운영 브랜드</label>
           <b-form-checkbox-group id="update_op_brand" name="update_op_brand">
             <b-form-checkbox
@@ -336,7 +339,7 @@
               :value="brand"
               @change="onSelectBrand(brand)"
             >
-              <b-card>
+              <b-card class="mb-3">
                 <img
                   :src="brand.logo[0].endpoint"
                   :alt="brand.nameKr"

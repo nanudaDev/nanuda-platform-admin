@@ -174,11 +174,11 @@
           </b-form-checkbox-group>
         </b-col>
         <b-col lg="12" class="mb-3">
-          <label>브랜드</label>
+          <label>운영 가능 브랜드</label>
           <b-form-checkbox-group
-            id="update_available_barnd"
+            id="update_available_brand"
             v-model="brandIds"
-            name="update_available_barnd"
+            name="update_available_brand"
           >
             <b-form-checkbox
               v-for="brand in brandList"

@@ -6,6 +6,7 @@ import { DeliverySpaceOptionDto } from '../delivery-space-option';
 import { DeliveryFounderConsultContractDto } from '../delivery-founder-consult-contract';
 import { BrandDto } from '../brand';
 import { FileAttachmentDto } from '@/services/shared/file-upload';
+import { DeliverySpaceNndBrandOpRecordDto } from '../delivery-space-nnd-brand-op-record';
 
 export class DeliverySpaceDto extends BaseDto<DeliverySpaceDto> {
   no?: number;
@@ -30,4 +31,8 @@ export class DeliverySpaceDto extends BaseDto<DeliverySpaceDto> {
   isBestedYn?: YN;
   isBestedShowYn?: YN;
   isOpenedYn?: YN;
+  isOperatedYn?: YN;
+  operatingStartDate?: Date;
+  operatingEndDate?: Date;
+  deliverySpaceNndBrandOpRecords?: DeliverySpaceNndBrandOpRecordDto[];
 }

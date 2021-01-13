@@ -405,7 +405,10 @@ import { CONST_YN, Pagination, YN } from '@/common';
 import DeliverySpaceUpdate from './DeliverySpaceUpdate.vue';
 import DeliverySpaceDetailContractList from './DeliverySpaceDetailContractList.vue';
 import toast from '../../../../resources/assets/js/services/toast.js';
-import { DeliverySpaceNndBrandOpRecordDto } from '@/dto/delivery-space-nnd-brand-op-record';
+import {
+  DeliverySpaceNndBrandOpRecordDto,
+  DeliverySpaceNndOpRecordDto,
+} from '@/dto';
 
 @Component({
   name: 'DeliverySpaceDetail',
@@ -423,6 +426,7 @@ export default class DeliverySpaceList extends BaseComponent {
 
   private deliverySpaceUpdateDto = new DeliverySpaceDto();
   private deliverySpaceNndBrandOpRecordDto = new DeliverySpaceNndBrandOpRecordDto();
+  private deliverySpaceNndOpRecordCreateDto = new DeliverySpaceNndOpRecordDto();
   private opYn: YN[] = [...CONST_YN];
   private brandList: BrandDto[] = [];
   private brandRecords: DeliverySpaceNndBrandOpRecordDto[] = [];

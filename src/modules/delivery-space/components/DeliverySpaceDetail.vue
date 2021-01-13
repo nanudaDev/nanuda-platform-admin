@@ -47,28 +47,6 @@
           rounded
           style="max-width:100%"
         />
-        <template
-          v-if="
-            deliverySpaceDto.nndOpRecord &&
-              deliverySpaceDto.nndOpRecord.length > 0
-          "
-        >
-          <div v-for="record in deliverySpaceDto.nndOpRecord" :key="record.no">
-            <span>
-              {{ record.started | dateTransformer }} ~
-              {{ record.ended | dateTransformer }}
-            </span>
-            <template>
-              <div
-                v-for="brandRecord in record.nndBrandOpRecord"
-                :key="brandRecord.no"
-              >
-                {{ brandRecord.brand.name }}
-                | {{ brandRecord.isOperatedYn }}
-              </div>
-            </template>
-          </div>
-        </template>
       </b-col>
       <b-col cols="12" md="8">
         <div v-if="deliverySpaceDto && deliverySpaceDto.companyDistrict">
@@ -310,7 +288,11 @@
       </div>
     </b-modal>
     <!-- 직영점 -->
-    <b-modal id="update_delivery_space_op_record" title="직영점" hide-footer>
+    <b-modal
+      id="update_delivery_space_op_record"
+      title="직영점"
+      @ok="updateOPBrandRecord()"
+    >
       <b-form-row>
         <b-col cols="12">
           <b-form-group label-cols="3" label="직영점 여부">
@@ -345,16 +327,14 @@
           </b-form-group>
         </b-col>
         <b-col cols="12">
+          {{ selectedOpBrand }}
           <label for="update_op_brand">운영 브랜드</label>
-          <b-form-checkbox-group
-            id="update_op_brand"
-            v-model="deliverySpaceUpdateDto.deliverySpaceNndBrandOpRecords"
-            name="update_op_brand"
-          >
+          <b-form-checkbox-group id="update_op_brand" name="update_op_brand">
             <b-form-checkbox
               v-for="brand in brandList"
               :key="brand.no"
-              :value="brand.no"
+              :value="brand"
+              @change="onSelectBrand(brand)"
             >
               <b-card>
                 <img
@@ -363,25 +343,26 @@
                   v-if="brand.logo && brand.logo[0]"
                   height="80"
                 />
-                <template #footer>
-                  <b-form-radio-group
-                    :id="brand.no"
+                <!-- <template #footer>
+                 <b-form-radio-group
+                    :id="`${brand.no}`"
                     v-model="brand.isOperatedYn"
                     :options="opYn"
                     buttons
                   >
                   </b-form-radio-group>
-                </template>
+                  <v-form-checkbox
+                    :id="`${brand.no}`"
+                    @change="onBrandOpCheckbox(brand.no)"
+                    :options="opYn"
+                  >
+                  </v-form-checkbox>
+                </template> -->
               </b-card>
             </b-form-checkbox>
           </b-form-checkbox-group>
         </b-col>
       </b-form-row>
-      <div class="text-right">
-        <b-button variant="primary" @click="updateOPBrandRecord()">
-          수정
-        </b-button>
-      </div>
     </b-modal>
   </section>
 </template>
@@ -422,12 +403,11 @@ export default class DeliverySpaceList extends BaseComponent {
   private prevNo = null;
   private nextNo = null;
 
-  private deliverySpaceUpdateDto = new DeliverySpaceDto();
-  private deliverySpaceNndBrandOpRecordDto = new DeliverySpaceNndBrandOpRecordDto();
   private deliverySpaceNndOpRecordCreateDto = new DeliverySpaceNndOpRecordDto();
   private opYn: YN[] = [...CONST_YN];
   private brandList: BrandDto[] = [];
   private brandRecords: DeliverySpaceNndBrandOpRecordDto[] = [];
+  private selectedOpBrand = [];
 
   // 타입 상세 보기
   findOne(id) {
@@ -470,7 +450,25 @@ export default class DeliverySpaceList extends BaseComponent {
 
   showUpdateOPRecordModal() {
     this.getNndBrand();
-    this.deliverySpaceUpdateDto = this.deliverySpaceDto;
+    this.deliverySpaceNndOpRecordCreateDto = this.deliverySpaceDto;
+    this.selectedOpBrand = [];
+  }
+
+  onSelectBrand(brand) {
+    const index = this.selectedOpBrand.findIndex(e => e.brandNo === brand.no);
+    if (index !== -1) {
+      this.selectedOpBrand.splice(index, 1);
+    } else {
+      const opBrand = new DeliverySpaceNndBrandOpRecordDto();
+      opBrand.brandNo = brand.no;
+      opBrand.isOperatedYn = YN.YES;
+      this.selectedOpBrand.push(opBrand);
+    }
+  }
+
+  onBrandOpCheckbox(brandNo) {
+    const index = this.selectedOpBrand.findIndex(e => e.brandNo == brandNo);
+    console.log('index', index);
   }
 
   getNndBrand() {
@@ -482,15 +480,16 @@ export default class DeliverySpaceList extends BaseComponent {
   }
 
   updateOPBrandRecord() {
-    this.deliverySpaceNndOpRecordCreateDto.deliverySpaceNndBrandOpRecords.push(
-      this.deliverySpaceNndBrandOpRecordDto,
-    );
+    if (this.selectedOpBrand && this.selectedOpBrand.length > 0) {
+      this.deliverySpaceNndOpRecordCreateDto.deliverySpaceNndBrandOpRecords = this.selectedOpBrand;
+    }
+
     DeliverySpaceService.update(
       this.$route.params.id,
       this.deliverySpaceNndOpRecordCreateDto,
     ).subscribe(res => {
       toast.success('수정완료');
-      // this.findOne(this.$route.params.id);
+      this.findOne(this.$route.params.id);
     });
   }
 

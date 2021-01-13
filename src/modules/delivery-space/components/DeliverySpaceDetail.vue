@@ -317,7 +317,7 @@
             <b-form-checkbox
               switch
               size="lg"
-              v-model="deliverySpaceUpdateDto.isOperatedYn"
+              v-model="deliverySpaceNndOpRecordCreateDto.isOperatedYn"
               :value="opYn[0]"
               :unchecked-value="opYn[1]"
             ></b-form-checkbox>
@@ -327,7 +327,7 @@
           <b-form-group label="운영 시작 날짜">
             <b-form-datepicker
               id="started"
-              v-model="deliverySpaceUpdateDto.operatingStartDate"
+              v-model="deliverySpaceNndOpRecordCreateDto.operatingStartDate"
             ></b-form-datepicker>
           </b-form-group>
         </b-col>
@@ -335,9 +335,11 @@
           <b-form-group label="운영 종료 날짜">
             <b-form-datepicker
               id="ended"
-              v-model="deliverySpaceUpdateDto.operatingEndDate"
+              v-model="deliverySpaceNndOpRecordCreateDto.operatingEndDate"
               :disabled="
-                deliverySpaceUpdateDto.operatingStartDate ? false : true
+                deliverySpaceNndOpRecordCreateDto.operatingStartDate
+                  ? false
+                  : true
               "
             ></b-form-datepicker>
           </b-form-group>
@@ -363,12 +365,11 @@
                 />
                 <template #footer>
                   <b-form-radio-group
-                    id="update_op_brand_yn"
-                    v-model="deliverySpaceNndBrandOpRecordDto.isOperatedYn"
+                    :id="brand.no"
+                    v-model="brand.isOperatedYn"
+                    :options="opYn"
+                    buttons
                   >
-                    <b-form-radio v-for="yn in opYn" :key="yn" :value="yn">
-                      {{ yn }}
-                    </b-form-radio>
                   </b-form-radio-group>
                 </template>
               </b-card>
@@ -376,10 +377,7 @@
           </b-form-checkbox-group>
         </b-col>
       </b-form-row>
-      <div
-        class="text-right"
-        v-if="deliverySpaceUpdateDto.isOperatedYn === 'Y'"
-      >
+      <div class="text-right">
         <b-button variant="primary" @click="updateOPBrandRecord()">
           수정
         </b-button>
@@ -484,12 +482,12 @@ export default class DeliverySpaceList extends BaseComponent {
   }
 
   updateOPBrandRecord() {
-    this.deliverySpaceUpdateDto.deliverySpaceNndBrandOpRecords.push(
+    this.deliverySpaceNndOpRecordCreateDto.deliverySpaceNndBrandOpRecords.push(
       this.deliverySpaceNndBrandOpRecordDto,
     );
     DeliverySpaceService.update(
       this.$route.params.id,
-      this.deliverySpaceUpdateDto,
+      this.deliverySpaceNndOpRecordCreateDto,
     ).subscribe(res => {
       toast.success('수정완료');
       // this.findOne(this.$route.params.id);

@@ -171,6 +171,9 @@ img {
 .red-text {
   color: red;
 }
+.white-text {
+  color: white;
+}
 
 // list
 .u-list {

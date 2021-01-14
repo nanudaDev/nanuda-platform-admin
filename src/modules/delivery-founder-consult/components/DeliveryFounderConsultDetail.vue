@@ -585,8 +585,6 @@
                       </b-alert>
                     </li>
                   </ul>
-                </div>
-                <div class="col-12 col-md-6">
                   <ul>
                     <li v-if="elapsedTime">
                       전달 완료일 :
@@ -639,6 +637,58 @@
                         }}
                       </b-badge>
                     </li>
+                    <!-- <li
+                    v-if="
+                      deliveryFounderConsultManagements &&
+                        deliveryFounderConsultManagements.memo
+                    "
+                  >
+                    업체 메모
+                    <div class="mt-2">
+                      <div class="bg-light border rounded p-3">
+                        <b-row no-gutters align-h="between" align-v="end">
+                          <div
+                            v-if="deliveryFounderConsultManagements.companyUser"
+                          >
+                            <span>
+                              <strong class="user-name">
+                                {{
+                                  deliveryFounderConsultManagements.companyUser
+                                    .name
+                                }}
+                              </strong>
+                            </span>
+                          </div>
+                          <div>
+                            <span>
+                              {{
+                                deliveryFounderConsultManagements.createdAt
+                                  | dateTransformer
+                              }}
+                            </span>
+                          </div>
+                        </b-row>
+                        <div
+                          class="mt-2 pt-1 border-top"
+                          v-if="deliveryFounderConsultManagements.memo"
+                        >
+                          {{ deliveryFounderConsultManagements.memo }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mt-2 text-right">
+                      <b-button
+                        variant="outline-info"
+                        size="sm"
+                        v-b-modal.managemnt_history
+                        >메모 이력 보기</b-button
+                      >
+                    </div>
+                  </li> -->
+                  </ul>
+                </div>
+                <div class="col-12 col-md-6">
+                  <ul>
                     <li>
                       <label for="space_consult_etc">비고 내용</label>
                       <b-form-textarea
@@ -702,57 +752,23 @@
                         </div>
                       </template>
                     </li>
-                    <!-- <li
-                    v-if="
-                      deliveryFounderConsultManagements &&
-                        deliveryFounderConsultManagements.memo
-                    "
-                  >
-                    업체 메모
-                    <div class="mt-2">
-                      <div class="bg-light border rounded p-3">
-                        <b-row no-gutters align-h="between" align-v="end">
-                          <div
-                            v-if="deliveryFounderConsultManagements.companyUser"
-                          >
-                            <span>
-                              <strong class="user-name">
-                                {{
-                                  deliveryFounderConsultManagements.companyUser
-                                    .name
-                                }}
-                              </strong>
-                            </span>
-                          </div>
-                          <div>
-                            <span>
-                              {{
-                                deliveryFounderConsultManagements.createdAt
-                                  | dateTransformer
-                              }}
-                            </span>
-                          </div>
-                        </b-row>
-                        <div
-                          class="mt-2 pt-1 border-top"
-                          v-if="deliveryFounderConsultManagements.memo"
-                        >
-                          {{ deliveryFounderConsultManagements.memo }}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="mt-2 text-right">
-                      <b-button
-                        variant="outline-info"
-                        size="sm"
-                        v-b-modal.managemnt_history
-                        >메모 이력 보기</b-button
-                      >
-                    </div>
-                  </li> -->
                   </ul>
+                  <br />
+                  <div
+                    v-for="reply in deliveryFounderConsultReplyDto"
+                    :key="reply.no"
+                  >
+                    <b-card
+                      border-variant="secondary"
+                      header="Secondary"
+                      header-border-variant="secondary"
+                    >
+                      <b-card-text>
+                        {{ reply.desc }}
+                      </b-card-text>
+                    </b-card>
+                  </div>
                 </div>
-                <div></div>
               </b-row>
             </div>
             <div v-else class="empty-data">상담 내역 없음</div>
@@ -1202,6 +1218,7 @@ export default class FounderConsultDetail extends BaseComponent {
   private districtSelect = '';
   private paginationReply = new Pagination();
   private deliveryFounderConsultReplyTotalCount = null;
+  private deliveryFounderConsultReplyDto: DeliveryFounderConsultReplyDto = new DeliveryFounderConsultReplyDto();
   private deliveryFounderConsultReplyList: DeliveryFounderConsultReplyDto[] = [];
   private deliveryFounderconsultReplyListDto = new DeliveryFounderConsultReplyListDto();
   private deliveryFounderConsultReplyCreateDto = new DeliveryFounderConsultReplyDto();

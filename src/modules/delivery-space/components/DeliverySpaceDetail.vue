@@ -47,12 +47,60 @@
           rounded
           style="max-width:100%"
         />
+        <template
+          v-if="
+            deliverySpaceDto.nndOpRecord &&
+              deliverySpaceDto.nndOpRecord.length > 0
+          "
+        >
+          <h4>운영중인 브랜드</h4>
+          <table class="table mt-4">
+            <tbody>
+              <tr
+                v-for="record in deliverySpaceDto.nndOpRecord"
+                :key="record.no"
+              >
+                <td>{{ record.no }}</td>
+                <td>
+                  {{ record.started | dateTransformer }} ~
+                  {{ record.ended | dateTransformer }}
+                </td>
+                <td>
+                  <div
+                    v-for="brandRecord in record.nndBrandOpRecord"
+                    :key="brandRecord.no"
+                  >
+                    {{ brandRecord.brand.name }}
+                    <b-badge
+                      :variant="
+                        brandRecord.isOperatedYn === 'Y' ? 'success' : 'danger'
+                      "
+                      >{{ brandRecord.isOperatedYn }}</b-badge
+                    >
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </template>
       </b-col>
       <b-col cols="12" md="8">
         <div v-if="deliverySpaceDto && deliverySpaceDto.companyDistrict">
           <h4 v-if="deliverySpaceDto.typeName" class="mb-3">
-            [{{ deliverySpaceDto.no }}] {{ deliverySpaceDto.typeName }}
-            <b-badge variant="danger" v-if="deliverySpaceDto.isOpenedYn !== 'Y'"
+            <span class="px-2 py-1 rounded bg-dark white-text">{{
+              deliverySpaceDto.no
+            }}</span>
+            {{ deliverySpaceDto.typeName }}
+            <b-badge
+              variant="warning"
+              v-if="deliverySpaceDto.isOperatedYn === 'Y'"
+              class="mr-1"
+              >직영점</b-badge
+            >
+            <b-badge
+              variant="danger"
+              v-if="deliverySpaceDto.isOpenedYn !== 'Y'"
+              class="mr-1"
               >오픈 예정</b-badge
             >
           </h4>
@@ -220,12 +268,19 @@
         </div>
         <div class="text-right mt-4">
           <b-button
+            variant="warning"
+            v-b-modal.update_delivery_space_op_record
+            @click="showUpdateOPRecordModal()"
+          >
+            <b-icon icon="flag-fill"></b-icon>
+            직영점</b-button
+          >
+          <b-button
             variant="primary"
             v-b-modal.update_delivery_space
             @click="showUpdateModal()"
             >수정하기</b-button
           >
-
           <b-button
             variant="danger"
             v-b-modal.delete_delivery_space
@@ -268,20 +323,96 @@
         </div>
       </div>
     </b-modal>
+    <!-- 직영점 -->
+    <b-modal id="update_delivery_space_op_record" title="직영점" hide-footer>
+      <b-form-row>
+        <b-col cols="12">
+          <b-form-group label-cols="3" label="직영점 여부">
+            <b-form-checkbox
+              switch
+              size="lg"
+              v-model="deliverySpaceNndOpRecordCreateDto.isOperatedYn"
+              :value="opYn[0]"
+              :unchecked-value="opYn[1]"
+            ></b-form-checkbox>
+          </b-form-group>
+        </b-col>
+        <b-col cols="12" md="6">
+          <b-form-group label="운영 시작 날짜">
+            <b-form-datepicker
+              id="started"
+              v-model="deliverySpaceNndOpRecordCreateDto.operatingStartDate"
+            ></b-form-datepicker>
+          </b-form-group>
+        </b-col>
+        <b-col cols="12" md="6">
+          <b-form-group label="운영 종료 날짜">
+            <b-form-datepicker
+              id="ended"
+              v-model="deliverySpaceNndOpRecordCreateDto.operatingEndDate"
+              :disabled="
+                deliverySpaceNndOpRecordCreateDto.operatingStartDate
+                  ? false
+                  : true
+              "
+            ></b-form-datepicker>
+          </b-form-group>
+        </b-col>
+        <b-col cols="12">
+          <label for="update_op_brand">운영 브랜드</label>
+          <b-form-checkbox-group id="update_op_brand" name="update_op_brand">
+            <b-form-checkbox v-for="brand in newBrandList" :key="brand.brandNo">
+              <b-card>
+                <img
+                  :src="brand.brand.logo[0].endpoint"
+                  :alt="brand.brand.nameKr"
+                  v-if="brand.brand.logo && brand.brand.logo[0]"
+                  height="80"
+                />
+                <template #footer>
+                  <b-form-radio-group
+                    :id="`${brand.brandNo}`"
+                    v-model="brand.isOperatedYn"
+                    :options="opYn"
+                    buttons
+                  >
+                  </b-form-radio-group>
+                </template>
+              </b-card>
+            </b-form-checkbox>
+          </b-form-checkbox-group>
+        </b-col>
+      </b-form-row>
+      <div class="text-right">
+        <b-button variant="primary" @click="updateOPBrandRecord()">
+          수정
+        </b-button>
+      </div>
+    </b-modal>
   </section>
 </template>
 <script lang="ts">
 import BaseCard from '../../_components/BaseCard.vue';
 import BaseComponent from '@/core/base.component';
-import { Prop, Vue, Component } from 'vue-property-decorator';
-import { DeliverySpaceDto, DeliverySpaceListDto } from '../../../dto';
+import { Prop, Vue, Component, Watch } from 'vue-property-decorator';
+import {
+  BrandDto,
+  DeliverySpaceDto,
+  DeliverySpaceListDto,
+  DeliverySpaceUpdateDto,
+} from '../../../dto';
 import AmenityService from '../../../services/amenity.service';
 import DeliverySpaceService from '../../../services/delivery-space.service';
-import { Pagination } from '@/common';
+import BrandService from '../../../services/brand.service';
+import { CONST_YN, Pagination, YN } from '@/common';
 
 import DeliverySpaceUpdate from './DeliverySpaceUpdate.vue';
 import DeliverySpaceDetailContractList from './DeliverySpaceDetailContractList.vue';
 import toast from '../../../../resources/assets/js/services/toast.js';
+import {
+  DeliverySpaceNndBrandOpRecordDto,
+  DeliverySpaceNndOpRecordDto,
+} from '@/dto';
 
 @Component({
   name: 'DeliverySpaceDetail',
@@ -296,6 +427,14 @@ export default class DeliverySpaceList extends BaseComponent {
   private deleteDeliverySpaceConfirm = null;
   private prevNo = null;
   private nextNo = null;
+
+  private deliverySpaceUpdateDto = new DeliverySpaceDto();
+  private deliverySpaceNndBrandOpRecordDto = new DeliverySpaceNndBrandOpRecordDto();
+  private deliverySpaceNndOpRecordCreateDto = new DeliverySpaceNndOpRecordDto();
+  private opYn: YN[] = [...CONST_YN];
+  private brandList: BrandDto[] = [];
+  private brandRecords: DeliverySpaceNndBrandOpRecordDto[] = [];
+  private newBrandList = [];
 
   // 타입 상세 보기
   findOne(id) {
@@ -334,6 +473,49 @@ export default class DeliverySpaceList extends BaseComponent {
   showUpdateModal() {
     this.$root.$emit('update_delivery_space', this.deliverySpaceDto);
     this.findOne(this.$route.params.id);
+  }
+
+  showUpdateOPRecordModal() {
+    this.getNndBrand();
+    this.deliverySpaceUpdateDto = this.deliverySpaceDto;
+    this.newBrandList = [];
+  }
+
+  @Watch('newBrandList', {
+    deep: true,
+  })
+  onChangeBrand() {
+    console.log('onChangedBrand');
+  }
+
+  getNndBrand() {
+    BrandService.findNanudaBrand().subscribe(res => {
+      if (res) {
+        this.brandList = res.data;
+        this.brandList.map(brand => {
+          // const newBrandRecord = new DeliverySpaceNndBrandOpRecordDto();
+          const newBrandRecord: any = {};
+          newBrandRecord.brandNo = brand.no;
+          newBrandRecord.isOperatedYn = YN.NO;
+          newBrandRecord.isSelected = false;
+          newBrandRecord.brand = brand;
+          this.newBrandList.push(newBrandRecord);
+        });
+      }
+    });
+  }
+
+  updateOPBrandRecord() {
+    this.deliverySpaceNndOpRecordCreateDto.deliverySpaceNndBrandOpRecords.push(
+      this.deliverySpaceNndBrandOpRecordDto,
+    );
+    DeliverySpaceService.update(
+      this.$route.params.id,
+      this.deliverySpaceNndOpRecordCreateDto,
+    ).subscribe(res => {
+      toast.success('수정완료');
+      // this.findOne(this.$route.params.id);
+    });
   }
 
   deleteDeliverySpace() {

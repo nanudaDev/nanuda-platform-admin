@@ -360,27 +360,29 @@
         </b-col>
         <b-col cols="12">
           <label for="update_op_brand">운영 브랜드</label>
-          <b-form-checkbox-group id="update_op_brand" name="update_op_brand">
-            <b-form-checkbox v-for="brand in newBrandList" :key="brand.brandNo">
-              <b-card>
-                <img
-                  :src="brand.brand.logo[0].endpoint"
-                  :alt="brand.brand.nameKr"
-                  v-if="brand.brand.logo && brand.brand.logo[0]"
-                  height="80"
-                />
-                <template #footer>
-                  <b-form-radio-group
-                    :id="`${brand.brandNo}`"
-                    v-model="brand.isOperatedYn"
-                    :options="opYn"
-                    buttons
-                  >
-                  </b-form-radio-group>
-                </template>
-              </b-card>
-            </b-form-checkbox>
-          </b-form-checkbox-group>
+          <b-form-checkbox
+            v-for="(brand, i) in newBrandList"
+            :key="brand.brandNo"
+            @change="onBrandSelected($event, i)"
+          >
+            <b-card>
+              <img
+                :src="brand.brand.logo[0].endpoint"
+                :alt="brand.brand.nameKr"
+                v-if="brand.brand.logo && brand.brand.logo[0]"
+                height="80"
+              />
+              <template #footer>
+                <b-form-radio-group
+                  :id="`${brand.brandNo}`"
+                  v-model="brand.isOperatedYn"
+                  :options="opYn"
+                  buttons
+                >
+                </b-form-radio-group>
+              </template>
+            </b-card>
+          </b-form-checkbox>
         </b-col>
       </b-form-row>
       <div class="text-right">
@@ -433,8 +435,9 @@ export default class DeliverySpaceList extends BaseComponent {
   private deliverySpaceNndOpRecordCreateDto = new DeliverySpaceNndOpRecordDto();
   private opYn: YN[] = [...CONST_YN];
   private brandList: BrandDto[] = [];
-  private brandRecords: DeliverySpaceNndBrandOpRecordDto[] = [];
+  // private brandRecords: DeliverySpaceNndBrandOpRecordDto[] = [];
   private newBrandList = [];
+  private selectedBrands: DeliverySpaceNndBrandOpRecordDto[] = [];
 
   // 타입 상세 보기
   findOne(id) {
@@ -470,6 +473,12 @@ export default class DeliverySpaceList extends BaseComponent {
     });
   }
 
+  onBrandSelected(event, i) {
+    console.log('onBrandSelected event', event);
+    console.log('onBrandSelected brandNo', i);
+    this.newBrandList[i].isSelected = event;
+  }
+
   showUpdateModal() {
     this.$root.$emit('update_delivery_space', this.deliverySpaceDto);
     this.findOne(this.$route.params.id);
@@ -485,7 +494,15 @@ export default class DeliverySpaceList extends BaseComponent {
     deep: true,
   })
   onChangeBrand() {
-    console.log('onChangedBrand');
+    this.selectedBrands = [];
+    this.newBrandList.map(e => {
+      if (e.isSelected) {
+        this.selectedBrands.push({
+          brandNo: e.brandNo,
+          isOperatedYn: e.isOperatedYn,
+        });
+      }
+    });
   }
 
   getNndBrand() {
@@ -506,14 +523,14 @@ export default class DeliverySpaceList extends BaseComponent {
   }
 
   updateOPBrandRecord() {
-    this.deliverySpaceNndOpRecordCreateDto.deliverySpaceNndBrandOpRecords.push(
-      this.deliverySpaceNndBrandOpRecordDto,
-    );
+    this.deliverySpaceNndOpRecordCreateDto.deliverySpaceNndBrandOpRecords = this.selectedBrands;
     DeliverySpaceService.update(
       this.$route.params.id,
       this.deliverySpaceNndOpRecordCreateDto,
     ).subscribe(res => {
+      console.log('res', res);
       toast.success('수정완료');
+      this.$bvModal.hide('update_delivery_space_op_record');
       // this.findOne(this.$route.params.id);
     });
   }

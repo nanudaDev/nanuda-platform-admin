@@ -91,7 +91,21 @@
       <b-form-row>
         <b-col cols="12" lg="8">
           <b-form-row>
-            <b-col cols="12" class="mb-3">
+            <b-col cols="6" class="mb-3">
+              <label for="display_type">설명회 타입</label>
+              <b-form-select
+                id="event_type"
+                v-model="presentationEventCreateDto.displayType"
+              >
+                <b-form-select-option
+                  v-for="type in displayTypeSelect"
+                  :key="type.code"
+                  :value="type.key"
+                  >{{ type.value }}</b-form-select-option
+                >
+              </b-form-select>
+            </b-col>
+            <b-col cols="6" class="mb-3">
               <label for="event_type">이벤트 타입</label>
               <b-form-select
                 id="event_type"
@@ -244,6 +258,7 @@ export default class PresentationEventList extends BaseComponent {
   private mobileAttachments: FileAttachmentDto[] = [];
   private dataLoading = false;
   private pagination = new Pagination();
+  private displayTypeSelect: CodeManagementDto[] = [];
   private eventTypeSelect: CodeManagementDto[] = [];
   private scheduleList = ['11시 오전', '2시 오후'];
   private imageChanged = false;
@@ -296,6 +311,12 @@ export default class PresentationEventList extends BaseComponent {
     CodeManagementService.findAnyCode('PRESENTATION_EVENT_TYPE').subscribe(
       res => {
         this.eventTypeSelect = res.data;
+      },
+    );
+
+    CodeManagementService.findAnyCode('PRESENTATION_DISPLAY_TYPE').subscribe(
+      res => {
+        this.displayTypeSelect = res.data;
       },
     );
   }

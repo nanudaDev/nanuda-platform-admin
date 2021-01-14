@@ -225,7 +225,7 @@
               variant="light"
               show
               class="mt-2"
-              v-for="record in deliverySpaceDto.nndOpRecord"
+              v-for="(record, i) in deliverySpaceDto.nndOpRecord"
               :key="record.no"
             >
               <b-row no-gutters align-h="between" align-v="center">
@@ -236,7 +236,7 @@
                 </div>
                 <b-button
                   v-b-modal.update_nnd_op_brand
-                  @click="showUpdateNndOpBrand(record.no)"
+                  @click="showUpdateNndOpBrand(record.no, i)"
                 >
                   수정
                 </b-button>
@@ -432,25 +432,28 @@
       <b-form-row>
         <b-col cols="12">
           <label for="nnd_op_brand">운영 브랜드</label>
-          <b-row>
-            <b-col
-              cols="6"
-              v-for="(brand, index) in opBrandList"
-              :key="brand.brandNo"
-              class="mb-3"
-            >
-              <b-form-checkbox
-                v-model="brand.isSelected"
-                @change="onChangeNewChecked($event, index)"
+          <b-form-group label="Individual radios" v-slot="{ ariaDescribedby }">
+            <b-row>
+              <b-col
+                cols="6"
+                v-for="(brand, index) in opBrandList"
+                :key="brand.brandNo"
+                class="mb-3"
               >
-                <b-card>
-                  <img
-                    :src="brand.brand.logo[0].endpoint"
-                    :alt="brand.brand.nameKr"
-                    v-if="brand.brand.logo && brand.brand.logo[0]"
-                    height="80"
-                  />
-                  <!-- <template #footer>
+                <b-form-radio
+                  :aria-describedby="ariaDescribedby"
+                  :value="brand.brandNo"
+                  @change="onChangeNewChecked($event, index)"
+                  v-model="selectedOpBrandId"
+                >
+                  <b-card>
+                    <img
+                      :src="brand.brand.logo[0].endpoint"
+                      :alt="brand.brand.nameKr"
+                      v-if="brand.brand.logo && brand.brand.logo[0]"
+                      height="80"
+                    />
+                    <!-- <template #footer>
                     <b-form-group label-cols="8" label="운영 여부" class="m-0">
                       <b-form-checkbox
                         switch
@@ -461,10 +464,11 @@
                       ></b-form-checkbox>
                     </b-form-group>
                   </template> -->
-                </b-card>
-              </b-form-checkbox>
-            </b-col>
-          </b-row>
+                  </b-card>
+                </b-form-radio>
+              </b-col>
+            </b-row>
+          </b-form-group>
         </b-col>
       </b-form-row>
       <div class="text-right">
@@ -633,50 +637,51 @@ export default class DeliverySpaceList extends BaseComponent {
     this.opBrandList[i].isSelected = value;
   }
 
-  @Watch('opBrandList', {
-    deep: true,
-  })
-  onChangeOpBrand() {
-    this.selectedOpBrands = [];
-    this.selectedOpBrandId = null;
-    this.opBrandList.map(e => {
-      if (e.isSelected) {
-        // this.selectedOpBrands.push({
-        //   brandNo: e.brandNo,
-        //   isOperatedYn: e.isOperatedYn,
-        // });
-        this.selectedOpBrandId = e.brandNo;
-      }
-    });
-  }
+  // @Watch('opBrandList', {
+  //   deep: true,
+  // })
+  // onChangeOpBrand() {
+  //   this.selectedOpBrands = [];
+  //   this.selectedOpBrandId = null;
+  //   this.opBrandList.map(e => {
+  //     if (e.isSelected) {
+  //       // this.selectedOpBrands.push({
+  //       //   brandNo: e.brandNo,
+  //       //   isOperatedYn: e.isOperatedYn,
+  //       // });
+  //       this.selectedOpBrandId = e.brandNo;
+  //     }
+  //   });
+  // }
 
-  showUpdateNndOpBrand(recordNo) {
+  showUpdateNndOpBrand(recordNo, i) {
     this.selectedOpRecordId = recordNo;
-    DeliverySpaceNndOpRecordService.findforBrand(recordNo).subscribe(res => {
-      if (res) {
-        this.selectedOpBrands = res.data;
-      }
-    });
-    this.opBrandList = [];
-    BrandService.findNanudaBrand().subscribe(res => {
-      if (res) {
-        this.brandList = res.data;
-        this.brandList.map(brand => {
-          const opBrandRecord: any = {};
-          opBrandRecord.brandNo = brand.no;
-          this.selectedOpBrands.map(selectedBrand => {
-            if (selectedBrand.brandNo === brand.no) {
-              opBrandRecord.isOperatedYn = selectedBrand.isOperatedYn
-                ? selectedBrand.isOperatedYn
-                : 'N';
-              opBrandRecord.isSelected = true;
-            }
-          });
-          opBrandRecord.brand = brand;
-          this.opBrandList.push(opBrandRecord);
-        });
-      }
-    });
+    this.opBrandList = this.deliverySpaceDto.nndOpRecord[i].nndBrandOpRecord;
+    // DeliverySpaceNndOpRecordService.findforBrand(recordNo).subscribe(res => {
+    //   if (res) {
+    //     this.selectedOpBrands = res.data;
+    //   }
+    // });
+    // this.opBrandList = [];
+    // BrandService.findNanudaBrand().subscribe(res => {
+    //   if (res) {
+    //     this.brandList = res.data;
+    //     this.brandList.map(brand => {
+    //       const opBrandRecord: any = {};
+    //       opBrandRecord.brandNo = brand.no;
+    //       this.selectedOpBrands.map(selectedBrand => {
+    //         if (selectedBrand.brandNo === brand.no) {
+    //           opBrandRecord.isOperatedYn = selectedBrand.isOperatedYn
+    //             ? selectedBrand.isOperatedYn
+    //             : 'N';
+    //           opBrandRecord.isSelected = true;
+    //         }
+    //       });
+    //       opBrandRecord.brand = brand;
+    //       this.opBrandList.push(opBrandRecord);
+    //     });
+    //   }
+    // });
   }
 
   updateNndOpBrand() {
@@ -684,6 +689,7 @@ export default class DeliverySpaceList extends BaseComponent {
     const brandNo = this.selectedOpBrandId;
     DeliverySpaceNndOpRecordService.update(recordNo, brandNo).subscribe(res => {
       if (res) {
+        console.log('res', res);
         toast.success('수정완료');
         this.$bvModal.hide('update_nnd_op_brand');
         this.findOne(this.$route.params.id);

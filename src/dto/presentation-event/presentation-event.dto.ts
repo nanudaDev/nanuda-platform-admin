@@ -17,11 +17,15 @@ export class PresentationEventDto extends BaseDto<PresentationEventDto> {
   image?: FileAttachmentDto[];
   mobileImage?: FileAttachmentDto[];
   schedule?: string[];
-  presentationDate?: Date;
+  presentationDate?: Date | string;
   address?: string;
   lat?: string;
   lon?: string;
   contactPhone?: string;
   signedUpAttendees?: AttendeesDto[];
   posteventDesc?: string;
+  buttonDesc?: string;
+  zoomLink?: string;
+  zoomId?: string;
+  zoomPassword?: string;
 }

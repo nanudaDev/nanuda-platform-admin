@@ -653,9 +653,11 @@ export default class DeliverySpaceList extends BaseComponent {
   // }
 
   showUpdateNndOpBrand(recordNo, i) {
-    this.selectedOpBrandId = null;
     this.selectedOpRecordId = recordNo;
     this.opBrandList = this.deliverySpaceDto.nndOpRecord[i].nndBrandOpRecord;
+    //클릭한 기록의 운영중인 브랜드로 미리 선택함
+    const index = this.opBrandList.findIndex(e => e.isOperatedYn === 'Y');
+    this.selectedOpBrandId = this.opBrandList[index].no;
     // DeliverySpaceNndOpRecordService.findforBrand(recordNo).subscribe(res => {
     //   if (res) {
     //     this.selectedOpBrands = res.data;

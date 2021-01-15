@@ -25,24 +25,33 @@
           xl="3"
           v-for="event in presentationEventList"
           :key="event.no"
+          class="my-3"
         >
           <b-card
-            :img-src="[
+            :img-src="
               event.image && event.mobileImage.length > 0
                 ? event.mobileImage[0].endpoint
-                : require('@/assets/images/general/common/img_placeholder.jpg'),
-            ]"
+                : require('@/assets/images/general/common/img_placeholder.jpg')
+            "
             img-alt="Image"
             img-top
             @click="findOne(event.no)"
           >
             <b-card-title>
               <b-badge
-                :variant="[
+                variant="warning"
+                v-if="event.displayType === 'ONLINE'"
+                class="mr-1"
+              >
+                <b-icon icon="wifi"></b-icon>
+                {{ event.displayType }}
+              </b-badge>
+              <b-badge
+                :variant="
                   event.eventTypeInfo.key === 'DELIVERY_EVENT'
                     ? 'primary'
-                    : 'orange',
-                ]"
+                    : 'orange'
+                "
                 v-if="event.eventTypeInfo"
               >
                 {{ event.eventTypeInfo.value }}
@@ -53,20 +62,22 @@
             </b-card-title>
             <b-card-text>
               <p v-if="event.desc">{{ event.desc }}</p>
-              <div class="pt-2 mt-2 border-top">
-                <p class="mt-1">
-                  {{ event.presentationDate | dateTransformer }}
-                </p>
-                <p class="mt-1">
-                  <span
-                    class="badge badge-time"
-                    v-for="(time, index) in event.schedule"
-                    :key="index"
-                  >
-                    {{ time }}
-                  </span>
-                </p>
-              </div>
+              <template v-if="event.displayType !== 'ONLINE'">
+                <div class="pt-2 mt-2 border-top">
+                  <p class="mt-1">
+                    {{ event.presentationDate | dateTransformer }}
+                  </p>
+                  <p class="mt-1">
+                    <span
+                      class="badge badge-time"
+                      v-for="(time, index) in event.schedule"
+                      :key="index"
+                    >
+                      {{ time }}
+                    </span>
+                  </p>
+                </div>
+              </template>
             </b-card-text>
             <template #footer v-if="event.posteventDesc">
               {{ event.posteventDesc }}
@@ -91,7 +102,21 @@
       <b-form-row>
         <b-col cols="12" lg="8">
           <b-form-row>
-            <b-col cols="12" class="mb-3">
+            <b-col cols="6" class="mb-3">
+              <label for="display_type">설명회 타입</label>
+              <b-form-select
+                id="event_type"
+                v-model="presentationEventCreateDto.displayType"
+              >
+                <b-form-select-option
+                  v-for="type in displayTypeSelect"
+                  :key="type.code"
+                  :value="type.key"
+                  >{{ type.value }}</b-form-select-option
+                >
+              </b-form-select>
+            </b-col>
+            <b-col cols="6" class="mb-3">
               <label for="event_type">이벤트 타입</label>
               <b-form-select
                 id="event_type"
@@ -119,35 +144,67 @@
                 v-model="presentationEventCreateDto.desc"
               ></b-form-textarea>
             </b-col>
-            <b-col cols="12" md="6" class="mb-3">
-              <div>
-                <label for="ended">설명회 날짜</label>
-                <b-form-datepicker
-                  id="started"
-                  v-model="presentationEventCreateDto.presentationDate"
-                ></b-form-datepicker>
-              </div>
-            </b-col>
-            <b-col cols="12" md="6" class="mb-3">
-              <label for="">설명회 시간</label>
-              <b-form-checkbox-group
-                v-model="presentationEventCreateDto.schedule"
-              >
-                <b-form-checkbox
-                  v-for="(time, index) in scheduleList"
-                  :key="index"
-                  :value="time"
-                  >{{ time }}</b-form-checkbox
+            <template
+              v-if="presentationEventCreateDto.displayType === 'ONLINE'"
+            >
+              <b-col cols="6" class="mb-3">
+                <label for="zoom_id">ZOOM ID</label>
+                <b-form-input
+                  v-model="presentationEventCreateDto.zoomId"
+                ></b-form-input>
+              </b-col>
+              <b-col cols="6" class="mb-3">
+                <label for="zoom_id">ZOOM PASSWORD</label>
+                <b-form-input
+                  v-model="presentationEventCreateDto.zoomPassword"
+                ></b-form-input>
+              </b-col>
+              <b-col cols="12" class="mb-3">
+                <label for="zoom_link">ZOOM URL</label>
+                <b-form-input
+                  id="zoom_link"
+                  v-model="presentationEventCreateDto.zoomLink"
+                ></b-form-input>
+              </b-col>
+            </template>
+            <template v-else>
+              <b-col cols="12" md="6" class="mb-3">
+                <div>
+                  <label for="ended">설명회 날짜</label>
+                  <b-form-datepicker
+                    id="started"
+                    v-model="presentationEventCreateDto.presentationDate"
+                  ></b-form-datepicker>
+                </div>
+              </b-col>
+              <b-col cols="12" md="6" class="mb-3">
+                <label for="">설명회 시간</label>
+                <b-form-checkbox-group
+                  v-model="presentationEventCreateDto.schedule"
                 >
-              </b-form-checkbox-group>
-            </b-col>
-            <b-col cols="12" class="mb-3">
-              <label for="">설명회 장소</label>
+                  <b-form-checkbox
+                    v-for="(time, index) in scheduleList"
+                    :key="index"
+                    :value="time"
+                    >{{ time }}</b-form-checkbox
+                  >
+                </b-form-checkbox-group>
+              </b-col>
+              <b-col cols="12" class="mb-3">
+                <label for="">설명회 장소</label>
+                <b-form-input
+                  v-model="presentationEventCreateDto.address"
+                ></b-form-input>
+              </b-col>
+            </template>
+            <b-col cols="6" class="mb-3">
+              <label for="button_desc">버튼 이름</label>
               <b-form-input
-                v-model="presentationEventCreateDto.address"
+                id="button_desc"
+                v-model="presentationEventCreateDto.buttonDesc"
               ></b-form-input>
             </b-col>
-            <b-col cols="12" class="mb-3">
+            <b-col cols="6" class="mb-3">
               <label for="">문의 연락처</label>
               <b-form-input
                 v-model="presentationEventCreateDto.contactPhone"
@@ -244,6 +301,7 @@ export default class PresentationEventList extends BaseComponent {
   private mobileAttachments: FileAttachmentDto[] = [];
   private dataLoading = false;
   private pagination = new Pagination();
+  private displayTypeSelect: CodeManagementDto[] = [];
   private eventTypeSelect: CodeManagementDto[] = [];
   private scheduleList = ['11시 오전', '2시 오후'];
   private imageChanged = false;
@@ -296,6 +354,12 @@ export default class PresentationEventList extends BaseComponent {
     CodeManagementService.findAnyCode('PRESENTATION_EVENT_TYPE').subscribe(
       res => {
         this.eventTypeSelect = res.data;
+      },
+    );
+
+    CodeManagementService.findAnyCode('PRESENTATION_DISPLAY_TYPE').subscribe(
+      res => {
+        this.displayTypeSelect = res.data;
       },
     );
   }

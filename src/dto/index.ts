@@ -19,6 +19,8 @@ export * from './delivery-founder-consult-management';
 export * from './delivery-founder-consult-record';
 export * from './delivery-founder-consult-reply';
 export * from './delivery-space';
+export * from './delivery-space-nnd-brand-op-record/';
+export * from './delivery-space-nnd-op-record';
 export * from './delivery-space-option';
 export * from './food-category';
 export * from './founder-consult';

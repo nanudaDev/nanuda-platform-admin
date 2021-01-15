@@ -146,6 +146,14 @@ export enum POPUP {
 }
 export const CONST_POPUP = Object.values(POPUP);
 
+export enum PRESENTATION_DISPLAY_TYPE {
+  'OFFLINE' = 'OFFLINE',
+  'ONLINE' = 'ONLINE',
+}
+export const CONST_PRESENTATION_DISPLAY_TYPE = Object.values(
+  PRESENTATION_DISPLAY_TYPE,
+);
+
 export enum PRESENTATION_EVENT_TYPE {
   'COMMON_EVENT' = 'COMMON_EVENT',
   'DELIVERY_EVENT' = 'DELIVERY_EVENT',

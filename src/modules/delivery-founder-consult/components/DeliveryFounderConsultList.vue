@@ -1,9 +1,6 @@
 <template>
   <section>
-    <div class="title pb-2 mb-2">
-      <h3>배달형 상담 신청</h3>
-    </div>
-    <div class="divider"></div>
+    <SectionTitle title="배달형 상담 신청" divider />
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <div class="form-row">
         <div class="col-6 col-lg-1 mb-3">
@@ -107,7 +104,20 @@
             </datalist>
           </template>
         </div>
-        <div class="col-6 col-lg-2 mb-3">
+        <div class="col-6 col-lg-1 mb-3">
+          <label for="view_count">열람 유무</label>
+          <select
+            class="custom-select"
+            id="view_count"
+            v-model="deliveryFounderConsultSearchDto.viewCount"
+          >
+            <option value selected>전체</option>
+            <option v-for="yn in delYn" :key="yn" :value="yn">{{
+              yn | viewTransformer
+            }}</option>
+          </select>
+        </div>
+        <div class="col-6 col-lg-1 mb-3">
           <label for="hope_time">희망 시간대</label>
           <select
             class="custom-select"
@@ -140,16 +150,19 @@
           </select>
         </div>
         <div class="col-6 col-lg-2 mb-3">
-          <label for="view_count">열람 유무</label>
+          <label for="status">업체 상태</label>
           <select
             class="custom-select"
-            id="view_count"
-            v-model="deliveryFounderConsultSearchDto.viewCount"
+            id="status"
+            v-model="deliveryFounderConsultSearchDto.companyDecisionStatus"
           >
             <option value selected>전체</option>
-            <option v-for="yn in delYn" :key="yn" :value="yn">{{
-              yn | viewTransformer
-            }}</option>
+            <option
+              v-for="status in statusB2BSelect"
+              :key="status.no"
+              :value="status.key"
+              >{{ status.value }}</option
+            >
           </select>
         </div>
         <div class="col-6 col-lg-2 mb-3">
@@ -234,16 +247,17 @@
             <col width="60" />
             <col width="100" />
             <col width="100" />
-            <col width="100" />
+            <col width="60" />
             <col width="100" />
             <col width="60" />
             <col width="60" />
             <col width="300" />
             <col width="80" />
-            <col width="80" />
+            <col width="100" />
+            <col width="100" />
             <col width="100" />
             <col width="150" />
-            <col width="100" />
+            <!-- <col width="100" /> -->
           </colgroup>
           <thead>
             <tr>
@@ -343,9 +357,18 @@
               >
                 신청 상태
               </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted:
+                    deliveryFounderConsultSearchDto.companyDecisionStatus,
+                }"
+              >
+                업체 상태
+              </th>
               <th scope="col">공간 공실 수</th>
               <th scope="col">생성날짜</th>
-              <th scope="col"></th>
+              <!-- <th scope="col"></th> -->
             </tr>
           </thead>
 
@@ -353,6 +376,12 @@
             <tr
               v-for="deliveryFounderConsult in deliveryFounderConsultListDto"
               :key="deliveryFounderConsult.no"
+              @click="
+                $router.push(
+                  `/delivery-founder-consult/${deliveryFounderConsult.no}`,
+                )
+              "
+              style="cursor:pointer"
             >
               <th scope="row">{{ deliveryFounderConsult.no }}</th>
               <td>{{ deliveryFounderConsult.deliverySpaceNo }}</td>
@@ -462,6 +491,17 @@
                 >
               </td>
               <td>
+                <b-badge
+                  :variant="
+                    getStatusColor(deliveryFounderConsult.companyDecisionStatus)
+                  "
+                  class="badge-pill p-2 mr-2"
+                  >{{
+                    deliveryFounderConsult.companyDecisionStatusCode.value
+                  }}</b-badge
+                >
+              </td>
+              <td>
                 <template
                   v-if="
                     deliveryFounderConsult.deliverySpace &&
@@ -475,7 +515,7 @@
                 </template>
               </td>
               <td>{{ deliveryFounderConsult.createdAt | dateTransformer }}</td>
-              <td>
+              <!-- <td>
                 <router-link
                   v-if="deliveryFounderConsult.no"
                   class="btn btn-sm btn-secondary text-nowrap"
@@ -487,7 +527,7 @@
                   }"
                   >상세보기</router-link
                 >
-              </td>
+              </td> -->
             </tr>
           </tbody>
         </table>

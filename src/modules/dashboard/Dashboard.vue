@@ -1,24 +1,6 @@
 <template>
   <section>
     <b-row class="my-0">
-      <b-col md="6" class="my-3">
-        <BaseCard title="업체 승인 요청" no-body>
-          <template v-slot:head>
-            <router-link to="/company" class="btn btn-primary float-right">더 보기</router-link>
-          </template>
-          <DashboardCompanyList />
-        </BaseCard>
-      </b-col>
-      <b-col md="6" class="my-3">
-        <BaseCard title="업체 사용자 승인 요청" no-body>
-          <template v-slot:head>
-            <router-link to="/company/company-user" class="btn btn-primary float-right">더 보기</router-link>
-          </template>
-          <DashboardCompanyUserList />
-        </BaseCard>
-      </b-col>
-    </b-row>
-    <b-row class="my-0">
       <b-col lg="4" class="my-3">
         <BaseCard title="배달형 상담 신청">
           <template v-slot:body>
@@ -41,8 +23,9 @@
                 <div>
                   <router-link
                     to="/graph-by-cities"
-                    class="btn btn-primary text-center float-right"
-                  >더 보기</router-link>
+                    class="btn btn-outline-info text-center float-right"
+                    >자세히 보기</router-link
+                  >
                 </div>
               </template>
               <template v-slot:body>
@@ -53,11 +36,15 @@
         </b-row>
       </b-col>
     </b-row>
-    <b-row>
-      <b-col lg="12" my-3>
+    <b-row class="my-0">
+      <b-col lg="12" class="my-3">
         <BaseCard title="키오스크 매장 매출">
           <template v-slot:head>
-            <router-link to="/kiosk-payment" class="btn btn-primary float-right">자세히 보기</router-link>
+            <router-link
+              to="/kiosk-payment"
+              class="btn btn-outline-info float-right"
+              >자세히 보기</router-link
+            >
           </template>
           <DashboardPaymentListGraph />
         </BaseCard>
@@ -67,7 +54,11 @@
       <b-col lg="6" class="my-3">
         <BaseCard title="최신 배달형 상담 신청" no-body>
           <template v-slot:head>
-            <router-link to="/delivery-founder-consult" class="btn btn-primary float-right">더 보기</router-link>
+            <router-link
+              to="/delivery-founder-consult"
+              class="btn btn-outline-info float-right"
+              >전체보기</router-link
+            >
           </template>
           <DashboardDeliveryConsultList />
         </BaseCard>
@@ -75,9 +66,37 @@
       <b-col lg="6" class="my-3">
         <BaseCard title="최신 식당형 상담 신청" no-body>
           <template v-slot:head>
-            <router-link to="/founder-consult" class="btn btn-primary float-right">더 보기</router-link>
+            <router-link
+              to="/founder-consult"
+              class="btn btn-outline-info float-right"
+              >전체보기</router-link
+            >
           </template>
           <DashboardFounderConsultList />
+        </BaseCard>
+      </b-col>
+    </b-row>
+    <b-row class="my-0">
+      <b-col md="6" class="my-3">
+        <BaseCard title="업체 승인 요청" no-body>
+          <template v-slot:head>
+            <router-link to="/company" class="btn btn-outline-info float-right"
+              >전체보기</router-link
+            >
+          </template>
+          <DashboardCompanyList />
+        </BaseCard>
+      </b-col>
+      <b-col md="6" class="my-3">
+        <BaseCard title="업체 사용자 승인 요청" no-body>
+          <template v-slot:head>
+            <router-link
+              to="/company/company-user"
+              class="btn btn-outline-info float-right"
+              >전체보기</router-link
+            >
+          </template>
+          <DashboardCompanyUserList />
         </BaseCard>
       </b-col>
     </b-row>

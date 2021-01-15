@@ -33,4 +33,5 @@ export class BrandDto extends BaseDto<BrandDto> {
   urlPath?: string;
   kioskNo?: number;
   brandType?: BRAND_TYPE;
+  isOperatedYn?: YN;
 }

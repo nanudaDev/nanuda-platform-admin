@@ -35,4 +35,5 @@ export class DeliverySpaceDto extends BaseDto<DeliverySpaceDto> {
   operatingStartDate?: Date;
   operatingEndDate?: Date;
   deliverySpaceNndBrandOpRecords?: DeliverySpaceNndBrandOpRecordDto[];
+  nndOpRecord?: any;
 }

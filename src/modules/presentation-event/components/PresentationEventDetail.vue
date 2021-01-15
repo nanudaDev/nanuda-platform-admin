@@ -105,7 +105,21 @@
       </b-col>
       <b-col cols="8">
         <b-form-row>
-          <b-col cols="12" class="mb-3">
+          <b-col cols="6" class="mb-3">
+            <label for="event_type">창업 설명회 유형</label>
+            <b-form-select
+              id="event_type"
+              v-model="presentationEventDto.displayType"
+            >
+              <b-form-select-option
+                v-for="type in displayTypeSelect"
+                :key="type.code"
+                :value="type.key"
+                >{{ type.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-col>
+          <b-col cols="6" class="mb-3">
             <label for="event_type">이벤트 타입</label>
             <b-form-select
               id="event_type"
@@ -131,23 +145,69 @@
               v-model="presentationEventDto.desc"
             ></b-form-textarea>
           </b-col>
-          <b-col cols="12" class="mb-3">
-            <label for="ended">설명회 날짜</label>
-            <b-form-datepicker
-              id="started"
-              v-model="presentationEventDto.presentationDate"
-            ></b-form-datepicker>
+          <template v-if="presentationEventDto.displayType !== 'ONLINE'">
+            <b-col cols="12" class="mb-3">
+              <label for="ended">설명회 날짜</label>
+              <b-form-datepicker
+                id="started"
+                v-model="presentationEventDto.presentationDate"
+              ></b-form-datepicker>
+            </b-col>
+            <b-col cols="12" class="mb-3">
+              <label for="">설명회 시간</label>
+              <b-form-checkbox-group v-model="presentationEventDto.schedule">
+                <b-form-checkbox
+                  v-for="(time, index) in scheduleList"
+                  :key="index"
+                  :value="time"
+                  >{{ time }}</b-form-checkbox
+                >
+              </b-form-checkbox-group>
+            </b-col>
+          </template>
+          <template v-else>
+            <b-col cols="6" class="mb-3">
+              <label for="zoom_id">ZOOM ID</label>
+              <b-form-input
+                id="zoom_id"
+                v-model="presentationEventDto.zoomId"
+              ></b-form-input>
+            </b-col>
+            <b-col cols="6" class="mb-3">
+              <label for="zoom_id">ZOOM PASSWORD</label>
+              <b-form-input
+                id="zoom_password"
+                v-model="presentationEventDto.zoomPassword"
+              ></b-form-input>
+            </b-col>
+            <b-col cols="12" class="mb-3">
+              <label for="zoom_link">ZOOM URL</label>
+              <b-row no-gutters align-v="center" style="flex-wrap:nowrap">
+                <b-form-input
+                  id="zoom_link"
+                  v-model="presentationEventDto.zoomLink"
+                ></b-form-input>
+                <a
+                  :href="presentationEventDto.zoomLink"
+                  target="_blank"
+                  class="btn btn-lg  btn-info text-nowrap ml-2"
+                  >링크 확인</a
+                >
+              </b-row>
+            </b-col>
+          </template>
+          <b-col cols="6" class="mb-3">
+            <label for="button_desc">버튼 이름</label>
+            <b-form-input
+              id="button_desc"
+              v-model="presentationEventDto.buttonDesc"
+            ></b-form-input>
           </b-col>
-          <b-col cols="12" class="mb-3">
-            <label for="">설명회 시간</label>
-            <b-form-checkbox-group v-model="presentationEventDto.schedule">
-              <b-form-checkbox
-                v-for="(time, index) in scheduleList"
-                :key="index"
-                :value="time"
-                >{{ time }}</b-form-checkbox
-              >
-            </b-form-checkbox-group>
+          <b-col cols="6" class="mb-3">
+            <label for="contact_phone">문의 연락처</label>
+            <b-form-input
+              v-model="presentationEventDto.contactPhone"
+            ></b-form-input>
           </b-col>
           <b-col cols="12" class="mb-3">
             <label for="">설명회 피드백</label>
@@ -467,8 +527,16 @@ export default class PresentationEventDetail extends BaseComponent {
   private newAttachments: FileAttachmentDto[] = [];
   private newMobileAttachments: FileAttachmentDto[] = [];
   private eventTypeSelect: CodeManagementDto[] = [];
+  private displayTypeSelect: CodeManagementDto[] = [];
   private genderSelect: CodeManagementDto[] = [];
   private scheduleList = ['11시 오전', '2시 오후'];
+  private onlineScheduleList = [
+    '25일(월)',
+    '26일(화)',
+    '27일(수)',
+    '28일(목)',
+    '29일(금)',
+  ];
   private imageChanged = false;
   private mobieImageChanged = false;
   private ynSelect: YN[] = [...CONST_YN];
@@ -499,6 +567,12 @@ export default class PresentationEventDetail extends BaseComponent {
     CodeManagementService.findAnyCode('PRESENTATION_EVENT_TYPE').subscribe(
       res => {
         this.eventTypeSelect = res.data;
+      },
+    );
+
+    CodeManagementService.findAnyCode('PRESENTATION_DISPLAY_TYPE').subscribe(
+      res => {
+        this.displayTypeSelect = res.data;
       },
     );
   }

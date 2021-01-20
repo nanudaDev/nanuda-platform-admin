@@ -431,19 +431,17 @@
     <b-modal id="update_nnd_op_brand" title="운영 브랜드 수정" hide-footer>
       <b-form-row>
         <b-col cols="12">
-          <label for="nnd_op_brand">운영 브랜드</label>
-          <b-form-group label="Individual radios" v-slot="{ ariaDescribedby }">
+          <b-form-group label="운영 브랜드" v-slot="{ ariaDescribedby }">
             <b-row>
               <b-col
                 cols="6"
-                v-for="(brand, index) in opBrandList"
+                v-for="brand in opBrandList"
                 :key="brand.brandNo"
                 class="mb-3"
               >
                 <b-form-radio
                   :aria-describedby="ariaDescribedby"
-                  :value="brand.brandNo"
-                  @change="onChangeNewChecked($event, index)"
+                  :value="brand.no"
                   v-model="selectedOpBrandId"
                 >
                   <b-card>
@@ -633,9 +631,9 @@ export default class DeliverySpaceList extends BaseComponent {
 
   // 운영 브랜드 수정
 
-  onChangeNewChecked(value, i) {
-    this.opBrandList[i].isSelected = value;
-  }
+  // onChangeNewChecked(value, i) {
+  //   this.opBrandList[i].isSelected = value;
+  // }
 
   // @Watch('opBrandList', {
   //   deep: true,
@@ -657,6 +655,9 @@ export default class DeliverySpaceList extends BaseComponent {
   showUpdateNndOpBrand(recordNo, i) {
     this.selectedOpRecordId = recordNo;
     this.opBrandList = this.deliverySpaceDto.nndOpRecord[i].nndBrandOpRecord;
+    //클릭한 기록의 운영중인 브랜드로 미리 선택함
+    const index = this.opBrandList.findIndex(e => e.isOperatedYn === 'Y');
+    this.selectedOpBrandId = this.opBrandList[index].no;
     // DeliverySpaceNndOpRecordService.findforBrand(recordNo).subscribe(res => {
     //   if (res) {
     //     this.selectedOpBrands = res.data;
@@ -685,9 +686,10 @@ export default class DeliverySpaceList extends BaseComponent {
   }
 
   updateNndOpBrand() {
-    const recordNo = this.selectedOpRecordId;
-    const brandNo = this.selectedOpBrandId;
-    DeliverySpaceNndOpRecordService.update(recordNo, brandNo).subscribe(res => {
+    DeliverySpaceNndOpRecordService.update(
+      this.selectedOpRecordId,
+      this.selectedOpBrandId,
+    ).subscribe(res => {
       if (res) {
         console.log('res', res);
         toast.success('수정완료');

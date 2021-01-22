@@ -15,9 +15,69 @@
         >
       </template>
     </SectionTitle>
-    <div id="map" style="width:100%; height:420px"></div>
     <b-row align-h="start" align-v="stretch">
-      <b-col md="4" class="my-3">
+      <b-col
+        :lg="
+          deliveryFounderConsultDto.deliverySpace &&
+          deliveryFounderConsultDto.deliverySpace.companyDistrict.bCode
+            ? 5
+            : 12
+        "
+        class="my-3"
+      >
+        <div id="map" style="width:100%; height:558px"></div>
+      </b-col>
+      <b-col
+        lg="7"
+        class="my-3"
+        v-if="
+          deliveryFounderConsultDto.deliverySpace &&
+            deliveryFounderConsultDto.deliverySpace.companyDistrict.bCode
+        "
+      >
+        <div id="tab-section">
+          <b-card no-body>
+            <b-tabs card fill>
+              <b-tab title="요약" no-body>
+                <AnalysisSummary
+                  :bdongCode="
+                    deliveryFounderConsultDto.deliverySpace.companyDistrict
+                      .bCode
+                  "
+                />
+              </b-tab>
+              <b-tab title="매출분석" no-body @click="revenueClicked = true">
+                <AnalysisSales
+                  :bdongCode="
+                    deliveryFounderConsultDto.deliverySpace.companyDistrict
+                      .bCode
+                  "
+                  v-if="revenueClicked"
+                />
+              </b-tab>
+              <b-tab title="업종분석" no-body @click="categoryClicked = true">
+                <AnalysisCategory
+                  :bdongCode="
+                    deliveryFounderConsultDto.deliverySpace.companyDistrict
+                      .bCode
+                  "
+                  v-if="categoryClicked"
+                />
+              </b-tab>
+              <b-tab title="인구분석" no-body @click="populationClicked = true">
+                <AnalysisPopulation
+                  :bdongCode="
+                    deliveryFounderConsultDto.deliverySpace.companyDistrict
+                      .bCode
+                  "
+                  v-if="populationClicked"
+                />
+              </b-tab>
+            </b-tabs>
+          </b-card>
+        </div>
+      </b-col>
+      <b-col lg="4" class="my-3">
         <BaseCard title="사용자 정보">
           <template v-slot:head>
             <div>
@@ -100,7 +160,7 @@
           </template>
         </BaseCard>
       </b-col>
-      <b-col md="4" class="my-3">
+      <b-col lg="4" class="my-3">
         <BaseCard title="관리자 정보">
           <template v-slot:head>
             <div>
@@ -145,7 +205,7 @@
           </template>
         </BaseCard>
       </b-col>
-      <b-col md="4" class="my-3">
+      <b-col lg="4" class="my-3">
         <BaseCard title="업체 정보">
           <template v-slot:body>
             <div v-if="deliveryFounderConsultDto.deliverySpace">
@@ -283,7 +343,7 @@
           </template>
         </BaseCard>
       </b-col>
-      <b-col md="5" class="my-3">
+      <b-col lg="5" class="my-3">
         <BaseCard title="타입 정보">
           <template v-slot:head>
             <div>
@@ -472,7 +532,7 @@
           </template>
         </BaseCard>
       </b-col>
-      <b-col md="7" class="my-3">
+      <b-col lg="7" class="my-3">
         <BaseCard title="상담 상세 정보">
           <template v-slot:head>
             <div v-if="deliveryFounderConsultDto.createdAt">
@@ -1152,6 +1212,10 @@ import {
 } from '@/dto';
 import { Pagination, YN, CONST_YN } from '@/common';
 import { BaseUser } from '@/services/shared/auth';
+import AnalysisSummary from '../../../modules/analysis/components/AnalysisSummary.vue';
+import AnalysisSales from '../../../modules/analysis/components/AnalysisSales.vue';
+import AnalysisCategory from '../../../modules/analysis/components/AnalysisCategory.vue';
+import AnalysisPopulation from '../../../modules/analysis/components/AnalysisPopulation.vue';
 import BaseCard from '../../_components/BaseCard.vue';
 import FounderConsultManagementHistory from './FounderConsultManagementHistory.vue';
 import toast from '../../../../resources/assets/js/services/toast.js';
@@ -1181,6 +1245,10 @@ if (process.env.NODE_ENV === EnvironmentType.production) {
 @Component({
   name: 'DeliveryFounderConsultDetail',
   components: {
+    AnalysisSummary,
+    AnalysisSales,
+    AnalysisCategory,
+    AnalysisPopulation,
     BaseCard,
     FounderConsultManagementHistory,
   },
@@ -1222,6 +1290,12 @@ export default class FounderConsultDetail extends BaseComponent {
   private deliveryFounderConsultReplyList: DeliveryFounderConsultReplyDto[] = [];
   private deliveryFounderconsultReplyListDto = new DeliveryFounderConsultReplyListDto();
   private deliveryFounderConsultReplyCreateDto = new DeliveryFounderConsultReplyDto();
+
+  private map;
+  private bdongCode = null;
+  private revenueClicked = false;
+  private categoryClicked = false;
+  private populationClicked = false;
 
   // get status color
   getStatusColor(
@@ -1558,6 +1632,7 @@ export default class FounderConsultDetail extends BaseComponent {
     circle.setRadius(1000);
     circle.setMap(map);
     customOverlay.setMap(map);
+    this.map = map;
   }
 
   created() {
@@ -1565,6 +1640,7 @@ export default class FounderConsultDetail extends BaseComponent {
     this.getGender();
     this.getFoodCategories();
     this.getFounderConsultCodes();
+    this.findOne(this.$route.params.id);
     // this.getFounderConsultManagements(founderConsultId);
   }
 
@@ -1573,3 +1649,113 @@ export default class FounderConsultDetail extends BaseComponent {
   }
 }
 </script>
+<style lang="scss">
+#tab-section {
+  .article-header {
+    background-color: #f8f9fa;
+    padding: 3em 1.5em;
+    height: 145px;
+    h2 {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+  }
+  .article-content {
+    overflow-y: auto;
+  }
+
+  .section {
+    background-color: #fff;
+    padding: 3em 1.5em;
+    + .section {
+      border-top: 1.5em solid #f5f5f5;
+    }
+    .section-header {
+      h3 {
+        font-size: 16px;
+        font-weight: bold;
+      }
+      + .section-content {
+        margin-top: 1em;
+      }
+    }
+  }
+
+  .tabs {
+    height: calc(100% - 145px);
+    background-color: #f8f9fa;
+    .nav-tabs {
+      padding: 0 1.5em;
+      .nav-link {
+        padding: 0 0.5em;
+        height: 45px;
+        line-height: 45px;
+        font-size: 14px;
+      }
+    }
+  }
+  .table {
+    th,
+    td {
+      padding: 0;
+    }
+    th {
+      background-color: #f8f9fa;
+    }
+  }
+  .tab-content {
+    background-color: #fff;
+    height: 500px;
+    overflow-y: auto;
+  }
+
+  .graph-label {
+    background: #f5f5f5;
+    padding: 0.25em 0.5em;
+    border: 1px solid #dedede;
+  }
+  .horizontal-stacked-bars {
+    display: flex;
+    height: 40px;
+    .horizontal-stacked-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      font-size: 16px;
+      color: #fff;
+      &.bar-gender-male {
+        background-color: #17a2b8;
+      }
+      &.bar-gender-female {
+        background-color: #e85d47;
+      }
+
+      &.bar-gender-etc {
+        background-color: #646464;
+      }
+      p {
+        font-weight: bold;
+      }
+      span {
+        font-size: 12px;
+        margin-left: 8px;
+      }
+    }
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 140px 0;
+  }
+
+  .loader {
+    text-align: center;
+    margin: 140px 0;
+    img {
+      height: 100px;
+    }
+  }
+}
+</style>

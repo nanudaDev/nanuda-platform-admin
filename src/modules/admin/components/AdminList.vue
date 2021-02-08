@@ -21,6 +21,7 @@
         <b-col cols="12" sm="6" md="3">
           <b-form-group label="담당 공유주방">
             <b-form-select id="space_type" v-model="adminSearchDto.spaceTypeNo">
+              <b-form-select-option>전체</b-form-select-option>
               <b-form-select-option
                 v-for="spaceType in spaceTypes"
                 :key="spaceType.no"

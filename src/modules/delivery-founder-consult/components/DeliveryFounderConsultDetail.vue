@@ -7,10 +7,7 @@
           class="btn btn-secondary text-center"
           >목록으로</router-link
         >
-        <b-button
-          variant="primary"
-          @click="updateFounderConsult()"
-          v-if="!statusDistComplete"
+        <b-button variant="primary" @click="updateFounderConsult()"
           >수정하기</b-button
         >
       </template>
@@ -126,8 +123,14 @@
                     :key="gender.no"
                     :value="gender.key"
                     name="gender"
-                    :disabled="statusDistComplete"
                     >{{ gender.value }}</b-form-radio
+                  >
+                  <b-alert
+                    show
+                    variant="danger"
+                    v-if="!deliveryFounderConsultDto.nanudaUser.genderInfo"
+                    class="mt-3"
+                    >성별 미입력 상태입니다</b-alert
                   >
                 </li>
                 <li
@@ -150,13 +153,6 @@
               </ul>
             </div>
             <div v-else class="empty-data">사용자 없음</div>
-            <!-- <b-alert
-              show
-              variant="danger"
-              v-if="!deliveryFounderConsultDto.nanudaUser.genderInfo"
-              class="mt-3"
-              >성별 미입력 상태</b-alert
-            > -->
           </template>
         </BaseCard>
       </b-col>
@@ -481,7 +477,6 @@
                   공간설명 :
                   <b>
                     {{ deliveryFounderConsultDto.deliverySpace.desc }}
-                    평
                   </b>
                 </li>
               </ul>
@@ -848,10 +843,7 @@
         class="btn btn-secondary text-center"
         >목록으로</router-link
       >
-      <b-button
-        variant="primary"
-        @click="updateFounderConsult()"
-        v-if="!statusDistComplete"
+      <b-button variant="primary" @click="updateFounderConsult()"
         >수정하기</b-button
       >
     </div>
@@ -1263,6 +1255,7 @@ export default class FounderConsultDetail extends BaseComponent {
   private availableTimesSelect: CodeManagementDto[] = [];
   private delYn: YN[] = [...CONST_YN];
   private deliveryFounderConsultDto = new DeliveryFounderConsultDto();
+  private deliveryFounderConsultMap = new DeliveryFounderConsultDto();
   private deliveryFounderConsultUpdateDto = new DeliveryFounderConsultUpdateDto();
   private deliveryFounderConsultStatusSelect: CodeManagementDto[] = [];
   private genderSelect: CodeManagementDto[] = [];
@@ -1433,8 +1426,8 @@ export default class FounderConsultDetail extends BaseComponent {
     // find founder consult detail
     DeliveryFounderConsultService.findOne(id).subscribe(res => {
       this.deliveryFounderConsultDto = res.data;
-      this.setMap(res.data);
       this.deliveredTime = res.data.deliveredAt;
+
       if (this.deliveredTime) {
         this.createdTime = new Date(res.data.createdAt);
         this.deliveredTime = new Date(res.data.deliveredAt);
@@ -1590,49 +1583,54 @@ export default class FounderConsultDetail extends BaseComponent {
   }
 
   // 지도 가져오기
-  setMap(deliveryFounderConsult: DeliveryFounderConsultDto) {
-    const mapContainer = document.getElementById('map'),
-      mapOption = {
-        center: new window.kakao.maps.LatLng(
-          deliveryFounderConsult.deliverySpace.companyDistrict.lat,
-          deliveryFounderConsult.deliverySpace.companyDistrict.lon,
-        ),
-        level: 5,
-        maxLevel: 6,
-        minLevel: 3,
-        mapTypeId: window.kakao.maps.MapTypeId.ROADMAP,
-      };
+  setMap(id) {
+    DeliveryFounderConsultService.findOne(id).subscribe(res => {
+      if (res) {
+        this.deliveryFounderConsultMap = res.data;
+        const mapContainer = document.getElementById('map'),
+          mapOption = {
+            center: new window.kakao.maps.LatLng(
+              this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lat,
+              this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lon,
+            ),
+            level: 5,
+            maxLevel: 6,
+            minLevel: 3,
+            mapTypeId: window.kakao.maps.MapTypeId.ROADMAP,
+          };
 
-    const map = new window.kakao.maps.Map(mapContainer, mapOption);
-    const content = `<span class="badge badge-primary" style="font-size:21px;border-radius: 100px;opacity: 82%">Here</span>`;
-    const markerPosition = new window.kakao.maps.LatLng(
-      deliveryFounderConsult.deliverySpace.companyDistrict.lat,
-      deliveryFounderConsult.deliverySpace.companyDistrict.lon,
-    );
+        const map = new window.kakao.maps.Map(mapContainer, mapOption);
+        const content = `<span class="badge badge-primary" style="font-size:21px;border-radius: 100px;opacity: 82%">Here</span>`;
+        const markerPosition = new window.kakao.maps.LatLng(
+          this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lat,
+          this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lon,
+        );
 
-    const customOverlay = new window.kakao.maps.CustomOverlay({
-      position: markerPosition,
-      content: content,
-      // image: markerImage,
+        const customOverlay = new window.kakao.maps.CustomOverlay({
+          position: markerPosition,
+          content: content,
+          // image: markerImage,
+        });
+
+        const circle = new window.kakao.maps.Circle({
+          map: map,
+          center: new window.kakao.maps.LatLng(
+            this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lat,
+            this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lon,
+          ),
+          strokeWeight: 2,
+          strokeColor: '#FF00FF',
+          strokeOpacity: 0.8,
+          strokeStyle: 'dashed',
+          fillColor: '#00EEEE',
+          fillOpacity: 0.5,
+        });
+        circle.setRadius(1000);
+        circle.setMap(map);
+        customOverlay.setMap(map);
+        this.map = map;
+      }
     });
-
-    const circle = new window.kakao.maps.Circle({
-      map: map,
-      center: new window.kakao.maps.LatLng(
-        deliveryFounderConsult.deliverySpace.companyDistrict.lat,
-        deliveryFounderConsult.deliverySpace.companyDistrict.lon,
-      ),
-      strokeWeight: 2,
-      strokeColor: '#FF00FF',
-      strokeOpacity: 0.8,
-      strokeStyle: 'dashed',
-      fillColor: '#00EEEE',
-      fillOpacity: 0.5,
-    });
-    circle.setRadius(1000);
-    circle.setMap(map);
-    customOverlay.setMap(map);
-    this.map = map;
   }
 
   created() {
@@ -1641,11 +1639,8 @@ export default class FounderConsultDetail extends BaseComponent {
     this.getFoodCategories();
     this.getFounderConsultCodes();
     this.findOne(this.$route.params.id);
+    this.setMap(this.$route.params.id);
     // this.getFounderConsultManagements(founderConsultId);
-  }
-
-  mounted() {
-    this.findOne(this.$route.params.id);
   }
 }
 </script>

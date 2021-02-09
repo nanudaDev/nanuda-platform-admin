@@ -209,10 +209,12 @@ export default class AdminList extends BaseComponent {
   private adminTotalCount = null;
   private dataLoading = false;
   private spaceTypes: SpaceTypeDto[] = [];
+  private searchPramsDto: any = {};
 
+  // search admin
   search(isPagination?: boolean) {
+    this.dataLoading = false;
     if (!isPagination) {
-      this.dataLoading = false;
       this.pagination.page = 1;
     }
     AdminService.findAll(this.adminSearchDto, this.pagination).subscribe(
@@ -221,8 +223,12 @@ export default class AdminList extends BaseComponent {
           this.dataLoading = false;
           this.adminList = res.data.items;
           this.adminTotalCount = res.data.totalCount;
+          this.searchPramsDto = Object.assign(
+            this.adminSearchDto,
+            this.pagination,
+          );
           this.$router.push({
-            query: Object.assign(this.adminSearchDto),
+            query: this.searchPramsDto,
           });
         }
       },
@@ -258,13 +264,16 @@ export default class AdminList extends BaseComponent {
   }
 
   created() {
-    this.dataLoading = true;
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.adminSearchDto = query;
+      this.pagination.limit = +query.limit;
+      this.pagination.page = +query.page;
+      this.search(true);
+    } else {
+      this.search();
     }
     this.findSpaceType();
-    this.search();
   }
 }
 </script>

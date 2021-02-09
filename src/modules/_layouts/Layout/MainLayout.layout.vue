@@ -3,7 +3,7 @@
     <section :id="this.$route.name">
       <NavBar />
       <div id="app-main" class="container-fluid">
-        <router-view />
+        <router-view :key="$route.fullPath" />
       </div>
     </section>
   </div>

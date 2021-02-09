@@ -26,14 +26,15 @@ import {
   DatePipeTransformer,
   EnumPipeTransformer,
   StringPipeTransformer,
-  ViewPipeTransformer,
+  StringViewPipeTransformer,
   StringDistrictPipeTransformer,
   PhonePipeTransformer,
   BizNoPipeTransformer,
   StringInquiryPipeTransformer,
+  StringShowPipeTransformer,
   CurrencyPipeTransformer,
   SpaceTypePipeTransformer,
-  NumberPipeTransformer
+  NumberPipeTransformer,
 } from './core';
 
 let env = new Environment();
@@ -61,17 +62,18 @@ Vue.component('BaseCard', BaseCard);
 Vue.component('downloadExcel', JsonExcel);
 
 // filters
+BizNoPipeTransformer();
+CurrencyPipeTransformer();
 DatePipeTransformer();
 EnumPipeTransformer();
+NumberPipeTransformer();
+PhonePipeTransformer();
 StringPipeTransformer();
 StringDistrictPipeTransformer();
 StringInquiryPipeTransformer();
-ViewPipeTransformer();
-PhonePipeTransformer();
-BizNoPipeTransformer();
-CurrencyPipeTransformer();
+StringShowPipeTransformer();
+StringViewPipeTransformer();
 SpaceTypePipeTransformer();
-NumberPipeTransformer();
 
 // bootstrap
 Vue.use(BootstrapVue);

@@ -201,6 +201,7 @@ import NanudaUserService from '../../../services/nanuda-user.service';
 import { CONST_YN, Pagination, YN } from '@/common';
 import { BaseUser } from '@/services/shared/auth';
 import toast from '../../../../resources/assets/js/services/toast.js';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'NanudaUserList',
@@ -213,13 +214,14 @@ export default class NanudaUserList extends BaseComponent {
   private pagination = new Pagination();
   private dataLoading = false;
   private yn: YN[] = [...CONST_YN];
+  private searchPramsDto: any = {};
 
+  // search nanuda user
   search(isPagination?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
     }
-    this.pagination.limit = 20;
     NanudaUserService.findAll(
       this.nanudaUserSearchDto,
       this.pagination,
@@ -228,6 +230,13 @@ export default class NanudaUserList extends BaseComponent {
       if (res) {
         this.nanudaUserList = res.data.items;
         this.nanudaUserTotalCount = res.data.totalCount;
+        this.searchPramsDto = Object.assign(
+          this.nanudaUserSearchDto,
+          this.pagination,
+        );
+        this.$router.push({
+          query: this.searchPramsDto,
+        });
       }
     });
   }
@@ -256,7 +265,15 @@ export default class NanudaUserList extends BaseComponent {
   }
 
   created() {
-    this.search();
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.nanudaUserSearchDto = query;
+      this.pagination.limit = +query.limit;
+      this.pagination.page = +query.page;
+      this.search(true);
+    } else {
+      this.search();
+    }
   }
 }
 </script>

@@ -58,10 +58,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import BaseComponent from '../../../core/base.component';
 import FounderConsultService from '../../../services/founder-consult.service';
 import { Pagination, PaginatedResponse } from '../../../common';
-import {
-  FounderConsultListDto,
-  FounderConsultDto,
-} from '../../../dto/founder-consult';
+import { FounderConsultListDto, FounderConsultDto } from '@/dto';
 import { SPACE_TYPE, FOUNDER_CONSULT } from '@/services/shared';
 
 import { getStatusColor } from '../../../core/utils/status-color.util';

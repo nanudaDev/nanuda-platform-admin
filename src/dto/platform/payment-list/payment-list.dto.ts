@@ -1,5 +1,5 @@
 import { BaseDto } from '@/core';
-import { NanudaKitchenMasterDto } from '../';
+import { NanudaKitchenMasterDto } from '..';
 
 export class PaymentListDto extends BaseDto<PaymentListDto> {
   paymentListNo?: number;

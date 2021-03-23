@@ -6,6 +6,7 @@ import {
   ProductionEnvironment,
   EnvironmentType,
   Environment,
+  ApiUrlType,
 } from '../../environments';
 import { Pagination, PaginatedResponse } from '../common';
 import JwtStorageService from '../services/shared/auth/jwt-storage.service';
@@ -93,19 +94,21 @@ export class BaseService extends Vue {
     method: Method,
     path: string,
     params?: any,
-    analysis?: boolean,
+    apiUrlType?: ApiUrlType,
   ): AxiosObservable<T> {
-    let baseUrl;
-    let siteUrl;
-    let homepageBaseUrl;
-    let homepageSiteUrl;
-    let analysisUrl;
+    let baseUrl: string;
+    let siteUrl: string;
+    let homepageBaseUrl: string;
+    let homepageSiteUrl: string;
+    let analysisUrl: string;
+    let pickcookUrl: string;
     if (process.env.NODE_ENV === EnvironmentType.development) {
       baseUrl = DevelopmentEnvironment.baseURL;
       siteUrl = DevelopmentEnvironment.siteUrl;
       homepageBaseUrl = DevelopmentEnvironment.homepageBaseUrl;
       homepageSiteUrl = DevelopmentEnvironment.homepageSiteUrl;
       analysisUrl = DevelopmentEnvironment.analysisUrl;
+      pickcookUrl = DevelopmentEnvironment.pickcookUrl;
     }
     if (process.env.NODE_ENV === EnvironmentType.staging) {
       baseUrl = StagingEnvironment.baseURL;
@@ -113,6 +116,7 @@ export class BaseService extends Vue {
       homepageBaseUrl = StagingEnvironment.homepageBaseUrl;
       homepageSiteUrl = StagingEnvironment.homepageSiteUrl;
       analysisUrl = StagingEnvironment.analysisUrl;
+      pickcookUrl = StagingEnvironment.pickcookUrl;
     }
     if (process.env.NODE_ENV === EnvironmentType.production) {
       baseUrl = ProductionEnvironment.baseURL;
@@ -120,6 +124,7 @@ export class BaseService extends Vue {
       homepageBaseUrl = ProductionEnvironment.homepageBaseUrl;
       homepageSiteUrl = ProductionEnvironment.homepageSiteUrl;
       analysisUrl = ProductionEnvironment.analysisUrl;
+      pickcookUrl = ProductionEnvironment.pickcookUrl;
     }
     // axios observable에서 글로벌 에러 catch하는 코드
     Axios.interceptors.response.use(
@@ -152,8 +157,10 @@ export class BaseService extends Vue {
         }
       },
     );
-    if (analysis) {
+    if (apiUrlType === ApiUrlType.ANALYSIS) {
       baseUrl = analysisUrl;
+    } else if (apiUrlType === ApiUrlType.PICKCOOK) {
+      baseUrl = pickcookUrl;
     }
     if (path.indexOf('http') !== 0) {
       path = baseUrl + path;
@@ -224,9 +231,9 @@ export class BaseService extends Vue {
   protected get<T>(
     path: string,
     params?: any,
-    analysis?: boolean,
+    apiUrlType?: ApiUrlType,
   ): AxiosObservable<T> {
-    return this.__api('get', path, params, analysis);
+    return this.__api('get', path, params, apiUrlType);
   }
 
   protected post<T>(path: string, params?: any): AxiosObservable<T> {

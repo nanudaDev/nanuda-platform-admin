@@ -3,7 +3,7 @@ import { BaseService } from '@/core';
 import {
   CompanyDistrictPromotionDto,
   CompanyDistrictPromotionListDto,
-} from '@/dto/company-district-promotion';
+} from '@/dto';
 
 export class CompanyDistrictPromotionService extends BaseService {
   constructor() {

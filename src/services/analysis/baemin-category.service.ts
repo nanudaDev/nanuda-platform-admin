@@ -1,8 +1,9 @@
 import { BaseService } from '@/core';
+import { ApiUrlType } from '../../../environments';
 
 export class BaeminCategoryService extends BaseService {
   findAll(params) {
-    return super.get<any>('baemin-category', params, true);
+    return super.get<any>('baemin-category', params, ApiUrlType.ANALYSIS);
   }
 }
 

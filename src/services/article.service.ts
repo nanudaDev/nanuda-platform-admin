@@ -1,7 +1,7 @@
 import { Pagination } from '@/common';
 import { BaseService } from '@/core';
 import { ArticleDto, ArticleListDto } from '@/dto';
-import { ArticleUpdateDto } from '@/dto/article/article-update.dto';
+import { ArticleUpdateDto } from '@/dto';
 
 export class ArticleService extends BaseService {
   findAll(filter: ArticleListDto, pagination?: Pagination) {

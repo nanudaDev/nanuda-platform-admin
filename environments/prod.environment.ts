@@ -11,4 +11,5 @@ export const ProductionEnvironment: Environment = {
   homepageBaseUrl: 'https://nanudakitchen.com/api',
   homepageSiteUrl: 'https://nanudakitchen.com',
   analysisUrl: 'https://platform-analysis.nanudakitchen.com/',
+  pickcookUrl: 'https://pickcook-api.nanudakitchen.com/',
 };

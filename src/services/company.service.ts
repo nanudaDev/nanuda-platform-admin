@@ -5,8 +5,8 @@ import {
   CompanyListDto,
   CompanyUpdateDto,
   CompanyUpdateRefusalDto,
+  CompanyDistrictPromotionDto,
 } from '@/dto';
-import { CompanyDistrictPromotionDto } from '@/dto/company-district-promotion';
 
 class CompanyService extends BaseService {
   /**

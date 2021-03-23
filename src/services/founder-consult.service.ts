@@ -3,7 +3,7 @@ import {
   FounderConsultDto,
   FounderConsultListDto,
   FounderConsultUpdateDto,
-} from '@/dto/founder-consult';
+} from '@/dto';
 import { Pagination } from '@/common';
 
 class FounderConsultService extends BaseService {

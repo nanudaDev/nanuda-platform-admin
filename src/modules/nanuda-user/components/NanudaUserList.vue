@@ -1,10 +1,7 @@
 <template>
   <section>
-    <div class="title pb-2 mb-2">
-      <h3>사용자 관리</h3>
-    </div>
-    <div class="divider"></div>
-    <div class="serach-box my-4" v-on:keyup.enter="search()">
+    <SectionTitle title="사용자 관리" divider></SectionTitle>
+    <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
         <!-- <b-col cols="6" md="2" class="mb-2">
           <label for="user_no">사용자 ID</label>
@@ -15,7 +12,7 @@
             v-model="nanudaUserSearchDto.no"
           />
         </b-col>-->
-        <b-col cols="6" md="2" class="mb-3">
+        <b-col cols="12" sm="6" md="3" class="mb-3">
           <label>사용자명</label>
           <input
             type="text"
@@ -23,8 +20,8 @@
             v-model="nanudaUserSearchDto.name"
           />
         </b-col>
-        <b-col cols="6" md="3" class="mb-3">
-          <label>사용자 휴대폰 번호</label>
+        <b-col cols="12" sm="6" md="3" class="mb-3">
+          <label>휴대폰 번호</label>
           <input
             type="text"
             class="form-control"
@@ -32,73 +29,77 @@
           />
         </b-col>
       </b-form-row>
-      <div class="text-center">
-        <div class="btn-group mb-4">
-          <button class="btn btn-primary" @click="clearOut()">초기화</button>
-          <button class="btn btn-success" @click="search()">검색</button>
+      <b-row align-h="center">
+        <div>
+          <b-button variant="secondary" @click="clearOut()">초기화</b-button>
+          <b-button variant="primary" @click="search()">검색</b-button>
         </div>
-      </div>
+      </b-row>
     </div>
     <div class="table-top">
       <div class="total-count">
         <h5>
           <span>TOTAL</span>
-          <strong class="text-primary">{{ nanudaUserListCount }}</strong>
+          <strong class="text-primary">{{ nanudaUserTotalCount }}</strong>
         </h5>
       </div>
-      <div>
+      <div class="text-right">
         <b-button variant="primary" v-b-modal.add_user>
           사용자 추가
         </b-button>
       </div>
     </div>
-    <div v-if="!dataLoading" class="border table-responsive">
-      <table class="table table-hover table-sm text-center table-nowrap">
-        <colgroup>
-          <col width="60" />
-          <col width="auto" />
-          <col width="auto" />
-          <col width="200" />
-          <col width="150" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th
-              scope="col"
-              v-bind:class="{ highlighted: nanudaUserSearchDto.no }"
+    <template v-if="!dataLoading">
+      <div class="bg-white table-responsive">
+        <table
+          class="table table-hover table-sm text-center table-nowrap"
+          v-if="nanudaUserTotalCount"
+        >
+          <colgroup>
+            <col width="60" />
+            <col width="auto" />
+            <col width="auto" />
+            <col width="200" />
+            <col width="150" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                v-bind:class="{ highlighted: nanudaUserSearchDto.no }"
+              >
+                ID
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: nanudaUserSearchDto.name,
+                }"
+              >
+                사용자명
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{ highlighted: nanudaUserSearchDto.phone }"
+              >
+                휴대폰 번호
+              </th>
+              <th scope="col">가입일</th>
+              <!-- <th scope="col"></th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="user in nanudaUserList"
+              :key="user.no"
+              @click="$router.push(`/nanuda-user/${user.no}`)"
+              style="cursor:pointer;"
             >
-              ID
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: nanudaUserSearchDto.name,
-              }"
-            >
-              사용자명
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{ highlighted: nanudaUserSearchDto.phone }"
-            >
-              휴대폰 번호
-            </th>
-            <th scope="col">가입일</th>
-            <!-- <th scope="col"></th> -->
-          </tr>
-        </thead>
-        <tbody v-if="nanudaUserListCount">
-          <tr
-            v-for="user in nanudaUserList"
-            :key="user.no"
-            @click="$router.push(`/nanuda-user/${user.no}`)"
-            style="cursor:pointer;"
-          >
-            <th scope="row">{{ user.no }}</th>
-            <td>{{ user.name }}</td>
-            <td>{{ user.phone | phoneTransformer }}</td>
-            <td>{{ user.createdAt | dateTransformer }}</td>
-            <!-- <td>
+              <th scope="row">{{ user.no }}</th>
+              <td>{{ user.name }}</td>
+              <td>{{ user.phone | phoneTransformer }}</td>
+              <td>{{ user.createdAt | dateTransformer }}</td>
+              <!-- <td>
               <router-link
                 class="btn btn-sm btn-secondary text-nowrap"
                 :to="{
@@ -110,24 +111,28 @@
                 >상세보기</router-link
               >
             </td> -->
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div v-else class="empty-data border">검색결과가 없습니다.</div>
-    <b-pagination
-      v-model="pagination.page"
-      v-if="nanudaUserListCount"
-      pills
-      :total-rows="nanudaUserListCount"
-      :per-page="pagination.limit"
-      @input="paginateSearch"
-      class="mt-4 justify-content-center"
-    ></b-pagination>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+            </tr>
+          </tbody>
+        </table>
+        <div v-else class="empty-data border">검색결과가 없습니다.</div>
+      </div>
+      <b-pagination
+        v-model="pagination.page"
+        v-if="nanudaUserTotalCount"
+        pills
+        :total-rows="nanudaUserTotalCount"
+        :per-page="pagination.limit"
+        @input="paginateSearch"
+        class="mt-4 justify-content-center"
+      ></b-pagination>
+    </template>
+    <template v-else>
+      <div class="half-circle-spinner py-4">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+      </div>
+    </template>
+    <!-- 사용자 추가 모달 -->
     <b-modal
       id="add_user"
       title="사용자 추가"
@@ -196,25 +201,27 @@ import NanudaUserService from '../../../services/nanuda-user.service';
 import { CONST_YN, Pagination, YN } from '@/common';
 import { BaseUser } from '@/services/shared/auth';
 import toast from '../../../../resources/assets/js/services/toast.js';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'NanudaUserList',
 })
 export default class NanudaUserList extends BaseComponent {
   private nanudaUserList: NanudaUserDto[] = [];
-  private nanudaUserListCount = 0;
+  private nanudaUserTotalCount = 0;
   private nanudaUserSearchDto = new NanudaUserListDto();
   private nanudaUserCreateDto = new NanudaUserDto(BaseUser);
   private pagination = new Pagination();
   private dataLoading = false;
   private yn: YN[] = [...CONST_YN];
+  private searchPramsDto: any = {};
 
+  // search nanuda user
   search(isPagination?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
     }
-    this.pagination.limit = 20;
     NanudaUserService.findAll(
       this.nanudaUserSearchDto,
       this.pagination,
@@ -222,7 +229,14 @@ export default class NanudaUserList extends BaseComponent {
       this.dataLoading = false;
       if (res) {
         this.nanudaUserList = res.data.items;
-        this.nanudaUserListCount = res.data.totalCount;
+        this.nanudaUserTotalCount = res.data.totalCount;
+        this.searchPramsDto = Object.assign(
+          this.nanudaUserSearchDto,
+          this.pagination,
+        );
+        this.$router.push({
+          query: this.searchPramsDto,
+        });
       }
     });
   }
@@ -251,7 +265,15 @@ export default class NanudaUserList extends BaseComponent {
   }
 
   created() {
-    this.search();
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.nanudaUserSearchDto = query;
+      this.pagination.limit = +query.limit;
+      this.pagination.page = +query.page;
+      this.search(true);
+    } else {
+      this.search();
+    }
   }
 }
 </script>

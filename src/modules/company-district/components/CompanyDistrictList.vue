@@ -345,7 +345,7 @@ import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 import { getStatusColor } from '../../../core/utils/status-color.util';
 import { ReverseQueryParamMapper } from '@/core';
-import { CompanyDistrictCreateDto } from '@/dto/company-district/company-district-create.dto';
+import { CompanyDistrictCreateDto } from '@/dto';
 
 @Component({
   name: 'CompanyDistrictList',

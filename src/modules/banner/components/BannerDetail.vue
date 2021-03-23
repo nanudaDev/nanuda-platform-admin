@@ -331,7 +331,6 @@ import BaseComponent from '@/core/base.component';
 import { BannerDto } from '@/dto';
 import BannerService from '../../../services/banner.service';
 import Component from 'vue-class-component';
-// import { BannerUpdateDto } from '@/dto/banner/banner-update.dto';
 import { FileAttachmentDto } from '@/services/shared/file-upload';
 import FileUploadService from '../../../services/shared/file-upload/file-upload.service';
 import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';

@@ -138,7 +138,6 @@ import { MenuUpdateDto, MenuDto } from '@/dto';
 import MenuService from '../../../services/menu.service';
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { CONST_YN, YN } from '@/common';
-import { ArticleUpdateDto } from '@/dto/article/article-update.dto';
 import { FileAttachmentDto } from '@/services/shared/file-upload';
 import FileUploadService from '../../../services/shared/file-upload/file-upload.service';
 import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';

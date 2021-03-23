@@ -1,15 +1,20 @@
 import { BaseService } from '@/core';
 import { AnalysisTabListDto } from '@/dto';
+import { ApiUrlType } from '../../../environments';
 
 export class AnalysisTabService extends BaseService {
   findSummary(analysisTabListdto: AnalysisTabListDto) {
-    return super.get<any>('analysis-tab/get-summary', analysisTabListdto, true);
+    return super.get<any>(
+      'analysis-tab/get-summary',
+      analysisTabListdto,
+      ApiUrlType.ANALYSIS,
+    );
   }
   findCategoryRatio(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/category-ratio',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
 
@@ -17,7 +22,7 @@ export class AnalysisTabService extends BaseService {
     return super.get<any>(
       'analysis-tab/revenue-analysis-gender',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
 
@@ -25,14 +30,14 @@ export class AnalysisTabService extends BaseService {
     return super.get<any>(
       'analysis-tab/revenue-analysis-age-group',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
   findRevenueAnalysisByDay(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/revenue-analysis-by-day',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
 
@@ -40,7 +45,7 @@ export class AnalysisTabService extends BaseService {
     return super.get<any>(
       'analysis-tab/food-category-summary',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
 
@@ -48,7 +53,7 @@ export class AnalysisTabService extends BaseService {
     return super.get<any>(
       'analysis-tab/survival-years',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
 
@@ -56,28 +61,28 @@ export class AnalysisTabService extends BaseService {
     return super.get<any>(
       'analysis-tab/population/resident-count',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
   findPopulationGenderRatio(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/population/gender-ratio',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
   findAgeGroupRatio(analysisTabListdto) {
     return super.get<any>(
       'analysis-tab/population/age-group-ratio',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
   findPopulationResidentialRatio(analysisTabListdto: AnalysisTabListDto) {
     return super.get<any>(
       'analysis-tab/population/residential-ratio',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
 
@@ -85,7 +90,7 @@ export class AnalysisTabService extends BaseService {
     return super.get<any>(
       'analysis-tab/population/employee-count',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
 
@@ -93,7 +98,7 @@ export class AnalysisTabService extends BaseService {
     return super.get<any>(
       'analysis-tab/population/moving-population-count',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
 
@@ -101,7 +106,7 @@ export class AnalysisTabService extends BaseService {
     return super.get<any>(
       'analysis-tab/revenue-analysis-by-lunch',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
 
@@ -109,7 +114,7 @@ export class AnalysisTabService extends BaseService {
     return super.get<any>(
       'analysis-tab/revenue-analysis-by-dinner',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
 
@@ -117,7 +122,7 @@ export class AnalysisTabService extends BaseService {
     return super.get<any>(
       'analysis-tab/revenue-analysis-by-late-night',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
 
@@ -127,7 +132,7 @@ export class AnalysisTabService extends BaseService {
     return super.get<any>(
       'analysis-tab/population/moving-population-gender-and-age-ratio',
       analysisTabListdto,
-      true,
+      ApiUrlType.ANALYSIS,
     );
   }
 }

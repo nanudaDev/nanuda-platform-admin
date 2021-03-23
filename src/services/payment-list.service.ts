@@ -1,7 +1,6 @@
 import { BaseService } from '@/core';
-import { PaymentListSearchDto } from '@/dto/payment-list/payment-list-search.dto';
 import { Pagination } from '@/common';
-import { PaymentListDto } from '@/dto';
+import { PaymentListDto, PaymentListSearchDto } from '@/dto';
 
 class PaymentListService extends BaseService {
   constructor() {

@@ -478,37 +478,33 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import BaseComponent from '../../../core/base.component';
-import { CodeManagementDto } from '../../../services/init/dto';
+import BaseComponent from '@/core/base.component';
+import { CodeManagementDto } from '@/services/init/dto';
 import { GENDER, CONST_GENDER } from '../../../services/shared';
-import CodeManagementService from '../../../services/code-management.service';
-import FounderConsultService from '../../../services/founder-consult.service';
-import AdminService from '../../../services/admin.service';
-import FoodCategoryService from '../../../services/food-category.service';
-import FounderConsultManagementService from '../../../services/founder-consult-management.service';
-import SmsService from '../../../services/sms.service';
+import CodeManagementService from '@/services/code-management.service';
+import FounderConsultService from '@/services/founder-consult.service';
+import AdminService from '@/services/admin.service';
+import FoodCategoryService from '@/services/food-category.service';
+import FounderConsultManagementService from '@/services/founder-consult-management.service';
+import SmsService from '@/services/sms.service';
+
 import {
+  AdminSendMessageDto,
+  FoodCategoryDto,
+  FoodCategoryListDto,
   AdminDto,
   AdminListDto,
   FounderConsultDto,
   FounderConsultUpdateDto,
   FounderConsultManagementDto,
-} from '../../../dto';
-import {
-  FoodCategoryDto,
-  FoodCategoryListDto,
-} from '../../../dto/food-category';
-import { AdminSendMessageDto } from '../../../dto';
-import { Pagination, YN, CONST_YN } from '../../../common';
-import { BaseUser } from '../../../services/shared/auth';
+} from '@/dto';
+import { Pagination, YN, CONST_YN } from '@/common';
+import { BaseUser } from '@/services/shared/auth';
 import BaseCard from '../../_components/BaseCard.vue';
 import FounderConsultManagementHistory from './FounderConsultManagementHistory.vue';
 import toast from '../../../../resources/assets/js/services/toast.js';
-import {
-  FOUNDER_CONSULT,
-  CONST_FOUNDER_CONSULT,
-} from '../../../services/shared';
-import { getStatusColor } from '../../../core/utils/status-color.util';
+import { FOUNDER_CONSULT, CONST_FOUNDER_CONSULT } from '@/services/shared';
+import { getStatusColor } from '@/core';
 
 import {
   ProductionEnvironment,

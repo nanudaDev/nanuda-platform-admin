@@ -252,6 +252,7 @@ export class BaseService extends Vue {
     path: string,
     params: any | Pagination,
     pagination?: Pagination,
+    apiUrlType?: ApiUrlType,
   ): AxiosObservable<PaginatedResponse<T>> {
     let request = {};
     if (params instanceof Pagination) {
@@ -266,6 +267,6 @@ export class BaseService extends Vue {
         take: String(pagination.limit),
       };
     }
-    return this.__api('get', path, request);
+    return this.__api('get', path, request, apiUrlType);
   }
 }

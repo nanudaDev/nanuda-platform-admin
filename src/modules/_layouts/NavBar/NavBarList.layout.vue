@@ -36,6 +36,7 @@
           >
             <a class="dropdown-item" href="/my-page">마이 프로필</a>
             <a class="dropdown-item" href="/analysis">상권분석</a>
+            <a class="dropdown-item" href="/pickcook/consult-response">픽쿡</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click="logout()">로그아웃</a>
           </div>

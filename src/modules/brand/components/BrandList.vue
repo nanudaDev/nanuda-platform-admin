@@ -1,7 +1,7 @@
 <template>
   <section>
     <SectionTitle title="브랜드 관리" divider></SectionTitle>
-    <div class="search-box my-4" v-on:keyup.enter="search()">
+    <div class="search-box my-4" v-on:keyup.enter="search(true, true)">
       <b-form-row>
         <b-col cols="6" sm="4" md="3">
           <b-form-group label="업종">
@@ -22,15 +22,18 @@
         </b-col>
         <b-col cols="6" sm="4" md="3">
           <b-form-group label="추천 브랜드">
-            <select
+            <b-form-select
               class="custom-select"
               v-model="brandSearchDto.isRecommendedYn"
             >
-              <option value>전체</option>
-              <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
-                yn | enumTransformer
-              }}</option>
-            </select>
+              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="yn in ynSelect"
+                :key="yn"
+                :value="yn"
+                >{{ yn | enumTransformer }}</b-form-select-option
+              >
+            </b-form-select>
           </b-form-group>
         </b-col>
         <b-col cols="6" sm="4" md="3">
@@ -40,64 +43,79 @@
         </b-col>
         <b-col cols="6" sm="4" md="3">
           <b-form-group label="노출 여부">
-            <select class="custom-select" v-model="brandSearchDto.showYn">
-              <option value>전체</option>
-              <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
-                yn | stringShowTransformer
-              }}</option>
-            </select>
+            <b-form-select
+              class="custom-select"
+              v-model="brandSearchDto.showYn"
+            >
+              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="yn in ynSelect"
+                :key="yn"
+                :value="yn"
+                >{{ yn | stringShowTransformer }}</b-form-select-option
+              >
+            </b-form-select>
           </b-form-group>
         </b-col>
         <b-col cols="6" sm="4" md="3">
           <b-form-group label="창업 비용">
-            <select class="custom-select" v-model="brandSearchDto.cost">
-              <option value>전체</option>
-              <option
+            <b-form-select class="custom-select" v-model="brandSearchDto.cost">
+              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option
                 v-for="cost in costValues"
                 :key="cost.no"
                 :value="cost.key"
-                >{{ cost.value }}</option
+                >{{ cost.value }}</b-form-select-option
               >
-            </select>
+            </b-form-select>
           </b-form-group>
         </b-col>
         <b-col cols="6" sm="4" md="3">
           <b-form-group label="조리 난이도">
-            <select class="custom-select" v-model="brandSearchDto.difficulty">
-              <option value>전체</option>
-              <option
+            <b-form-select
+              class="custom-select"
+              v-model="brandSearchDto.difficulty"
+            >
+              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option
                 v-for="difficulty in difficultyValues"
                 :key="difficulty.no"
                 :value="difficulty.key"
-                >{{ difficulty.value }}</option
+                >{{ difficulty.value }}</b-form-select-option
               >
-            </select>
+            </b-form-select>
           </b-form-group>
         </b-col>
         <b-col cols="6" sm="4" md="3">
           <b-form-group label="매장 수">
-            <select class="custom-select" v-model="brandSearchDto.storeCount">
-              <option value>전체</option>
-              <option
+            <b-form-select
+              class="custom-select"
+              v-model="brandSearchDto.storeCount"
+            >
+              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option
                 v-for="storeCount in storeCountValues"
                 :key="storeCount.no"
                 :value="storeCount.key"
-                >{{ storeCount.value }}</option
+                >{{ storeCount.value }}</b-form-select-option
               >
-            </select>
+            </b-form-select>
           </b-form-group>
         </b-col>
         <b-col cols="6" sm="4" md="3">
           <b-form-group label="뷔페/플레이트">
-            <select class="custom-select" v-model="brandSearchDto.brandType">
-              <option value>전체</option>
-              <option
+            <b-form-select
+              class="custom-select"
+              v-model="brandSearchDto.brandType"
+            >
+              <b-form-select-option value>전체</b-form-select-option>
+              <b-form-select-option
                 v-for="type in brandType"
                 :key="type.no"
                 :value="type.key"
-                >{{ type.value }}</option
+                >{{ type.value }}</b-form-select-option
               >
-            </select>
+            </b-form-select>
           </b-form-group>
         </b-col>
       </b-form-row>
@@ -105,7 +123,9 @@
       <b-row align-h="center">
         <div>
           <b-button variant="secondary" @click="clearOut()">초기화</b-button>
-          <b-button variant="primary" @click="search()">검색</b-button>
+          <b-button variant="primary" @click="search(true, true)"
+            >검색</b-button
+          >
         </div>
       </b-row>
     </div>
@@ -126,17 +146,6 @@
           class="table table-sm table-hover table-nowrap"
           v-if="brandTotalCount"
         >
-          <colgroup>
-            <col width="60" />
-            <col width="100" />
-            <col width="120" />
-            <col width="auto" />
-            <col width="120" />
-            <col width="100" />
-            <col width="80" />
-            <col width="60" />
-            <col width="60" />
-          </colgroup>
           <thead>
             <th scope="row">NO</th>
             <th
@@ -147,7 +156,7 @@
             >
               업종
             </th>
-
+            <!-- <th scope="row">운영방식</th> -->
             <th scope="row">로고</th>
             <th
               scope="row"
@@ -208,7 +217,14 @@
             >
               <td>{{ brand.no }}</td>
               <td>{{ brand.category.nameKr }}</td>
-
+              <!-- <td>
+                <template v-if="brand.brandType">
+                  {{ brand.brandType }}
+                </template>
+                <template v-else>
+                  뷔페/플레이트
+                </template>
+              </td> -->
               <td style="width:80px">
                 <div v-if="brand.logo && brand.logo.length > 0">
                   <div v-for="logo in brand.logo" :key="logo.endpoint">
@@ -220,7 +236,7 @@
                   </div>
                 </div>
               </td>
-              <td>{{ brand.nameKr }}</td>
+              <td class="text-nowrap">{{ brand.nameKr }}</td>
               <td>
                 <template v-if="brand.desc">{{ brand.desc }}</template>
               </td>
@@ -480,18 +496,14 @@ export default class BrandList extends BaseComponent {
   private brandType: CodeManagementDto[] = [];
   private searchPramsDto: any = {};
 
-  // get food category
-  getFoodCategories() {
-    FoodCategoryService.findForSelect().subscribe(res => {
-      this.foodCategorySelect = res.data;
-    });
-  }
-
   // search brand
-  search(isPagination?: boolean) {
+  search(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
-      this.pagination.page = 1;
+      this.pagination.page = 1; // 최초 페이지 진입시 페이지 초기화
+    } else {
+      if (isSearch) this.pagination.page = 1; // 검색버튼 클릭시 페이지 초기화
+      this.searchPramsDto = Object.assign(this.brandSearchDto, this.pagination);
     }
     BrandService.findAll(this.brandSearchDto, this.pagination).subscribe(
       res => {
@@ -499,18 +511,28 @@ export default class BrandList extends BaseComponent {
           this.dataLoading = false;
           this.brandList = res.data.items;
           this.brandTotalCount = res.data.totalCount;
-          this.searchPramsDto = Object.assign(
-            this.brandSearchDto,
-            this.pagination,
-          );
-          this.$router.push({
-            query: this.searchPramsDto,
-          });
+          this.$router
+            .push({
+              query: this.searchPramsDto,
+            })
+            .catch();
         }
       },
     );
   }
 
+  paginateSearch() {
+    this.search(true);
+  }
+
+  // get food category
+  getFoodCategories() {
+    FoodCategoryService.findForSelect().subscribe(res => {
+      this.foodCategorySelect = res.data;
+    });
+  }
+
+  // get common codes
   getCommonCodes() {
     CodeManagementService.findAnyCode('BRAND').subscribe(res => {
       this.costValues = res.data;
@@ -526,14 +548,10 @@ export default class BrandList extends BaseComponent {
     });
   }
 
-  paginateSearch() {
-    this.search(true);
-  }
-
   // clear brand search dto
   clearOut() {
     this.brandSearchDto = new BrandListDto();
-    this.search();
+    this.$router.replace({ query: null });
   }
 
   // find brand detail
@@ -550,7 +568,7 @@ export default class BrandList extends BaseComponent {
     BrandService.create(this.brandCreateDto).subscribe(res => {
       if (res) {
         toast.success('추가완료');
-        this.search();
+        this.clearOut();
       }
     });
   }
@@ -588,6 +606,7 @@ export default class BrandList extends BaseComponent {
     } else {
       this.search();
     }
+
     this.getCommonCodes();
     this.getFoodCategories();
   }

@@ -1,13 +1,13 @@
 <template>
   <section v-if="consultResponseDto">
-    <SectionTitle title="픽쿡 상담 신청" divider>
+    <SectionTitle title="상담 신청" divider>
       <template v-slot:rightArea>
-        <router-link to="/consult-response" class="btn btn-secondary"
+        <router-link to="/pickcook/consult-response" class="btn btn-secondary"
           >목록으로</router-link
         >
       </template>
     </SectionTitle>
-    <b-row v-on:keyup.enter="updateProductConsult()">
+    <b-row v-on:keyup.enter="updateConsultResponse()">
       <b-col lg="6" class="my-3">
         <BaseCard title="사용자 정보">
           <template v-slot:head>
@@ -16,12 +16,12 @@
                 <b-icon icon="envelope"></b-icon>
                 <span class="ml-2">문자전송</span>
               </b-button> -->
-              <b-button
+              <!-- <b-button
                 variant="primary"
                 @click="updateNanudaUser()"
                 v-b-modal.nanuda_user
                 >수정하기</b-button
-              >
+              > -->
             </div>
             <div v-else>
               <b-button variant="outline-info" v-b-modal.send_message>
@@ -33,9 +33,6 @@
           <template v-slot:body>
             <div v-if="consultResponseDto">
               <ul class="u-list">
-                <li v-if="consultResponseDto.no">
-                  사용자 ID : {{ consultResponseDto.no }}
-                </li>
                 <li v-if="consultResponseDto && consultResponseDto.name">
                   사용자명 : {{ consultResponseDto.name }}
                 </li>
@@ -43,42 +40,23 @@
                   휴대폰 번호 :
                   <span>{{ consultResponseDto.phone | phoneTransformer }}</span>
                 </li>
-                <li v-if="consultResponseDto.gender">
-                  성별 :
-                  {{ consultResponseDto.gender | enumTransformer }}
+                <li
+                  v-if="
+                    consultResponseDto.ageGroupCodeStatus &&
+                      consultResponseDto.ageGroupCodeStatus.displayName
+                  "
+                >
+                  연령대 :
+                  {{ consultResponseDto.ageGroupCodeStatus.displayName }}
                 </li>
-              </ul>
-            </div>
-            <div v-else>
-              <ul class="u-list">
-                <li>
-                  <div>
-                    <b-input-group>
-                      <template #prepend>
-                        <b-input-group-text
-                          ><span class="red-text"
-                            >비회원명</span
-                          ></b-input-group-text
-                        >
-                      </template>
-                      <b-form-input
-                        v-model="consultResponseDto.nonUserName"
-                      ></b-form-input>
-                    </b-input-group>
-                  </div>
-                </li>
-                <li>
-                  <div>
-                    <b-input-group>
-                      <template #prepend>
-                        <b-input-group-text>휴대번호</b-input-group-text>
-                      </template>
-                      <b-form-input
-                        disabled
-                        v-model="consultResponseDto.nonUserPhone"
-                      ></b-form-input>
-                    </b-input-group>
-                  </div>
+                <li
+                  v-if="
+                    consultResponseDto.fnbOwnerCodeStatus &&
+                      consultResponseDto.fnbOwnerCodeStatus.comment
+                  "
+                >
+                  창업자 유형 :
+                  {{ consultResponseDto.fnbOwnerCodeStatus.comment }}
                 </li>
               </ul>
             </div>
@@ -86,52 +64,9 @@
         </BaseCard>
       </b-col>
       <b-col lg="6" class="my-3">
-        <!-- <BaseCard title="관리자 정보">
-          <template v-slot:head>
-            <div>
-              <b-button
-                v-if="!consultResponseDto.pConsultManager"
-                variant="info"
-                @click="assignYourselfAdmin()"
-                >본인으로 정하기</b-button
-              >
-              <b-button
-                variant="primary"
-                @click="findAdmin()"
-                v-b-modal.admin_list
-                >수정하기</b-button
-              >
-            </div>
-          </template>
-          <template v-slot:body>
-            <div v-if="consultResponseDto.admin">
-              <ul>
-                <li>
-                  관리자 ID :
-                  <span>
-                    {{ consultResponseDto.admin.no }}
-                  </span>
-                </li>
-                <li>
-                  관리자명 :
-                  <span>
-                    {{ consultResponseDto.admin.name }}
-                  </span>
-                </li>
-                <li>
-                  휴대폰 번호 :
-                  {{ consultResponseDto.admin.phone | phoneTransformer }}
-                </li>
-              </ul>
-            </div>
-            <div v-else class="empty-data">관리자 없음</div>
-          </template>
-        </BaseCard> -->
-      </b-col>
-      <b-col lg="12" class="my-3">
         <BaseCard title="상담 상세 정보">
           <template v-slot:head>
-            <b-button variant="primary" @click="updateProductConsult()">
+            <b-button variant="primary" @click="updateConsultResponse()">
               수정하기
             </b-button>
           </template>
@@ -139,72 +74,66 @@
             <b-row>
               <b-col lg="6">
                 <ul class="u-list">
-                  <li v-if="consultResponseDto.spaceType">
-                    관심 공간 유형 :
-                    {{ consultResponseDto.spaceType.displayName }}
+                  <li v-if="consultResponseDto.isReadyCode">
+                    창업 진행 현황 :
+                    {{ consultResponseDto.isReadyCode }}
                   </li>
-                  <li v-else>
-                    관심 상담: 일반/창업 문의
+                  <li v-if="consultResponseDto.selectedKbMediumCategory">
+                    운영중인 업종 :
+                    {{ consultResponseDto.selectedKbMediumCategory }}
                   </li>
                   <li
                     v-if="
-                      consultResponseDto.addressInfo &&
-                        consultResponseDto.addressInfo.name
+                      consultResponseDto.operationTimes &&
+                        consultResponseDto.operationTimes.length > 0
                     "
                   >
-                    관심 창업 지역 :
-                    {{ consultResponseDto.addressInfo.name }}
-                  </li>
-                  <li v-if="consultResponseDto.availableTime">
-                    통화 가능 시간 :
-                    {{ consultResponseDto.availableTime.value }}
-                  </li>
-                  <li v-if="consultResponseDto.hopeDate">
-                    희망 방문 일자 :
-                    {{ consultResponseDto.hopeDate }}
-                  </li>
-                  <li>
-                    창업 경험 유무 :
-                    <b-badge
-                      :variant="
-                        consultResponseDto.changUpExpYn === 'Y'
-                          ? 'success'
-                          : 'danger'
-                      "
-                      >{{
-                        consultResponseDto.changUpExpYn | enumTransformer
-                      }}</b-badge
+                    운영중인 시간대 :
+                    <span
+                      v-for="time in consultResponseDto.operationTimes"
+                      :key="time"
                     >
+                      {{ time }}
+                    </span>
                   </li>
-                  <li v-if="consultResponseDto.codeManagement">
-                    <label for="product_approve_status">신청 상태</label>
-                    <b-form-select
-                      id="product_approve_status"
-                      v-model="consultResponseDto.status"
-                    >
-                      <b-select-option value>전체</b-select-option>
-                      <b-form-select-option
-                        v-for="status in statusSelect"
-                        :key="status.no"
-                        :value="status.key"
-                        >{{ status.value }}</b-form-select-option
-                      >
-                    </b-form-select>
-                    <p class="mt-1" v-if="consultResponseDto.updatedAt">
-                      ({{ consultResponseDto.updatedAt | dateTransformer }})
-                    </p>
+                  <li
+                    v-if="
+                      consultResponseDto.revenueRangeCodeStatus &&
+                        consultResponseDto.revenueRangeCodeStatus.displayName
+                    "
+                  >
+                    매출 범위 :
+                    {{ consultResponseDto.revenueRangeCodeStatus.displayName }}
                   </li>
                 </ul>
               </b-col>
               <b-col lg="6">
-                <label for="productConsultEtc">비고 내용</label>
-                <b-form-textarea
-                  id="productConsultEtc"
-                  v-model="consultResponseDto.pConsultEtc"
-                  placeholder="내용 입력해주세요"
-                  rows="7"
-                  max-rows="12"
-                ></b-form-textarea>
+                <b-form-group label="신청상태">
+                  <b-form-select
+                    class="custom-select"
+                    v-model="consultResponseDto.consultStatus"
+                  >
+                    <b-select-option
+                      v-for="status in brandConsultStatus"
+                      :key="status"
+                      :value="status"
+                      >{{ status }}</b-select-option
+                    >
+                  </b-form-select>
+                </b-form-group>
+                <p class="text-right mt-1" v-if="consultResponseDto.updated">
+                  ({{ consultResponseDto.updated | dateTransformer }})
+                </p>
+                <!-- <div class="mt-2">
+                  <label for="productConsultEtc">비고 내용</label>
+                  <b-form-textarea
+                    id="productConsultEtc"
+                    v-model="consultResponseDto.pConsultEtc"
+                    placeholder="내용 입력해주세요"
+                    rows="7"
+                    max-rows="12"
+                  ></b-form-textarea>
+                </div> -->
               </b-col>
             </b-row>
           </template>
@@ -255,7 +184,7 @@
       title="관리자 수정하기"
       @cancel="cancelSelection()"
       @hide="cancelSelection()"
-      @ok="updateProductConsult()"
+      @ok="updateConsultResponse()"
     >
       <table class="table table-sm tabl-bordered text-center">
         <thead>
@@ -299,7 +228,7 @@
     <!-- <b-modal
       id="nanuda_user"
       title="사용자 정보 수정"
-      @ok="updateProductConsult()"
+      @ok="updateConsultResponse()"
     >
       <b-form-row>
         <b-col cols="12" class="mb-3">
@@ -330,7 +259,12 @@ import {
   ProductConsultUpdateDto,
 } from '@/dto';
 import ProductConsultService from '@/services/product-consult.service';
-import { APPROVAL_STATUS, PRODUCT_CONSULT } from '@/services/shared';
+import {
+  APPROVAL_STATUS,
+  BRAND_CONSULT,
+  CONST_BRAND_CONSULT,
+  PRODUCT_CONSULT,
+} from '@/services/shared';
 import { Component, Vue } from 'vue-property-decorator';
 import { getStatusColor } from '@/core/utils/status-color.util';
 import SmsService from '@//services/sms.service';
@@ -349,6 +283,12 @@ import ConsultResponseService from '@/services/pickcook/consult-response.service
 export default class ConsultResponseDetail extends BaseComponent {
   private consultResponseDto = new ConsultResponseDto();
   private adminSendMessageDto = new AdminSendMessageDto();
+  private brandConsultStatus: BRAND_CONSULT[] = [...CONST_BRAND_CONSULT];
+
+  // get status color
+  getStatusColor(status: BRAND_CONSULT) {
+    return getStatusColor(status);
+  }
 
   findOne(id) {
     ConsultResponseService.findOne(id).subscribe(res => {
@@ -358,9 +298,17 @@ export default class ConsultResponseDetail extends BaseComponent {
     });
   }
 
-  // update product consult
-  updateProductConsult() {
-    console.log('update');
+  // update consult response
+  updateConsultResponse() {
+    ConsultResponseService.update(
+      this.$route.params.id,
+      this.consultResponseDto,
+    ).subscribe(res => {
+      if (res) {
+        toast.success('수정완료');
+        this.findOne(this.$route.params.id);
+      }
+    });
   }
 
   created() {

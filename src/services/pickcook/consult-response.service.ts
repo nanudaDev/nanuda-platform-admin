@@ -31,6 +31,21 @@ class ConsultResponseService extends BaseService {
   findOne(consultNo: string) {
     return super.get<ConsultResponseDto>(
       `admin/consult-response/${consultNo}`,
+      null,
+      ApiUrlType.PICKCOOK,
+    );
+  }
+
+  /**
+   *
+   * @param consultNo
+   * @param consultResponseUpdateDto
+   * @returns
+   */
+  update(consultNo: string, consultResponseUpdateDto: ConsultResponseDto) {
+    return super.patch<ConsultResponseDto>(
+      `admin/consult-response/${consultNo}`,
+      consultResponseUpdateDto,
       ApiUrlType.PICKCOOK,
     );
   }

@@ -22,9 +22,18 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
               <div v-for="item in items" :key="item.path">
-                <b-nav-item v-if="!item.meta.detailPage" :to="item.path">
-                  <template>{{ item.meta.title }}</template>
-                </b-nav-item>
+                <b-nav-item-dropdown :text="item.name" left>
+                  <template>
+                    <div v-for="children in item.children" :key="children.path">
+                      <b-dropdown-item
+                        v-if="!children.meta.detailPage"
+                        :to="children.path"
+                      >
+                        <template>{{ children.meta.title }}</template>
+                      </b-dropdown-item>
+                    </div>
+                  </template>
+                </b-nav-item-dropdown>
               </div>
             </ul>
             <div>
@@ -83,6 +92,7 @@ export default class PickcookLayout extends BaseComponent {
     AdminService.findMe().subscribe(res => {
       this.admin = res.data;
     });
+    console.log(this.items[0].children);
   }
 }
 </script>

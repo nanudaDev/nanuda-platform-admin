@@ -28,9 +28,9 @@
               <b-form-select-option>전체</b-form-select-option>
               <b-form-select-option
                 v-for="status in fnbOwnerStatus"
-                :key="status.no"
-                :value="status.no"
-                >{{ status.name }}</b-form-select-option
+                :key="status"
+                :value="status"
+                >{{ status }}</b-form-select-option
               >
             </b-form-select>
           </b-form-group>
@@ -59,9 +59,12 @@
         >
           <colgroup>
             <col width="60" />
+            <col width="100" />
+            <col width="150" />
+            <col width="100" />
+            <col width="150" />
             <col width="auto" />
-            <col width="auto" />
-            <col width="200" />
+            <col width="150" />
             <col width="150" />
           </colgroup>
           <thead>
@@ -75,10 +78,21 @@
               <th
                 scope="col"
                 v-bind:class="{
+                  highlighted: consultResponseSerchDto.fnbOwnerStatus,
+                }"
+              >
+                유형
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
                   highlighted: consultResponseSerchDto.name,
                 }"
               >
                 사용자명
+              </th>
+              <th scope="col">
+                나이
               </th>
               <th
                 scope="col"
@@ -86,24 +100,52 @@
               >
                 휴대폰 번호
               </th>
-              <th scope="col">가입일</th>
+              <th scope="col">
+                매출
+              </th>
+              <th scope="col">
+                신청상태
+              </th>
+              <th scope="col">신청일</th>
             </tr>
           </thead>
           <tbody>
             <tr
-              v-for="counsult in consultResponseList"
-              :key="counsult.id"
-              @click="$router.push(`/consult-response/${counsult.id}`)"
+              v-for="consult in consultResponseList"
+              :key="consult.id"
+              @click="$router.push(`/pickcook/consult-response/${consult.id}`)"
               style="cursor:pointer;"
             >
               <th scope="row">
-                <router-link :to="`/consult-response/${counsult.id}`">
-                  {{ counsult.id }}</router-link
-                >
+                {{ consult.id }}
               </th>
-              <td>{{ counsult.name }}</td>
-              <td>{{ counsult.phone | phoneTransformer }}</td>
-              <td>{{ counsult.createdAt | dateTransformer }}</td>
+              <td>
+                <template v-if="consult.fnbOwnerCodeStatus">
+                  {{ consult.fnbOwnerCodeStatus.comment }}
+                </template>
+              </td>
+              <td>{{ consult.name }}</td>
+              <td>
+                <template v-if="consult.ageGroupCodeStatus">
+                  {{ consult.ageGroupCodeStatus.displayName }}
+                </template>
+              </td>
+              <td>{{ consult.phone | phoneTransformer }}</td>
+              <td>
+                <template v-if="consult.revenueRangeCodeStatus">
+                  {{ consult.revenueRangeCodeStatus.displayName }}
+                </template>
+              </td>
+              <td>
+                <template v-if="consult.consultCodeStatus">
+                  <b-badge
+                    :variant="getStatusColor(consult.consultCodeStatus.value)"
+                    class="badge-pill p-2 mr-2"
+                    >{{ consult.consultCodeStatus.comment }}</b-badge
+                  >
+                </template>
+              </td>
+              <td>{{ consult.created | dateTransformer }}</td>
             </tr>
           </tbody>
         </table>
@@ -133,7 +175,8 @@ import { Component } from 'vue-property-decorator';
 import ConsultResponseService from '@/services/pickcook/consult-response.service';
 import { ConsultResponseDto, ConsultResponseListDto } from '@/dto';
 import { Pagination } from '@/common';
-import { CONST_FNB_OWNER, FNB_OWNER } from '@/services/shared';
+import { BRAND_CONSULT, CONST_FNB_OWNER, FNB_OWNER } from '@/services/shared';
+import { getStatusColor } from '@/core/utils/status-color.util';
 
 @Component({
   name: 'ConsultResponseList',
@@ -146,11 +189,17 @@ export default class ConsultResponseList extends BaseComponent {
   private dataLoading = false;
   private fnbOwnerStatus: FNB_OWNER[] = [...CONST_FNB_OWNER];
 
+  // get status color
+  getStatusColor(status: BRAND_CONSULT) {
+    return getStatusColor(status);
+  }
+
   search(isPagination?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
     }
+    this.pagination.limit = 50;
     ConsultResponseService.findAll(
       this.consultResponseSerchDto,
       this.pagination,
@@ -162,7 +211,9 @@ export default class ConsultResponseList extends BaseComponent {
   }
 
   clearOut() {
-    console.log('clearout');
+    this.consultResponseSerchDto = new ConsultResponseListDto();
+    this.pagination = new Pagination();
+    this.search();
   }
 
   paginateSearch() {

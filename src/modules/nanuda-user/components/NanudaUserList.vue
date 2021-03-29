@@ -1,7 +1,7 @@
 <template>
   <section>
     <SectionTitle title="사용자 관리" divider></SectionTitle>
-    <div class="search-box my-4" v-on:keyup.enter="search()">
+    <div class="search-box my-4" v-on:keyup.enter="search(true, true)">
       <b-form-row>
         <!-- <b-col cols="6" md="2" class="mb-2">
           <label for="user_no">사용자 ID</label>
@@ -32,7 +32,9 @@
       <b-row align-h="center">
         <div>
           <b-button variant="secondary" @click="clearOut()">초기화</b-button>
-          <b-button variant="primary" @click="search()">검색</b-button>
+          <b-button variant="primary" @click="search(true, true)"
+            >검색</b-button
+          >
         </div>
       </b-row>
     </div>
@@ -217,10 +219,16 @@ export default class NanudaUserList extends BaseComponent {
   private searchPramsDto: any = {};
 
   // search nanuda user
-  search(isPagination?: boolean) {
+  search(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
+    } else {
+      if (isSearch) this.pagination.page = 1;
+      this.searchPramsDto = Object.assign(
+        this.nanudaUserSearchDto,
+        this.pagination,
+      );
     }
     NanudaUserService.findAll(
       this.nanudaUserSearchDto,
@@ -230,10 +238,7 @@ export default class NanudaUserList extends BaseComponent {
       if (res) {
         this.nanudaUserList = res.data.items;
         this.nanudaUserTotalCount = res.data.totalCount;
-        this.searchPramsDto = Object.assign(
-          this.nanudaUserSearchDto,
-          this.pagination,
-        );
+
         this.$router.push({
           query: this.searchPramsDto,
         });
@@ -242,9 +247,8 @@ export default class NanudaUserList extends BaseComponent {
   }
 
   clearOut() {
-    this.pagination.page = 1;
     this.nanudaUserSearchDto = new NanudaUserListDto();
-    this.search();
+    this.$router.replace({ query: null });
   }
 
   paginateSearch() {
@@ -255,7 +259,7 @@ export default class NanudaUserList extends BaseComponent {
     NanudaUserService.create(this.nanudaUserCreateDto).subscribe(res => {
       if (res) {
         toast.success('추가완료');
-        this.search();
+        this.clearOut();
       }
     });
   }

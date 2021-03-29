@@ -17,6 +17,7 @@ import VueDaumPostcode from 'vue-daum-postcode';
 import MainLayout from '../src/modules/_layouts/Layout/MainLayout.layout.vue';
 import NonMainLayout from '../src/modules/_layouts/Layout/NonMainLayout.layout.vue';
 import AnalysisLayout from '../src/modules/_layouts/Layout/AnalysisLayout.layout.vue';
+import PickcookLayout from '../src/modules/_layouts/Layout/PickcookLayout.layout.vue';
 import SectionTitle from '../src/modules/_components/SectionTitle.vue';
 import BaseCard from '../src/modules/_components/BaseCard.vue';
 import '@/core/guards/auth-role.guard';
@@ -56,6 +57,7 @@ Vue.config.productionTip = env.productionTip;
 Vue.component('NonMainLayout', NonMainLayout);
 Vue.component('MainLayout', MainLayout);
 Vue.component('AnalysisLayout', AnalysisLayout);
+Vue.component('PickcookLayout', PickcookLayout);
 
 Vue.component('SectionTitle', SectionTitle);
 Vue.component('BaseCard', BaseCard);

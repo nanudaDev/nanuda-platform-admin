@@ -1,7 +1,7 @@
 <template>
   <section>
     <SectionTitle title="관리자 관리" divider></SectionTitle>
-    <div class="search-box my-4" v-on:keyup.enter="search()">
+    <div class="search-box my-4" v-on:keyup.enter="search(true, true)">
       <b-form-row>
         <b-col cols="12" sm="6" md="3">
           <b-form-group label="ID">
@@ -36,7 +36,9 @@
       <b-row align-h="center">
         <div>
           <b-button variant="secondary" @click="clearOut()">초기화</b-button>
-          <b-button variant="primary" @click="search()">검색</b-button>
+          <b-button variant="primary" @click="search(true, true)"
+            >검색</b-button
+          >
         </div>
       </b-row>
     </div>
@@ -133,7 +135,7 @@
       title="관리자 추가"
       ok-title="추가"
       cancel-title="취소"
-      @ok="create()"
+      @ok="createAdmin()"
       @cancel="clearOutCreateDto()"
       @hide="clearOutCreateDto()"
     >
@@ -197,6 +199,7 @@ import { AdminDto, AdminListDto, SpaceTypeDto } from '@/dto';
 import { Pagination } from '@/common';
 import { ReverseQueryParamMapper } from '@/core';
 import { BaseUser } from '@/services/shared/auth';
+import toast from '../../../../resources/assets/js/services/toast.js';
 
 @Component({
   name: 'AdminList',
@@ -212,10 +215,13 @@ export default class AdminList extends BaseComponent {
   private searchPramsDto: any = {};
 
   // search admin
-  search(isPagination?: boolean) {
+  search(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = false;
     if (!isPagination) {
       this.pagination.page = 1;
+    } else {
+      if (isSearch) this.pagination.page = 1;
+      this.searchPramsDto = Object.assign(this.adminSearchDto, this.pagination);
     }
     AdminService.findAll(this.adminSearchDto, this.pagination).subscribe(
       res => {
@@ -223,10 +229,6 @@ export default class AdminList extends BaseComponent {
           this.dataLoading = false;
           this.adminList = res.data.items;
           this.adminTotalCount = res.data.totalCount;
-          this.searchPramsDto = Object.assign(
-            this.adminSearchDto,
-            this.pagination,
-          );
           this.$router.push({
             query: this.searchPramsDto,
           });
@@ -242,8 +244,7 @@ export default class AdminList extends BaseComponent {
 
   clearOut() {
     this.adminSearchDto = new AdminListDto();
-    this.pagination = new Pagination();
-    this.search();
+    this.$router.replace({ query: null });
   }
 
   clearOutCreateDto() {
@@ -256,10 +257,12 @@ export default class AdminList extends BaseComponent {
     });
   }
 
-  create() {
+  createAdmin() {
     AdminService.create(this.adminCreateDto).subscribe(res => {
-      this.adminCreateDto = new AdminDto(BaseUser);
-      this.search();
+      if (res) {
+        toast.success('추가완료');
+        this.clearOut();
+      }
     });
   }
 

@@ -1,13 +1,12 @@
 <template>
-  <div id="analysis-app" class="page-content">
+  <div id="pickcook-app" class="page-content">
     <section :id="this.$route.name">
-      <nav
-        id="nav"
-        class="navbar fixed-top navbar-expand-lg navbar-dark bg-info"
-      >
+      <nav id="nav" class="navbar fixed-top navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-          <router-link class="navbar-brand brand-text" to="/analysis"
-            >NND ANALYSIS</router-link
+          <router-link
+            class="navbar-brand brand-text"
+            to="/pickcook/consult-response"
+            >PICKCOOK</router-link
           >
           <button
             class="navbar-toggler"
@@ -23,9 +22,18 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
               <div v-for="item in items" :key="item.path">
-                <b-nav-item v-if="!item.meta.detailPage" :to="item.path">
-                  <template>{{ item.meta.title }}</template>
-                </b-nav-item>
+                <b-nav-item-dropdown :text="item.name" left>
+                  <template>
+                    <div v-for="children in item.children" :key="children.path">
+                      <b-dropdown-item
+                        v-if="!children.meta.detailPage"
+                        :to="children.path"
+                      >
+                        <template>{{ children.meta.title }}</template>
+                      </b-dropdown-item>
+                    </div>
+                  </template>
+                </b-nav-item-dropdown>
               </div>
             </ul>
             <div>
@@ -48,9 +56,7 @@
                   >
                     <a class="dropdown-item" href="/my-page">마이 프로필</a>
                     <a class="dropdown-item" href="/dashboard">대시보드</a>
-                    <a class="dropdown-item" href="/pickcook/consult-response"
-                      >픽쿡</a
-                    >
+                    <a class="dropdown-item" href="/analysis">상권분석</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" @click="logout()">로그아웃</a>
                   </div>
@@ -60,7 +66,7 @@
           </div>
         </div>
       </nav>
-      <div id="analysis-main">
+      <div id="pickcook-main" class="container-fluid">
         <router-view />
       </div>
     </section>
@@ -70,28 +76,35 @@
 import { Component, Vue } from 'vue-property-decorator';
 import BaseComponent from '../../../core/base.component';
 import JwtStorageService from '../../../services/shared/auth/jwt-storage.service';
-import analysisComponentRouter from '@/router/modules/analysis-component';
+import pickcookComponentRouter from '@/router/modules/pickcook-component';
 import AdminService from '../../../services/admin.service';
 import { AdminDto } from '@/dto';
 import { BaseUser } from '@/services/shared/auth';
 
 @Component({
-  name: 'AnalysisLayout',
+  name: 'PickcookLayout',
 })
-export default class AnalysisLayout extends BaseComponent {
-  private items = analysisComponentRouter;
+export default class PickcookLayout extends BaseComponent {
+  private items = pickcookComponentRouter;
   private admin = new AdminDto(BaseUser);
 
   created() {
     AdminService.findMe().subscribe(res => {
       this.admin = res.data;
     });
+    console.log(this.items[0].children);
   }
 }
 </script>
 <style lang="scss">
-#analysis-main {
-  margin-top: 55px;
+#pickcook-app {
+  padding: 0 1rem;
+  #nav {
+    background-color: #0b538d;
+  }
+}
+#pickcook-main {
+  margin-top: 80px;
   font-size: 11px;
 }
 
@@ -133,14 +146,6 @@ export default class AnalysisLayout extends BaseComponent {
   }
   100% {
     transform: rotate(360deg);
-  }
-}
-#app {
-  padding: 0 1rem;
-}
-#Dashboard {
-  #app-main {
-    max-width: none;
   }
 }
 </style>

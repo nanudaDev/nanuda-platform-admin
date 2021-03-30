@@ -49,6 +49,31 @@ class ConsultResponseService extends BaseService {
       ApiUrlType.PICKCOOK,
     );
   }
+
+  /**
+   * assign own's self
+   * @param consultResponseId
+   */
+  assignAdmin(consultResponseId) {
+    return super.patch<any>(
+      `admin/consult-response/${consultResponseId}/assign`,
+    );
+  }
+
+  /**
+   *
+   * @param hdongCode
+   * @returns
+   */
+  getLocationInfoDetail(hdongCode: string) {
+    return super.get(
+      `location-analysis/location-info-detail`,
+      {
+        hdongCode: hdongCode,
+      },
+      ApiUrlType.PICKCOOK,
+    );
+  }
 }
 
 export default new ConsultResponseService();

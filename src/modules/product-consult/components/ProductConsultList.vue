@@ -254,10 +254,12 @@
             <tr
               v-for="productConsult in productConsultListDto"
               :key="productConsult.no"
-              @click="$router.push(`/product-consult/${productConsult.no}`)"
+              @click.stop="
+                $router.push(`/product-consult/${productConsult.no}`)
+              "
               style="cursor:pointer;"
             >
-              <td>
+              <td @click.stop>
                 <b-form-checkbox
                   :value="productConsult.no"
                   v-model="selectedProductConsultNos"

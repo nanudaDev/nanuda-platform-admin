@@ -10,18 +10,30 @@ import {
 } from '@/services/shared';
 
 export class ConsultResponseDto extends BaseDto<ConsultResponseDto> {
-  id?: number;
-  name?: string;
-  phone?: string;
-  proformaConsultResultId?: number;
-  aggregateResponseId?: number;
-  fnbOwnerStatus?: FNB_OWNER;
-  ageGroupCode?: AGE_GROUP;
-  revenueRangeCode?: REVENUE_RANGE;
-  isReadyCode?: TENTATIVE_OPEN_OPTION;
-  selectedKbMediumCategory?: KB_MEDIUM_CATEGORY;
+  id: number;
+  name: string;
+  phone: string;
+  proformaConsultResultId: number;
+  aggregateResponseId: number;
+  fnbOwnerStatus: FNB_OWNER;
+  ageGroupGrade: number;
+  ageGroupCode: AGE_GROUP;
+  revenueRangeCode: REVENUE_RANGE;
+  revenueRangeGrade: number;
+  isReadyCode: TENTATIVE_OPEN_OPTION;
+  isReadyGrade: number;
+  selectedKbMediumCategory: KB_MEDIUM_CATEGORY;
   operationTimes?: OPERATION_TIME[];
-  operationTimesResult: any[];
-  consultStatus?: BRAND_CONSULT;
-  operationSentenceId?: number;
+  operationTimesResult?: any[];
+  deliveryRatioGrade: number;
+  consultStatus: BRAND_CONSULT;
+  operationSentenceId: number;
+  reservationCode: string;
+  description: string;
+  fnbOwnerCodeStatus?: string;
+  revenueRangeCodeStatus?: string;
+  ageGroupCodeStatus?: string;
+  consultCodeStatus?: BRAND_CONSULT;
+  operationSentenceResponse?: any;
+  proforma?: any;
 }

@@ -19,7 +19,7 @@
             v-model="consultResponseSerchDto.phone"
           />
         </b-col>
-        <!-- <b-col cols="12" sm="6" md="3">
+        <b-col cols="12" sm="6" md="3">
           <b-form-group label="창업자 유형">
             <b-form-select
               id="space_type"
@@ -28,13 +28,29 @@
               <b-form-select-option>전체</b-form-select-option>
               <b-form-select-option
                 v-for="status in fnbOwnerStatus"
-                :key="status"
-                :value="status"
-                >{{ status }}</b-form-select-option
+                :key="status.key"
+                :value="status.value"
+                >{{ status.comment }}</b-form-select-option
               >
             </b-form-select>
           </b-form-group>
-        </b-col> -->
+        </b-col>
+        <b-col cols="12" sm="6" md="3">
+          <b-form-group label="창업자 유형">
+            <b-form-select
+              id="space_type"
+              v-model="consultResponseSerchDto.consultStatus"
+            >
+              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="status in consultStatus"
+                :key="status.key"
+                :value="status.value"
+                >{{ status.comment }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
       </b-form-row>
       <b-row align-h="center">
         <div>
@@ -49,6 +65,28 @@
           <span>TOTAL</span>
           <strong class="text-primary">{{ consultResponseTotalCount }}</strong>
         </h5>
+      </div>
+      <div>
+        <b-button
+          variant="primary"
+          v-b-modal.update_product_consult_status_nos
+          v-if="selectedProductConsultNos.length > 0"
+          @click="getProductConsultCodes()"
+          >신청 상태 수정</b-button
+        >
+
+        <download-excel
+          class="btn btn-outline-success"
+          :data="consultResponseList"
+          :fields="fields"
+          :stringifyLongNum="true"
+          worksheet="픽쿡 상담 리스트"
+          :name="`pickcook_consult_${newDate}.xls`"
+          v-if="consultResponseTotalCount"
+        >
+          <b-icon icon="file-earmark-arrow-down"></b-icon>
+          엑셀 다운로드
+        </download-excel>
       </div>
     </div>
     <template v-if="!dataLoading">
@@ -173,10 +211,22 @@
 import BaseComponent from '@/core/base.component';
 import { Component } from 'vue-property-decorator';
 import ConsultResponseService from '@/services/pickcook/consult-response.service';
-import { ConsultResponseDto, ConsultResponseListDto } from '@/dto';
+import {
+  ConsultResponseDto,
+  ConsultResponseListDto,
+  ProductConsultStatusUpdateDto,
+} from '@/dto';
 import { Pagination } from '@/common';
-import { BRAND_CONSULT, CONST_FNB_OWNER, FNB_OWNER } from '@/services/shared';
+import {
+  BRAND,
+  BRAND_CONSULT,
+  CONST_BRAND_CONSULT,
+  CONST_FNB_OWNER,
+  FNB_OWNER,
+} from '@/services/shared';
 import { getStatusColor } from '@/core/utils/status-color.util';
+import CommonCodeService from '@/services/pickcook/common-code.service';
+import { PickcookCodeManagementDto } from '@/services/init/dto';
 
 @Component({
   name: 'ConsultResponseList',
@@ -187,11 +237,54 @@ export default class ConsultResponseList extends BaseComponent {
   private pagination = new Pagination();
   private consultResponseTotalCount = null;
   private dataLoading = false;
-  private fnbOwnerStatus: FNB_OWNER[] = [...CONST_FNB_OWNER];
+  private fnbOwnerStatus: PickcookCodeManagementDto[] = [];
+  private consultStatus: PickcookCodeManagementDto[] = [];
+  private codeManagementDto = new PickcookCodeManagementDto();
+  private paginationCode = new Pagination();
+
+  private selectedProductConsultNos: number[] = [];
+  private consultStatusUpdateDto = new ProductConsultStatusUpdateDto();
+  private newDate = new Date();
+  // excel options
+  private fields = {
+    ID: 'id',
+    이름: 'name',
+    연락처: 'phone',
+    나이대: 'ageGroupCodeStatus.displayName',
+    신청상태: 'consultCodeStatus.comment',
+    신청일: 'created',
+  };
+  private json_meta = [
+    [
+      {
+        key: 'charset',
+        value: 'utf-8',
+      },
+    ],
+  ];
 
   // get status color
   getStatusColor(status: BRAND_CONSULT) {
     return getStatusColor(status);
+  }
+
+  // get common codes
+  getCommonCodes() {
+    this.codeManagementDto.category = 'FNB_OWNER';
+    CommonCodeService.findAll(
+      this.codeManagementDto,
+      this.paginationCode,
+    ).subscribe(res => {
+      this.fnbOwnerStatus = res.data.items;
+    });
+
+    this.codeManagementDto.category = 'BRAND_CONSULT';
+    CommonCodeService.findAll(
+      this.codeManagementDto,
+      this.paginationCode,
+    ).subscribe(res => {
+      this.consultStatus = res.data.items;
+    });
   }
 
   search(isPagination?: boolean) {
@@ -222,6 +315,7 @@ export default class ConsultResponseList extends BaseComponent {
 
   created() {
     this.search();
+    this.getCommonCodes();
   }
 }
 </script>

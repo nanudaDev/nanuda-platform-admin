@@ -186,7 +186,14 @@
           </template>
           <template v-slot:body>
             <b-row>
-              <b-col cols="12" md="6" class="my-5">
+              <b-col
+                cols="12"
+                md="6"
+                class="my-5"
+                v-if="
+                  consultResponseDto.proforma.graphData.newFnbOwnerPieChartData
+                "
+              >
                 <div class="title text-center mb-4">
                   <h4>
                     현재
@@ -208,6 +215,32 @@
                     :chartData="
                       consultResponseDto.proforma.graphData
                         .newFnbOwnerPieChartData
+                    "
+                  />
+                </div>
+              </b-col>
+              <b-col
+                cols="12"
+                md="6"
+                class="my-5"
+                v-if="
+                  consultResponseDto.proforma.graphData.curFnbOwnerLineChartData
+                "
+              >
+                <div class="title text-center mb-4">
+                  <h4>
+                    <strong class="text-primary">
+                      {{ consultResponseDto.proforma.hdong.hdongName }}</strong
+                    >
+                    매출 현황
+                  </h4>
+                </div>
+
+                <div class="border bg-light p-4">
+                  <ResultRevenueChart
+                    :chartData="
+                      consultResponseDto.proforma.graphData
+                        .curFnbOwnerLineChartData
                     "
                   />
                 </div>
@@ -501,10 +534,16 @@ import CommonCodeService from '@/services/pickcook/common-code.service';
 import FoodCategoryRatioChart from '@/modules/pickcook/consult-response/add-on/FoodCategoryRatioChart.vue';
 import TimeRevenueChart from '@/modules/pickcook/consult-response/add-on/TimeRevenueChart.vue';
 import GenderRevenueChart from '@/modules/pickcook/consult-response/add-on/GenderRevenueChart.vue';
+import ResultRevenueChart from '@/modules/pickcook/consult-response/add-on/ResultRevenueChart.vue';
 
 @Component({
   name: 'ConsultResponseDetail',
-  components: { FoodCategoryRatioChart, TimeRevenueChart, GenderRevenueChart },
+  components: {
+    FoodCategoryRatioChart,
+    TimeRevenueChart,
+    GenderRevenueChart,
+    ResultRevenueChart,
+  },
 })
 export default class ConsultResponseDetail extends BaseComponent {
   private consultResponseDto = new ConsultResponseDto();

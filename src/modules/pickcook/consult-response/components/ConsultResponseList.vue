@@ -35,6 +35,22 @@
             </b-form-select>
           </b-form-group>
         </b-col>
+        <b-col cols="12" sm="6" md="3">
+          <b-form-group label="창업자 유형">
+            <b-form-select
+              id="space_type"
+              v-model="consultResponseSerchDto.consultStatus"
+            >
+              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="status in consultStatus"
+                :key="status.key"
+                :value="status.value"
+                >{{ status.comment }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
       </b-form-row>
       <b-row align-h="center">
         <div>
@@ -204,6 +220,7 @@ import { Pagination } from '@/common';
 import {
   BRAND,
   BRAND_CONSULT,
+  CONST_BRAND_CONSULT,
   CONST_FNB_OWNER,
   FNB_OWNER,
 } from '@/services/shared';
@@ -221,6 +238,7 @@ export default class ConsultResponseList extends BaseComponent {
   private consultResponseTotalCount = null;
   private dataLoading = false;
   private fnbOwnerStatus: PickcookCodeManagementDto[] = [];
+  private consultStatus: PickcookCodeManagementDto[] = [];
   private codeManagementDto = new PickcookCodeManagementDto();
   private paginationCode = new Pagination();
 
@@ -258,6 +276,14 @@ export default class ConsultResponseList extends BaseComponent {
       this.paginationCode,
     ).subscribe(res => {
       this.fnbOwnerStatus = res.data.items;
+    });
+
+    this.codeManagementDto.category = 'BRAND_CONSULT';
+    CommonCodeService.findAll(
+      this.codeManagementDto,
+      this.paginationCode,
+    ).subscribe(res => {
+      this.consultStatus = res.data.items;
     });
   }
 

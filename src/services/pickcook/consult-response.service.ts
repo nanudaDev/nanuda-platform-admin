@@ -1,6 +1,10 @@
 import { Pagination } from '@/common';
 import { BaseService } from '@/core';
-import { ConsultResponseDto, ConsultResponseListDto } from '@/dto';
+import {
+  ConsultResponseDto,
+  ConsultResponseListDto,
+  ConsultResponseUpdateDto,
+} from '@/dto';
 import { ApiUrlType } from '../../../environments';
 
 class ConsultResponseService extends BaseService {
@@ -42,8 +46,11 @@ class ConsultResponseService extends BaseService {
    * @param consultResponseUpdateDto
    * @returns
    */
-  update(consultNo: string, consultResponseUpdateDto: ConsultResponseDto) {
-    return super.patch<ConsultResponseDto>(
+  update(
+    consultNo: string,
+    consultResponseUpdateDto: ConsultResponseUpdateDto,
+  ) {
+    return super.patch<ConsultResponseUpdateDto>(
       `admin/consult-response/${consultNo}`,
       consultResponseUpdateDto,
       ApiUrlType.PICKCOOK,

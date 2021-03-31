@@ -147,7 +147,7 @@
                   <b-form-group label="신청상태">
                     <b-form-select
                       class="custom-select"
-                      v-model="consultResponseDto.consultStatus"
+                      v-model="consultResponseUpdateDto.consultStatus"
                     >
                       <b-select-option
                         v-for="status in brandConsultStatus"
@@ -180,9 +180,9 @@
       <b-col lg="12" class="my-3">
         <BaseCard title="분석 결과 정보" v-if="consultResponseDto.proforma">
           <template v-slot:head>
-            <b-button variant="primary" @click="updateConsultResponse()">
+            <!-- <b-button variant="primary" @click="updateConsultResponse()">
               수정하기
-            </b-button>
+            </b-button> -->
           </template>
           <template v-slot:body>
             <b-row>
@@ -481,6 +481,7 @@ import {
   AdminListDto,
   AdminSendMessageDto,
   ConsultResponseDto,
+  ConsultResponseUpdateDto,
 } from '@/dto';
 import {
   BEST_FOOD_CATEGORY,
@@ -507,6 +508,7 @@ import GenderRevenueChart from '@/modules/pickcook/consult-response/add-on/Gende
 })
 export default class ConsultResponseDetail extends BaseComponent {
   private consultResponseDto = new ConsultResponseDto();
+  private consultResponseUpdateDto = new ConsultResponseUpdateDto();
   private adminSendMessageDto = new AdminSendMessageDto();
   private brandConsultStatus: PickcookCodeManagementDto[] = [];
   private codeManagementDto = new PickcookCodeManagementDto();
@@ -635,6 +637,7 @@ export default class ConsultResponseDetail extends BaseComponent {
       if (res) {
         this.consultResponseDto = res.data;
         this.getLocationInfoDetail();
+        this.consultResponseUpdateDto.consultStatus = this.consultResponseDto.consultStatus;
       }
     });
   }
@@ -643,7 +646,7 @@ export default class ConsultResponseDetail extends BaseComponent {
   updateConsultResponse() {
     ConsultResponseService.update(
       this.$route.params.id,
-      this.consultResponseDto,
+      this.consultResponseUpdateDto,
     ).subscribe(res => {
       if (res) {
         toast.success('수정완료');

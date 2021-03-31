@@ -333,7 +333,26 @@
                 </div>
               </b-col>
               <b-col cols="12">
-                <div class="bg-light border p-4">
+                <div class="bg-light border p-4 my-5">
+                  <h4>메뉴 전략</h4>
+                  <p class="mt-4">
+                    현재 위치에서는 <br />
+                    <span
+                      v-for="resonse in consultResponseDto.proforma.graphData
+                        .responses"
+                      :key="resonse.operationTime"
+                      class="d-block"
+                    >
+                      {{ resonse.koreanPrefSentence }}
+                      <strong class="text-primary">{{
+                        resonse.modifiedSufSentence.replace('커피/음료', '카페')
+                      }}</strong>
+                    </span>
+                    메뉴로 도입하시면
+                    <strong>낮은 위험으로 매출을 상승시킬 수 있습니다</strong>
+                  </p>
+                </div>
+                <div class="bg-light border p-4 my-5">
                   <h4>운영전략</h4>
                   <p class="mt-4">
                     {{

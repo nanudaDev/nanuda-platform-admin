@@ -60,14 +60,14 @@
       </b-col>
       <b-col lg="6" class="my-3">
         <BaseCard title="관리자 정보">
-          <!-- <template v-slot:head>
+          <template v-slot:head>
             <div>
-              <b-button
-                v-if="!consultResponseDto.pConsultManager"
+              <!-- <b-button
+                v-if="!consultResponseDto.adminId"
                 variant="info"
                 @click="assignYourselfAdmin()"
                 >본인으로 정하기</b-button
-              >
+              > -->
               <b-button
                 variant="primary"
                 @click="findAdmin()"
@@ -75,7 +75,7 @@
                 >수정하기</b-button
               >
             </div>
-          </template> -->
+          </template>
           <template v-slot:body>
             <div v-if="consultResponseDto.admin">
               <ul>
@@ -113,8 +113,23 @@
               <b-col lg="6">
                 <ul class="u-list">
                   <li v-if="consultResponseDto.reservationCode">
-                    예약 코드 :
+                    미팅 예약 코드 :
                     {{ consultResponseDto.reservationCode }}
+                  </li>
+                  <li v-if="consultResponseDto.reservation">
+                    미팅 예약 날짜 :
+                    {{
+                      consultResponseDto.reservation.reservationDate.substr(
+                        0,
+                        10,
+                      )
+                    }}
+                    {{ consultResponseDto.reservation.reservationTime }}
+                    <template
+                      v-if="consultResponseDto.reservation.isCancelYn === 'Y'"
+                    >
+                      <b-badge variant="danger">예약취소</b-badge>
+                    </template>
                   </li>
                   <li
                     v-if="
@@ -194,7 +209,13 @@
                   consultResponseDto.proforma.graphData.newFnbOwnerPieChartData
                 "
               >
-                <div class="title text-center mb-4">
+                <div
+                  class="title text-center mb-4"
+                  v-if="
+                    consultResponseDto.proforma &&
+                      consultResponseDto.proforma.hdong
+                  "
+                >
                   <h4>
                     현재
                     <strong class="text-primary">
@@ -229,7 +250,13 @@
               >
                 <div class="title text-center mb-4">
                   <h4>
-                    <strong class="text-primary">
+                    <strong
+                      class="text-primary"
+                      v-if="
+                        consultResponseDto.proforma &&
+                          consultResponseDto.proforma.hdong
+                      "
+                    >
                       {{ consultResponseDto.proforma.hdong.hdongName }}</strong
                     >
                     매출 현황
@@ -245,8 +272,20 @@
                   />
                 </div>
               </b-col>
-              <b-col cols="12" md="6" class="my-5">
-                <div class="title text-center mb-4">
+              <b-col
+                cols="12"
+                md="6"
+                class="my-5"
+                v-if="
+                  consultResponseDto.proforma.graphData.timeGraphChoseByCategory
+                "
+              >
+                <div
+                  class="title text-center mb-4"
+                  v-if="
+                    consultResponseDto.proforma.selectedKbMediumCategoryName
+                  "
+                >
                   <h4>
                     <strong class="text-primary">{{
                       consultResponseDto.proforma.selectedKbMediumCategoryName
@@ -263,7 +302,15 @@
                   />
                 </div>
               </b-col>
-              <b-col cols="12" md="6" class="my-5">
+              <b-col
+                cols="12"
+                md="6"
+                class="my-5"
+                v-if="
+                  consultResponseDto.proforma.graphData
+                    .genderGraphChosenByCategory
+                "
+              >
                 <div class="title text-center mb-4">
                   <h4>
                     <strong class="text-primary">남/녀</strong>
@@ -279,7 +326,12 @@
                   />
                 </div>
               </b-col>
-              <b-col cols="12" md="6" class="my-5">
+              <b-col
+                cols="12"
+                md="6"
+                class="my-5"
+                v-if="locationDetailInfo.length > 0"
+              >
                 <h4 class="title text-center mb-4">
                   메뉴별 매장/배달 소비 현황
                 </h4>
@@ -439,7 +491,7 @@
       ></b-form-textarea>
     </b-modal> -->
     <!-- 관리자 수정 모달 -->
-    <!-- <b-modal
+    <b-modal
       id="admin_list"
       title="관리자 수정하기"
       @cancel="cancelSelection()"
@@ -483,7 +535,7 @@
         @input="paginateSearch()"
         class="mt-4 justify-content-center"
       ></b-pagination>
-    </b-modal> -->
+    </b-modal>
     <!-- 사용자 정보 수정 -->
     <!-- <b-modal
       id="nanuda_user"
@@ -582,23 +634,25 @@ export default class ConsultResponseDetail extends BaseComponent {
 
   // get location info detail
   getLocationInfoDetail() {
-    ConsultResponseService.getLocationInfoDetail(
-      this.consultResponseDto.proforma.hdong.hdongCode,
-    ).subscribe(res => {
-      let filterArray = [...Object.values(res.data)];
-      filterArray = filterArray.filter((arr: any) => {
-        for (const filter of this.bestFoodCategory) {
-          if (arr.mediumCategoryName.includes(filter)) {
-            return true;
+    if (this.consultResponseDto.proforma.hdong) {
+      ConsultResponseService.getLocationInfoDetail(
+        this.consultResponseDto.proforma.hdong.hdongCode,
+      ).subscribe(res => {
+        let filterArray = [...Object.values(res.data)];
+        filterArray = filterArray.filter((arr: any) => {
+          for (const filter of this.bestFoodCategory) {
+            if (arr.mediumCategoryName.includes(filter)) {
+              return true;
+            }
           }
-        }
+        });
+
+        this.selectedFoodCategory = filterArray[0].mediumCategoryName;
+        this.locationDetailInfo = filterArray.splice(0, 5);
+
+        // console.log('this.locationDetailInfo', this.locationDetailInfo);
       });
-
-      this.selectedFoodCategory = filterArray[0].mediumCategoryName;
-      this.locationDetailInfo = filterArray.splice(0, 5);
-
-      console.log('this.locationDetailInfo', this.locationDetailInfo);
-    });
+    }
   }
 
   // get cateogry
@@ -623,14 +677,18 @@ export default class ConsultResponseDetail extends BaseComponent {
     this.selectedAdmin = admin;
   }
 
+  cancelSelection() {
+    this.selectedAdmin = new AdminDto(BaseUser);
+  }
+
   // 담당자 본인으로 정하기
-  // assignYourselfAdmin() {
-  //   ConsultResponseService.assignAdmin(this.consultResponseDto.id).subscribe(
-  //     res => {
-  //       this.findOne(this.consultResponseDto.id);
-  //     },
-  //   );
-  // }
+  assignYourselfAdmin() {
+    ConsultResponseService.assignAdmin(this.consultResponseDto.id).subscribe(
+      res => {
+        this.findOne(this.consultResponseDto.id);
+      },
+    );
+  }
 
   // 지도 가져오기
   // setMap(district: consultResponseDto) {
@@ -684,6 +742,9 @@ export default class ConsultResponseDetail extends BaseComponent {
 
   // update consult response
   updateConsultResponse() {
+    if (this.selectedAdmin) {
+      this.consultResponseUpdateDto.adminId = this.selectedAdmin.no;
+    }
     ConsultResponseService.update(
       this.$route.params.id,
       this.consultResponseUpdateDto,

@@ -637,7 +637,8 @@ export default class ConsultResponseDetail extends BaseComponent {
       if (res) {
         this.consultResponseDto = res.data;
         this.getLocationInfoDetail();
-        this.consultResponseUpdateDto = this.consultResponseDto;
+        this.consultResponseUpdateDto.consultStatus = this.consultResponseDto.consultStatus;
+        this.consultResponseUpdateDto.description = this.consultResponseDto.description;
       }
     });
   }

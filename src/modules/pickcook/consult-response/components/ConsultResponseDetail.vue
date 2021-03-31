@@ -165,7 +165,7 @@
                   <label for="productConsultEtc">비고 내용</label>
                   <b-form-textarea
                     id="productConsultEtc"
-                    v-model="consultResponseDto.description"
+                    v-model="consultResponseUpdateDto.description"
                     placeholder="내용 입력해주세요"
                     rows="10"
                     max-rows="20"
@@ -637,7 +637,7 @@ export default class ConsultResponseDetail extends BaseComponent {
       if (res) {
         this.consultResponseDto = res.data;
         this.getLocationInfoDetail();
-        this.consultResponseUpdateDto.consultStatus = this.consultResponseDto.consultStatus;
+        this.consultResponseUpdateDto = this.consultResponseDto;
       }
     });
   }

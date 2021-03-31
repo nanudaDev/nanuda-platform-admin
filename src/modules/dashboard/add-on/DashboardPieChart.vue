@@ -9,14 +9,8 @@ export default class DashboardPieChart extends Vue<Pie> {
   constructor() {
     super();
   }
-  @Prop({ required: true }) chartData!: {
-    type: any;
-    default: null;
-  };
-  @Prop({ required: true }) options: {
-    type: any;
-    default: null;
-  };
+  @Prop({ required: true }) chartData!: any;
+  @Prop({ required: true }) options: any;
 
   mounted() {
     this.renderChart(this.chartData, this.options);

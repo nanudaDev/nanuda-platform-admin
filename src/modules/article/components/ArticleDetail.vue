@@ -2,7 +2,9 @@
   <section v-if="articleDto">
     <SectionTitle title="기사 관리" divider>
       <template v-slot:rightArea>
-        <router-link to="/article" class="btn btn-secondary">목록으로</router-link>
+        <router-link to="/article" class="btn btn-secondary"
+          >목록으로</router-link
+        >
       </template>
     </SectionTitle>
     <b-row>
@@ -10,14 +12,24 @@
         <BaseCard title="기사 정보">
           <template v-slot:head>
             <div>
-              <b-button variant="danger" v-b-modal.delete_article>삭제하기</b-button>
-              <b-button variant="primary" v-b-modal.update_article @click="showUpdateModal()">수정하기</b-button>
+              <b-button variant="danger" v-b-modal.delete_article
+                >삭제하기</b-button
+              >
+              <b-button
+                variant="primary"
+                v-b-modal.update_article
+                @click="showUpdateModal()"
+                >수정하기</b-button
+              >
             </div>
           </template>
           <template v-slot:body>
             <b-row aligh-h="start" align-v="start">
               <b-col cols="12" md="4">
-                <div v-if="articleDto.image && articleDto.image.length > 0" class="mb-4">
+                <div
+                  v-if="articleDto.image && articleDto.image.length > 0"
+                  class="mb-4"
+                >
                   <div v-for="image in articleDto.image" :key="image.endpoint">
                     <b-img-lazy
                       :src="image.endpoint"
@@ -35,9 +47,7 @@
                     <li>
                       URL :
                       <a :href="articleDto.url" target="_blank">
-                        {{
-                        articleDto.url
-                        }}
+                        {{ articleDto.url }}
                       </a>
                     </li>
                     <li>설명글 : {{ articleDto.desc }}</li>
@@ -59,7 +69,12 @@
       size="lg"
     >
       <b-row no-gutters align-h="end">
-        <b-form-group label="노출 여부" label-size="sm" label-text-align="right" label-cols="8">
+        <b-form-group
+          label="노출 여부"
+          label-size="sm"
+          label-text-align="right"
+          label-cols="8"
+        >
           <b-form-checkbox
             switch
             size="lg"
@@ -111,12 +126,18 @@
                 />
               </div>
               <div class="text-center mt-2">
-                <b-button variant="danger" @click="removeArticleImage()">이미지 제거</b-button>
+                <b-button variant="danger" @click="removeArticleImage()"
+                  >이미지 제거</b-button
+                >
               </div>
             </div>
           </div>
           <div class="custom-file">
-            <b-form-file placeholder="파일 첨부" ref="fileInput" @input="upload($event)"></b-form-file>
+            <b-form-file
+              placeholder="파일 첨부"
+              ref="fileInput"
+              @input="upload($event)"
+            ></b-form-file>
           </div>
         </b-col>
         <b-col cols="12" md="12" class="mb-3">
@@ -181,7 +202,7 @@ import BaseComponent from '@/core/base.component';
 import { ArticleDto } from '@/dto';
 import ArticleService from '../../../services/article.service';
 import Component from 'vue-class-component';
-import { ArticleUpdateDto } from '@/dto/article/article-update.dto';
+import { ArticleUpdateDto } from '@/dto';
 import { FileAttachmentDto } from '@/services/shared/file-upload';
 import FileUploadService from '../../../services/shared/file-upload/file-upload.service';
 import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';

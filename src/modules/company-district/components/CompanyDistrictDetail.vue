@@ -356,7 +356,7 @@ import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { getStatusColor } from '../../../core/utils/status-color.util';
-import { CompanyDistrictMapUpdateDto } from '@/dto/company-district/company-district-map-update.dto';
+import { CompanyDistrictMapUpdateDto } from '@/dto';
 import { APPROVAL_STATUS } from '@/services/shared';
 
 @Component({

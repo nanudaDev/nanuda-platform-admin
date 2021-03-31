@@ -10,6 +10,7 @@ import { CONST_ADMIN_USER } from '@/services/shared';
 import componentsRouter from './modules/component';
 import nonNavBarRouter from './modules/non-navbar-component';
 import analysisComponentRouter from './modules/analysis-component';
+import pickcookComponentRouter from './modules/pickcook-component';
 
 let env = new Environment();
 if (process.env.NODE_ENV === EnvironmentType.development) {
@@ -52,6 +53,7 @@ export const constantRoutes: RouteConfig[] = [
   ...componentsRouter,
   ...nonNavBarRouter,
   ...analysisComponentRouter,
+  ...pickcookComponentRouter,
 ];
 
 const createRouter = () =>

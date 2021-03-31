@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import { YN } from '@/common';
 
-export const ViewPipeTransformer = () => {
-  Vue.filter('viewTransformer', (value: string): string => {
+export const StringViewPipeTransformer = () => {
+  Vue.filter('stringViewTransformer', (value: string): string => {
     if (!value) {
       return;
     }

@@ -70,7 +70,7 @@ import { Pagination, PaginatedResponse } from '../../../common';
 import {
   DeliveryFounderConsultListDto,
   DeliveryFounderConsultDto,
-} from '../../../dto/delivery-founder-consult';
+} from '@/dto';
 import { SPACE_TYPE, FOUNDER_CONSULT } from '@/services/shared';
 
 import { getStatusColor } from '../../../core/utils/status-color.util';

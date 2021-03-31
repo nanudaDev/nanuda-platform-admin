@@ -1,6 +1,6 @@
 import { BaseService } from '@/core';
 import { Pagination } from '@/common';
-import { FoodCategoryDto, FoodCategoryListDto } from '@/dto/food-category';
+import { FoodCategoryDto, FoodCategoryListDto } from '@/dto';
 
 class FoodCategoryService extends BaseService {
   /**

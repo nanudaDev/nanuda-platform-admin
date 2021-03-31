@@ -12,4 +12,5 @@ export const DevelopmentEnvironment: Environment = {
   homepageBaseUrl: 'http://localhost:8185',
   homepageSiteUrl: 'http://localhost:3000',
   analysisUrl: 'http://localhost:4400/',
+  pickcookUrl: 'http://localhost:4700/',
 };

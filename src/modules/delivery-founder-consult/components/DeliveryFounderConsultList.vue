@@ -113,7 +113,7 @@
           >
             <option value selected>전체</option>
             <option v-for="yn in delYn" :key="yn" :value="yn">{{
-              yn | viewTransformer
+              yn | stringViewTransformer
             }}</option>
           </select>
         </div>

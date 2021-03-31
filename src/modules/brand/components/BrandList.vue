@@ -1,252 +1,298 @@
 <template>
   <section>
     <SectionTitle title="브랜드 관리" divider></SectionTitle>
-    <div class="search-box my-4" v-on:keyup.enter="search()">
+    <div class="search-box my-4" v-on:keyup.enter="search(true, true)">
       <b-form-row>
-        <div class="col-sm-4 col-lg-1 mb-3">
-          <label>업종</label>
-          <b-form-input
-            list="food-category-list"
-            id="food_category"
-            v-model="brandSearchDto.categoryName"
-          ></b-form-input>
-          <datalist id="food-category-list">
-            <option
-              v-for="category in foodCategorySelect"
-              :key="category.code"
-              :value="category.nameKr"
-              >{{ category.nameKr }}</option
+        <b-col cols="6" sm="4" md="3">
+          <b-form-group label="업종">
+            <b-form-input
+              list="food-category-list"
+              id="food_category"
+              v-model="brandSearchDto.categoryName"
+            ></b-form-input>
+            <datalist id="food-category-list">
+              <option
+                v-for="category in foodCategorySelect"
+                :key="category.code"
+                :value="category.nameKr"
+                >{{ category.nameKr }}</option
+              >
+            </datalist>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" sm="4" md="3">
+          <b-form-group label="추천 브랜드">
+            <b-form-select
+              class="custom-select"
+              v-model="brandSearchDto.isRecommendedYn"
             >
-          </datalist>
-        </div>
-        <div class="col-sm-4 col-lg-1 mb-3">
-          <label>추천 브랜드</label>
-          <select
-            class="custom-select"
-            v-model="brandSearchDto.isRecommendedYn"
-          >
-            <option value>전체</option>
-            <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
-              yn | enumTransformer
-            }}</option>
-          </select>
-        </div>
-        <div class="col-sm-4 col-lg-2 mb-3">
+              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="yn in ynSelect"
+                :key="yn"
+                :value="yn"
+                >{{ yn | enumTransformer }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" sm="4" md="3">
           <b-form-group label="브랜드명">
             <b-form-input v-model="brandSearchDto.nameKr"></b-form-input>
           </b-form-group>
-        </div>
-        <div class="col-sm-4 col-lg-1 mb-3">
-          <label>노출 여부</label>
-          <select class="custom-select" v-model="brandSearchDto.showYn">
-            <option value>전체</option>
-            <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
-              yn | enumTransformer
-            }}</option>
-          </select>
-        </div>
-        <div class="col-sm-4 col-lg-2 mb-3">
-          <label>창업 비용</label>
-          <select class="custom-select" v-model="brandSearchDto.cost">
-            <option value>전체</option>
-            <option
-              v-for="cost in costValues"
-              :key="cost.no"
-              :value="cost.key"
-              >{{ cost.value }}</option
+        </b-col>
+        <b-col cols="6" sm="4" md="3">
+          <b-form-group label="노출 여부">
+            <b-form-select
+              class="custom-select"
+              v-model="brandSearchDto.showYn"
             >
-          </select>
-        </div>
-        <div class="col-sm-4 col-lg-2 mb-3">
-          <label>조리 난이도</label>
-          <select class="custom-select" v-model="brandSearchDto.difficulty">
-            <option value>전체</option>
-            <option
-              v-for="difficulty in difficultyValues"
-              :key="difficulty.no"
-              :value="difficulty.key"
-              >{{ difficulty.value }}</option
+              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="yn in ynSelect"
+                :key="yn"
+                :value="yn"
+                >{{ yn | stringShowTransformer }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" sm="4" md="3">
+          <b-form-group label="창업 비용">
+            <b-form-select class="custom-select" v-model="brandSearchDto.cost">
+              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="cost in costValues"
+                :key="cost.no"
+                :value="cost.key"
+                >{{ cost.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" sm="4" md="3">
+          <b-form-group label="조리 난이도">
+            <b-form-select
+              class="custom-select"
+              v-model="brandSearchDto.difficulty"
             >
-          </select>
-        </div>
-        <div class="col-sm-4 col-lg-2 mb-3">
-          <label>매장 수</label>
-          <select class="custom-select" v-model="brandSearchDto.storeCount">
-            <option value>전체</option>
-            <option
-              v-for="storeCount in storeCountValues"
-              :key="storeCount.no"
-              :value="storeCount.key"
-              >{{ storeCount.value }}</option
+              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="difficulty in difficultyValues"
+                :key="difficulty.no"
+                :value="difficulty.key"
+                >{{ difficulty.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" sm="4" md="3">
+          <b-form-group label="매장 수">
+            <b-form-select
+              class="custom-select"
+              v-model="brandSearchDto.storeCount"
             >
-          </select>
-        </div>
-        <div class="col-sm-4 col-lg-1 mb-3">
-          <label>뷔페/플레이트</label>
-          <select class="custom-select" v-model="brandSearchDto.brandType">
-            <option value>전체</option>
-            <option
-              v-for="type in brandType"
-              :key="type.no"
-              :value="type.key"
-              >{{ type.value }}</option
+              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="storeCount in storeCountValues"
+                :key="storeCount.no"
+                :value="storeCount.key"
+                >{{ storeCount.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" sm="4" md="3">
+          <b-form-group label="뷔페/플레이트">
+            <b-form-select
+              class="custom-select"
+              v-model="brandSearchDto.brandType"
             >
-          </select>
-        </div>
+              <b-form-select-option value>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="type in brandType"
+                :key="type.no"
+                :value="type.key"
+                >{{ type.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
       </b-form-row>
       <!-- second row -->
       <b-row align-h="center">
-        <b-btn-group>
-          <b-button variant="primary" @click="clearOut()">초기화</b-button>
-          <b-button variant="success" @click="search()">검색</b-button>
-        </b-btn-group>
+        <div>
+          <b-button variant="secondary" @click="clearOut()">초기화</b-button>
+          <b-button variant="primary" @click="search(true, true)"
+            >검색</b-button
+          >
+        </div>
       </b-row>
     </div>
     <div class="table-top">
       <div class="total-count">
         <h5>
           <span>TOTAL</span>
-          <strong class="text-primary">{{ brandListCount }}</strong>
+          <strong class="text-primary">{{ brandTotalCount }}</strong>
         </h5>
       </div>
-      <b-button variant="primary" v-b-modal.add_brand>브랜드 추가</b-button>
+      <div>
+        <b-button variant="primary" v-b-modal.add_brand>브랜드 추가</b-button>
+      </div>
     </div>
-    <div v-if="!dataLoading" class="table-bordered table-responsive">
-      <table class="table table-sm table-hover" v-if="brandListCount">
-        <thead>
-          <th scope="row">NO</th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: brandSearchDto.categoryName,
-            }"
-          >
-            업종
-          </th>
-
-          <th scope="row">로고</th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: brandSearchDto.nameKr,
-            }"
-          >
-            브랜드명
-          </th>
-          <th scope="row">설명</th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: brandSearchDto.cost,
-            }"
-          >
-            창업 비용
-          </th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: brandSearchDto.difficulty,
-            }"
-          >
-            조리 난이도
-          </th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: brandSearchDto.storeCount,
-            }"
-          >
-            매장 수
-          </th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: brandSearchDto.isRecommendedYn,
-            }"
-          >
-            추천
-          </th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: brandSearchDto.showYn,
-            }"
-          >
-            노출 여부
-          </th>
-        </thead>
-        <tbody>
-          <tr
-            v-for="brand in brandList"
-            :key="brand.no"
-            @click="findOne(brand.no)"
-            style="cursor:pointer"
-          >
-            <td>{{ brand.no }}</td>
-            <td>{{ brand.category.nameKr }}</td>
-
-            <td style="width:80px">
-              <div v-if="brand.logo && brand.logo.length > 0">
-                <div v-for="logo in brand.logo" :key="logo.endpoint">
-                  <b-img-lazy
-                    :src="logo.endpoint"
-                    class="rounded mx-auto d-block company-logo"
-                    style="max-height:40px"
-                  />
+    <template v-if="!dataLoading">
+      <div class="bg-white table-responsive">
+        <table
+          class="table table-sm table-hover table-nowrap"
+          v-if="brandTotalCount"
+        >
+          <thead>
+            <th scope="row">NO</th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: brandSearchDto.categoryName,
+              }"
+            >
+              업종
+            </th>
+            <!-- <th scope="row">운영방식</th> -->
+            <th scope="row">로고</th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: brandSearchDto.nameKr,
+              }"
+            >
+              브랜드명
+            </th>
+            <th scope="row">설명</th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: brandSearchDto.cost,
+              }"
+            >
+              창업 비용
+            </th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: brandSearchDto.difficulty,
+              }"
+            >
+              조리 난이도
+            </th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: brandSearchDto.storeCount,
+              }"
+            >
+              매장 수
+            </th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: brandSearchDto.isRecommendedYn,
+              }"
+            >
+              추천
+            </th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: brandSearchDto.showYn,
+              }"
+            >
+              노출 여부
+            </th>
+          </thead>
+          <tbody>
+            <tr
+              v-for="brand in brandList"
+              :key="brand.no"
+              @click="findOne(brand.no)"
+              style="cursor:pointer"
+            >
+              <td>{{ brand.no }}</td>
+              <td>{{ brand.category.nameKr }}</td>
+              <!-- <td>
+                <template v-if="brand.brandType">
+                  {{ brand.brandType }}
+                </template>
+                <template v-else>
+                  뷔페/플레이트
+                </template>
+              </td> -->
+              <td style="width:80px">
+                <div v-if="brand.logo && brand.logo.length > 0">
+                  <div v-for="logo in brand.logo" :key="logo.endpoint">
+                    <b-img-lazy
+                      :src="logo.endpoint"
+                      class="rounded mx-auto d-block company-logo"
+                      style="max-height:40px; max-width:none;"
+                    />
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td>{{ brand.nameKr }}</td>
-            <td>
-              <template v-if="brand.desc">{{ brand.desc }}</template>
-            </td>
-            <td>
-              <template v-if="brand.costValue">{{
-                brand.costValue.value
-              }}</template>
-              <template v-else> - </template>
-            </td>
-            <td>
-              <template v-if="brand.difficultyValue">{{
-                brand.difficultyValue.value
-              }}</template>
-              <template v-else> - </template>
-            </td>
-            <td>
-              <template v-if="brand.storeCountValue">{{
-                brand.storeCountValue.value
-              }}</template>
-              <template v-else> - </template>
-            </td>
-            <td>
-              <b-badge
-                :variant="brand.isRecommendedYn === 'Y' ? 'success' : 'danger'"
-                >{{ brand.isRecommendedYn }}</b-badge
-              >
-            </td>
-            <td>
-              <b-badge :variant="brand.showYn === 'Y' ? 'success' : 'danger'">{{
-                brand.showYn
-              }}</b-badge>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div v-else class="empty-data border">검색결과가 없습니다.</div>
-    </div>
-    <b-pagination
-      v-model="pagination.page"
-      v-if="brandListCount"
-      pills
-      :total-rows="brandListCount"
-      :per-page="pagination.limit"
-      @input="paginateSearch()"
-      class="mt-4 justify-content-center"
-    ></b-pagination>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+              </td>
+              <td class="text-nowrap">{{ brand.nameKr }}</td>
+              <td>
+                <template v-if="brand.desc">{{ brand.desc }}</template>
+              </td>
+              <td>
+                <template v-if="brand.costValue">{{
+                  brand.costValue.value
+                }}</template>
+                <template v-else> - </template>
+              </td>
+              <td>
+                <template v-if="brand.difficultyValue">{{
+                  brand.difficultyValue.value
+                }}</template>
+                <template v-else> - </template>
+              </td>
+              <td>
+                <template v-if="brand.storeCountValue">{{
+                  brand.storeCountValue.value
+                }}</template>
+                <template v-else> - </template>
+              </td>
+              <td>
+                <b-badge
+                  :variant="
+                    brand.isRecommendedYn === 'Y' ? 'success' : 'danger'
+                  "
+                  >{{ brand.isRecommendedYn }}</b-badge
+                >
+              </td>
+              <td>
+                <b-badge
+                  :variant="brand.showYn === 'Y' ? 'success' : 'danger'"
+                  >{{ brand.showYn }}</b-badge
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div v-else class="empty-data border">검색결과가 없습니다.</div>
+      </div>
+      <b-pagination
+        v-model="pagination.page"
+        v-if="brandTotalCount"
+        pills
+        :total-rows="brandTotalCount"
+        :per-page="pagination.limit"
+        @input="paginateSearch()"
+        class="mt-4 justify-content-center"
+      ></b-pagination>
+    </template>
+    <template v-else>
+      <div class="half-circle-spinner py-4">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+      </div>
+    </template>
     <!-- 브랜드 추가 모달 -->
     <b-modal
       id="add_brand"
@@ -411,7 +457,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import BaseComponent from '../../../core/base.component';
 import { BrandDto, BrandListDto, FoodCategoryDto } from '../../../dto';
 import BrandService from '../../../services/brand.service';
@@ -436,7 +482,7 @@ export default class BrandList extends BaseComponent {
     super();
   }
   private brandList: BrandDto[] = [];
-  private brandListCount = null;
+  private brandTotalCount = null;
   private brandSearchDto = new BrandListDto();
   private pagination = new Pagination();
   private ynSelect: YN[] = [...CONST_YN];
@@ -448,6 +494,36 @@ export default class BrandList extends BaseComponent {
   private brandCreateDto = new BrandDto();
   private brandLogo: FileAttachmentDto[] = [];
   private brandType: CodeManagementDto[] = [];
+  private searchPramsDto: any = {};
+
+  // search brand
+  search(isPagination?: boolean, isSearch?: boolean) {
+    this.dataLoading = true;
+    if (!isPagination) {
+      this.pagination.page = 1; // 최초 페이지 진입시 페이지 초기화
+    } else {
+      if (isSearch) this.pagination.page = 1; // 검색버튼 클릭시 페이지 초기화
+      this.searchPramsDto = Object.assign(this.brandSearchDto, this.pagination);
+    }
+    BrandService.findAll(this.brandSearchDto, this.pagination).subscribe(
+      res => {
+        if (res) {
+          this.dataLoading = false;
+          this.brandList = res.data.items;
+          this.brandTotalCount = res.data.totalCount;
+          this.$router
+            .push({
+              query: this.searchPramsDto,
+            })
+            .catch();
+        }
+      },
+    );
+  }
+
+  paginateSearch() {
+    this.search(true);
+  }
 
   // get food category
   getFoodCategories() {
@@ -456,26 +532,7 @@ export default class BrandList extends BaseComponent {
     });
   }
 
-  // search brand
-  search(isPagination?: boolean) {
-    this.dataLoading = true;
-    if (!isPagination) {
-      this.pagination.page = 1;
-    }
-    BrandService.findAll(this.brandSearchDto, this.pagination).subscribe(
-      res => {
-        if (res) {
-          this.dataLoading = false;
-          this.brandList = res.data.items;
-          this.brandListCount = res.data.totalCount;
-          this.$router.push({
-            query: Object.assign(this.brandSearchDto),
-          });
-        }
-      },
-    );
-  }
-
+  // get common codes
   getCommonCodes() {
     CodeManagementService.findAnyCode('BRAND').subscribe(res => {
       this.costValues = res.data;
@@ -491,19 +548,15 @@ export default class BrandList extends BaseComponent {
     });
   }
 
-  paginateSearch() {
-    this.search(true);
-  }
-
   // clear brand search dto
   clearOut() {
     this.brandSearchDto = new BrandListDto();
-    this.search();
+    this.$router.replace({ query: null });
   }
 
   // find brand detail
-  findOne(brandNo) {
-    this.$router.push(`/brand/${brandNo}`);
+  findOne(id) {
+    this.$router.push(`/brand/${id}`);
   }
 
   // create brand
@@ -515,7 +568,7 @@ export default class BrandList extends BaseComponent {
     BrandService.create(this.brandCreateDto).subscribe(res => {
       if (res) {
         toast.success('추가완료');
-        this.search();
+        this.clearOut();
       }
     });
   }
@@ -547,9 +600,14 @@ export default class BrandList extends BaseComponent {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.brandSearchDto = query;
+      this.pagination.limit = +query.limit;
+      this.pagination.page = +query.page;
+      this.search(true);
+    } else {
+      this.search();
     }
+
     this.getCommonCodes();
-    this.search();
     this.getFoodCategories();
   }
 }

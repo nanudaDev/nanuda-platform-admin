@@ -4,7 +4,7 @@ import {
   ProductConsultDto,
   ProductConsultUpdateDto,
   ProductConsultStatusUpdateDto,
-} from '@/dto/product-consult';
+} from '@/dto';
 import { Pagination } from '@/common';
 
 class ProductConsultService extends BaseService {

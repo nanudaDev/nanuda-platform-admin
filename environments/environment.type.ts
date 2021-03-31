@@ -9,10 +9,17 @@ export class Environment {
   homepageBaseUrl?: string;
   homepageSiteUrl?: string;
   analysisUrl?: string;
+  pickcookUrl?: string;
 }
 
 export enum EnvironmentType {
   development = 'development',
   staging = 'staging',
   production = 'production',
+}
+
+export enum ApiUrlType {
+  PLATFORM = 'PLATFORM',
+  ANALYSIS = 'ANALYSIS',
+  PICKCOOK = 'PICKCOOK',
 }

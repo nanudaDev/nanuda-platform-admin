@@ -5,9 +5,9 @@ import {
   CompanyDistrictListDto,
   CompanyDistrictUpdateRefusalDto,
   CompanyDistrictUpdateDto,
+  CompanyDistrictMapUpdateDto,
+  CompanyDistrictPromotionDto,
 } from '@/dto';
-import { CompanyDistrictMapUpdateDto } from '@/dto/company-district/company-district-map-update.dto';
-import { CompanyDistrictPromotionDto } from '@/dto/company-district-promotion';
 
 class CompanyDistrictService extends BaseService {
   /**

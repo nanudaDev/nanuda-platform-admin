@@ -25,7 +25,7 @@
               id="space_type"
               v-model="consultResponseSerchDto.fnbOwnerStatus"
             >
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="status in fnbOwnerStatus"
                 :key="status.key"
@@ -36,12 +36,12 @@
           </b-form-group>
         </b-col>
         <b-col cols="12" sm="6" md="3">
-          <b-form-group label="창업자 유형">
+          <b-form-group label="신청 상태">
             <b-form-select
               id="space_type"
               v-model="consultResponseSerchDto.consultStatus"
             >
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="status in consultStatus"
                 :key="status.key"
@@ -104,6 +104,7 @@
             <col width="auto" />
             <col width="150" />
             <col width="150" />
+            <col width="150" />
           </colgroup>
           <thead>
             <tr>
@@ -139,7 +140,10 @@
                 휴대폰 번호
               </th>
               <th scope="col">
-                매출
+                미팅날짜
+              </th>
+              <th scope="col">
+                담당자
               </th>
               <th scope="col">
                 신청상태
@@ -170,8 +174,14 @@
               </td>
               <td>{{ consult.phone | phoneTransformer }}</td>
               <td>
-                <template v-if="consult.revenueRangeCodeStatus">
-                  {{ consult.revenueRangeCodeStatus.displayName }}
+                <template v-if="consult.reservation">
+                  {{ consult.reservation.reservationDate.substr(0, 10) }}
+                  {{ consult.reservation.reservationTime }}
+                </template>
+              </td>
+              <td>
+                <template v-if="consult.admin">
+                  {{ consult.admin.name }}
                 </template>
               </td>
               <td>

@@ -1,5 +1,6 @@
 import { BaseDto } from '@/core';
 import {
+  ADMIN_USER,
   AGE_GROUP,
   BRAND_CONSULT,
   FNB_OWNER,
@@ -36,4 +37,6 @@ export class ConsultResponseDto extends BaseDto<ConsultResponseDto> {
   consultCodeStatus?: BRAND_CONSULT;
   operationSentenceResponse?: any;
   proforma?: any;
+  adminId?: number;
+  admin?: ADMIN_USER;
 }

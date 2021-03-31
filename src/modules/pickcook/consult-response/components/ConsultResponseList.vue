@@ -232,12 +232,9 @@ export default class ConsultResponseList extends BaseComponent {
     ID: 'id',
     이름: 'name',
     연락처: 'phone',
-    비회원명: 'nonUserName',
-    비회원연락처: 'nonUserPhone',
-    미팅일자: 'availableTime.value',
-    담당자: 'consultManager',
-    신청일: 'createdAt',
-    신청상태: 'codeManagement.value',
+    나이대: 'ageGroupCodeStatus.displayName',
+    신청상태: 'consultCodeStatus.comment',
+    신청일: 'created',
   };
   private json_meta = [
     [

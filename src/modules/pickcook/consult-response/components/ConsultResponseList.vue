@@ -174,7 +174,12 @@
               </td>
               <td>{{ consult.phone | phoneTransformer }}</td>
               <td>
-                <template v-if="consult.reservation">
+                <template
+                  v-if="
+                    consult.reservation &&
+                      consult.reservation.isCancelYn !== 'Y'
+                  "
+                >
                   {{ consult.reservation.reservationDate.substr(0, 10) }}
                   {{ consult.reservation.reservationTime }}
                 </template>
@@ -259,8 +264,11 @@ export default class ConsultResponseList extends BaseComponent {
   private fields = {
     ID: 'id',
     이름: 'name',
+    나이: 'ageGroupCodeStatus.displayName',
     연락처: 'phone',
-    나이대: 'ageGroupCodeStatus.displayName',
+    미팅예약날짜: 'reservation.reservationDate',
+    미팅예약시간: 'reservation.reservationTime',
+    담당자: 'admin.name',
     신청상태: 'consultCodeStatus.comment',
     신청일: 'created',
   };

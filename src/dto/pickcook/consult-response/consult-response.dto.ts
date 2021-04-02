@@ -9,6 +9,7 @@ import {
   REVENUE_RANGE,
   TENTATIVE_OPEN_OPTION,
 } from '@/services/shared';
+import { ReservationDto } from '../reservation';
 
 export class ConsultResponseDto extends BaseDto<ConsultResponseDto> {
   id: number;
@@ -39,4 +40,5 @@ export class ConsultResponseDto extends BaseDto<ConsultResponseDto> {
   proforma?: any;
   adminId?: number;
   admin?: ADMIN_USER;
+  reservation?: ReservationDto;
 }

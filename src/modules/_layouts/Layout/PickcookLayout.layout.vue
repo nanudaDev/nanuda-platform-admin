@@ -92,7 +92,6 @@ export default class PickcookLayout extends BaseComponent {
     AdminService.findMe().subscribe(res => {
       this.admin = res.data;
     });
-    console.log(this.items[0].children);
   }
 }
 </script>

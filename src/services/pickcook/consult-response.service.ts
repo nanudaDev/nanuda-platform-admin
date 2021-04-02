@@ -64,6 +64,8 @@ class ConsultResponseService extends BaseService {
   assignAdmin(consultResponseId) {
     return super.patch<any>(
       `admin/consult-response/${consultResponseId}/assign`,
+      null,
+      ApiUrlType.PICKCOOK,
     );
   }
 

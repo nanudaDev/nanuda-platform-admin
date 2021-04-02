@@ -8,4 +8,5 @@ export class ConsultResponseUpdateDto extends BaseDto<
   name?: string;
   phone?: string;
   description?: string;
+  adminId?: number;
 }

@@ -60,14 +60,14 @@
       </b-col>
       <b-col lg="6" class="my-3">
         <BaseCard title="관리자 정보">
-          <!-- <template v-slot:head>
+          <template v-slot:head>
             <div>
-              <b-button
-                v-if="!consultResponseDto.pConsultManager"
+              <!-- <b-button
+                v-if="!consultResponseDto.adminId"
                 variant="info"
                 @click="assignYourselfAdmin()"
                 >본인으로 정하기</b-button
-              >
+              > -->
               <b-button
                 variant="primary"
                 @click="findAdmin()"
@@ -75,7 +75,7 @@
                 >수정하기</b-button
               >
             </div>
-          </template> -->
+          </template>
           <template v-slot:body>
             <div v-if="consultResponseDto.admin">
               <ul>
@@ -104,18 +104,16 @@
       <b-col lg="12" class="my-3">
         <BaseCard title="상담 상세 정보">
           <template v-slot:head>
-            <b-button variant="primary" @click="updateConsultResponse()">
-              수정하기
-            </b-button>
+            <div>
+              <b-button variant="primary" @click="updateConsultResponse()">
+                수정하기
+              </b-button>
+            </div>
           </template>
           <template v-slot:body>
             <b-row>
               <b-col lg="6">
                 <ul class="u-list">
-                  <li v-if="consultResponseDto.reservationCode">
-                    예약 코드 :
-                    {{ consultResponseDto.reservationCode }}
-                  </li>
                   <li
                     v-if="
                       consultResponseDto.fnbOwnerCodeStatus &&
@@ -162,6 +160,44 @@
                   </p>
                 </div>
                 <div class="my-2">
+                  <b-form-group
+                    label="미팅 예약 코드"
+                    v-if="consultResponseDto.reservationCode"
+                  >
+                    <b-form-input
+                      v-model="consultResponseDto.reservationCode"
+                      disabled
+                    >
+                    </b-form-input>
+                  </b-form-group>
+                  <template
+                    v-if="
+                      consultResponseDto.reservation &&
+                        consultResponseDto.reservation.isCancelYn !== 'Y'
+                    "
+                  >
+                    <b-form-group label="미팅 예약 날짜">
+                      <b-form-input
+                        :value="
+                          ` ${consultResponseDto.reservation.reservationDate.substr(
+                            0,
+                            10,
+                          )}  ${consultResponseDto.reservation.reservationTime}`
+                        "
+                        disabled
+                      ></b-form-input>
+                    </b-form-group>
+                    <div class="mt-2 text-right">
+                      <!-- <b-button variant="info" v-b-modal.update_reservation>
+                      변경
+                    </b-button> -->
+                      <b-button variant="danger" v-b-modal.cancel_reservation>
+                        취소
+                      </b-button>
+                    </div>
+                  </template>
+                </div>
+                <div class="my-2">
                   <label for="productConsultEtc">비고 내용</label>
                   <b-form-textarea
                     id="productConsultEtc"
@@ -194,7 +230,13 @@
                   consultResponseDto.proforma.graphData.newFnbOwnerPieChartData
                 "
               >
-                <div class="title text-center mb-4">
+                <div
+                  class="title text-center mb-4"
+                  v-if="
+                    consultResponseDto.proforma &&
+                      consultResponseDto.proforma.hdong
+                  "
+                >
                   <h4>
                     현재
                     <strong class="text-primary">
@@ -229,7 +271,13 @@
               >
                 <div class="title text-center mb-4">
                   <h4>
-                    <strong class="text-primary">
+                    <strong
+                      class="text-primary"
+                      v-if="
+                        consultResponseDto.proforma &&
+                          consultResponseDto.proforma.hdong
+                      "
+                    >
                       {{ consultResponseDto.proforma.hdong.hdongName }}</strong
                     >
                     매출 현황
@@ -245,8 +293,20 @@
                   />
                 </div>
               </b-col>
-              <b-col cols="12" md="6" class="my-5">
-                <div class="title text-center mb-4">
+              <b-col
+                cols="12"
+                md="6"
+                class="my-5"
+                v-if="
+                  consultResponseDto.proforma.graphData.timeGraphChoseByCategory
+                "
+              >
+                <div
+                  class="title text-center mb-4"
+                  v-if="
+                    consultResponseDto.proforma.selectedKbMediumCategoryName
+                  "
+                >
                   <h4>
                     <strong class="text-primary">{{
                       consultResponseDto.proforma.selectedKbMediumCategoryName
@@ -263,7 +323,15 @@
                   />
                 </div>
               </b-col>
-              <b-col cols="12" md="6" class="my-5">
+              <b-col
+                cols="12"
+                md="6"
+                class="my-5"
+                v-if="
+                  consultResponseDto.proforma.graphData
+                    .genderGraphChosenByCategory
+                "
+              >
                 <div class="title text-center mb-4">
                   <h4>
                     <strong class="text-primary">남/녀</strong>
@@ -279,7 +347,12 @@
                   />
                 </div>
               </b-col>
-              <b-col cols="12" md="6" class="my-5">
+              <b-col
+                cols="12"
+                md="6"
+                class="my-5"
+                v-if="locationDetailInfo.length > 0"
+              >
                 <h4 class="title text-center mb-4">
                   메뉴별 매장/배달 소비 현황
                 </h4>
@@ -439,7 +512,7 @@
       ></b-form-textarea>
     </b-modal> -->
     <!-- 관리자 수정 모달 -->
-    <!-- <b-modal
+    <b-modal
       id="admin_list"
       title="관리자 수정하기"
       @cancel="cancelSelection()"
@@ -483,7 +556,7 @@
         @input="paginateSearch()"
         class="mt-4 justify-content-center"
       ></b-pagination>
-    </b-modal> -->
+    </b-modal>
     <!-- 사용자 정보 수정 -->
     <!-- <b-modal
       id="nanuda_user"
@@ -505,6 +578,41 @@
         </b-col>
       </b-form-row>
     </b-modal> -->
+    <!-- 예약 변경 모달 -->
+    <!-- <b-modal
+      id="update_reservation"
+      title="미팅 예약 변경"
+      header-bg-variant="info"
+      header-text-variant="light"
+      hide-footer
+    >
+      <div class="text-center">
+        <div class="mt-2 text-right">
+          <b-button variant="primary" @click="updateReservation()"
+            >예약변경</b-button
+          >
+        </div>
+      </div>
+    </b-modal> -->
+    <!-- 예약 취소 모달 -->
+    <b-modal
+      id="cancel_reservation"
+      title="미팅 예약 취소"
+      header-bg-variant="danger"
+      header-text-variant="light"
+      hide-footer
+    >
+      <div class="text-center">
+        <p>
+          <b>정말로 취소하시겠습니까?</b>
+        </p>
+        <div class="mt-2 text-right">
+          <b-button variant="danger" @click="cancelReservation()"
+            >예약취소</b-button
+          >
+        </div>
+      </div>
+    </b-modal>
   </section>
 </template>
 <script lang="ts">
@@ -515,6 +623,7 @@ import {
   AdminSendMessageDto,
   ConsultResponseDto,
   ConsultResponseUpdateDto,
+  ReservationCheckDto,
 } from '@/dto';
 import {
   BEST_FOOD_CATEGORY,
@@ -531,6 +640,7 @@ import { CONST_YN, Pagination, YN } from '@/common';
 import { PickcookCodeManagementDto } from '@/services/init/dto';
 import ConsultResponseService from '@/services/pickcook/consult-response.service';
 import CommonCodeService from '@/services/pickcook/common-code.service';
+import ReservationService from '@/services/pickcook/reservation.service';
 import FoodCategoryRatioChart from '@/modules/pickcook/consult-response/add-on/FoodCategoryRatioChart.vue';
 import TimeRevenueChart from '@/modules/pickcook/consult-response/add-on/TimeRevenueChart.vue';
 import GenderRevenueChart from '@/modules/pickcook/consult-response/add-on/GenderRevenueChart.vue';
@@ -558,6 +668,8 @@ export default class ConsultResponseDetail extends BaseComponent {
     ...CONST_BEST_FOOD_CATEGORY,
   ];
 
+  private reservationCheckDto = new ReservationCheckDto();
+
   private adminList: AdminDto[] = [];
   private adminSearchDto = new AdminListDto();
   private adminTotalCount = null;
@@ -582,23 +694,25 @@ export default class ConsultResponseDetail extends BaseComponent {
 
   // get location info detail
   getLocationInfoDetail() {
-    ConsultResponseService.getLocationInfoDetail(
-      this.consultResponseDto.proforma.hdong.hdongCode,
-    ).subscribe(res => {
-      let filterArray = [...Object.values(res.data)];
-      filterArray = filterArray.filter((arr: any) => {
-        for (const filter of this.bestFoodCategory) {
-          if (arr.mediumCategoryName.includes(filter)) {
-            return true;
+    if (this.consultResponseDto.proforma.hdong) {
+      ConsultResponseService.getLocationInfoDetail(
+        this.consultResponseDto.proforma.hdong.hdongCode,
+      ).subscribe(res => {
+        let filterArray = [...Object.values(res.data)];
+        filterArray = filterArray.filter((arr: any) => {
+          for (const filter of this.bestFoodCategory) {
+            if (arr.mediumCategoryName.includes(filter)) {
+              return true;
+            }
           }
-        }
+        });
+
+        this.selectedFoodCategory = filterArray[0].mediumCategoryName;
+        this.locationDetailInfo = filterArray.splice(0, 5);
+
+        // console.log('this.locationDetailInfo', this.locationDetailInfo);
       });
-
-      this.selectedFoodCategory = filterArray[0].mediumCategoryName;
-      this.locationDetailInfo = filterArray.splice(0, 5);
-
-      console.log('this.locationDetailInfo', this.locationDetailInfo);
-    });
+    }
   }
 
   // get cateogry
@@ -623,14 +737,18 @@ export default class ConsultResponseDetail extends BaseComponent {
     this.selectedAdmin = admin;
   }
 
+  cancelSelection() {
+    this.selectedAdmin = new AdminDto(BaseUser);
+  }
+
   // 담당자 본인으로 정하기
-  // assignYourselfAdmin() {
-  //   ConsultResponseService.assignAdmin(this.consultResponseDto.id).subscribe(
-  //     res => {
-  //       this.findOne(this.consultResponseDto.id);
-  //     },
-  //   );
-  // }
+  assignYourselfAdmin() {
+    ConsultResponseService.assignAdmin(this.consultResponseDto.id).subscribe(
+      res => {
+        this.findOne(this.consultResponseDto.id);
+      },
+    );
+  }
 
   // 지도 가져오기
   // setMap(district: consultResponseDto) {
@@ -684,12 +802,32 @@ export default class ConsultResponseDetail extends BaseComponent {
 
   // update consult response
   updateConsultResponse() {
+    if (this.selectedAdmin) {
+      this.consultResponseUpdateDto.adminId = this.selectedAdmin.no;
+    }
     ConsultResponseService.update(
       this.$route.params.id,
       this.consultResponseUpdateDto,
     ).subscribe(res => {
       if (res) {
         toast.success('수정완료');
+        this.findOne(this.$route.params.id);
+      }
+    });
+  }
+
+  // cancel reseration
+  cancelReservation() {
+    this.reservationCheckDto.phone = this.consultResponseDto.reservation.phone;
+    this.reservationCheckDto.reservationCode = this.consultResponseDto.reservation.reservationCode;
+    console.log(this.reservationCheckDto);
+    ReservationService.deleteOne(
+      this.consultResponseDto.reservation.id,
+      this.reservationCheckDto,
+    ).subscribe(res => {
+      if (res) {
+        toast.success('취소완료');
+        this.$bvModal.hide('cancel_reservation');
         this.findOne(this.$route.params.id);
       }
     });

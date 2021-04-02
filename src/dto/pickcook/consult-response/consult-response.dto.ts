@@ -1,5 +1,6 @@
 import { BaseDto } from '@/core';
 import {
+  ADMIN_USER,
   AGE_GROUP,
   BRAND_CONSULT,
   FNB_OWNER,
@@ -8,6 +9,7 @@ import {
   REVENUE_RANGE,
   TENTATIVE_OPEN_OPTION,
 } from '@/services/shared';
+import { ReservationDto } from '../reservation';
 
 export class ConsultResponseDto extends BaseDto<ConsultResponseDto> {
   id: number;
@@ -36,4 +38,7 @@ export class ConsultResponseDto extends BaseDto<ConsultResponseDto> {
   consultCodeStatus?: BRAND_CONSULT;
   operationSentenceResponse?: any;
   proforma?: any;
+  adminId?: number;
+  admin?: ADMIN_USER;
+  reservation?: ReservationDto;
 }

@@ -741,6 +741,10 @@ export default class ConsultResponseDetail extends BaseComponent {
     this.selectedAdmin = new AdminDto(BaseUser);
   }
 
+  paginateSearch() {
+    this.findAdmin(true);
+  }
+
   // 담당자 본인으로 정하기
   assignYourselfAdmin() {
     ConsultResponseService.assignAdmin(this.consultResponseDto.id).subscribe(

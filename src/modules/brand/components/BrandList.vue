@@ -1,7 +1,7 @@
 <template>
   <section>
     <SectionTitle title="브랜드 관리" divider></SectionTitle>
-    <div class="search-box my-4" v-on:keyup.enter="search(true, true)">
+    <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
         <b-col cols="6" sm="4" md="3">
           <b-form-group label="업종">
@@ -123,9 +123,7 @@
       <b-row align-h="center">
         <div>
           <b-button variant="secondary" @click="clearOut()">초기화</b-button>
-          <b-button variant="primary" @click="search(true, true)"
-            >검색</b-button
-          >
+          <b-button variant="primary" @click="search()">검색</b-button>
         </div>
       </b-row>
     </div>
@@ -212,7 +210,7 @@
             <tr
               v-for="brand in brandList"
               :key="brand.no"
-              @click="findOne(brand.no)"
+              @click="$router.push(`/brand/${brand.no}`)"
               style="cursor:pointer"
             >
               <td>{{ brand.no }}</td>
@@ -497,7 +495,7 @@ export default class BrandList extends BaseComponent {
   private searchPramsDto: any = {};
 
   // search brand
-  search(isPagination?: boolean, isSearch?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1; // 최초 페이지 진입시 페이지 초기화
@@ -521,8 +519,14 @@ export default class BrandList extends BaseComponent {
     );
   }
 
+  // pagination
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
+  }
+
+  // serach
+  search() {
+    this.findAll(true, true);
   }
 
   // get food category
@@ -551,12 +555,7 @@ export default class BrandList extends BaseComponent {
   // clear brand search dto
   clearOut() {
     this.brandSearchDto = new BrandListDto();
-    this.$router.replace({ query: null });
-  }
-
-  // find brand detail
-  findOne(id) {
-    this.$router.push(`/brand/${id}`);
+    this.$router.push({ query: null });
   }
 
   // create brand
@@ -602,9 +601,9 @@ export default class BrandList extends BaseComponent {
       this.brandSearchDto = query;
       this.pagination.limit = +query.limit;
       this.pagination.page = +query.page;
-      this.search(true);
+      this.paginateSearch();
     } else {
-      this.search();
+      this.findAll();
     }
 
     this.getCommonCodes();

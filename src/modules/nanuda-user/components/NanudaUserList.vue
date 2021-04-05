@@ -1,9 +1,9 @@
 <template>
   <section>
     <SectionTitle title="사용자 관리" divider></SectionTitle>
-    <div class="search-box my-4" v-on:keyup.enter="search(true, true)">
+    <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <!-- <b-col cols="6" md="2" class="mb-2">
+        <b-col cols="12" sm="6" md="3" class="mb-3">
           <label for="user_no">사용자 ID</label>
           <input
             type="text"
@@ -11,7 +11,7 @@
             id="user_no"
             v-model="nanudaUserSearchDto.no"
           />
-        </b-col>-->
+        </b-col>
         <b-col cols="12" sm="6" md="3" class="mb-3">
           <label>사용자명</label>
           <input
@@ -32,9 +32,7 @@
       <b-row align-h="center">
         <div>
           <b-button variant="secondary" @click="clearOut()">초기화</b-button>
-          <b-button variant="primary" @click="search(true, true)"
-            >검색</b-button
-          >
+          <b-button variant="primary" @click="search()">검색</b-button>
         </div>
       </b-row>
     </div>
@@ -218,8 +216,8 @@ export default class NanudaUserList extends BaseComponent {
   private yn: YN[] = [...CONST_YN];
   private searchPramsDto: any = {};
 
-  // search nanuda user
-  search(isPagination?: boolean, isSearch?: boolean) {
+  // find All Nanuda user
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
@@ -238,7 +236,6 @@ export default class NanudaUserList extends BaseComponent {
       if (res) {
         this.nanudaUserList = res.data.items;
         this.nanudaUserTotalCount = res.data.totalCount;
-
         this.$router.push({
           query: this.searchPramsDto,
         });
@@ -246,15 +243,23 @@ export default class NanudaUserList extends BaseComponent {
     });
   }
 
+  // search nanuda user
+  search() {
+    this.findAll(true, true);
+  }
+
+  // clearout search dto
   clearOut() {
     this.nanudaUserSearchDto = new NanudaUserListDto();
-    this.$router.replace({ query: null });
+    this.$router.push({ query: null });
   }
 
+  // pagination
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
   }
 
+  // create nanuda user
   createUser() {
     NanudaUserService.create(this.nanudaUserCreateDto).subscribe(res => {
       if (res) {
@@ -264,6 +269,7 @@ export default class NanudaUserList extends BaseComponent {
     });
   }
 
+  // clearout create dto
   clearOutCreateDto() {
     this.nanudaUserCreateDto = new NanudaUserDto(BaseUser);
   }
@@ -274,9 +280,9 @@ export default class NanudaUserList extends BaseComponent {
       this.nanudaUserSearchDto = query;
       this.pagination.limit = +query.limit;
       this.pagination.page = +query.page;
-      this.search(true);
+      this.paginateSearch();
     } else {
-      this.search();
+      this.findAll();
     }
   }
 }

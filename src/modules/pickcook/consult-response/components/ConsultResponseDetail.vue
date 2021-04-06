@@ -113,17 +113,20 @@
           <template v-slot:body>
             <b-row>
               <b-col lg="6">
-                <ul class="u-list">
-                  <li
+                <div class="mt-2">
+                  <div
+                    class="card border p-3 mt-2"
                     v-if="
                       consultResponseDto.fnbOwnerCodeStatus &&
                         consultResponseDto.fnbOwnerCodeStatus.comment
                     "
                   >
-                    창업자 유형 :
-                    {{ consultResponseDto.fnbOwnerCodeStatus.comment }}
-                  </li>
-                </ul>
+                    <p>Q. 창업자 유형</p>
+                    <p class="mt-2 text-primary">
+                      A. {{ consultResponseDto.fnbOwnerCodeStatus.comment }}
+                    </p>
+                  </div>
+                </div>
                 <div v-if="consultResponseDto.proforma" class="mt-2">
                   <div
                     v-for="question in consultResponseDto.proforma.questions"
@@ -147,11 +150,11 @@
                       class="custom-select"
                       v-model="consultResponseUpdateDto.consultStatus"
                     >
-                      <b-select-option
+                      <b-form-select-option
                         v-for="status in brandConsultStatus"
                         :key="status.key"
                         :value="status.value"
-                        >{{ status.comment }}</b-select-option
+                        >{{ status.comment }}</b-form-select-option
                       >
                     </b-form-select>
                   </b-form-group>
@@ -176,23 +179,73 @@
                         consultResponseDto.reservation.isCancelYn !== 'Y'
                     "
                   >
-                    <b-form-group label="미팅 예약 날짜">
-                      <b-form-input
-                        :value="
-                          ` ${consultResponseDto.reservation.reservationDate.substr(
-                            0,
-                            10,
-                          )}  ${consultResponseDto.reservation.reservationTime}`
-                        "
-                        disabled
-                      ></b-form-input>
-                    </b-form-group>
+                    <b-form-row>
+                      <b-col cols="6">
+                        <b-form-group label="미팅 예약 날짜">
+                          <b-form-datepicker
+                            v-model="reservationUpdateDto.reservationDate"
+                            @input="getReservationTimes($event)"
+                          >
+                          </b-form-datepicker>
+                        </b-form-group>
+                      </b-col>
+                      <b-col cols="6">
+                        <b-form-group label="미팅 예약 시간">
+                          <b-form-select
+                            v-model="reservationUpdateDto.reservationTime"
+                          >
+                            <b-form-select-option
+                              :key="index"
+                              :value="time.value"
+                              v-for="(time, index) in reservationTimes"
+                              :disabled="!time.available"
+                            >
+                              {{ time.value }}
+                            </b-form-select-option>
+                          </b-form-select>
+                        </b-form-group>
+                      </b-col>
+                    </b-form-row>
                     <div class="mt-2 text-right">
-                      <!-- <b-button variant="info" v-b-modal.update_reservation>
-                      변경
-                    </b-button> -->
+                      <b-button variant="info" @click="updateReservation()">
+                        예약 변경
+                      </b-button>
                       <b-button variant="danger" v-b-modal.cancel_reservation>
-                        취소
+                        예약 취소
+                      </b-button>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <b-form-row>
+                      <b-col cols="6">
+                        <b-form-group label="미팅 예약 날짜">
+                          <b-form-datepicker
+                            v-model="reservationCreateDto.reservationDate"
+                            @input="getReservationTimes($event)"
+                          >
+                          </b-form-datepicker>
+                        </b-form-group>
+                      </b-col>
+                      <b-col cols="6">
+                        <b-form-group label="미팅 예약 시간">
+                          <b-form-select
+                            v-model="reservationCreateDto.reservationTime"
+                          >
+                            <b-form-select-option
+                              :key="index"
+                              :value="time.value"
+                              v-for="(time, index) in reservationTimes"
+                              :disabled="!time.available"
+                            >
+                              {{ time.value }}
+                            </b-form-select-option>
+                          </b-form-select>
+                        </b-form-group>
+                      </b-col>
+                    </b-form-row>
+                    <div class="mt-2 text-right">
+                      <b-button variant="primary" @click="createReservation()">
+                        예약 추가
                       </b-button>
                     </div>
                   </template>
@@ -205,7 +258,7 @@
                     placeholder="내용 입력해주세요"
                     rows="10"
                     max-rows="20"
-                    style="height:400px"
+                    style="height:240px"
                   ></b-form-textarea>
                 </div>
               </b-col>
@@ -602,15 +655,19 @@
       header-text-variant="light"
       hide-footer
     >
-      <div class="text-center">
+      <div class="text-center mb-2">
         <p>
           <b>정말로 취소하시겠습니까?</b>
         </p>
-        <div class="mt-2 text-right">
-          <b-button variant="danger" @click="cancelReservation()"
-            >예약취소</b-button
-          >
-        </div>
+      </div>
+      <b-form-group label="취소사유">
+        <b-form-input v-model="reservationDeleteReasonDto.deleteReason">
+        </b-form-input>
+      </b-form-group>
+      <div class="mt-2 text-right">
+        <b-button variant="danger" @click="cancelReservation()"
+          >예약취소</b-button
+        >
       </div>
     </b-modal>
   </section>
@@ -623,12 +680,18 @@ import {
   AdminSendMessageDto,
   ConsultResponseDto,
   ConsultResponseUpdateDto,
-  ReservationCheckDto,
+  ReservationCheckTimeDto,
+  ReservationCreateDto,
+  ReservationDeleteReasonDto,
+  ReservationUpdateDto,
 } from '@/dto';
 import {
   BEST_FOOD_CATEGORY,
   BRAND_CONSULT,
   CONST_BEST_FOOD_CATEGORY,
+  CONST_RESERVATION_HOURS,
+  RESERVATION_HOURS,
+  RESERVATION_HOURS_JSON,
 } from '@/services/shared';
 import { Component, Vue } from 'vue-property-decorator';
 import { getStatusColor } from '@/core/utils/status-color.util';
@@ -668,13 +731,45 @@ export default class ConsultResponseDetail extends BaseComponent {
     ...CONST_BEST_FOOD_CATEGORY,
   ];
 
-  private reservationCheckDto = new ReservationCheckDto();
+  private reservationCreateDto = new ReservationCreateDto();
+  private reservationUpdateDto = new ReservationUpdateDto();
+  private reservationDeleteReasonDto = new ReservationDeleteReasonDto();
+  private reservationCheckTimeDto = new ReservationCheckTimeDto();
+  private reservationTimes: any[] = [];
+  private reservationDate = '';
 
   private adminList: AdminDto[] = [];
   private adminSearchDto = new AdminListDto();
   private adminTotalCount = null;
   private paginationAdmin = new Pagination();
   private selectedAdmin: AdminDto = new AdminDto(BaseUser);
+
+  private configOptions: any = {
+    format: 'YYYY-MM-DD hh:mm A',
+    icons: {
+      time: 'far fa-clock',
+      date: 'far fa-calendar',
+      up: 'fas fa-arrow-up',
+      down: 'fas fa-arrow-down',
+      previous: 'fas fa-chevron-left',
+      next: 'fas fa-chevron-right',
+      today: 'fas fa-calendar-check',
+      clear: 'far fa-trash-alt',
+      close: 'far fa-times-circle',
+    },
+  };
+
+  // get reservation time
+  getReservationTimes(date: string) {
+    this.reservationCheckTimeDto.reservationDate = date;
+    ReservationService.getAvailableTimes(
+      this.reservationCheckTimeDto,
+    ).subscribe(res => {
+      if (res) {
+        this.reservationTimes = res.data;
+      }
+    });
+  }
 
   // get status color
   getStatusColor(status: BRAND_CONSULT) {
@@ -800,6 +895,13 @@ export default class ConsultResponseDetail extends BaseComponent {
         this.getLocationInfoDetail();
         this.consultResponseUpdateDto.consultStatus = this.consultResponseDto.consultStatus;
         this.consultResponseUpdateDto.description = this.consultResponseDto.description;
+        this.reservationUpdateDto.reservationDate = this.consultResponseDto.reservation.reservationDate;
+        this.reservationUpdateDto.reservationTime = this.consultResponseDto.reservation.reservationTime;
+        this.getReservationTimes(
+          this.consultResponseDto.reservation.reservationDate
+            .toString()
+            .slice(0, 10),
+        );
       }
     });
   }
@@ -820,14 +922,37 @@ export default class ConsultResponseDetail extends BaseComponent {
     });
   }
 
-  // cancel reseration
+  // create reservation
+  createReservation() {
+    this.reservationCreateDto.consultId = this.consultResponseDto.id;
+    this.reservationCreateDto.reservationCode = this.consultResponseDto.reservationCode;
+    ReservationService.create(this.reservationCreateDto).subscribe(res => {
+      if (res) {
+        toast.success('추가완료');
+        this.findOne(this.$route.params.id);
+      }
+    });
+  }
+
+  // update reservation
+  updateReservation() {
+    this.reservationUpdateDto.reservationCode = this.consultResponseDto.reservationCode;
+    ReservationService.update(
+      this.consultResponseDto.reservation.id,
+      this.reservationUpdateDto,
+    ).subscribe(res => {
+      if (res) {
+        toast.success('변경완료');
+        this.findOne(this.$route.params.id);
+      }
+    });
+  }
+
+  // cancel reservation
   cancelReservation() {
-    this.reservationCheckDto.phone = this.consultResponseDto.reservation.phone;
-    this.reservationCheckDto.reservationCode = this.consultResponseDto.reservation.reservationCode;
-    console.log(this.reservationCheckDto);
     ReservationService.deleteOne(
       this.consultResponseDto.reservation.id,
-      this.reservationCheckDto,
+      this.reservationDeleteReasonDto,
     ).subscribe(res => {
       if (res) {
         toast.success('취소완료');

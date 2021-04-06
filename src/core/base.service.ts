@@ -236,8 +236,12 @@ export class BaseService extends Vue {
     return this.__api('get', path, params, apiUrlType);
   }
 
-  protected post<T>(path: string, params?: any): AxiosObservable<T> {
-    return this.__api('post', path, params);
+  protected post<T>(
+    path: string,
+    params?: any,
+    apiUrlType?: ApiUrlType,
+  ): AxiosObservable<T> {
+    return this.__api('post', path, params, apiUrlType);
   }
 
   protected patch<T>(

@@ -736,7 +736,6 @@ export default class ConsultResponseDetail extends BaseComponent {
   private reservationDeleteReasonDto = new ReservationDeleteReasonDto();
   private reservationCheckTimeDto = new ReservationCheckTimeDto();
   private reservationTimes: any[] = [];
-  private reservationDate = '';
 
   private adminList: AdminDto[] = [];
   private adminSearchDto = new AdminListDto();
@@ -895,13 +894,18 @@ export default class ConsultResponseDetail extends BaseComponent {
         this.getLocationInfoDetail();
         this.consultResponseUpdateDto.consultStatus = this.consultResponseDto.consultStatus;
         this.consultResponseUpdateDto.description = this.consultResponseDto.description;
-        this.reservationUpdateDto.reservationDate = this.consultResponseDto.reservation.reservationDate;
-        this.reservationUpdateDto.reservationTime = this.consultResponseDto.reservation.reservationTime;
-        this.getReservationTimes(
-          this.consultResponseDto.reservation.reservationDate
-            .toString()
-            .slice(0, 10),
-        );
+        if (
+          this.consultResponseDto.reservation &&
+          this.consultResponseDto.reservation.isCancelYn !== 'Y'
+        ) {
+          this.reservationUpdateDto.reservationDate = this.consultResponseDto.reservation.reservationDate;
+          this.reservationUpdateDto.reservationTime = this.consultResponseDto.reservation.reservationTime;
+          this.getReservationTimes(
+            this.consultResponseDto.reservation.reservationDate
+              .toString()
+              .slice(0, 10),
+          );
+        }
       }
     });
   }
@@ -936,7 +940,6 @@ export default class ConsultResponseDetail extends BaseComponent {
 
   // update reservation
   updateReservation() {
-    this.reservationUpdateDto.reservationCode = this.consultResponseDto.reservationCode;
     ReservationService.update(
       this.consultResponseDto.reservation.id,
       this.reservationUpdateDto,

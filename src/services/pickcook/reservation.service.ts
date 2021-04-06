@@ -49,8 +49,11 @@ export class ReservationService extends BaseService {
   deleteOne(id, reservationDeleteReasonDto: ReservationDeleteReasonDto) {
     return super.delete<ReservationDeleteReasonDto>(
       `admin/reservation/${id}`,
-      reservationDeleteReasonDto,
+      null,
       ApiUrlType.PICKCOOK,
+      {
+        deleteReason: reservationDeleteReasonDto.deleteReason,
+      },
     );
   }
 

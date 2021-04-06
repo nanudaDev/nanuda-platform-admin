@@ -12,5 +12,5 @@ export const StagingEnvironment: Environment = {
   homepageBaseUrl: 'http://211.249.62.165:8185',
   homepageSiteUrl: 'http://211.249.62.165:3000',
   analysisUrl: 'https://platform-analysis-test.nanudakitchen.com/',
-  pickcookUrl: 'https://pickcook-api-testing.nanudakitchen.com/',
+  pickcookUrl: 'https://pickcook-api-test.nanudakitchen.com/',
 };

@@ -2,6 +2,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import store from './store';
 import router from '../src/router';
+
 import {
   DevelopmentEnvironment,
   StagingEnvironment,
@@ -9,9 +10,8 @@ import {
   EnvironmentType,
   ProductionEnvironment,
 } from '../environments';
+
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
-// import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
 import VueDaumPostcode from 'vue-daum-postcode';
 
 import MainLayout from '../src/modules/_layouts/Layout/MainLayout.layout.vue';
@@ -20,8 +20,13 @@ import AnalysisLayout from '../src/modules/_layouts/Layout/AnalysisLayout.layout
 import PickcookLayout from '../src/modules/_layouts/Layout/PickcookLayout.layout.vue';
 import SectionTitle from '../src/modules/_components/SectionTitle.vue';
 import BaseCard from '../src/modules/_components/BaseCard.vue';
-import '@/core/guards/auth-role.guard';
 import JsonExcel from 'vue-json-excel';
+import datePicker from 'vue-bootstrap-datetimepicker';
+
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
+// import '@fortawesome/fontawesome-free/css/all.css';
+// import '@fortawesome/fontawesome-free/js/all.js';
 
 import {
   DatePipeTransformer,
@@ -36,7 +41,8 @@ import {
   CurrencyPipeTransformer,
   SpaceTypePipeTransformer,
   NumberPipeTransformer,
-} from './core';
+} from '@/core';
+import '@/core/guards/auth-role.guard';
 
 let env = new Environment();
 if (process.env.NODE_ENV === EnvironmentType.development) {
@@ -58,7 +64,6 @@ Vue.component('NonMainLayout', NonMainLayout);
 Vue.component('MainLayout', MainLayout);
 Vue.component('AnalysisLayout', AnalysisLayout);
 Vue.component('PickcookLayout', PickcookLayout);
-
 Vue.component('SectionTitle', SectionTitle);
 Vue.component('BaseCard', BaseCard);
 Vue.component('downloadExcel', JsonExcel);
@@ -81,6 +86,7 @@ SpaceTypePipeTransformer();
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(JsonExcel);
+Vue.use(datePicker);
 
 // daum kakao
 Vue.use(VueDaumPostcode);

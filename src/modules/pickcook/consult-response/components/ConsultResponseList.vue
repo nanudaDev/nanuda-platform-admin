@@ -54,6 +54,7 @@
         <b-col cols="12" sm="6" md="3">
           <b-form-group label="미팅 취소사유">
             <b-form-select v-model="consultResponseSerchDto.deleteReason">
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="reason in reservationDeleteReasons"
                 :key="reason"
@@ -77,6 +78,20 @@
           <span>TOTAL</span>
           <strong class="text-primary">{{ consultResponseTotalCount }}</strong>
         </h5>
+        <b-form-select
+          v-model="newLimit"
+          size="sm"
+          class="select-limit ml-3"
+          @change="search()"
+          v-if="consultResponseTotalCount"
+        >
+          <b-form-select-option
+            v-for="count in paginationCount"
+            :key="count"
+            :value="count"
+            >{{ count }}개</b-form-select-option
+          >
+        </b-form-select>
       </div>
       <div>
         <b-button
@@ -232,7 +247,7 @@
         pills
         :total-rows="consultResponseTotalCount"
         :per-page="pagination.limit"
-        @input="paginateSearch"
+        @input="paginateSearch()"
         class="mt-4 justify-content-center"
       ></b-pagination>
     </template>
@@ -259,13 +274,16 @@ import {
   BRAND_CONSULT,
   CONST_BRAND_CONSULT,
   CONST_FNB_OWNER,
+  CONST_PAGINATION_COUNT,
   CONST_RESERVATION_DELETE_REASON,
   FNB_OWNER,
+  PaginationCount,
   RESERVATION_DELETE_REASON,
 } from '@/services/shared';
 import { getStatusColor } from '@/core/utils/status-color.util';
 import CommonCodeService from '@/services/pickcook/common-code.service';
 import { PickcookCodeManagementDto } from '@/services/init/dto';
+import { ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'ConsultResponseList',
@@ -275,6 +293,10 @@ export default class ConsultResponseList extends BaseComponent {
   private consultResponseSerchDto = new ConsultResponseListDto();
   private pagination = new Pagination();
   private consultResponseTotalCount = null;
+  private newLimit = null;
+  private paginationCount: PaginationCount[] = [...CONST_PAGINATION_COUNT];
+  private searchPramsDto: any = {};
+
   private dataLoading = false;
   private fnbOwnerStatus: PickcookCodeManagementDto[] = [];
   private consultStatus: PickcookCodeManagementDto[] = [];
@@ -297,6 +319,8 @@ export default class ConsultResponseList extends BaseComponent {
     연락처: 'phone',
     미팅예약날짜: 'reservation.reservationDate',
     미팅예약시간: 'reservation.reservationTime',
+    미팅취소사유: 'reservation.deleteReason',
+    취소기타사유: 'reservation.deleteReasonEtc',
     담당자: 'admin.name',
     신청상태: 'consultCodeStatus.comment',
     신청일: 'created',
@@ -334,12 +358,19 @@ export default class ConsultResponseList extends BaseComponent {
     });
   }
 
-  search(isPagination?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
+    this.pagination.limit = this.newLimit;
     if (!isPagination) {
       this.pagination.page = 1;
+    } else {
+      if (isSearch) this.pagination.page = 1;
+      this.searchPramsDto = Object.assign(
+        this.consultResponseSerchDto,
+        this.pagination,
+      );
     }
-    this.pagination.limit = 50;
+
     ConsultResponseService.findAll(
       this.consultResponseSerchDto,
       this.pagination,
@@ -347,21 +378,36 @@ export default class ConsultResponseList extends BaseComponent {
       this.dataLoading = false;
       this.consultResponseList = res.data.items;
       this.consultResponseTotalCount = res.data.totalCount;
+      this.$router.push({
+        query: this.searchPramsDto,
+      });
     });
+  }
+
+  search() {
+    this.findAll(true, true);
+  }
+
+  paginateSearch() {
+    this.findAll(true);
   }
 
   clearOut() {
     this.consultResponseSerchDto = new ConsultResponseListDto();
-    this.pagination = new Pagination();
-    this.search();
-  }
-
-  paginateSearch() {
-    this.search(true);
+    this.$router.push({ query: null });
   }
 
   created() {
-    this.search();
+    this.newLimit = PaginationCount.TWENTY;
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.consultResponseSerchDto = query;
+      this.pagination.page = +query.page;
+      this.newLimit = +query.limit;
+      this.paginateSearch();
+    } else {
+      this.findAll();
+    }
     this.getCommonCodes();
   }
 }

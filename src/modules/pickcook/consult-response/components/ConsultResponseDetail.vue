@@ -164,13 +164,10 @@
                 </div>
                 <div class="my-2">
                   <b-form-group
-                    :label="
-                      `미팅 예약 코드 (예약 ID - ${consultResponseDto.reservation.id})`
+                    label="
+                      미팅 예약 코드
                     "
-                    v-if="
-                      consultResponseDto.reservationCode ||
-                        consultResponseDto.reservation
-                    "
+                    v-if="consultResponseDto.reservationCode"
                   >
                     <b-form-input
                       v-model="consultResponseDto.reservationCode"

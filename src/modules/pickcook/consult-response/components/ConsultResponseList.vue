@@ -51,6 +51,18 @@
             </b-form-select>
           </b-form-group>
         </b-col>
+        <b-col cols="12" sm="6" md="3">
+          <b-form-group label="미팅 취소사유">
+            <b-form-select v-model="consultResponseSerchDto.deleteReason">
+              <b-form-select-option
+                v-for="reason in reservationDeleteReasons"
+                :key="reason"
+                :value="reason"
+                >{{ reason }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
       </b-form-row>
       <b-row align-h="center">
         <div>
@@ -174,14 +186,24 @@
               </td>
               <td>{{ consult.phone | phoneTransformer }}</td>
               <td>
-                <template
-                  v-if="
-                    consult.reservation &&
-                      consult.reservation.isCancelYn !== 'Y'
-                  "
-                >
-                  {{ consult.reservation.reservationDate.substr(0, 10) }}
-                  {{ consult.reservation.reservationTime }}
+                <template v-if="consult.reservation">
+                  <template v-if="consult.reservation.isCancelYn !== 'Y'">
+                    {{
+                      consult.reservation.reservationDate | dateOnlyTransformer
+                    }}
+                    {{ consult.reservation.reservationTime }}
+                  </template>
+                  <template v-else>
+                    <p class="red-text" v-if="consult.reservation.deleteReason">
+                      <b-badge variant="danger">취소</b-badge>
+                      <template v-if="consult.reservation.deleteReasonEtc">
+                        {{ consult.reservation.deleteReasonEtc }}
+                      </template>
+                      <template v-else>
+                        {{ consult.reservation.deleteReason }}
+                      </template>
+                    </p>
+                  </template>
                 </template>
               </td>
               <td>
@@ -237,7 +259,9 @@ import {
   BRAND_CONSULT,
   CONST_BRAND_CONSULT,
   CONST_FNB_OWNER,
+  CONST_RESERVATION_DELETE_REASON,
   FNB_OWNER,
+  RESERVATION_DELETE_REASON,
 } from '@/services/shared';
 import { getStatusColor } from '@/core/utils/status-color.util';
 import CommonCodeService from '@/services/pickcook/common-code.service';
@@ -257,9 +281,14 @@ export default class ConsultResponseList extends BaseComponent {
   private codeManagementDto = new PickcookCodeManagementDto();
   private paginationCode = new Pagination();
 
+  private reservationDeleteReasons: RESERVATION_DELETE_REASON[] = [
+    ...CONST_RESERVATION_DELETE_REASON,
+  ];
+
   private selectedProductConsultNos: number[] = [];
   private consultStatusUpdateDto = new ProductConsultStatusUpdateDto();
   private newDate = new Date();
+
   // excel options
   private fields = {
     ID: 'id',

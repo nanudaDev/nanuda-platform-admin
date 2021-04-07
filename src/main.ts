@@ -30,6 +30,7 @@ import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
 
 import {
   DatePipeTransformer,
+  DateOnlyPipeTransformer,
   EnumPipeTransformer,
   StringPipeTransformer,
   StringViewPipeTransformer,
@@ -72,6 +73,7 @@ Vue.component('downloadExcel', JsonExcel);
 BizNoPipeTransformer();
 CurrencyPipeTransformer();
 DatePipeTransformer();
+DateOnlyPipeTransformer();
 EnumPipeTransformer();
 NumberPipeTransformer();
 PhonePipeTransformer();

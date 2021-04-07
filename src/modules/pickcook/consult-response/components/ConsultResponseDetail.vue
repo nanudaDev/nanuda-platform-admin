@@ -164,8 +164,13 @@
                 </div>
                 <div class="my-2">
                   <b-form-group
-                    label="미팅 예약 코드"
-                    v-if="consultResponseDto.reservationCode"
+                    :label="
+                      `미팅 예약 코드 (예약 ID - ${consultResponseDto.reservation.id})`
+                    "
+                    v-if="
+                      consultResponseDto.reservationCode ||
+                        consultResponseDto.reservation
+                    "
                   >
                     <b-form-input
                       v-model="consultResponseDto.reservationCode"
@@ -173,47 +178,53 @@
                     >
                     </b-form-input>
                   </b-form-group>
-                  <template
-                    v-if="
-                      consultResponseDto.reservation &&
-                        consultResponseDto.reservation.isCancelYn !== 'Y'
-                    "
-                  >
-                    <b-form-row>
-                      <b-col cols="6">
-                        <b-form-group label="미팅 예약 날짜">
-                          <b-form-datepicker
-                            v-model="reservationUpdateDto.reservationDate"
-                            @input="getReservationTimes($event)"
-                          >
-                          </b-form-datepicker>
-                        </b-form-group>
-                      </b-col>
-                      <b-col cols="6">
-                        <b-form-group label="미팅 예약 시간">
-                          <b-form-select
-                            v-model="reservationUpdateDto.reservationTime"
-                          >
-                            <b-form-select-option
-                              :key="index"
-                              :value="time.value"
-                              v-for="(time, index) in reservationTimes"
-                              :disabled="!time.available"
+                  <template v-if="consultResponseDto.reservation">
+                    <template
+                      v-if="consultResponseDto.reservation.isCancelYn !== 'Y'"
+                    >
+                      <b-form-row>
+                        <b-col cols="6">
+                          <b-form-group label="미팅 예약 날짜">
+                            <b-form-datepicker
+                              v-model="reservationUpdateDto.reservationDate"
+                              @input="getReservationTimes($event)"
                             >
-                              {{ time.value }}
-                            </b-form-select-option>
-                          </b-form-select>
-                        </b-form-group>
-                      </b-col>
-                    </b-form-row>
-                    <div class="mt-2 text-right">
-                      <b-button variant="info" @click="updateReservation()">
-                        예약 변경
-                      </b-button>
-                      <b-button variant="danger" v-b-modal.cancel_reservation>
-                        예약 취소
-                      </b-button>
-                    </div>
+                            </b-form-datepicker>
+                          </b-form-group>
+                        </b-col>
+                        <b-col cols="6">
+                          <b-form-group label="미팅 예약 시간">
+                            <b-form-select
+                              v-model="reservationUpdateDto.reservationTime"
+                            >
+                              <b-form-select-option
+                                :key="index"
+                                :value="time.value"
+                                v-for="(time, index) in reservationTimes"
+                                :disabled="!time.available"
+                              >
+                                {{ time.value }}
+                              </b-form-select-option>
+                            </b-form-select>
+                          </b-form-group>
+                        </b-col>
+                      </b-form-row>
+                      <div class="mt-2 text-right">
+                        <b-button variant="info" @click="updateReservation()">
+                          예약 변경
+                        </b-button>
+                        <b-button variant="danger" v-b-modal.cancel_reservation>
+                          예약 취소
+                        </b-button>
+                      </div>
+                    </template>
+                    <template v-else>
+                      <p class="red-text">
+                        <b-badge variant="danger">취소</b-badge>
+                        {{ consultResponseDto.reservation.deleteReason }}
+                        {{ consultResponseDto.reservation.deleteReasonEtc }}
+                      </p>
+                    </template>
                   </template>
                   <template v-else>
                     <b-form-row>
@@ -250,7 +261,7 @@
                     </div>
                   </template>
                 </div>
-                <div class="my-2">
+                <div class="my-4">
                   <label for="productConsultEtc">비고 내용</label>
                   <b-form-textarea
                     id="productConsultEtc"
@@ -666,7 +677,7 @@
           :key="index"
         >
           <b-form-radio
-            v-model="selectDeleteReason"
+            v-model="reservationDeleteReasonDto.deleteReason"
             :value="reason"
             name="delete_reason"
             @input="onSelectDeleteReason($event)"
@@ -675,17 +686,10 @@
           </b-form-radio>
         </b-form-group>
         <b-form-group>
-          <b-form-radio
-            name="delete_reason"
-            value="etc"
-            v-model="selectDeleteReason"
-            @input="onSelectDeleteReason($event)"
-          >
-            기타</b-form-radio
-          >
+          {{ reservationDeleteReasonDto.deleteReasonEtc }}
           <b-form-input
-            v-model="otherDeleteReason"
-            :disabled="selectDeleteReason !== 'etc'"
+            v-model="reservationDeleteReasonDto.deleteReasonEtc"
+            :disabled="reservationDeleteReasonDto.deleteReason !== '기타'"
             @input="onSelectOtherReason($event)"
             class="mt-2"
           >
@@ -991,19 +995,16 @@ export default class ConsultResponseDetail extends BaseComponent {
   }
 
   onSelectDeleteReason(value) {
-    if (value === 'etc') {
-      this.reservationDeleteReasonDto.deleteReason = this.otherDeleteReason;
+    if (value !== RESERVATION_DELETE_REASON.ETC) {
+      this.deleteReasonText = value;
+      this.reservationDeleteReasonDto.deleteReasonEtc = '';
     } else {
-      this.otherDeleteReason = '';
-      this.reservationDeleteReasonDto.deleteReason = this.selectDeleteReason;
+      this.deleteReasonText = '';
     }
-    this.deleteReasonText = this.reservationDeleteReasonDto.deleteReason;
   }
 
   onSelectOtherReason(value) {
-    this.otherDeleteReason = value;
-    this.reservationDeleteReasonDto.deleteReason = this.otherDeleteReason;
-    this.deleteReasonText = this.otherDeleteReason;
+    this.deleteReasonText = value;
   }
 
   // cancel reservation

@@ -51,9 +51,7 @@ export class ReservationService extends BaseService {
       `admin/reservation/${id}`,
       null,
       ApiUrlType.PICKCOOK,
-      {
-        deleteReason: reservationDeleteReasonDto.deleteReason,
-      },
+      reservationDeleteReasonDto,
     );
   }
 

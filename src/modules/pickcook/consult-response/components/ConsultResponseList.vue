@@ -78,7 +78,7 @@
           <span>TOTAL</span>
           <strong class="text-primary">{{ consultResponseTotalCount }}</strong>
         </h5>
-        <!-- <b-form-select
+        <b-form-select
           v-model="newLimit"
           size="sm"
           class="select-limit ml-3"
@@ -91,7 +91,7 @@
             :value="count"
             >{{ count }}개</b-form-select-option
           >
-        </b-form-select> -->
+        </b-form-select>
       </div>
       <div>
         <b-button
@@ -247,7 +247,7 @@
         pills
         :total-rows="consultResponseTotalCount"
         :per-page="pagination.limit"
-        @input="paginateSearch"
+        @input="paginateSearch()"
         class="mt-4 justify-content-center"
       ></b-pagination>
     </template>
@@ -360,6 +360,7 @@ export default class ConsultResponseList extends BaseComponent {
 
   findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
+    this.pagination.limit = this.newLimit;
     if (!isPagination) {
       this.pagination.page = 1;
     } else {
@@ -397,11 +398,12 @@ export default class ConsultResponseList extends BaseComponent {
   }
 
   created() {
+    this.newLimit = PaginationCount.TWENTY;
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.consultResponseSerchDto = query;
-      this.pagination.limit = +query.limit;
       this.pagination.page = +query.page;
+      this.newLimit = +query.limit;
       this.paginateSearch();
     } else {
       this.findAll();

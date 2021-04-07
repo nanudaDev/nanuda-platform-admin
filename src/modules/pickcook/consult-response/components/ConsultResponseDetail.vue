@@ -660,12 +660,43 @@
           <b>정말로 취소하시겠습니까?</b>
         </p>
       </div>
-      <b-form-group label="취소사유">
-        <b-form-input v-model="reservationDeleteReasonDto.deleteReason">
-        </b-form-input>
-      </b-form-group>
+      <div class="mt-3">
+        <b-form-group
+          v-for="(reason, index) in reservationDeleteReasons"
+          :key="index"
+        >
+          <b-form-radio
+            v-model="selectDeleteReason"
+            :value="reason"
+            name="delete_reason"
+            @input="onSelectDeleteReason($event)"
+          >
+            {{ reason }}
+          </b-form-radio>
+        </b-form-group>
+        <b-form-group>
+          <b-form-radio
+            name="delete_reason"
+            value="etc"
+            v-model="selectDeleteReason"
+            @input="onSelectDeleteReason($event)"
+          >
+            기타</b-form-radio
+          >
+          <b-form-input
+            v-model="otherDeleteReason"
+            :disabled="selectDeleteReason !== 'etc'"
+            @input="onSelectOtherReason($event)"
+            class="mt-2"
+          >
+          </b-form-input>
+        </b-form-group>
+      </div>
       <div class="mt-2 text-right">
-        <b-button variant="danger" @click="cancelReservation()"
+        <b-button
+          variant="danger"
+          @click="cancelReservation()"
+          :disabled="!deleteReasonText.length"
           >예약취소</b-button
         >
       </div>
@@ -689,7 +720,9 @@ import {
   BEST_FOOD_CATEGORY,
   BRAND_CONSULT,
   CONST_BEST_FOOD_CATEGORY,
+  CONST_RESERVATION_DELETE_REASON,
   CONST_RESERVATION_HOURS,
+  RESERVATION_DELETE_REASON,
   RESERVATION_HOURS,
   RESERVATION_HOURS_JSON,
 } from '@/services/shared';
@@ -736,6 +769,12 @@ export default class ConsultResponseDetail extends BaseComponent {
   private reservationDeleteReasonDto = new ReservationDeleteReasonDto();
   private reservationCheckTimeDto = new ReservationCheckTimeDto();
   private reservationTimes: any[] = [];
+  private reservationDeleteReasons: RESERVATION_DELETE_REASON[] = [
+    ...CONST_RESERVATION_DELETE_REASON,
+  ];
+  private selectDeleteReason = '';
+  private otherDeleteReason = '';
+  private deleteReasonText = '';
 
   private adminList: AdminDto[] = [];
   private adminSearchDto = new AdminListDto();
@@ -949,6 +988,22 @@ export default class ConsultResponseDetail extends BaseComponent {
         this.findOne(this.$route.params.id);
       }
     });
+  }
+
+  onSelectDeleteReason(value) {
+    if (value === 'etc') {
+      this.reservationDeleteReasonDto.deleteReason = this.otherDeleteReason;
+    } else {
+      this.otherDeleteReason = '';
+      this.reservationDeleteReasonDto.deleteReason = this.selectDeleteReason;
+    }
+    this.deleteReasonText = this.reservationDeleteReasonDto.deleteReason;
+  }
+
+  onSelectOtherReason(value) {
+    this.otherDeleteReason = value;
+    this.reservationDeleteReasonDto.deleteReason = this.otherDeleteReason;
+    this.deleteReasonText = this.otherDeleteReason;
   }
 
   // cancel reservation

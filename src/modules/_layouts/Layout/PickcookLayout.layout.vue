@@ -97,7 +97,6 @@ export default class PickcookLayout extends BaseComponent {
 </script>
 <style lang="scss">
 #pickcook-app {
-  padding: 0 1rem;
   #nav {
     background-color: #0b538d;
   }

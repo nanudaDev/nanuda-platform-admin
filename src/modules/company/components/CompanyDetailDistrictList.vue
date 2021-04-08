@@ -1,33 +1,36 @@
 <template>
-  <div v-if="companyDistrictListCount > 0" class="table-responsive">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th scope="col">NO</th>
-          <th scope="col">NAME</th>
-          <th scope="col">ADDRESS</th>
-          <th scope="col">STATUS</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="district in companyDistrictList"
-          :key="district.no"
-          @click="findOne(district.no)"
-          style="cursor:pointer"
-        >
-          <th scope="row">{{ district.no }}</th>
-          <td>{{ district.nameKr }}</td>
-          <td>{{ district.address }}</td>
-          <td>
-            <b-badge
-              :variant="getStatusColor(district.companyDistrictStatus)"
-              class="badge-pill p-2 mr-2"
-            >{{ district.companyDistrictStatus | enumTransformer }}</b-badge>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div v-if="companyDistrictListCount">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">지점명</th>
+            <th scope="col">지점주소</th>
+            <th scope="col">승인상태</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="district in companyDistrictList"
+            :key="district.no"
+            @click="findOne(district.no)"
+            style="cursor:pointer"
+          >
+            <th scope="row">{{ district.no }}</th>
+            <td>{{ district.nameKr }}</td>
+            <td>{{ district.address }}</td>
+            <td>
+              <b-badge
+                :variant="getStatusColor(district.companyDistrictStatus)"
+                class="badge-pill p-2 mr-2"
+                >{{ district.companyDistrictStatus | enumTransformer }}</b-badge
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <b-pagination
       v-model="pagination.page"
       v-if="companyDistrictListCount"

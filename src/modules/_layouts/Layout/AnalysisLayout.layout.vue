@@ -135,9 +135,6 @@ export default class AnalysisLayout extends BaseComponent {
     transform: rotate(360deg);
   }
 }
-#app {
-  padding: 0 1rem;
-}
 #Dashboard {
   #app-main {
     max-width: none;

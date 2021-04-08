@@ -72,14 +72,23 @@ select {
   font: inherit;
 }
 
+.page-content {
+  @media screen and (min-width: 992px) {
+    padding: 0 1rem;
+  }
+}
+
 .table-top {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  // flex-direction: row-reverse;
   margin-bottom: 1rem;
+
   .total-count {
     display: flex;
     align-items: center;
+    margin-top: 1rem;
     h5 {
       font-size: 14px;
       margin: 0;
@@ -87,6 +96,9 @@ select {
     .text-primary {
       margin-left: 0.25rem;
     }
+  }
+  .btn-wrap {
+    text-align: right;
   }
   .select-limit {
     width: 100px;
@@ -158,7 +170,8 @@ img {
   font-weight: bold;
 }
 
-.empty-data {
+.empty-data,
+.loading-spinner {
   display: flex;
   justify-content: center;
   align-items: center;

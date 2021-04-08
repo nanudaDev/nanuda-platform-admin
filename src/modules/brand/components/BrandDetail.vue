@@ -134,61 +134,71 @@
               <b-button variant="success" v-b-modal.add_menu>추가하기</b-button>
             </div>
           </template>
-          <div v-if="!dataLoading" class="table-responsive">
-            <table class="table table-hover" v-if="menuTotalCount">
-              <thead>
-                <tr>
-                  <th scope="col">ID</th>
-                  <th scope="col">메뉴명</th>
-                  <th scope="col">노출 여부</th>
-                  <th scope="col">대표 메뉴</th>
-                  <th scope="col">생성날짜</th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="menu in menus" :key="menu.no" style="cursor:pointer">
-                  <td>{{ menu.no }}</td>
-                  <td>{{ menu.nameKr }}</td>
-                  <td>
-                    <b-badge
-                      :variant="menu.showYn === 'Y' ? 'success' : 'danger'"
-                      >{{ menu.showYn }}</b-badge
-                    >
-                  </td>
-                  <td>
-                    <b-badge
-                      :variant="menu.mainYn === 'Y' ? 'success' : 'danger'"
-                      >{{ menu.mainYn }}</b-badge
-                    >
-                  </td>
-                  <td>{{ menu.createdAt | dateTransformer }}</td>
-                  <td>
-                    <b-button
-                      variant="primary"
-                      v-b-modal.update_menu
-                      @click="showMenuUpdateModal(menu.no)"
-                      >수정하기</b-button
-                    >
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div v-else class="empty-data">등록된 메뉴가 없습니다.</div>
-            <b-pagination
-              v-model="pagination.page"
-              v-if="menuTotalCount"
-              pills
-              :total-rows="menuTotalCount"
-              :per-page="pagination.limit"
-              @input="paginateSearch()"
-              class="mt-4 justify-content-center"
-            ></b-pagination>
-          </div>
-          <div class="half-circle-spinner mt-5" v-if="dataLoading">
-            <div class="circle circle-1"></div>
-            <div class="circle circle-2"></div>
-          </div>
+          <template v-if="!dataLoading">
+            <div v-if="menuTotalCount" class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">메뉴명</th>
+                    <th scope="col">노출 여부</th>
+                    <th scope="col">대표 메뉴</th>
+                    <th scope="col">등록일</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="menu in menus"
+                    :key="menu.no"
+                    style="cursor:pointer"
+                  >
+                    <td>{{ menu.no }}</td>
+                    <td>{{ menu.nameKr }}</td>
+                    <td>
+                      <b-badge
+                        :variant="menu.showYn === 'Y' ? 'success' : 'danger'"
+                        >{{ menu.showYn }}</b-badge
+                      >
+                    </td>
+                    <td>
+                      <b-badge
+                        :variant="menu.mainYn === 'Y' ? 'success' : 'danger'"
+                        >{{ menu.mainYn }}</b-badge
+                      >
+                    </td>
+                    <td>{{ menu.createdAt | dateTransformer }}</td>
+                    <td>
+                      <b-button
+                        variant="primary"
+                        v-b-modal.update_menu
+                        @click="showMenuUpdateModal(menu.no)"
+                        >수정하기</b-button
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <b-pagination
+                v-model="pagination.page"
+                v-if="menuTotalCount"
+                pills
+                :total-rows="menuTotalCount"
+                :per-page="pagination.limit"
+                @input="paginateSearch()"
+                class="mt-4 justify-content-center"
+              ></b-pagination>
+            </div>
+            <div v-else class="empty-data">등록된 메뉴가 없습니다</div>
+          </template>
+          <template v-else>
+            <div class="loading-spinner">
+              <div class="half-circle-spinner">
+                <div class="circle circle-1"></div>
+                <div class="circle circle-2"></div>
+              </div>
+            </div>
+          </template>
         </BaseCard>
       </b-col>
       <!-- <b-col cols="12" class="my-3" v-if="revenues && revenues.length > 0">

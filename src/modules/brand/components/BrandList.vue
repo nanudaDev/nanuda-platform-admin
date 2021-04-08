@@ -26,7 +26,7 @@
               class="custom-select"
               v-model="brandSearchDto.isRecommendedYn"
             >
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="yn in ynSelect"
                 :key="yn"
@@ -47,7 +47,7 @@
               class="custom-select"
               v-model="brandSearchDto.showYn"
             >
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="yn in ynSelect"
                 :key="yn"
@@ -60,7 +60,7 @@
         <b-col cols="6" sm="4" md="3">
           <b-form-group label="창업 비용">
             <b-form-select class="custom-select" v-model="brandSearchDto.cost">
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="cost in costValues"
                 :key="cost.no"
@@ -76,7 +76,7 @@
               class="custom-select"
               v-model="brandSearchDto.difficulty"
             >
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="difficulty in difficultyValues"
                 :key="difficulty.no"
@@ -92,7 +92,7 @@
               class="custom-select"
               v-model="brandSearchDto.storeCount"
             >
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="storeCount in storeCountValues"
                 :key="storeCount.no"

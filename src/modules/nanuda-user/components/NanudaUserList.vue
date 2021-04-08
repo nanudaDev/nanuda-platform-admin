@@ -201,7 +201,7 @@ import NanudaUserService from '../../../services/nanuda-user.service';
 import { CONST_YN, Pagination, YN } from '@/common';
 import { BaseUser } from '@/services/shared/auth';
 import toast from '../../../../resources/assets/js/services/toast.js';
-import { ReverseQueryParamMapper } from '@/core';
+import { ClearOutQueryParamMapper, ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'NanudaUserList',
@@ -214,7 +214,7 @@ export default class NanudaUserList extends BaseComponent {
   private pagination = new Pagination();
   private dataLoading = false;
   private yn: YN[] = [...CONST_YN];
-  private searchPramsDto: any = {};
+  private searchQueryParamsDto: any = {};
 
   // find All Nanuda user
   findAll(isPagination?: boolean, isSearch?: boolean) {
@@ -223,7 +223,7 @@ export default class NanudaUserList extends BaseComponent {
       this.pagination.page = 1;
     } else {
       if (isSearch) this.pagination.page = 1;
-      this.searchPramsDto = Object.assign(
+      this.searchQueryParamsDto = Object.assign(
         this.nanudaUserSearchDto,
         this.pagination,
       );
@@ -236,9 +236,13 @@ export default class NanudaUserList extends BaseComponent {
       if (res) {
         this.nanudaUserList = res.data.items;
         this.nanudaUserTotalCount = res.data.totalCount;
-        this.$router.push({
-          query: this.searchPramsDto,
-        });
+        this.$router
+          .push({
+            query: this.searchQueryParamsDto,
+          })
+          .catch(() => {
+            //
+          });
       }
     });
   }
@@ -251,7 +255,7 @@ export default class NanudaUserList extends BaseComponent {
   // clearout search dto
   clearOut() {
     this.nanudaUserSearchDto = new NanudaUserListDto();
-    this.$router.push({ query: null });
+    ClearOutQueryParamMapper();
   }
 
   // pagination

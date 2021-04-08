@@ -195,7 +195,7 @@ import AdminService from '@/services/admin.service';
 import SpaceTypeService from '@/services/space-type.service';
 import { AdminDto, AdminListDto, SpaceTypeDto } from '@/dto';
 import { Pagination } from '@/common';
-import { ReverseQueryParamMapper } from '@/core';
+import { ClearOutQueryParamMapper, ReverseQueryParamMapper } from '@/core';
 import { BaseUser } from '@/services/shared/auth';
 import toast from '../../../../resources/assets/js/services/toast.js';
 
@@ -210,7 +210,7 @@ export default class AdminList extends BaseComponent {
   private adminTotalCount = null;
   private dataLoading = false;
   private spaceTypes: SpaceTypeDto[] = [];
-  private searchPramsDto: any = {};
+  private searchQueryParamsDto: any = {};
 
   // findAll admin
   findAll(isPagination?: boolean, isSearch?: boolean) {
@@ -219,7 +219,10 @@ export default class AdminList extends BaseComponent {
       this.pagination.page = 1;
     } else {
       if (isSearch) this.pagination.page = 1;
-      this.searchPramsDto = Object.assign(this.adminSearchDto, this.pagination);
+      this.searchQueryParamsDto = Object.assign(
+        this.adminSearchDto,
+        this.pagination,
+      );
     }
     AdminService.findAll(this.adminSearchDto, this.pagination).subscribe(
       res => {
@@ -228,7 +231,7 @@ export default class AdminList extends BaseComponent {
           this.adminList = res.data.items;
           this.adminTotalCount = res.data.totalCount;
           this.$router.push({
-            query: this.searchPramsDto,
+            query: this.searchQueryParamsDto,
           });
         }
       },
@@ -248,7 +251,7 @@ export default class AdminList extends BaseComponent {
   // clearout search dto
   clearOut() {
     this.adminSearchDto = new AdminListDto();
-    this.$router.push({ query: null });
+    ClearOutQueryParamMapper();
   }
 
   // get space type

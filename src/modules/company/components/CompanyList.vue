@@ -381,7 +381,7 @@ import FileUploadService from '../../../services/shared/file-upload/file-upload.
 import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';
 import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 import { getStatusColor } from '../../../core/utils/status-color.util';
-import { ReverseQueryParamMapper } from '@/core';
+import { ClearOutQueryParamMapper, ReverseQueryParamMapper } from '@/core';
 import toast from '../../../../resources/assets/js/services/toast.js';
 
 @Component({
@@ -405,7 +405,7 @@ export default class Company extends BaseComponent {
   // single file일 경우 치환자를 attachment으로 정한다
   private companyLogo: FileAttachmentDto[] = [];
   private addressData = new CompanyAddrssDataDto();
-  private searchPramsDto: any = {};
+  private searchQueryParamsDto: any = {};
 
   // get status color
   getStatusColor(status: APPROVAL_STATUS) {
@@ -425,13 +425,15 @@ export default class Company extends BaseComponent {
   }
 
   findAll(isPagination?: boolean, isSearch?: boolean) {
-    let searchPramsDto;
     this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
     } else {
       if (isSearch) this.pagination.page = 1;
-      searchPramsDto = Object.assign(this.companySearchDto, this.pagination);
+      this.searchQueryParamsDto = Object.assign(
+        this.companySearchDto,
+        this.pagination,
+      );
     }
 
     CompanyService.findAll(this.companySearchDto, this.pagination).subscribe(
@@ -442,9 +444,13 @@ export default class Company extends BaseComponent {
         this.totalPage = Math.ceil(
           this.companyTotalCount / this.pagination.limit,
         );
-        this.$router.push({
-          query: searchPramsDto,
-        });
+        this.$router
+          .push({
+            query: this.searchQueryParamsDto,
+          })
+          .catch(() => {
+            //
+          });
       },
     );
   }
@@ -459,7 +465,7 @@ export default class Company extends BaseComponent {
 
   clearOut() {
     this.companySearchDto = new CompanyListDto();
-    this.$router.push({ query: null });
+    ClearOutQueryParamMapper();
   }
 
   async upload(file: File) {

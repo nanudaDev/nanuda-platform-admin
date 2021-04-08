@@ -469,7 +469,7 @@ import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { CodeManagementDto } from '@/services/init/dto';
-import { ReverseQueryParamMapper } from '@/core';
+import { ClearOutQueryParamMapper, ReverseQueryParamMapper } from '@/core';
 import { BRAND_TYPE } from '@/services/shared';
 
 @Component({
@@ -492,7 +492,7 @@ export default class BrandList extends BaseComponent {
   private brandCreateDto = new BrandDto();
   private brandLogo: FileAttachmentDto[] = [];
   private brandType: CodeManagementDto[] = [];
-  private searchPramsDto: any = {};
+  private searchQueryParamsDto: any = {};
 
   // search brand
   findAll(isPagination?: boolean, isSearch?: boolean) {
@@ -501,7 +501,10 @@ export default class BrandList extends BaseComponent {
       this.pagination.page = 1; // 최초 페이지 진입시 페이지 초기화
     } else {
       if (isSearch) this.pagination.page = 1; // 검색버튼 클릭시 페이지 초기화
-      this.searchPramsDto = Object.assign(this.brandSearchDto, this.pagination);
+      this.searchQueryParamsDto = Object.assign(
+        this.brandSearchDto,
+        this.pagination,
+      );
     }
     BrandService.findAll(this.brandSearchDto, this.pagination).subscribe(
       res => {
@@ -511,7 +514,7 @@ export default class BrandList extends BaseComponent {
           this.brandTotalCount = res.data.totalCount;
           this.$router
             .push({
-              query: this.searchPramsDto,
+              query: this.searchQueryParamsDto,
             })
             .catch();
         }
@@ -555,7 +558,7 @@ export default class BrandList extends BaseComponent {
   // clear brand search dto
   clearOut() {
     this.brandSearchDto = new BrandListDto();
-    this.$router.push({ query: null });
+    ClearOutQueryParamMapper();
   }
 
   // create brand

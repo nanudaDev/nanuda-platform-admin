@@ -62,12 +62,12 @@
         <BaseCard title="관리자 정보">
           <template v-slot:head>
             <div>
-              <!-- <b-button
+              <b-button
                 v-if="!consultResponseDto.adminId"
                 variant="info"
                 @click="assignYourselfAdmin()"
                 >본인으로 정하기</b-button
-              > -->
+              >
               <b-button
                 variant="primary"
                 @click="findAdmin()"

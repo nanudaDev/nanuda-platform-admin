@@ -2,7 +2,7 @@
   <div id="app" class="page-content">
     <section :id="this.$route.name">
       <NavBar />
-      <div id="app-main" class="container-fluid">
+      <div id="app-main" class="main-conetnt container-fluid">
         <router-view :key="$route.fullPath" />
       </div>
     </section>

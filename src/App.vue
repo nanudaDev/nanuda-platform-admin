@@ -72,9 +72,13 @@ select {
   font: inherit;
 }
 
+.navbar {
+}
+
 .page-content {
+  padding-top: 1rem;
   @media screen and (min-width: 992px) {
-    padding: 0 1rem;
+    padding: 1rem 1rem;
   }
 }
 

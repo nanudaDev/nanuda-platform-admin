@@ -20,6 +20,12 @@ export default class BaseComponent extends Vue {
   }
 
   mounted() {
+    const navDropdown = document.getElementById('navbarSupportedContent');
+    if (navDropdown) {
+      if (navDropdown.classList.contains('show'))
+        navDropdown.classList.remove('show');
+    }
+
     window.addEventListener('load', this.getNavBarHeight);
     window.addEventListener('resize', this.getNavBarHeight);
   }

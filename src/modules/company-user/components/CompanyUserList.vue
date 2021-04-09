@@ -3,16 +3,7 @@
     <SectionTitle title="업체 사용자 관리" divider></SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <b-col cols="6" md="1" class="mb-2">
-          <label for="username">사용자 ID</label>
-          <input
-            type="text"
-            class="form-control"
-            id="username"
-            v-model="companyUserSearchDto.no"
-          />
-        </b-col>
-        <b-col cols="6" md="2" class="mb-3">
+        <b-col cols="12" md="4" lg="3">
           <b-form-group label="업체명">
             <b-form-input
               list="company_lsit"
@@ -28,58 +19,46 @@
             </datalist>
           </b-form-group>
         </b-col>
-        <b-col cols="6" md="2" class="mb-3">
-          <label>이름</label>
-          <input
-            type="text"
-            class="form-control"
-            v-model="companyUserSearchDto.name"
-          />
+        <b-col cols="12" md="4" lg="3">
+          <b-form-group label="이름">
+            <b-form-input v-model="companyUserSearchDto.name" />
+          </b-form-group>
         </b-col>
-        <b-col cols="6" md="2" class="mb-3">
-          <label>휴대폰 번호</label>
-          <input
-            type="text"
-            class="form-control"
-            v-model="companyUserSearchDto.phone"
-          />
+        <b-col cols="12" md="4" lg="3">
+          <b-form-group label="휴대폰 번호">
+            <b-form-input v-model="companyUserSearchDto.phone" />
+          </b-form-group>
         </b-col>
-        <b-col cols="6" md="3" class="mb-3">
-          <label>이메일</label>
-          <input
-            type="text"
-            class="form-control"
-            v-model="companyUserSearchDto.email"
-          />
+        <b-col cols="12" md="4" lg="3">
+          <b-form-group label="이메일">
+            <b-form-input v-model="companyUserSearchDto.email" />
+          </b-form-group>
         </b-col>
-        <b-col cols="6" md="2" class="mb-3">
+        <b-col cols="12" md="4" lg="3">
           <label>승인 상태</label>
-          <select
-            class="custom-select"
-            v-model="companyUserSearchDto.companyUserStatus"
-          >
-            <option value>전체</option>
-            <option
+          <b-form-select v-model="companyUserSearchDto.companyUserStatus">
+            <b-form-select-option value>전체</b-form-select-option>
+            <b-form-select-option
               v-for="status in approvalStatus"
               :key="status"
               :value="status"
-              >{{ status | enumTransformer }}</option
+              >{{ status | enumTransformer }}</b-form-select-option
             >
-          </select>
+          </b-form-select>
         </b-col>
       </b-form-row>
-      <div class="text-center">
-        <div class="btn-group mb-4">
-          <button class="btn btn-primary" @click="clearOut()">초기화</button>
-          <button class="btn btn-success" @click="search()">검색</button>
+      <b-row align-h="center">
+        <div>
+          <b-button variant="secondary" @click="clearOut()">초기화</b-button>
+          <b-button variant="primary" @click="search()">검색</b-button>
         </div>
-      </div>
+      </b-row>
     </div>
     <div class="table-top">
       <div class="total-count">
         <h5>
           <span>TOTAL</span>
-          <strong class="text-primary">{{ companyUserListTotalCount }}</strong>
+          <strong class="text-primary">{{ companyUserTotalCount }}</strong>
         </h5>
       </div>
       <b-button
@@ -89,114 +68,111 @@
         >업체 사용자 추가</b-button
       >
     </div>
-    <div v-if="!dataLoading" class="table-bordered table-responsive">
-      <table
-        class="table table-hover table-sm text-center"
-        v-if="companyUserListTotalCount"
-      >
-        <thead>
-          <tr>
-            <th
-              scope="col"
-              v-bind:class="{ highlighted: companyUserSearchDto.no }"
-            >
-              ID
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: companyUserSearchDto.companyNo,
-              }"
-            >
-              업체명
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: companyUserSearchDto.name,
-              }"
-            >
-              이름
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{ highlighted: companyUserSearchDto.phone }"
-            >
-              휴대폰 번호
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{ highlighted: companyUserSearchDto.email }"
-            >
-              이메일
-            </th>
-            <th scope="col">등록일</th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: companyUserSearchDto.companyUserStatus,
-              }"
-            >
-              승인 상태
-            </th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="companyUser in companyUserListDto" :key="companyUser.no">
-            <th scope="row">{{ companyUser.no }}</th>
-            <td class="text-nowrap">{{ companyUser.company.nameKr }}</td>
-            <td class="text-nowrap">
-              <strong
-                class="text-danger"
-                v-if="companyUser.authCode === companyUserAdminRole[0]"
-                >M</strong
+    <template v-if="!dataLoading">
+      <div class="bg-white table-responsive">
+        <table
+          class="table table-hover table-sm text-center table-nowrap"
+          v-if="companyUserTotalCount"
+        >
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                v-bind:class="{ highlighted: companyUserSearchDto.no }"
               >
-              {{ companyUser.name }}
-            </td>
-            <td class="text-nowrap">
-              {{ companyUser.phone | phoneTransformer }}
-            </td>
-            <td>{{ companyUser.email }}</td>
-            <td>{{ companyUser.createdAt | dateTransformer }}</td>
-            <td>
-              <b-badge
-                :variant="getStatusColor(companyUser.companyUserStatus)"
-                class="badge-pill p-2 mr-2"
-                >{{ companyUser.codeManagement.value }}</b-badge
-              >
-            </td>
-            <td class="text-nowrap">
-              <router-link
-                v-if="companyUser.no"
-                class="btn btn-sm btn-secondary"
-                :to="{
-                  name: 'CompanyUserDetail',
-                  params: {
-                    id: companyUser.no,
-                  },
+                ID
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: companyUserSearchDto.companyNameKr,
                 }"
-                >상세보기</router-link
               >
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="empty-data border" v-else>검색결과가 없습니다.</div>
-    </div>
-    <b-pagination
-      v-model="pagination.page"
-      v-if="companyUserListTotalCount"
-      pills
-      :total-rows="companyUserListTotalCount"
-      :per-page="pagination.limit"
-      @input="paginateSearch()"
-      class="mt-4 justify-content-center"
-    ></b-pagination>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+                업체명
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: companyUserSearchDto.name,
+                }"
+              >
+                이름
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{ highlighted: companyUserSearchDto.phone }"
+              >
+                휴대폰 번호
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{ highlighted: companyUserSearchDto.email }"
+              >
+                이메일
+              </th>
+              <th scope="col">등록일</th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: companyUserSearchDto.companyUserStatus,
+                }"
+              >
+                승인 상태
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="companyUser in companyUserList"
+              :key="companyUser.no"
+              @click="$router.push(`/company/company-user/${companyUser.no}`)"
+              style="cursor:pointer;"
+            >
+              <th scope="row">{{ companyUser.no }}</th>
+              <td class="text-nowrap">{{ companyUser.company.nameKr }}</td>
+              <td class="text-nowrap">
+                <strong
+                  class="text-danger"
+                  v-if="companyUser.authCode === companyUserAdminRole[0]"
+                  >M</strong
+                >
+                {{ companyUser.name }}
+              </td>
+              <td class="text-nowrap">
+                {{ companyUser.phone | phoneTransformer }}
+              </td>
+              <td>{{ companyUser.email }}</td>
+              <td>{{ companyUser.createdAt | dateTransformer }}</td>
+              <td>
+                <b-badge
+                  :variant="getStatusColor(companyUser.companyUserStatus)"
+                  class="badge-pill p-2 mr-2"
+                  >{{ companyUser.codeManagement.value }}</b-badge
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="empty-data border" v-else>검색결과가 없습니다.</div>
+      </div>
+      <b-pagination
+        v-model="pagination.page"
+        v-if="companyUserTotalCount"
+        pills
+        :total-rows="companyUserTotalCount"
+        :per-page="pagination.limit"
+        @input="paginateSearch()"
+        class="mt-4 justify-content-center"
+      ></b-pagination>
+    </template>
+    <template v-else>
+      <div class="my-5 py-5">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+      </div>
+    </template>
     <!--사용자 추가 모달 -->
     <b-modal
       id="add_company_user"
@@ -208,7 +184,7 @@
       <div class="form-row">
         <div class="col-12 col-md-6">
           <label>
-            사용자명
+            이름
             <span class="red-text">*</span>
           </label>
           <input
@@ -336,22 +312,26 @@ import {
 } from '../../../services/shared';
 
 import { getStatusColor } from '../../../core/utils/status-color.util';
-import { ReverseQueryParamMapper } from '@/core';
+import toast from '../../../../resources/assets/js/services/toast.js';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 
 @Component({
   name: 'CompanyUserList',
 })
 export default class Company extends BaseComponent {
   private companyUserSearchDto = new CompanyUserListDto();
-  private companyUserListDto: CompanyUserDto[] = Array<CompanyUserDto>();
-  private companyUserListTotalCount = null;
+  private companyUserList: CompanyUserDto[] = Array<CompanyUserDto>();
+  private companyUserTotalCount = null;
   private companySelect: CompanyDto[] = [];
   private availableCompanySelect: CompanyDto[] = [];
   private companyUserCreateDto = new CompanyUserDto(BaseUser);
   private pagination = new Pagination();
   private approvalStatus: APPROVAL_STATUS[] = [...CONST_APPROVAL_STATUS];
   private companyUserAdminRole: COMPANY_USER[] = [...CONST_COMPANY_USER];
-  private totalPage = null;
   private dataLoading = false;
 
   // get status color
@@ -373,37 +353,39 @@ export default class Company extends BaseComponent {
   }
 
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
+  }
+
+  search() {
+    this.findAll(true, true);
   }
 
   clearOut() {
-    this.pagination.page = 1;
     this.companyUserSearchDto = new CompanyUserListDto();
-    this.search();
+    ClearOutQueryParamMapper();
   }
 
   clearOutCompanyUserDto() {
     this.companyUserCreateDto = new CompanyUserDto(BaseUser);
   }
 
-  search(isPagination?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
+    } else {
+      if (isSearch) this.pagination.page = 1;
+      RouterQueryParamMapper(this.companyUserSearchDto, this.pagination);
     }
     CompanyUserService.findAll(
       this.companyUserSearchDto,
       this.pagination,
     ).subscribe(res => {
-      this.dataLoading = false;
-      this.companyUserListDto = res.data.items;
-      this.companyUserListTotalCount = res.data.totalCount;
-      this.totalPage = Math.ceil(
-        this.companyUserListTotalCount / this.pagination.limit,
-      );
-      this.$router.push({
-        query: Object.assign(this.companyUserSearchDto),
-      });
+      if (res) {
+        this.dataLoading = false;
+        this.companyUserList = res.data.items;
+        this.companyUserTotalCount = res.data.totalCount;
+      }
     });
   }
 
@@ -412,23 +394,27 @@ export default class Company extends BaseComponent {
     CompanyUserService.createCompanyUser(this.companyUserCreateDto).subscribe(
       res => {
         if (res) {
-          this.search();
+          toast.success('추가완료');
+          this.findAll();
         }
       },
     );
   }
 
   created() {
-    if (this.$route.params.companyNo) {
-      this.companyUserSearchDto.companyNo = parseInt(
-        this.$route.params.companyNo,
-      );
-    }
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.companyUserSearchDto = query;
+      if (query.limit !== 'NaN' && query.page !== '' && query.page !== '0') {
+        this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
+    } else {
+      this.findAll();
     }
-    this.search();
     this.getCompanies();
     this.getAvailableCompanies();
   }

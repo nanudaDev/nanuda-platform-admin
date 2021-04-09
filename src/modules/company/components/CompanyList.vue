@@ -517,8 +517,12 @@ export default class Company extends BaseComponent {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.companySearchDto = query;
-      this.pagination.limit = +query.limit;
-      this.pagination.page = +query.page;
+      if (query.limit !== 'NaN' && query.page !== '' && query.page !== '0') {
+        this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
       this.paginateSearch();
     } else {
       this.findAll();

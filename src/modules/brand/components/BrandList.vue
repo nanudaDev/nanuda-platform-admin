@@ -469,7 +469,11 @@ import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { CodeManagementDto } from '@/services/init/dto';
-import { ClearOutQueryParamMapper, ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 import { BRAND_TYPE } from '@/services/shared';
 
 @Component({
@@ -501,10 +505,7 @@ export default class BrandList extends BaseComponent {
       this.pagination.page = 1; // 최초 페이지 진입시 페이지 초기화
     } else {
       if (isSearch) this.pagination.page = 1; // 검색버튼 클릭시 페이지 초기화
-      this.searchQueryParamsDto = Object.assign(
-        this.brandSearchDto,
-        this.pagination,
-      );
+      RouterQueryParamMapper(this.brandSearchDto, this.pagination);
     }
     BrandService.findAll(this.brandSearchDto, this.pagination).subscribe(
       res => {
@@ -512,11 +513,6 @@ export default class BrandList extends BaseComponent {
           this.dataLoading = false;
           this.brandList = res.data.items;
           this.brandTotalCount = res.data.totalCount;
-          this.$router
-            .push({
-              query: this.searchQueryParamsDto,
-            })
-            .catch();
         }
       },
     );
@@ -602,8 +598,12 @@ export default class BrandList extends BaseComponent {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.brandSearchDto = query;
-      this.pagination.limit = +query.limit;
-      this.pagination.page = +query.page;
+      if (query.limit !== 'NaN' && query.page !== '' && query.page !== '0') {
+        this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
       this.paginateSearch();
     } else {
       this.findAll();

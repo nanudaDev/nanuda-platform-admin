@@ -160,9 +160,14 @@
             <b-button
               variant="outline-info"
               @click="
-                $router.push(
-                  `/company/company-district?companyNo=${companyDto.no}`,
-                )
+                $router.push({
+                  path: '/company/company-district',
+                  query: {
+                    companyNameKr: companyDto.nameKr,
+                    page: 1,
+                    limit: 20,
+                  },
+                })
               "
               >전체보기</b-button
             >
@@ -176,7 +181,14 @@
             <b-button
               variant="outline-info"
               @click="
-                $router.push(`/company/company-user?companyNo=${companyDto.no}`)
+                $router.push({
+                  path: '/company/company-user',
+                  query: {
+                    companyNameKr: companyDto.nameKr,
+                    page: 1,
+                    limit: 20,
+                  },
+                })
               "
               >전체보기</b-button
             >

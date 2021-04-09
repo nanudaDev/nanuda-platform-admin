@@ -195,7 +195,11 @@ import AdminService from '@/services/admin.service';
 import SpaceTypeService from '@/services/space-type.service';
 import { AdminDto, AdminListDto, SpaceTypeDto } from '@/dto';
 import { Pagination } from '@/common';
-import { ClearOutQueryParamMapper, ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 import { BaseUser } from '@/services/shared/auth';
 import toast from '../../../../resources/assets/js/services/toast.js';
 
@@ -219,10 +223,7 @@ export default class AdminList extends BaseComponent {
       this.pagination.page = 1;
     } else {
       if (isSearch) this.pagination.page = 1;
-      this.searchQueryParamsDto = Object.assign(
-        this.adminSearchDto,
-        this.pagination,
-      );
+      RouterQueryParamMapper(this.adminSearchDto, this.pagination);
     }
     AdminService.findAll(this.adminSearchDto, this.pagination).subscribe(
       res => {
@@ -230,9 +231,6 @@ export default class AdminList extends BaseComponent {
           this.dataLoading = false;
           this.adminList = res.data.items;
           this.adminTotalCount = res.data.totalCount;
-          this.$router.push({
-            query: this.searchQueryParamsDto,
-          });
         }
       },
     );
@@ -280,8 +278,12 @@ export default class AdminList extends BaseComponent {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.adminSearchDto = query;
-      this.pagination.limit = +query.limit;
-      this.pagination.page = +query.page;
+      if (query.limit !== 'NaN' && query.page !== '' && query.page !== '0') {
+        this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
       this.paginateSearch();
     } else {
       this.findAll();

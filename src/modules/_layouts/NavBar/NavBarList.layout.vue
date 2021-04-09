@@ -6,7 +6,7 @@
         left
         v-for="item in items"
         :key="item.path"
-        class="col-6 col-md-auto"
+        class="col-6 col-lg-auto"
       >
         <template>
           <div v-for="children in item.children" :key="children.path">

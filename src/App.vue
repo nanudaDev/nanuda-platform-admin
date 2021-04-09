@@ -73,12 +73,15 @@ select {
 }
 
 .navbar {
+  @media screen and (max-width: 991px) {
+    position: absolute;
+  }
 }
 
 .page-content {
-  padding-top: 1rem;
+  padding: 1.5rem 0;
   @media screen and (min-width: 992px) {
-    padding: 1rem 1rem;
+    padding: 1.5rem 1rem;
   }
 }
 

@@ -25,5 +25,6 @@ export class ConsultResponseListDto extends BaseDto<ConsultResponseListDto>
   isReadyCode?: TENTATIVE_OPEN_OPTION;
   isReadyGrade?: number;
   deliveryRatioGrade?: number;
+  deleteReason?: string;
   orderById?: OrderByValue;
 }

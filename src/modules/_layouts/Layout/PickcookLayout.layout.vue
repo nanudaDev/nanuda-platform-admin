@@ -67,7 +67,7 @@
         </div>
       </nav>
       <div id="pickcook-main" class="container-fluid">
-        <router-view />
+        <router-view :key="$route.fullPath" />
       </div>
     </section>
   </div>

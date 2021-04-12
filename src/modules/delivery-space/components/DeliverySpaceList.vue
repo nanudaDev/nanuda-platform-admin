@@ -59,10 +59,10 @@
             <b-form-select v-model="deliverySpaceSearchDto.delYn">
               <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
-                v-for="yn in ynSelect"
+                v-for="yn in ynSelect.slice().reverse()"
                 :key="yn"
                 :value="yn"
-                >{{ yn | stringShowTransformer }}</b-form-select-option
+                >{{ yn !== 'Y' ? '노출' : '미노출' }}</b-form-select-option
               >
             </b-form-select>
           </b-form-group>

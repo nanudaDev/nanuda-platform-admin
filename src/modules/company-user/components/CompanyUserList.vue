@@ -166,7 +166,7 @@
       ></b-pagination>
     </template>
     <template v-else>
-      <div class="my-5 py-5">
+      <div class="loading-spinner">
         <div class="half-circle-spinner">
           <div class="circle circle-1"></div>
           <div class="circle circle-2"></div>
@@ -361,8 +361,12 @@ export default class Company extends BaseComponent {
   }
 
   clearOut() {
-    this.companyUserSearchDto = new CompanyUserListDto();
-    ClearOutQueryParamMapper();
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.companyUserSearchDto = new CompanyUserListDto();
+      this.findAll();
+    }
   }
 
   clearOutCompanyUserDto() {
@@ -395,7 +399,7 @@ export default class Company extends BaseComponent {
       res => {
         if (res) {
           toast.success('추가완료');
-          this.findAll();
+          this.clearOut();
         }
       },
     );
@@ -405,7 +409,7 @@ export default class Company extends BaseComponent {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.companyUserSearchDto = query;
-      if (query.limit !== 'NaN' && query.page !== '' && query.page !== '0') {
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
         this.pagination.limit = +query.limit;
         this.pagination.page = +query.page;
       } else {

@@ -164,8 +164,8 @@
                   path: '/company/company-district',
                   query: {
                     companyNameKr: companyDto.nameKr,
-                    page: 1,
-                    limit: 20,
+                    page: pagination.page,
+                    limit: pagination.limit,
                   },
                 })
               "
@@ -185,8 +185,8 @@
                   path: '/company/company-user',
                   query: {
                     companyNameKr: companyDto.nameKr,
-                    page: 1,
-                    limit: 20,
+                    page: pagination.page,
+                    limit: pagination.limit,
                   },
                 })
               "

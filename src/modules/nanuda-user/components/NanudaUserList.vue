@@ -127,9 +127,11 @@
       ></b-pagination>
     </template>
     <template v-else>
-      <div class="half-circle-spinner py-4">
-        <div class="circle circle-1"></div>
-        <div class="circle circle-2"></div>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
       </div>
     </template>
     <!-- 사용자 추가 모달 -->
@@ -248,8 +250,12 @@ export default class NanudaUserList extends BaseComponent {
 
   // clearout search dto
   clearOut() {
-    this.nanudaUserSearchDto = new NanudaUserListDto();
-    ClearOutQueryParamMapper();
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.nanudaUserSearchDto = new NanudaUserListDto();
+      this.findAll();
+    }
   }
 
   // pagination
@@ -276,7 +282,7 @@ export default class NanudaUserList extends BaseComponent {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.nanudaUserSearchDto = query;
-      if (query.limit !== 'NaN' && query.page !== '' && query.page !== '0') {
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
         this.pagination.limit = +query.limit;
         this.pagination.page = +query.page;
       } else {

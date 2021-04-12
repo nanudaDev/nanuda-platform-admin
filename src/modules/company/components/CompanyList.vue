@@ -144,7 +144,7 @@
           </thead>
           <tbody v-if="companyTotalCount">
             <tr
-              v-for="company in companyListDto"
+              v-for="company in companyList"
               :key="company.no"
               @click="$router.push(`/company/${company.no}`)"
               style="cursor:pointer"
@@ -192,9 +192,11 @@
       ></b-pagination>
     </template>
     <template v-else>
-      <div class="half-circle-spinner py-4">
-        <div class="circle circle-1"></div>
-        <div class="circle circle-2"></div>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
       </div>
     </template>
 
@@ -350,7 +352,7 @@
           </b-col> -->
         </b-form-row>
         <div class="text-right pt-3 mt-4 border-top">
-          <b-button variant="secondary" @click="clearOutCompanyCreateDto()"
+          <b-button variant="secondary" @click="$bvModal.hide('add_company')"
             >취소</b-button
           >
           <b-button type="submit" variant="primary">추가</b-button>
@@ -393,8 +395,8 @@ export default class Company extends BaseComponent {
   }
   private companySearchDto = new CompanyListDto();
   //   or you can set this value to an empty erray. either or
-  //   private companyListDto: Array<CompanyDto>();
-  private companyListDto: CompanyDto[] = [];
+  //   private companyList: Array<CompanyDto>();
+  private companyList: CompanyDto[] = [];
   private companyTotalCount = null;
   private companyCreateDto = new CompanyDto();
   private companySelect: CompanyDto[] = [];
@@ -439,7 +441,7 @@ export default class Company extends BaseComponent {
     CompanyService.findAll(this.companySearchDto, this.pagination).subscribe(
       res => {
         this.dataLoading = false;
-        this.companyListDto = res.data.items;
+        this.companyList = res.data.items;
         this.companyTotalCount = res.data.totalCount;
         this.totalPage = Math.ceil(
           this.companyTotalCount / this.pagination.limit,
@@ -464,8 +466,12 @@ export default class Company extends BaseComponent {
   }
 
   clearOut() {
-    this.companySearchDto = new CompanyListDto();
-    ClearOutQueryParamMapper();
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.companySearchDto = new CompanyListDto();
+      this.findAll();
+    }
   }
 
   async upload(file: File) {
@@ -493,7 +499,8 @@ export default class Company extends BaseComponent {
 
     CompanyService.createCompany(this.companyCreateDto).subscribe(res => {
       if (res) {
-        this.search();
+        toast.success('추가완료');
+        this.clearOut();
         this.$bvModal.hide('add_company');
       }
     });
@@ -510,14 +517,13 @@ export default class Company extends BaseComponent {
     this.companyCreateDto = new CompanyDto();
     this.addressData = new CompanyAddrssDataDto();
     this.companyLogo = [];
-    this.$bvModal.hide('add_company');
   }
 
   created() {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.companySearchDto = query;
-      if (query.limit !== 'NaN' && query.page !== '' && query.page !== '0') {
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
         this.pagination.limit = +query.limit;
         this.pagination.page = +query.page;
       } else {

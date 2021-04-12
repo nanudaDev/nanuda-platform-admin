@@ -683,7 +683,6 @@
           </b-form-radio>
         </b-form-group>
         <b-form-group>
-          {{ reservationDeleteReasonDto.deleteReasonEtc }}
           <b-form-input
             v-model="reservationDeleteReasonDto.deleteReasonEtc"
             :disabled="reservationDeleteReasonDto.deleteReason !== '기타'"

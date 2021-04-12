@@ -218,8 +218,14 @@
                     <template v-else>
                       <p class="red-text">
                         <b-badge variant="danger">취소</b-badge>
-                        {{ consultResponseDto.reservation.deleteReason }}
-                        {{ consultResponseDto.reservation.deleteReasonEtc }}
+                        <template
+                          v-if="consultResponseDto.reservation.deleteReasonEtc"
+                        >
+                          {{ consultResponseDto.reservation.deleteReasonEtc }}
+                        </template>
+                        <template v-else>
+                          {{ consultResponseDto.reservation.deleteReason }}
+                        </template>
                       </p>
                     </template>
                   </template>

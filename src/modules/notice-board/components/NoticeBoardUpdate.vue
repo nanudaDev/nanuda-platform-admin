@@ -130,13 +130,11 @@
         </div>
       </div>
       <div class="clearfix my-4" v-if="noticeBoardUpdateDto.content">
-        <div class="float-left">
-          <b-button variant="secondary" @click="clearedOut()">초기화</b-button>
-        </div>
+        <div class="float-left"></div>
         <div class="float-right">
           <b-button variant="info" @click="update('Y')">임시저장</b-button>
           <b-button v-b-modal.confirm-notice variant="primary"
-            >등록완료</b-button
+            >수정완료</b-button
           >
         </div>
       </div>
@@ -147,7 +145,7 @@
       size="xl"
       header-bg-variant="success"
       header-text-variant="light"
-      ok-title="등록하기"
+      ok-title="수정하기"
       cancel-title="취소하기"
       ok-variant="success"
       @ok="update('N')"
@@ -192,7 +190,7 @@ import { YN } from '@/common';
 })
 export default class NoticeBoardUpdate extends BaseComponent {
   @Prop() editMode: boolean;
-  @Prop() uploadedAttachments: FileAttachmentDto[];
+  @Prop() oldAttachments: FileAttachmentDto[];
   private noticeBoardDto = new NoticeBoardDto();
   private noticeBoardUpdateDto = new NoticeBoardDto();
   private htmlContent = null;
@@ -200,7 +198,7 @@ export default class NoticeBoardUpdate extends BaseComponent {
   private editorToolbar = EditorConfig;
   private startDate = new Date();
   private endDate = new Date();
-  private oldAttachments = this.uploadedAttachments;
+  // private oldAttachments = this.uploadedAttachments;
   private newAttachments: FileAttachmentDto[] = [];
 
   // 수정 취소
@@ -254,7 +252,11 @@ export default class NoticeBoardUpdate extends BaseComponent {
     ).subscribe(res => {
       if (res) {
         this.$router.push('/notice-board');
-        toast.success('수정완료');
+        if (isTempSaveYn === YN.NO) {
+          toast.success('수정 완료');
+        } else {
+          toast.success('임시 저장 완료');
+        }
       }
     });
   }

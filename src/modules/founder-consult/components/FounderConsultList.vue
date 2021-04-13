@@ -254,7 +254,7 @@
               <td @click.stop>
                 <a
                   :href="
-                    `https://nanudakitchen.com/restaurant-kitchen/${founderConsult.spaceNo}`
+                    `${env.homepageSiteUrl}/restaurant-kitchen/${founderConsult.spaceNo}`
                   "
                   class="text-primary"
                   target="_blank"
@@ -397,6 +397,9 @@ import {
   ReverseQueryParamMapper,
   RouterQueryParamMapper,
 } from '@/core';
+import { Environment } from '../../../../environments';
+
+const env = new Environment();
 
 @Component({
   name: 'FounderConsultList',

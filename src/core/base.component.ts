@@ -1,6 +1,15 @@
+import {
+  DevelopmentEnvironment,
+  Environment,
+  EnvironmentType,
+  ProductionEnvironment,
+  StagingEnvironment,
+} from '../../environments';
 import { Component, Vue } from 'vue-property-decorator';
+
 @Component
 export default class BaseComponent extends Vue {
+  public env = new Environment();
   public $refs: {
     fileInput: any;
   };
@@ -16,6 +25,18 @@ export default class BaseComponent extends Vue {
     }
     if (navBarHeight) {
       document.getElementById('app-main').style.marginTop = `${navBarHeight}px`;
+    }
+  }
+
+  created() {
+    if (process.env.NODE_ENV === EnvironmentType.development) {
+      this.env = DevelopmentEnvironment;
+    }
+    if (process.env.NODE_ENV === EnvironmentType.staging) {
+      this.env = StagingEnvironment;
+    }
+    if (process.env.NODE_ENV === EnvironmentType.production) {
+      this.env = ProductionEnvironment;
     }
   }
 

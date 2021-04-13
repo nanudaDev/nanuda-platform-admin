@@ -3,7 +3,7 @@
     <SectionTitle title="업체 관리" divider></SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <b-col cols="12" md="4" lg="3">
+        <b-col cols="6" md="4" lg="3">
           <b-form-group label="업체명">
             <b-form-input
               list="company_list"
@@ -19,27 +19,27 @@
             </datalist>
           </b-form-group>
         </b-col>
-        <b-col cols="12" md="4" lg="3">
+        <b-col cols="6" md="4" lg="3">
           <b-form-group label="대표자명">
             <b-form-input v-model="companySearchDto.ceoKr"></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="12" md="4" lg="3">
+        <b-col cols="6" md="4" lg="3">
           <b-form-group label="전화번호">
             <b-form-input v-model="companySearchDto.phone"></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="12" md="4" lg="3">
+        <b-col cols="6" md="4" lg="3">
           <b-form-group label="이메일">
             <b-form-input v-model="companySearchDto.email"></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="12" md="4" lg="3">
+        <b-col cols="6" md="4" lg="3">
           <b-form-group label="팩스">
             <b-form-input v-model="companySearchDto.fax"></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="12" md="4" lg="3">
+        <b-col cols="6" md="4" lg="3">
           <b-form-group label="승인 상태">
             <b-form-select
               class="custom-select"
@@ -316,7 +316,7 @@
               :disabled="!addressData.address"
             />
           </b-col>
-          <b-col cols="12" lg="6" class="mt-3">
+          <b-col cols="6" lg="6" class="mt-3">
             <label>웹사이트</label>
             <input
               type="text"

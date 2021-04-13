@@ -40,21 +40,21 @@
             ></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="6" lg="3">
+        <b-col cols="6" lg="2">
           <b-form-group label="최대 보증금 (만원 단위)">
             <b-form-input
               v-model="deliverySpaceSearchDto.deposit"
             ></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="6" lg="3">
+        <b-col cols="6" lg="2">
           <b-form-group label="최대 월 임대료 (만원 단위)">
             <b-form-input
               v-model="deliverySpaceSearchDto.monthlyRentFee"
             ></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="6" lg="3">
+        <b-col cols="6" lg="2">
           <b-form-group label="관리자 노출 여부">
             <b-form-select v-model="deliverySpaceSearchDto.delYn">
               <b-form-select-option value>전체</b-form-select-option>
@@ -67,7 +67,7 @@
             </b-form-select>
           </b-form-group>
         </b-col>
-        <b-col cols="6" lg="3">
+        <b-col cols="6" lg="2">
           <b-form-group label="업체 노출 여부">
             <b-form-select v-model="deliverySpaceSearchDto.showYn">
               <b-form-select-option value>전체</b-form-select-option>
@@ -80,7 +80,7 @@
             </b-form-select>
           </b-form-group>
         </b-col>
-        <b-col cols="6" lg="3">
+        <b-col cols="6" lg="2">
           <b-form-group label="직영점">
             <b-form-select v-model="deliverySpaceSearchDto.isOperatedYn">
               <b-form-select-option value>전체</b-form-select-option>
@@ -93,7 +93,7 @@
             </b-form-select>
           </b-form-group>
         </b-col>
-        <b-col cols="6" lg="3">
+        <b-col cols="6" lg="2">
           <b-form-group label="운영여부">
             <b-form-select v-model="deliverySpaceSearchDto.isOpenedYn">
               <b-form-select-option value>전체</b-form-select-option>

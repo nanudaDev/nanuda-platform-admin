@@ -6,7 +6,7 @@
       </template>
     </SectionTitle>
     <b-row>
-      <b-col cols="12" lg="4">
+      <b-col cols="12" lg="4" class="my-3">
         <BaseCard title="내 정보">
           <template v-slot:head>
             <b-button variant="outline-info" v-b-modal.change_password
@@ -57,11 +57,11 @@
           </template>
         </BaseCard>
       </b-col>
-
       <b-col
         cols="12"
         lg="8"
         v-if="founderConsultTotalCount || deliveryFounderConsultTotalCount"
+        class="my-3"
       >
         <BaseCard title="내 상담 리스트" no-body>
           <b-tabs card fill>
@@ -77,12 +77,20 @@
                     </h5>
                   </div>
                   <div>
-                    <router-link
-                      :to="
-                        `/founder-consult?spaceTypeNo=1&adminUserName=${myPageDto.name}`
+                    <b-button
+                      variant="outline-info"
+                      @click="
+                        $router.push({
+                          path: '/founder-consult',
+                          query: {
+                            spaceTypeNo: 1,
+                            adminUserName: myPageDto.name,
+                            page: pagination.page,
+                            limit: pagination.limit,
+                          },
+                        })
                       "
-                      class="btn btn-outline-info"
-                      >전체보기</router-link
+                      >전체보기</b-button
                     >
                   </div>
                 </div>
@@ -164,12 +172,19 @@
                     </h5>
                   </div>
                   <div>
-                    <router-link
-                      :to="
-                        `/delivery-founder-consult?adminUserName=${myPageDto.name}`
+                    <b-button
+                      variant="outline-info"
+                      @click="
+                        $router.push({
+                          path: '/delivery-founder-consult',
+                          query: {
+                            adminUserName: myPageDto.name,
+                            page: pagination.page,
+                            limit: pagination.limit,
+                          },
+                        })
                       "
-                      class="btn btn-outline-info"
-                      >전체보기</router-link
+                      >전체보기</b-button
                     >
                   </div>
                 </div>
@@ -307,6 +322,8 @@ export default class MyPageDetail extends BaseComponent {
   private myPageDto: AdminDto = new AdminDto(BaseUser);
   private myPageUpdateDto: AdminDto = new AdminDto(BaseUser);
   private pagination = new Pagination();
+  private paginationCounsults = new Pagination();
+  private paginationDeliveryConsults = new Pagination();
   private founderConsultList: FounderConsultDto[] = [];
   private founderConsultTotalCount = null;
   private deliveryFounderConsultList: DeliveryFounderConsultDto[] = [];
@@ -337,32 +354,34 @@ export default class MyPageDetail extends BaseComponent {
 
   findConsults(isPagination?: boolean) {
     if (!isPagination) {
-      this.pagination.page = 1;
+      this.paginationCounsults.page = 1;
     }
-    this.pagination.limit = 5;
+    this.paginationCounsults.limit = 5;
     this.dataLoading = true;
-    FounderConsultService.findMyConsults(this.pagination).subscribe(res => {
-      this.dataLoading = false;
-      this.founderConsultList = res.data.items;
-      this.founderConsultTotalCount = res.data.totalCount;
-    });
+    FounderConsultService.findMyConsults(this.paginationCounsults).subscribe(
+      res => {
+        this.dataLoading = false;
+        this.founderConsultList = res.data.items;
+        this.founderConsultTotalCount = res.data.totalCount;
+      },
+    );
   }
 
   findDeliveryConsults(isPagination?: boolean) {
     if (!isPagination) {
-      this.pagination.page = 1;
+      this.paginationDeliveryConsults.page = 1;
     }
-    this.pagination.limit = 5;
+    this.paginationDeliveryConsults.limit = 5;
     this.dataLoadingDelivery = true;
-    DeliveryFounderConsultService.findMyConsults(this.pagination).subscribe(
-      res => {
-        if (res) {
-          this.dataLoadingDelivery = false;
-          this.deliveryFounderConsultList = res.data.items;
-          this.deliveryFounderConsultTotalCount = res.data.totalCount;
-        }
-      },
-    );
+    DeliveryFounderConsultService.findMyConsults(
+      this.paginationDeliveryConsults,
+    ).subscribe(res => {
+      if (res) {
+        this.dataLoadingDelivery = false;
+        this.deliveryFounderConsultList = res.data.items;
+        this.deliveryFounderConsultTotalCount = res.data.totalCount;
+      }
+    });
   }
 
   updateSelf(password) {

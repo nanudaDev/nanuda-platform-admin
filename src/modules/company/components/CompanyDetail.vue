@@ -263,11 +263,11 @@
         <b>{{ selectedAdmin.name }}</b>
       </div>
       <b-pagination
-        v-model="pagination.page"
+        v-model="paginationAdmin.page"
         v-if="adminListCount"
         pills
         :total-rows="adminListCount"
-        :per-page="pagination.limit"
+        :per-page="paginationAdmin.limit"
         @input="paginateSearch"
         class="mt-4 justify-content-center"
       ></b-pagination>
@@ -470,6 +470,7 @@ export default class CompanyDetail extends BaseComponent {
   private companyUpdateRefusalDto = new CompanyUpdateRefusalDto();
   private companyUpdateRefusalReasonDto = (this.companyUpdateRefusalDto.refusalReasons = new CompanyUpdateRefusalReasonDto());
   private pagination = new Pagination();
+  private paginationAdmin = new Pagination();
   private selectedAdmin: AdminDto = new AdminDto(BaseUser);
   private newLogo: FileAttachmentDto[] = [];
   private logoChanged = false;
@@ -489,13 +490,15 @@ export default class CompanyDetail extends BaseComponent {
 
   findAdmin(isPagination: boolean) {
     if (!isPagination) {
-      this.pagination.page = 1;
+      this.paginationAdmin.page = 1;
     }
-    this.pagination.limit = 5;
-    AdminService.findAll(this.adminListDto, this.pagination).subscribe(res => {
-      this.adminList = res.data.items;
-      this.adminListCount = res.data.totalCount;
-    });
+    this.paginationAdmin.limit = 5;
+    AdminService.findAll(this.adminListDto, this.paginationAdmin).subscribe(
+      res => {
+        this.adminList = res.data.items;
+        this.adminListCount = res.data.totalCount;
+      },
+    );
   }
 
   findApprovalStatus() {

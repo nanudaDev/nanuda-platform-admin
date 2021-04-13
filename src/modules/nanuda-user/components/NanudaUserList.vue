@@ -99,18 +99,6 @@
               <td>{{ user.name }}</td>
               <td>{{ user.phone | phoneTransformer }}</td>
               <td>{{ user.createdAt | dateTransformer }}</td>
-              <!-- <td>
-              <router-link
-                class="btn btn-sm btn-secondary text-nowrap"
-                :to="{
-                  name: 'NanudaUserDetail',
-                  params: {
-                    id: user.no,
-                  },
-                }"
-                >상세보기</router-link
-              >
-            </td> -->
             </tr>
           </tbody>
         </table>

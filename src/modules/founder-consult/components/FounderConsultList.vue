@@ -1,163 +1,129 @@
 <template>
   <section>
-    <div class="title pb-2 mb-2">
-      <h3>식당형 상담 신청</h3>
-    </div>
-    <div class="divider"></div>
+    <SectionTitle title="식당형 상담 신청" divider></SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
-      <div class="form-row">
-        <div class="col-6 col-lg-2 mb-3">
-          <label for="user_name">사용자명</label>
-          <input
-            type="text"
-            class="form-control"
-            id="user_name"
-            v-model="founderConsultSearchDto.nanudaUserName"
-          />
-        </div>
-        <div class="col-6 col-lg-2 mb-3">
-          <label for="user_phone">휴대폰 번호</label>
-          <input
-            type="text"
-            class="form-control"
-            id="user_phone"
-            v-model="founderConsultSearchDto.phone"
-          />
-        </div>
-        <div class="col-6 col-lg-1 mb-3">
-          <label for="user_gender">성별</label>
-          <select
-            class="custom-select"
-            id="user_gender"
-            v-model="founderConsultSearchDto.gender"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="gender in genderSelect"
-              :key="gender"
-              :value="gender"
-              >{{ gender | enumTransformer }}</option
+      <b-form-row>
+        <b-col cols="6" md="4" lg="2">
+          <b-form-group label="사용자명">
+            <b-form-input v-model="founderConsultSearchDto.nanudaUserName" />
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="2">
+          <b-form-group label="휴대폰 번호">
+            <b-form-input v-model="founderConsultSearchDto.phone" />
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="2">
+          <b-form-group label="성별">
+            <b-form-select v-model="founderConsultSearchDto.gender">
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="gender in genderSelect"
+                :key="gender"
+                :value="gender"
+                >{{ gender | enumTransformer }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="2">
+          <b-form-group label="창업 경험">
+            <b-form-select
+              class="custom-select"
+              id="changup_exp_yn"
+              v-model="founderConsultSearchDto.changUpExpYn"
             >
-          </select>
-        </div>
-        <div class="col-6 col-lg-1 mb-3">
-          <label for="changup_exp_yn">창업 경험</label>
-          <select
-            class="custom-select"
-            id="changup_exp_yn"
-            v-model="founderConsultSearchDto.changUpExpYn"
-          >
-            <option value selected>전체</option>
-            <option v-for="yn in delYn" :key="yn" :value="yn">
-              {{ yn | enumTransformer }}
-            </option>
-          </select>
-        </div>
-        <div class="col-6 col-lg-3 mb-3">
-          <div>
-            <label for="ended">시작 날짜</label>
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option v-for="yn in delYn" :key="yn" :value="yn">
+                {{ yn | enumTransformer }}
+              </b-form-select-option>
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="2">
+          <b-form-group label="시작 날짜">
             <b-form-datepicker
               id="started"
               v-model="founderConsultSearchDto.started"
             ></b-form-datepicker>
-          </div>
-        </div>
-        <div class="col-6 col-md-3 mb-3">
-          <div>
-            <label for="ended">종료 날짜</label>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="2">
+          <b-form-group label="종료 날짜">
             <b-form-datepicker
               id="ended"
               v-model="founderConsultSearchDto.ended"
               :disabled="founderConsultSearchDto.started ? false : true"
             ></b-form-datepicker>
-          </div>
-        </div>
-      </div>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
       <!-- second row -->
-      <div class="form-row">
-        <div class="col-6 col-lg-1 mb-3">
-          <label for="space_id">공간 ID</label>
-          <input
-            type="text"
-            class="form-control"
-            id="space_id"
-            v-model="founderConsultSearchDto.spaceNo"
-          />
-        </div>
-        <div class="col-lg-3 mb-2">
-          <label for="space_address">공간 주소</label>
-          <input
-            type="text"
-            class="form-control"
-            id="space_address"
-            v-model="founderConsultSearchDto.address"
-          />
-        </div>
-        <div class="col-6 col-lg-2 mb-3">
-          <label for="admin_user">관리자명</label>
-          <template>
-            <b-form-input
-              list="admin_list"
-              id="admin_user"
-              v-model="founderConsultSearchDto.adminUserName"
-            ></b-form-input>
-            <datalist id="admin_list">
-              <option
-                v-for="admin in adminList.items"
-                :key="admin.no"
-                :value="admin.name"
-                >{{ admin.name }}</option
+      <b-form-row>
+        <b-col cols="6" md="4" lg="2">
+          <b-form-group label="공간 ID">
+            <b-form-input v-model="founderConsultSearchDto.spaceNo" />
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="4">
+          <b-form-group label="공간 주소">
+            <b-form-input v-model="founderConsultSearchDto.address" />
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="2">
+          <b-form-group label="관리자명">
+            <template>
+              <b-form-input
+                list="admin_list"
+                id="admin_user"
+                v-model="founderConsultSearchDto.adminUserName"
+              ></b-form-input>
+              <datalist id="admin_list">
+                <option
+                  v-for="admin in adminList.items"
+                  :key="admin.no"
+                  :value="admin.name"
+                  >{{ admin.name }}</option
+                >
+              </datalist>
+            </template>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="2">
+          <b-form-group label="희망 상담 시간대">
+            <b-form-select
+              class="custom-select"
+              id="hope_time"
+              v-model="founderConsultSearchDto.hopeTime"
+            >
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="time in availableTimesSelect"
+                :key="time.no"
+                :value="time.key"
+                >{{ time.value }}</b-form-select-option
               >
-            </datalist>
-          </template>
-        </div>
-
-        <div class="col-6 col-lg-2 mb-3">
-          <label for="hope_time">희망 시간대</label>
-          <select
-            class="custom-select"
-            id="hope_time"
-            v-model="founderConsultSearchDto.hopeTime"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="time in availableTimesSelect"
-              :key="time.no"
-              :value="time.key"
-              >{{ time.value }}</option
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="12" md="4" lg="2">
+          <b-form-group label="신청 상태">
+            <b-form-select
+              class="custom-select"
+              id="status"
+              v-model="founderConsultSearchDto.status"
             >
-          </select>
-        </div>
-        <div class="col-6 col-lg-2 mb-3">
-          <label for="status">신청 상태</label>
-          <select
-            class="custom-select"
-            id="status"
-            v-model="founderConsultSearchDto.status"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="status in founderConsultStatusSelect"
-              :key="status.no"
-              :value="status.key"
-              >{{ status.value }}</option
-            >
-          </select>
-        </div>
-        <!-- <div class="col-6 col-lg-2 mb-3">
-          <label for="view_count">열람 유무</label>
-          <select
-            class="custom-select"
-            id="view_count"
-            v-model="founderConsultSearchDto.viewCount"
-          >
-            <option value selected>전체</option>
-            <option v-for="yn in delYn" :key="yn" :value="yn">
-              {{ yn | stringViewTransformer }}
-            </option>
-          </select>
-        </div> -->
-      </div>
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="status in founderConsultStatusSelect"
+                :key="status.no"
+                :value="status.key"
+                >{{ status.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
       <b-row align-h="center">
         <div>
           <b-button variant="secondary" @click="clearOut()">초기화</b-button>
@@ -175,7 +141,7 @@
           v-model="newLimit"
           size="sm"
           class="select-limit ml-3"
-          @change="search()"
+          @change="paginateSearch()"
           v-if="founderConsultTotalCount"
         >
           <b-form-select-option
@@ -200,24 +166,12 @@
         </download-excel>
       </div>
     </div>
-    <div v-if="!dataLoading">
-      <div class="table-responsive border" v-if="founderConsultTotalCount">
-        <table class="table table-hover table-sm text-center table-fixed">
-          <colgroup>
-            <col width="60" />
-            <col width="60" />
-            <col width="100" />
-            <col width="100" />
-            <col width="60" />
-            <col width="300" />
-            <col width="100" />
-            <col width="100" />
-            <col width="300" />
-            <col width="100" />
-            <col width="100" />
-            <col width="150" />
-            <!-- <col width="100" /> -->
-          </colgroup>
+    <template v-if="!dataLoading">
+      <div class="bg-white table-responsive">
+        <table
+          class="table table-hover table-sm text-center table-nowrap"
+          v-if="founderConsultTotalCount"
+        >
           <thead>
             <tr>
               <th scope="col">ID</th>
@@ -227,12 +181,6 @@
               >
                 공간 ID
               </th>
-              <!-- <th
-              scope="col"
-              v-bind:class="{ highlighted: founderConsultSearchDto.spaceNo }"
-            >
-              SPACE TYPE
-            </th>-->
               <th
                 scope="col"
                 v-bind:class="{
@@ -291,20 +239,29 @@
                 신청 상태
               </th>
               <th scope="col">생성날짜</th>
-              <!-- <th scope="col"></th> -->
             </tr>
           </thead>
-
           <tbody>
             <tr
               v-for="founderConsult in founderConsultList"
               :key="founderConsult.no"
-              @click="$router.push(`/founder-consult/${founderConsult.no}`)"
+              @click.stop="
+                $router.push(`/founder-consult/${founderConsult.no}`)
+              "
               style="cursor:pointer;"
             >
               <th scope="row">{{ founderConsult.no }}</th>
-              <td>{{ founderConsult.spaceNo }}</td>
-              <!-- <td>{{ founderConsult.space.spaceType.displayName }}</td> -->
+              <td @click.stop>
+                <a
+                  :href="
+                    `https://nanudakitchen.com/restaurant-kitchen/${founderConsult.spaceNo}`
+                  "
+                  class="text-primary"
+                  target="_blank"
+                >
+                  {{ founderConsult.spaceNo }}</a
+                >
+              </td>
               <td>{{ founderConsult.nanudaUser.name }}</td>
               <td class="text-nowrap">
                 {{ founderConsult.nanudaUser.phone | phoneTransformer }}
@@ -336,26 +293,35 @@
                 </template>
                 <template v-else>-</template>
               </td>
-              <!-- <td>
-              <div v-if="founderConsult.viewCount">
-                <b-badge
-                  :variant="
-                    founderConsult.viewCount === 'Y' ? 'success' : 'danger'
-                  "
-                  >{{ founderConsult.viewCount }}</b-badge
-                >
-              </div>
-            </td> -->
-              <td>
+              <td @click.stop>
                 <template v-if="founderConsult.spaceConsultEtc">
-                  <pre>{{ founderConsult.spaceConsultEtc }}</pre>
+                  <!-- <pre>{{ founderConsult.spaceConsultEtc }}</pre> -->
+                  <p v-b-modal="getMoreConsultEtc(founderConsult.no)">
+                    <span>
+                      {{
+                        founderConsult.spaceConsultEtc
+                          | stringTruncateTransformer(50, '...')
+                      }}
+                    </span>
+                    <span
+                      class="text-primary"
+                      v-if="founderConsult.spaceConsultEtc.length > 50"
+                      >더보기</span
+                    >
+                  </p>
+                  <b-modal
+                    size="lg"
+                    :id="`more_etc_${founderConsult.no}`"
+                    hide-footer
+                  >
+                    <pre>{{ founderConsult.spaceConsultEtc }}</pre>
+                  </b-modal>
                 </template>
               </td>
               <td>
                 <template v-if="founderConsult.admin">
                   {{ founderConsult.admin.name }}
                 </template>
-                <template v-else>-</template>
               </td>
               <td>
                 <b-badge
@@ -365,24 +331,11 @@
                 >
               </td>
               <td>{{ founderConsult.createdAt | dateTransformer }}</td>
-              <!-- <td>
-                <router-link
-                  v-if="founderConsult.space"
-                  class="btn btn-sm btn-secondary text-nowrap"
-                  :to="{
-                    name: 'FounderConsultDetail',
-                    params: {
-                      id: founderConsult.no,
-                    },
-                  }"
-                  >상세보기</router-link
-                >
-              </td> -->
             </tr>
           </tbody>
         </table>
+        <div v-else class="empty-data border">검색결과가 없습니다.</div>
       </div>
-      <div v-else class="empty-data border">검색결과가 없습니다.</div>
       <b-pagination
         v-model="pagination.page"
         v-if="founderConsultTotalCount"
@@ -392,11 +345,15 @@
         @input="paginateSearch"
         class="mt-4 justify-content-center"
       ></b-pagination>
-    </div>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+    </template>
+    <template v-else>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+      </div>
+    </template>
   </section>
 </template>
 <script lang="ts">
@@ -435,7 +392,11 @@ import {
   YN,
   CONST_YN,
 } from '../../../common';
-import { ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 
 @Component({
   name: 'FounderConsultList',
@@ -485,6 +446,10 @@ export default class FounderConsult extends BaseComponent {
     return getStatusColor(status);
   }
 
+  getMoreConsultEtc(consultNo) {
+    return `more_etc_${consultNo}`;
+  }
+
   findAdmin() {
     AdminService.findForSelect().subscribe(res => {
       if (res) {
@@ -521,17 +486,24 @@ export default class FounderConsult extends BaseComponent {
   }
 
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
+  }
+
+  search() {
+    this.findAll(true, true);
   }
 
   // 검색하기
-  search(isPagination?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.founderConsultSearchDto.spaceTypeNo = SPACE_TYPE.SPACE_SHARE;
     this.dataLoading = true;
+    this.pagination.limit = this.newLimit;
     if (!isPagination) {
       this.pagination.page = 1;
+    } else {
+      if (isSearch) this.pagination.page = 1;
+      RouterQueryParamMapper(this.founderConsultSearchDto, this.pagination);
     }
-    this.pagination.limit = this.newLimit;
     FounderConsultService.findAll(
       this.founderConsultSearchDto,
       this.pagination,
@@ -539,36 +511,41 @@ export default class FounderConsult extends BaseComponent {
       this.dataLoading = false;
       this.founderConsultList = res.data.items;
       this.founderConsultTotalCount = res.data.totalCount;
-      this.totalPage = Math.ceil(
-        this.founderConsultTotalCount / this.pagination.limit,
-      );
-      this.$router.push({
-        query: Object.assign(this.founderConsultSearchDto),
-      });
     });
-    window.scrollTo(0, 0);
   }
 
   // 초기화
   clearOut() {
-    this.pagination.page = 1;
-    this.founderConsultSearchDto = new FounderConsultListDto();
-    this.search();
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.founderConsultSearchDto = new FounderConsultListDto();
+      this.findAll();
+    }
   }
 
   created() {
-    this.newLimit = 50;
-    this.pagination.limit = this.newLimit;
+    this.newLimit = PaginationCount.TWENTY;
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.founderConsultSearchDto = query;
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.newLimit = +query.limit;
+        // this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
+    } else {
+      this.findAll();
     }
+
     this.getAvailableTimes();
     this.getCompanies();
     this.getFounderConsultCodes();
     this.getSpaceTypes();
     this.findAdmin();
-    this.search();
   }
 }
 </script>

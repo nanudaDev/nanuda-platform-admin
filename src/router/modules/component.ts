@@ -378,8 +378,8 @@ const componentsRouter: RouteConfig[] = [
     ],
   },
   {
-    path: '/notice-board',
-    name: '공지사항',
+    path: '/board',
+    name: '게시판',
     component: () => import('../../modules/notice-board/NoticeBoard.vue'),
     children: [
       {
@@ -414,28 +414,6 @@ const componentsRouter: RouteConfig[] = [
         },
       },
       {
-        path: '/notice-board/create',
-        component: () =>
-          import(
-            /* webpackChunkName: "lazyLoaded" */
-            '../../modules/notice-board/components/NoticeBoardCreate.vue'
-          ),
-        name: 'NoticeBoardCreate',
-        meta: {
-          authRequired: true,
-          layout: 'MainLayout',
-          roles: [...CONST_ADMIN_USER],
-          title: '공지사항 작성',
-        },
-      },
-    ],
-  },
-  {
-    path: '/inquiry',
-    name: 'Q&A',
-    component: () => import('../../modules/inquiry/Inquiry.vue'),
-    children: [
-      {
         path: '/inquiry',
         component: () =>
           import(
@@ -466,28 +444,6 @@ const componentsRouter: RouteConfig[] = [
           title: 'Q&A 상세',
         },
       },
-      // {
-      //   path: '/inquiry/create',
-      //   component: () =>
-      //     import(
-      //       /* webpackChunkName: "lazyLoaded" */
-      //       '../../modules/inquiry/components/InquiryCreate.vue'
-      //     ),
-      //   name: 'Q&A 생성',
-      //   meta: {
-      //     authRequired: true,
-      //     layout: 'MainLayout',
-      //     roles: [...CONST_ADMIN_USER],
-      //     title: '공지사항 생성',
-      //   },
-      // },
-    ],
-  },
-  {
-    path: '/article',
-    name: '기사 관리',
-    component: () => import('../../modules/article/Article.vue'),
-    children: [
       {
         path: '/article',
         component: () =>
@@ -521,6 +477,97 @@ const componentsRouter: RouteConfig[] = [
       },
     ],
   },
+  // {
+  //   path: '/inquiry',
+  //   name: 'Q&A',
+  //   component: () => import('../../modules/inquiry/Inquiry.vue'),
+  //   children: [
+  //     {
+  //       path: '/inquiry',
+  //       component: () =>
+  //         import(
+  //           /* webpackChunkName: "lazyLoaded" */
+  //           '../../modules/inquiry/components/InquiryList.vue'
+  //         ),
+  //       name: 'InquiryList',
+  //       meta: {
+  //         authRequired: true,
+  //         layout: 'MainLayout',
+  //         roles: [...CONST_ADMIN_USER],
+  //         title: 'Q&A 관리',
+  //       },
+  //     },
+  //     {
+  //       path: '/inquiry/:id([0-9]+)',
+  //       name: 'InquiryDetail',
+  //       component: () =>
+  //         import(
+  //           /* webpackChunkName: "lazyLoaded" */
+  //           '../../modules/inquiry/components/InquiryDetail.vue'
+  //         ),
+  //       meta: {
+  //         authRequired: true,
+  //         layout: 'MainLayout',
+  //         roles: [...CONST_ADMIN_USER],
+  //         detailPage: true,
+  //         title: 'Q&A 상세',
+  //       },
+  //     },
+  //     // {
+  //     //   path: '/inquiry/create',
+  //     //   component: () =>
+  //     //     import(
+  //     //       /* webpackChunkName: "lazyLoaded" */
+  //     //       '../../modules/inquiry/components/InquiryCreate.vue'
+  //     //     ),
+  //     //   name: 'Q&A 생성',
+  //     //   meta: {
+  //     //     authRequired: true,
+  //     //     layout: 'MainLayout',
+  //     //     roles: [...CONST_ADMIN_USER],
+  //     //     title: '공지사항 생성',
+  //     //   },
+  //     // },
+  //   ],
+  // },
+  // {
+  //   path: '/article',
+  //   name: '기사 관리',
+  //   component: () => import('../../modules/article/Article.vue'),
+  //   children: [
+  //     {
+  //       path: '/article',
+  //       component: () =>
+  //         import(
+  //           /* webpackChunkName: "lazyLoaded" */
+  //           '../../modules/article/components/ArticleList.vue'
+  //         ),
+  //       name: 'ArticleList',
+  //       meta: {
+  //         authRequired: true,
+  //         layout: 'MainLayout',
+  //         roles: [...CONST_ADMIN_USER],
+  //         title: '기사 관리',
+  //       },
+  //     },
+  //     {
+  //       path: '/article/:id([0-9]+)',
+  //       name: 'ArticleDetail',
+  //       component: () =>
+  //         import(
+  //           /* webpackChunkName: "lazyLoaded" */
+  //           '../../modules/article/components/ArticleDetail.vue'
+  //         ),
+  //       meta: {
+  //         authRequired: true,
+  //         layout: 'MainLayout',
+  //         roles: [...CONST_ADMIN_USER],
+  //         detailPage: true,
+  //         title: '기사 상세',
+  //       },
+  //     },
+  //   ],
+  // },
   {
     path: '/presentation-event',
     name: '창업 설명회',

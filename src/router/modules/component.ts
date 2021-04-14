@@ -414,6 +414,22 @@ const componentsRouter: RouteConfig[] = [
         },
       },
       {
+        path: '/notice-board/create',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/notice-board/components/NoticeBoardCreate.vue'
+          ),
+        name: '공지사항 생성',
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          detailPage: true,
+          title: '공지사항 생성',
+        },
+      },
+      {
         path: '/inquiry',
         component: () =>
           import(

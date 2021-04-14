@@ -5,12 +5,6 @@
         <router-link to="/presentation-event" class="btn btn-secondary"
           >목록으로</router-link
         >
-        <b-button variant="primary" @click="updateEvent()">
-          수정하기
-        </b-button>
-        <b-button variant="danger" v-b-modal.delete_event>
-          삭제하기
-        </b-button>
       </template>
     </SectionTitle>
     <b-row>
@@ -224,12 +218,15 @@
       <router-link to="/presentation-event" class="btn btn-secondary"
         >목록으로</router-link
       >
+      <b-button variant="danger" v-b-modal.delete_event>
+        삭제하기
+      </b-button>
       <b-button variant="primary" @click="updateEvent()">
         수정하기
       </b-button>
     </div>
     <div class="divider my-4"></div>
-    <div class="title mb-4">
+    <div class="title mb-4" id="attendeesList">
       <h4>설명회 참석자</h4>
     </div>
     <div class="table-top">
@@ -242,7 +239,7 @@
           v-model="newLimit"
           size="sm"
           class="select-limit ml-3"
-          @change="search()"
+          @change="findAll()"
           v-if="attendeesTotalCount"
         >
           <b-form-select-option
@@ -266,14 +263,20 @@
           <b-icon icon="file-earmark-arrow-down"></b-icon>
           엑셀 다운로드
         </download-excel>
-        <b-button variant="primary" v-b-modal.add_attendee
+        <b-button
+          variant="primary"
+          v-b-modal.add_attendee
+          @click="clearOutCreateDto()"
           >참석자 정보 추가</b-button
         >
       </div>
     </div>
-    <div v-if="!dataLoading">
-      <div v-if="attendeesTotalCount" class="mt-4 bg-light">
-        <table class="table table-hover table-sm">
+    <template v-if="!dataLoading">
+      <div class="mt-4 bg-white table-responsive">
+        <table
+          class="table table-hover table-sm table-nowrap"
+          v-if="attendeesTotalCount"
+        >
           <thead>
             <tr>
               <th scope="col">NO</th>
@@ -326,29 +329,33 @@
                 <b-button
                   variant="secondary"
                   v-b-modal.update_attendee
-                  @click="findOneAttendee(attendee.no)"
+                  @click="findAttendee(attendee.no)"
                   >수정</b-button
                 >
               </td>
             </tr>
           </tbody>
         </table>
+        <div v-else class="empty-data border">검색결과가 없습니다.</div>
       </div>
-      <div v-else class="empty-data border">검색결과가 없습니다.</div>
       <b-pagination
-        v-model="pagination.page"
+        v-model="paginationAttendees.page"
         v-if="attendeesTotalCount"
         pills
         :total-rows="attendeesTotalCount"
-        :per-page="pagination.limit"
+        :per-page="paginationAttendees.limit"
         @input="paginateSearch()"
         class="mt-4 justify-content-center"
       ></b-pagination>
-    </div>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+    </template>
+    <template v-else>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+      </div>
+    </template>
     <!-- 삭제 모달 -->
     <b-modal
       id="delete_event"
@@ -511,6 +518,7 @@ import toast from '../../../../resources/assets/js/services/toast.js';
 import router from '@/router';
 import { CONST_YN, Pagination, YN } from '@/common';
 import { CONST_PAGINATION_COUNT, PaginationCount } from '@/services/shared';
+import { ReverseQueryParamMapper, RouterQueryParamMapper } from '@/core';
 
 @Component({
   name: 'PresentationEventDetail',
@@ -521,7 +529,7 @@ export default class PresentationEventDetail extends BaseComponent {
   private attendeesSearchDto = new AttendeesListDto();
   private attendeesCreateDto = new AttendeesDto();
   private attendeesDto = new AttendeesDto();
-  private pagination = new Pagination();
+  private paginationAttendees = new Pagination();
 
   private presentationEventDto = new PresentationEventDto();
   private newAttachments: FileAttachmentDto[] = [];
@@ -581,25 +589,27 @@ export default class PresentationEventDetail extends BaseComponent {
     PresentationEventService.findOne(this.$route.params.id).subscribe(res => {
       if (res) {
         this.presentationEventDto = res.data;
-        this.search();
       }
     });
   }
 
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
   }
 
-  search(isPagination?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
-    if (!isPagination) {
-      this.pagination.page = 1;
-    }
-    this.pagination.limit = this.newLimit;
+    this.paginationAttendees.limit = this.newLimit;
     this.attendeesSearchDto.eventNo = parseInt(this.$route.params.id);
+    if (!isPagination) {
+      this.paginationAttendees.page = 1;
+    } else {
+      if (isSearch) this.paginationAttendees.page = 1;
+      RouterQueryParamMapper(this.attendeesSearchDto, this.paginationAttendees);
+    }
     AttendeesService.findAll(
       this.attendeesSearchDto,
-      this.pagination,
+      this.paginationAttendees,
     ).subscribe(res => {
       if (res) {
         this.dataLoading = false;
@@ -609,7 +619,7 @@ export default class PresentationEventDetail extends BaseComponent {
     });
   }
 
-  findOneAttendee(attendeeNo) {
+  findAttendee(attendeeNo) {
     AttendeesService.findOne(attendeeNo).subscribe(res => {
       this.attendeesDto = res.data;
     });
@@ -620,7 +630,7 @@ export default class PresentationEventDetail extends BaseComponent {
     AttendeesService.create(this.attendeesCreateDto).subscribe(res => {
       if (res) {
         toast.success('추가 완료');
-        this.search();
+        this.findAll();
       }
     });
   }
@@ -631,16 +641,20 @@ export default class PresentationEventDetail extends BaseComponent {
 
   updateAttendee(attendeeNo) {
     AttendeesService.update(attendeeNo, this.attendeesDto).subscribe(res => {
-      toast.success('참석자 수정 완료');
-      this.findOne(this.$route.params.id);
+      if (res) {
+        toast.success('수정 완료');
+        this.findOne(this.$route.params.id);
+      }
     });
   }
 
   deleteOne() {
     PresentationEventService.deleteForAdmin(this.$route.params.id).subscribe(
       res => {
-        toast.success('설명회 삭제했습니다');
-        this.$router.push('/presentation-event');
+        if (res) {
+          toast.success('삭제 완료');
+          this.$router.push('/presentation-event');
+        }
       },
     );
   }
@@ -710,7 +724,7 @@ export default class PresentationEventDetail extends BaseComponent {
       this.presentationEventDto,
     ).subscribe(res => {
       if (res) {
-        toast.success('수정완료');
+        toast.success('수정 완료');
         this.findOne(this.presentationEventDto.no);
       }
     });
@@ -725,10 +739,20 @@ export default class PresentationEventDetail extends BaseComponent {
 
   created() {
     this.findOne(this.$route.params.id);
-
-    this.search();
-    this.newLimit = 50;
-    this.pagination.limit = this.newLimit;
+    this.newLimit = PaginationCount.TWENTY;
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.attendeesSearchDto = query;
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.paginationAttendees.limit = +query.limit;
+        this.paginationAttendees.page = +query.page;
+      } else {
+        this.paginationAttendees = new Pagination();
+      }
+      this.paginateSearch();
+    } else {
+      this.findAll();
+    }
     this.getCommonCodes();
     this.getGender();
   }

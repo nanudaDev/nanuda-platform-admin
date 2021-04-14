@@ -35,7 +35,7 @@
             </b-col>
             <b-col
               cols="12"
-              :md="articleDto.image[0] ? 8 : 12"
+              :md="articleDto.image && articleDto.image[0] ? 8 : 12"
               v-html="articleDto.desc"
             >
               {{ articleDto.desc }} ss</b-col
@@ -98,9 +98,7 @@
           <label>기사 이미지</label>
           <div class="my-2">
             <div
-              v-if="
-                articleDto.image && articleDto.image.length > 0 && !imageChanged
-              "
+              v-if="articleDto.image && articleDto.image[0] && !imageChanged"
               class="mb-4"
             >
               <div v-for="image in articleDto.image" :key="image.endpoint">
@@ -112,7 +110,11 @@
               </div>
             </div>
             <div
-              v-if="!articleDto.image.length && !newArticleImage.length"
+              v-if="
+                articleDto.image &&
+                  !articleDto.image.length &&
+                  !newArticleImage.length
+              "
               class="mb-4"
               style="background-color:#ddd;"
             >

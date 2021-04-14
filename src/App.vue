@@ -248,6 +248,17 @@ img {
   padding-right: 90px;
 }
 
+.cropped-img {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+}
+
 @media screen and (max-width: 540px) {
   .table-top {
     display: block;

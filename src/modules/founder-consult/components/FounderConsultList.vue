@@ -293,10 +293,10 @@
                 </template>
                 <template v-else>-</template>
               </td>
-              <td @click.stop>
+              <td>
                 <template v-if="founderConsult.spaceConsultEtc">
                   <!-- <pre>{{ founderConsult.spaceConsultEtc }}</pre> -->
-                  <p v-b-modal="getMoreConsultEtc(founderConsult.no)">
+                  <p>
                     <span>
                       {{
                         founderConsult.spaceConsultEtc
@@ -304,7 +304,9 @@
                       }}
                     </span>
                     <span
+                      @click.stop
                       class="text-primary"
+                      v-b-modal="getMoreConsultEtc(founderConsult.no)"
                       v-if="founderConsult.spaceConsultEtc.length > 50"
                       >더보기</span
                     >

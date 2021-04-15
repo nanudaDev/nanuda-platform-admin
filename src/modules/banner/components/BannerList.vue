@@ -27,7 +27,7 @@
           <select class="custom-select" v-model="bannerSearchDto.showYn">
             <option value>전체</option>
             <option v-for="yn in ynSelect" :key="yn" :value="yn">{{
-              yn | enumTransformer
+              yn | stringShowTransformer
             }}</option>
           </select>
         </b-col>
@@ -53,10 +53,10 @@
       </b-form-row>
       <!-- second row -->
       <b-row align-h="center">
-        <b-btn-group>
-          <b-button variant="primary" @click="clearOut()">초기화</b-button>
-          <b-button variant="success" @click="search()">검색</b-button>
-        </b-btn-group>
+        <div>
+          <b-button variant="secondary" @click="clearOut()">초기화</b-button>
+          <b-button variant="primary" @click="search()">검색</b-button>
+        </div>
       </b-row>
     </div>
     <div class="table-top">
@@ -68,114 +68,139 @@
       </div>
       <b-button variant="primary" v-b-modal.add_banner>배너 추가</b-button>
     </div>
-    <div v-if="!dataLoading" class="table-bordered table-responsive">
-      <table class="table table-sm table-hover" v-if="bannerTotalCount">
-        <thead>
-          <th scope="row">ID</th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: bannerSearchDto.bannerType,
-            }"
-          >
-            배너 타입
-          </th>
-          <th scope="row">
-            이미지
-          </th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: bannerSearchDto.title,
-            }"
-          >
-            제목
-          </th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: bannerSearchDto.started,
-            }"
-          >
-            개제 기간
-          </th>
-          <th scope="row">
-            URL
-          </th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: bannerSearchDto.showYn,
-            }"
-          >
-            노출여부
-          </th>
-          <th></th>
-        </thead>
-        <tbody>
-          <tr v-for="banner in bannerListDto" :key="banner.key">
-            <td>{{ banner.no }}</td>
-            <td>
-              <div v-if="banner.codeManagement">
-                {{ banner.codeManagement.value }}
-              </div>
-            </td>
-            <td>
-              <img
-                v-if="banner.image"
-                :src="banner.image[0].endpoint"
-                class="rounded mx-auto d-block article-image"
-                style="max-height:80px"
-              />
-            </td>
-            <td>{{ banner.title }}</td>
-            <td>
-              <div v-if="banner.started">
-                {{ banner.started | dateTransformer }} ~
-                {{ banner.ended | dateTransformer }}
-              </div>
-            </td>
-            <td>
-              <div v-if="banner.url">
-                {{ banner.url }}
-              </div>
-            </td>
-            <td>
-              <b-badge
-                :variant="banner.showYn === 'Y' ? 'success' : 'danger'"
-                >{{ banner.showYn }}</b-badge
-              >
-            </td>
-            <td>
-              <router-link
-                class="btn btn-sm btn-secondary text-nowrap"
-                :to="{
+    <template v-if="!dataLoading">
+      <div class="bg-white table-responsive">
+        <table
+          class="table table-sm table-hover table-nowrap"
+          v-if="bannerTotalCount"
+        >
+          <thead>
+            <th scope="row">ID</th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: bannerSearchDto.bannerType,
+              }"
+            >
+              배너 타입
+            </th>
+            <th scope="row">
+              이미지 (PC)
+            </th>
+            <th scope="row">
+              이미지 (모바일)
+            </th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: bannerSearchDto.title,
+              }"
+            >
+              제목
+            </th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: bannerSearchDto.started,
+              }"
+            >
+              개제 기간
+            </th>
+            <th scope="row">
+              URL
+            </th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: bannerSearchDto.showYn,
+              }"
+            >
+              노출여부
+            </th>
+            <th>
+              등록일
+            </th>
+          </thead>
+          <tbody>
+            <tr
+              v-for="banner in bannerList"
+              :key="banner.key"
+              @click="
+                $router.push({
                   name: 'BannerDetail',
                   params: {
                     id: banner.no,
                   },
-                }"
-                >상세보기</router-link
-              >
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div v-else class="empty-data border">검색결과가 없습니다.</div>
-    </div>
-    <b-pagination
-      v-model="pagination.page"
-      v-if="bannerTotalCount"
-      pills
-      :total-rows="bannerTotalCount"
-      :per-page="pagination.limit"
-      @input="paginateSearch()"
-      class="mt-4 justify-content-center"
-    ></b-pagination>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+                })
+              "
+              style="cursor:pointer"
+            >
+              <td>{{ banner.no }}</td>
+              <td>
+                <div v-if="banner.codeManagement">
+                  {{ banner.codeManagement.value }}
+                </div>
+              </td>
+              <td>
+                <b-img-lazy
+                  v-if="banner.image"
+                  :src="banner.image[0].endpoint"
+                  class="mx-auto d-block article-image"
+                  style="max-height:60px; max-width:none;"
+                />
+              </td>
+              <td>
+                <b-img-lazy
+                  v-if="banner.mobileImage"
+                  :src="banner.mobileImage[0].endpoint"
+                  class="mx-auto d-block article-image"
+                  style="max-height:60px; max-width:none;"
+                />
+              </td>
+              <td>{{ banner.title }}</td>
+              <td>
+                <div v-if="banner.started">
+                  {{ banner.started | dateTransformer }} ~
+                  {{ banner.ended | dateTransformer }}
+                </div>
+              </td>
+              <td>
+                <div v-if="banner.url">
+                  {{ banner.url }}
+                </div>
+              </td>
+              <td>
+                <b-badge
+                  :variant="banner.showYn === 'Y' ? 'success' : 'danger'"
+                  >{{ banner.showYn }}</b-badge
+                >
+              </td>
+              <td>
+                {{ banner.createdAt | dateTransformer }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div v-else class="empty-data border">검색결과가 없습니다.</div>
+      </div>
+      <b-pagination
+        v-model="pagination.page"
+        v-if="bannerTotalCount"
+        pills
+        :total-rows="bannerTotalCount"
+        :per-page="pagination.limit"
+        @input="paginateSearch()"
+        class="mt-4 justify-content-center"
+      ></b-pagination>
+    </template>
+    <template v-else>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+      </div>
+    </template>
     <!-- 배너 추가 모달 -->
     <b-modal
       id="add_banner"
@@ -339,13 +364,17 @@ import {
   CONST_LINK_TYPE,
   LINK_TYPE,
 } from '../../../services/shared';
-import { ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 import { CodeManagementDto } from '@/services/init/dto/index.js';
 import CodeManagementService from '../../../services/code-management.service';
 
 @Component
 export default class BannerList extends BaseComponent {
-  private bannerListDto: BannerDto[] = [];
+  private bannerList: BannerDto[] = [];
   private bannerSearchDto = new BannerDto();
   private bannerCreateDto = new BannerDto();
   private pagination = new Pagination();
@@ -366,31 +395,39 @@ export default class BannerList extends BaseComponent {
     });
   }
 
-  search(isPagination?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
+    } else {
+      if (isSearch) this.pagination.page = 1;
+      RouterQueryParamMapper(this.bannerSearchDto, this.pagination);
     }
     BannerService.findAll(this.bannerSearchDto, this.pagination).subscribe(
       res => {
-        this.dataLoading = false;
-        this.bannerListDto = res.data.items;
-        this.bannerTotalCount = res.data.totalCount;
-        this.$router.push({
-          query: Object.assign(this.bannerSearchDto),
-        });
+        if (res) {
+          this.dataLoading = false;
+          this.bannerList = res.data.items;
+          this.bannerTotalCount = res.data.totalCount;
+        }
       },
     );
   }
 
+  search() {
+    this.findAll(true, true);
+  }
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
   }
 
   clearOut() {
-    this.pagination.page = 1;
-    this.bannerSearchDto = new BannerDto();
-    this.search();
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.bannerSearchDto = new BannerDto();
+      this.findAll();
+    }
   }
 
   // create banner
@@ -400,7 +437,7 @@ export default class BannerList extends BaseComponent {
     BannerService.create(this.bannerCreateDto).subscribe(res => {
       if (res) {
         toast.success('추가완료');
-        this.search();
+        this.clearOut();
       }
     });
   }
@@ -444,13 +481,20 @@ export default class BannerList extends BaseComponent {
   }
 
   created() {
-    this.pagination.page = 1;
-    this.search();
-    this.getTypeCodes();
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.bannerSearchDto = query;
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
+    } else {
+      this.findAll();
     }
+    this.getTypeCodes();
   }
 }
 </script>

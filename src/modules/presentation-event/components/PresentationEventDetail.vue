@@ -8,7 +8,7 @@
       </template>
     </SectionTitle>
     <b-row>
-      <b-col cols="4">
+      <b-col cols="12" md="4">
         <b-card no-body>
           <b-tabs card fill>
             <b-tab title="PC 이미지" active>
@@ -53,7 +53,7 @@
               </div>
             </b-tab>
             <b-tab title="모바일 이미지">
-              <template v-if="!mobieImageChanged">
+              <template v-if="!mobileImageChanged">
                 <b-img-lazy
                   :src="presentationEventDto.mobileImage[0].endpoint"
                   v-if="
@@ -72,7 +72,7 @@
                 v-if="
                   newMobileAttachments &&
                     newMobileAttachments.length > 0 &&
-                    mobieImageChanged
+                    mobileImageChanged
                 "
               >
                 <b-img-lazy
@@ -97,7 +97,7 @@
           </b-tabs>
         </b-card>
       </b-col>
-      <b-col cols="8">
+      <b-col cols="12" md="8">
         <b-form-row>
           <b-col cols="6" class="mb-3">
             <label for="event_type">창업 설명회 유형</label>
@@ -546,7 +546,7 @@ export default class PresentationEventDetail extends BaseComponent {
     '29일(금)',
   ];
   private imageChanged = false;
-  private mobieImageChanged = false;
+  private mobileImageChanged = false;
   private ynSelect: YN[] = [...CONST_YN];
   private dataLoading = false;
   private newDate = new Date();
@@ -696,14 +696,14 @@ export default class PresentationEventDetail extends BaseComponent {
             fileUpload.attachmentReasonType === ATTACHMENT_REASON_TYPE.SUCCESS,
         ),
       );
-      this.mobieImageChanged = true;
+      this.mobileImageChanged = true;
     }
   }
 
   removeMobileImage() {
     this.newMobileAttachments = [];
     this.$refs['fileInputMobile'].reset();
-    this.mobieImageChanged = false;
+    this.mobileImageChanged = false;
   }
 
   updateEvent() {

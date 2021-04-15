@@ -372,7 +372,7 @@
                 업체 상태
               </th>
               <th scope="col">공간 공실 수</th>
-              <th scope="col">생성날짜</th>
+              <th scope="col">신청일</th>
             </tr>
           </thead>
 

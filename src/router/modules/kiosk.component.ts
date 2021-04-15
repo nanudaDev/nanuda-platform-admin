@@ -19,7 +19,7 @@ const kioskComponentRouter: RouteConfig[] = [
           authRequired: true,
           layout: 'MainLayout',
           roles: [...CONST_ADMIN_USER],
-          title: '키오스크 매출 정보',
+          title: '키오스크 매출',
         },
       },
       {
@@ -34,7 +34,7 @@ const kioskComponentRouter: RouteConfig[] = [
           layout: 'MainLayout',
           roles: [...CONST_ADMIN_USER],
           detailPage: true,
-          title: '키오스크 매출 정보',
+          title: '키오스크 매출',
         },
       },
     ],

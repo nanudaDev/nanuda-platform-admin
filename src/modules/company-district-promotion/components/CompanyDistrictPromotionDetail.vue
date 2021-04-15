@@ -102,6 +102,15 @@
         </b-form-group>
       </b-col>
     </b-form-row>
+    <div class="text-right">
+      <router-link to="/company-district-promotion" class="btn btn-secondary"
+        >목록으로</router-link
+      >
+      <b-button variant="primary" @click="updateOne()">
+        수정하기
+      </b-button>
+    </div>
+    <!-- 프로모션 삭제 모달 -->
     <b-modal
       id="delete_promotion"
       title="프로모션 삭제"
@@ -133,7 +142,7 @@ import { VueEditor } from 'vue2-editor';
 import { EditorConfig } from '../../../config';
 
 @Component({
-  name: 'PromotionDetail',
+  name: 'CompanyDistrictPromotionDetail',
   components: {
     VueEditor,
   },

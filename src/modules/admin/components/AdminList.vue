@@ -220,7 +220,7 @@ export default class AdminList extends BaseComponent {
 
   // findAll admin
   findAll(isPagination?: boolean, isSearch?: boolean) {
-    this.dataLoading = false;
+    this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
     } else {

@@ -494,7 +494,9 @@ export default class PresentationEventList extends BaseComponent {
   }
 
   clearOutCreateDto() {
-    this.clearOut();
+    this.attachments = [];
+    this.mobileAttachments = [];
+    this.presentationEventCreateDto = new PresentationEventDto();
   }
 
   createEvent() {

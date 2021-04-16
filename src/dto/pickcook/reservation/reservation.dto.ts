@@ -1,5 +1,6 @@
 import { YN } from '@/common';
 import { BaseDto } from '@/core';
+import { RESERVATION_HOURS } from '@/services/shared';
 import { ConsultResponseDto } from '../consult-response';
 
 export class ReservationDto extends BaseDto<ReservationDto> {
@@ -9,7 +10,8 @@ export class ReservationDto extends BaseDto<ReservationDto> {
   phone: string;
   consultId: number;
   reservationDate: Date;
-  reservationTime: string;
-  isCancelYn: YN;
+  reservationTime: RESERVATION_HOURS;
+  isCancelYn?: YN;
   consultResult?: ConsultResponseDto;
+  formatReservationDate?: string;
 }

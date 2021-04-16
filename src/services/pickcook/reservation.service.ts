@@ -1,5 +1,11 @@
 import { BaseService } from '@/core';
-import { ReservationCheckDto, ReservationDto } from '@/dto';
+import {
+  ReservationUpdateDto,
+  ReservationDto,
+  ReservationCreateDto,
+  ReservationDeleteReasonDto,
+  ReservationCheckTimeDto,
+} from '@/dto';
 import { ApiUrlType } from '../../../environments';
 
 export class ReservationService extends BaseService {
@@ -10,12 +16,54 @@ export class ReservationService extends BaseService {
   /**
    *
    * @param id
+   * @param reservationCreateDto
    * @returns
    */
-  deleteOne(id, reservationCheckDto: ReservationCheckDto) {
-    return super.delete<ReservationDto>(
-      `reservation/${id}`,
-      reservationCheckDto,
+  create(reservationCreateDto: ReservationCreateDto) {
+    return super.post<ReservationCreateDto>(
+      `admin/reservation`,
+      reservationCreateDto,
+      ApiUrlType.PICKCOOK,
+    );
+  }
+
+  /**
+   *
+   * @param id
+   * @param reservationUpdateDto
+   * @returns
+   */
+  update(id, reservationUpdateDto: ReservationUpdateDto) {
+    return super.patch<ReservationUpdateDto>(
+      `admin/reservation/${id}`,
+      reservationUpdateDto,
+      ApiUrlType.PICKCOOK,
+    );
+  }
+
+  /**
+   *
+   * @param id
+   * @returns
+   */
+  deleteOne(id, reservationDeleteReasonDto: ReservationDeleteReasonDto) {
+    return super.delete<ReservationDeleteReasonDto>(
+      `admin/reservation/${id}`,
+      null,
+      ApiUrlType.PICKCOOK,
+      reservationDeleteReasonDto,
+    );
+  }
+
+  /**
+   *
+   * @param reservationCheckTimeDto
+   * @returns
+   */
+  getAvailableTimes(reservationCheckTimeDto: ReservationCheckTimeDto) {
+    return super.get<ReservationCheckTimeDto[]>(
+      'reservation/check-available-times',
+      reservationCheckTimeDto,
       ApiUrlType.PICKCOOK,
     );
   }

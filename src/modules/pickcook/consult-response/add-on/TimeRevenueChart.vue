@@ -31,13 +31,18 @@ export default class TimeRevenueChart extends Vue {
     this.chartData.datasets[0].backgroundColor = 'transparent';
     // Overwriting base render method with actual data.
 
+    const totalAmount = this.chartData.datasets[0].data.reduce(
+      (a, b) => a + b,
+      0,
+    );
+
     this.renderChart(this.chartData, {
       animation: {
         easing: 'easeInOutBack',
       },
       plugins: {
         datalabels: {
-          display: false,
+          display: true,
           backgroundColor: 'transparent',
           anchor: 'end',
           align: 'top',
@@ -47,36 +52,25 @@ export default class TimeRevenueChart extends Vue {
             weight: 'bold',
           },
           color: '#004D8A',
-          //   formatter: function(number: any) {
-          //     // 단위 추가
-          //     let inputNumber: any = number < 0 ? false : number;
-          //     const unitWords = ['원', '만', '억', '조', '경'];
-          //     const splitUnit = 10000;
-          //     const splitCount = unitWords.length;
-          //     const resultArray = [];
-          //     let resultString = '';
-          //     for (let i = 0; i < splitCount; i++) {
-          //       let unitResult =
-          //         (inputNumber % Math.pow(splitUnit, i + 1)) /
-          //         Math.pow(splitUnit, i);
-          //       unitResult = Math.floor(unitResult);
-          //       if (i !== 0 && unitResult > 0) {
-          //         resultArray[i] = unitResult;
-          //       }
-          //     }
-          //     for (let i = 0; i < resultArray.length; i++) {
-          //       if (!resultArray[i]) continue;
-          //       resultString =
-          //         String(resultArray[i]) + unitWords[i] + resultString;
-          //     }
-
-          //     return resultString;
-          //   },
+          formatter: function(number: any) {
+            const resultNumber = number.toString().length;
+            if (totalAmount) {
+              let resultString;
+              if (resultNumber > 5) {
+                resultString = `${((number / totalAmount) * 100).toFixed(2)}%`;
+              } else {
+                resultString = `${number}%`;
+              }
+              return resultString;
+            }
+          },
         },
       },
       layout: {
         padding: {
           top: 80,
+          left: 20,
+          right: 20,
           // Any unspecified dimensions are assumed to be 0
         },
       },

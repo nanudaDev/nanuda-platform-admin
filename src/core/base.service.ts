@@ -95,6 +95,7 @@ export class BaseService extends Vue {
     path: string,
     params?: any,
     apiUrlType?: ApiUrlType,
+    data?: any,
   ): AxiosObservable<T> {
     let baseUrl: string;
     let siteUrl: string;
@@ -186,7 +187,9 @@ export class BaseService extends Vue {
     } else if (method === 'patch') {
       return Axios.patch(path, params, { headers }) as AxiosObservable<T>;
     } else if (method === 'delete') {
-      return Axios.delete(path, { params, headers }) as AxiosObservable<T>;
+      return Axios.delete(path, { params, headers, data }) as AxiosObservable<
+        T
+      >;
     }
   }
 
@@ -236,8 +239,12 @@ export class BaseService extends Vue {
     return this.__api('get', path, params, apiUrlType);
   }
 
-  protected post<T>(path: string, params?: any): AxiosObservable<T> {
-    return this.__api('post', path, params);
+  protected post<T>(
+    path: string,
+    params?: any,
+    apiUrlType?: ApiUrlType,
+  ): AxiosObservable<T> {
+    return this.__api('post', path, params, apiUrlType);
   }
 
   protected patch<T>(
@@ -252,8 +259,9 @@ export class BaseService extends Vue {
     path: string,
     params?: any,
     apiUrlType?: ApiUrlType,
+    data?: any,
   ): AxiosObservable<T> {
-    return this.__api('delete', path, params, apiUrlType);
+    return this.__api('delete', path, params, apiUrlType, data);
   }
 
   protected paginate<T>(

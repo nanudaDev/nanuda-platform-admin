@@ -25,8 +25,8 @@
           <NavBarList :items="items" />
         </div>
       </nav>
-      <div id="app-main" class="main-content container-fluid">
-        <router-view />
+      <div id="pickcook-main" class="container-fluid">
+        <router-view :key="$route.fullPath" />
       </div>
     </section>
   </div>

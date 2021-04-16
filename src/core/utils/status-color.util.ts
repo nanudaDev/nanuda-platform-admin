@@ -30,7 +30,8 @@ export const getStatusColor = (status: string): string => {
     status === APPROVAL_STATUS.REFUSED ||
     status === FOUNDER_CONSULT.F_DROP ||
     status === B2B_FOUNDER_CONSULT.B2B_F_CANCELLED ||
-    status === BRAND_CONSULT.CONSULT_DROPPED
+    status === BRAND_CONSULT.CONSULT_DROPPED ||
+    status === BRAND_CONSULT.CONSULT_CANNOT_CONTACT
   ) {
     return 'danger';
   }

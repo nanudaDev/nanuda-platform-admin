@@ -1,11 +1,8 @@
 <template>
   <section>
-    <div class="title pb-2 mb-2">
-      <h3>Q&amp;A 관리</h3>
-    </div>
-    <div class="divider"></div>
+    <SectionTitle title="Q&amp;A" divider />
     <div class="search-box my-4" v-on:keyup.enter="search()">
-      <div class="form-row">
+      <b-form-row>
         <div class="col-12 col-lg-2 mb-3">
           <label for="space_type">질문 유형</label>
           <select
@@ -30,12 +27,12 @@
             v-model="inquirySearchDto.title"
           />
         </div>
-      </div>
+      </b-form-row>
       <b-row align-h="center">
-        <b-btn-group>
-          <b-button variant="primary" @click="clearOut()">초기화</b-button>
-          <b-button variant="success" @click="search()">검색</b-button>
-        </b-btn-group>
+        <div>
+          <b-button variant="secondary" @click="clearOut()">초기화</b-button>
+          <b-button variant="primary" @click="search()">검색</b-button>
+        </div>
       </b-row>
     </div>
     <div class="table-top">
@@ -43,127 +40,133 @@
         <h5>
           <span>TOTAL</span>
           <strong class="text-primary">
-            {{ inquiryListCount }}
+            {{ inquiryTotalCount }}
           </strong>
         </h5>
       </div>
     </div>
-    <div v-if="!dataLoading">
-      <table
-        class="table table-bordered table-hover table-sm text-center"
-        v-if="inquiryListCount"
-      >
-        <colgroup>
-          <col width="40" />
-          <col width="100" />
-          <col width="auto" />
-          <col width="100" />
-          <col width="100" />
-          <col width="150" />
-          <col width="100" />
-          <col width="100" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th scope="col">NO</th>
-            <th
-              scope="col"
-              v-bind:class="{ highlighted: inquirySearchDto.inquiryType }"
-            >
-              CATEGORY
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{ highlighted: inquirySearchDto.title }"
-            >
-              TITLE
-            </th>
-            <th scope="col">COMPANY</th>
-            <th scope="col">COMPANY USER</th>
-            <th scope="col">CREATED</th>
-            <th scope="col">STATUS</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
+    <template v-if="!dataLoading">
+      <div class="bg-white table-responsive">
+        <table
+          class="table table-hover table-sm text-center table-nowrap"
+          v-if="inquiryTotalCount"
+        >
+          <colgroup>
+            <col width="80" />
+            <col width="200" />
+            <col width="auto" />
+            <col width="150" />
+            <col width="150" />
+            <col width="150" />
+            <col width="200" />
+            <col width="200" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col">NO</th>
+              <th
+                scope="col"
+                v-bind:class="{ highlighted: inquirySearchDto.inquiryType }"
+              >
+                카테고리
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{ highlighted: inquirySearchDto.title }"
+              >
+                제목
+              </th>
+              <th scope="col">업체명</th>
+              <th scope="col">작성자</th>
+              <th scope="col">등록일</th>
+              <th scope="col">답변 상태</th>
+            </tr>
+          </thead>
 
-        <tbody>
-          <tr v-for="inquiry in inquiryList" :key="inquiry.no">
-            <th scope="row">
-              {{ inquiry.no }}
-            </th>
-            <td>
-              <div v-if="inquiry.codeManagement.value">
-                {{ inquiry.codeManagement.value }}
-              </div>
-            </td>
-            <td>
-              <div v-if="inquiry.title">
-                {{ inquiry.title }}
-              </div>
-            </td>
-            <td>
-              <div v-if="inquiry.company && inquiry.company.nameKr">
-                {{ inquiry.company.nameKr }}
-              </div>
-            </td>
-            <td>
-              <div v-if="inquiry.companyUser && inquiry.companyUser.name">
-                {{ inquiry.companyUser.name }}
-              </div>
-            </td>
-            <td>
-              {{ inquiry.createdAt | dateTransformer }}
-            </td>
-            <td>
-              <b-badge
-                variant="success"
-                class="badge-pill p-2"
-                v-if="inquiry.isClosed === 'Y'"
-              >
-                {{ inquiry.isClosed | stringInquiryTransformer }}
-              </b-badge>
-              <b-badge
-                variant="warning"
-                class="badge-pill p-2"
-                v-else-if="inquiry.replyCount > 0"
-              >
-                답변중
-              </b-badge>
-              <b-badge variant="secondary" class="badge-pill p-2" v-else>
-                {{ inquiry.isClosed | stringInquiryTransformer }}
-              </b-badge>
-            </td>
-            <td>
-              <router-link
-                v-if="inquiry.no"
-                class="btn btn-sm btn-secondary text-nowrap"
-                :to="{
+          <tbody>
+            <tr
+              v-for="inquiry in inquiryList"
+              :key="inquiry.no"
+              @click="
+                $router.push({
                   name: 'InquiryDetail',
                   params: {
                     id: inquiry.no,
                   },
-                }"
-                >상세보기</router-link
-              >
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div v-else class="empty-data border">검색결과가 없습니다.</div>
-    </div>
-    <b-pagination
-      v-model="pagination.page"
-      v-if="inquiryListCount"
-      pills
-      :total-rows="inquiryListCount"
-      :per-page="pagination.limit"
-      @input="paginateSearch"
-      class="mt-4 justify-content-center"
-    ></b-pagination>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+                })
+              "
+              style="cursor:pointer"
+            >
+              <th scope="row">
+                {{ inquiry.no }}
+              </th>
+              <td>
+                <template v-if="inquiry.codeManagement.value">
+                  {{ inquiry.codeManagement.value }}
+                </template>
+              </td>
+              <td class="text-left">
+                <template v-if="inquiry.title">
+                  {{ inquiry.title }}
+                </template>
+              </td>
+              <td>
+                <template v-if="inquiry.company && inquiry.company.nameKr">
+                  {{ inquiry.company.nameKr }}
+                </template>
+              </td>
+              <td>
+                <template
+                  v-if="inquiry.companyUser && inquiry.companyUser.name"
+                >
+                  {{ inquiry.companyUser.name }}
+                </template>
+              </td>
+              <td>
+                {{ inquiry.createdAt | dateTransformer }}
+              </td>
+              <td>
+                <b-badge
+                  variant="success"
+                  class="badge-pill p-2"
+                  v-if="inquiry.isClosed === 'Y'"
+                >
+                  {{ inquiry.isClosed | stringInquiryTransformer }}
+                </b-badge>
+                <b-badge
+                  variant="warning"
+                  class="badge-pill p-2"
+                  v-else-if="inquiry.replyCount > 0"
+                >
+                  답변중
+                </b-badge>
+                <b-badge variant="secondary" class="badge-pill p-2" v-else>
+                  {{ inquiry.isClosed | stringInquiryTransformer }}
+                </b-badge>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div v-else class="empty-data border">검색결과가 없습니다.</div>
+      </div>
+      <b-pagination
+        v-model="pagination.page"
+        v-if="inquiryTotalCount"
+        pills
+        :total-rows="inquiryTotalCount"
+        :per-page="pagination.limit"
+        @input="paginateSearch"
+        class="mt-4 justify-content-center"
+      ></b-pagination>
+    </template>
+    <template v-else>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+      </div>
+    </template>
   </section>
 </template>
 <script lang="ts">
@@ -172,7 +175,11 @@ import Component from 'vue-class-component';
 import { InquiryDto, InquiryListDto } from '../../../dto';
 import { Pagination, INQUIRY, CONST_INQUIRY } from '../../../common';
 import InquiryService from '../../../services/inquiry.service';
-import { ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 
 @Component({
   name: 'InquiryList',
@@ -180,46 +187,61 @@ import { ReverseQueryParamMapper } from '@/core';
 export default class InquiryList extends BaseComponent {
   private inquiryList: InquiryDto[] = [];
   private inquirySearchDto = new InquiryListDto();
-  private inquiryListCount = 0;
+  private inquiryTotalCount = null;
   private pagination = new Pagination();
   private dataLoading = false;
   private inquiryTypeSelect: INQUIRY[] = [...CONST_INQUIRY];
 
-  search(isPagination?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
+    } else {
+      if (isSearch) this.pagination.page = 1;
+      RouterQueryParamMapper(this.inquirySearchDto, this.pagination);
     }
-    this.pagination.limit = 20;
-
     InquiryService.findAll(this.inquirySearchDto, this.pagination).subscribe(
       res => {
-        this.dataLoading = false;
-        this.inquiryList = res.data.items;
-        this.inquiryListCount = res.data.totalCount;
-        this.$router.push({
-          query: Object.assign(this.inquirySearchDto),
-        });
+        if (res) {
+          this.dataLoading = false;
+          this.inquiryList = res.data.items;
+          this.inquiryTotalCount = res.data.totalCount;
+        }
       },
     );
   }
 
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
+  }
+
+  search() {
+    this.findAll(true, true);
   }
 
   clearOut() {
-    this.pagination = new Pagination();
-    this.inquirySearchDto = new InquiryListDto();
-    this.search();
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.inquirySearchDto = new InquiryListDto();
+      this.findAll();
+    }
   }
 
   created() {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.inquirySearchDto = query;
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
+    } else {
+      this.findAll();
     }
-    this.search();
   }
 }
 </script>

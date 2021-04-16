@@ -16,17 +16,17 @@
           <select class="custom-select" v-model="articleSearchDto.showYn">
             <option value>전체</option>
             <option v-for="yn in showYn" :key="yn" :value="yn">{{
-              yn | enumTransformer
+              yn | stringShowTransformer
             }}</option>
           </select>
         </b-col>
       </b-form-row>
       <!-- second row -->
       <b-row align-h="center">
-        <b-btn-group>
-          <b-button variant="primary" @click="clearOut()">초기화</b-button>
-          <b-button variant="success" @click="search()">검색</b-button>
-        </b-btn-group>
+        <div>
+          <b-button variant="secondary" @click="clearOut()">초기화</b-button>
+          <b-button variant="primary" @click="search()">검색</b-button>
+        </div>
       </b-row>
     </div>
     <div class="table-top">
@@ -38,97 +38,122 @@
       </div>
       <b-button variant="primary" v-b-modal.add_article>기사 추가</b-button>
     </div>
-    <div v-if="!dataLoading" class="table-bordered table-responsive">
-      <table class="table table-sm table-hover" v-if="articleListCount">
-        <thead>
-          <th scope="row">NO</th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: articleSearchDto.mediaName,
-            }"
-          >
-            언론사
-          </th>
-          <th scope="row">
-            이미지
-          </th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: articleSearchDto.title,
-            }"
-          >
-            제목
-          </th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: articleSearchDto.url,
-            }"
-          >
-            링크
-          </th>
-          <th
-            scope="row"
-            v-bind:class="{
-              highlighted: articleSearchDto.showYn,
-            }"
-          >
-            노출여부
-          </th>
-          <th></th>
-        </thead>
-        <tbody>
-          <tr v-for="article in articleList" :key="article.no">
-            <td>{{ article.no }}</td>
-            <td>{{ article.mediaName }}</td>
-            <td></td>
-            <td>{{ article.title }}</td>
-            <td>{{ article.url }}</td>
-            <td>
-              <b-badge
-                :variant="article.showYn === 'Y' ? 'success' : 'danger'"
-                >{{ article.showYn }}</b-badge
-              >
-            </td>
-            <td>
-              <router-link
-                class="btn btn-sm btn-secondary text-nowrap"
-                :to="{
+    <template v-if="!dataLoading">
+      <div class="bg-white table-responsive">
+        <table
+          class="table table-sm table-hover table-hover table-nowrap"
+          v-if="articleListCount"
+        >
+          <colgroup>
+            <col width="80" />
+            <col width="200" />
+            <col width="200" />
+            <col width="auto" />
+            <col width="400" />
+            <col width="100" />
+          </colgroup>
+          <thead>
+            <th scope="row">NO</th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: articleSearchDto.mediaName,
+              }"
+            >
+              언론사
+            </th>
+            <th scope="row">
+              이미지
+            </th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: articleSearchDto.title,
+              }"
+            >
+              제목
+            </th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: articleSearchDto.url,
+              }"
+            >
+              링크
+            </th>
+            <th
+              scope="row"
+              v-bind:class="{
+                highlighted: articleSearchDto.showYn,
+              }"
+            >
+              노출여부
+            </th>
+          </thead>
+          <tbody>
+            <tr
+              v-for="article in articleList"
+              :key="article.no"
+              @click="
+                $router.push({
                   name: 'ArticleDetail',
                   params: {
                     id: article.no,
                   },
-                }"
-                >상세보기</router-link
-              >
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div v-else class="empty-data border">검색결과가 없습니다.</div>
-    </div>
-    <b-pagination
-      v-model="pagination.page"
-      v-if="articleListCount"
-      pills
-      :total-rows="articleListCount"
-      :per-page="pagination.limit"
-      @input="paginateSearch()"
-      class="mt-4 justify-content-center"
-    ></b-pagination>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+                })
+              "
+              style="cursor:pointer"
+            >
+              <td>{{ article.no }}</td>
+              <td>{{ article.mediaName }}</td>
+              <td>
+                <template v-if="article.image && article.image[0]">
+                  <b-img-lazy
+                    :src="article.image[0].endpoint"
+                    :alt="article.title"
+                    style="max-height:60px; max-width:none;"
+                  ></b-img-lazy>
+                </template>
+              </td>
+              <td class="text-left">{{ article.title }}</td>
+              <td>{{ article.url }}</td>
+              <td>
+                <b-badge
+                  :variant="article.showYn === 'Y' ? 'success' : 'danger'"
+                  >{{ article.showYn }}</b-badge
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div v-else class="empty-data border">검색결과가 없습니다.</div>
+      </div>
+      <b-pagination
+        v-model="pagination.page"
+        v-if="articleListCount"
+        pills
+        :total-rows="articleListCount"
+        :per-page="pagination.limit"
+        @input="paginateSearch()"
+        class="mt-4 justify-content-center"
+      ></b-pagination>
+    </template>
+    <template v-else>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+      </div>
+    </template>
+
     <!-- 기사 추가 모달 -->
     <b-modal
       id="add_article"
       title="기사 추가"
       ok-title="추가"
       cancel-title="취소"
-      size="lg"
+      size="xl"
       @hide="clearOutArticleCreateDto()"
       @cancel="clearOutArticleCreateDto()"
       @ok="createArticle()"
@@ -153,31 +178,35 @@
           </b-row>
         </b-col>
       </b-form-row>
-      <div v-if="articleImage && articleImage.length > 0" class="mb-4">
-        <div v-for="image in articleImage" :key="image.endpoint">
-          <img
-            :src="image.endpoint"
-            class="rounded mx-auto d-block article-image"
-            style="max-height:80px"
-          />
-        </div>
-      </div>
       <b-form-row>
-        <b-col cols="12" md="6" class="mb-3">
-          <label>
-            언론사
-            <span class="red-text">*</span>
-          </label>
-          <b-form-input
-            v-model="articleCreateDto.mediaName"
-            required
-          ></b-form-input>
-        </b-col>
-        <b-col cols="12" md="6" class="mb-3">
+        <b-col cols="12" lg="6" class="mb-3">
           <label>
             기사 이미지
             <span class="red-text">*</span>
           </label>
+          <div v-if="articleImage && articleImage.length > 0" class="mb-4">
+            <div v-for="image in articleImage" :key="image.endpoint">
+              <img
+                :src="image.endpoint"
+                class="rounded mx-auto d-block article-image"
+                style="max-height:300px"
+              />
+            </div>
+          </div>
+          <div
+            v-if="!articleImage.length"
+            class="mb-4"
+            style="background-color:#ddd;"
+          >
+            <b-img-lazy
+              class="rounded mx-auto d-block article-image"
+              :src="
+                require('@/assets/images/general/common/img_placeholder.jpg')
+              "
+              rounded
+              style="max-height:300px"
+            />
+          </div>
           <b-form-file
             placeholder="파일 선택"
             ref="fileInput"
@@ -185,40 +214,58 @@
             required
           ></b-form-file>
         </b-col>
-        <b-col cols="12" md="12" class="mb-3">
-          <label>
-            타이틀
-            <span class="red-text">*</span>
-          </label>
-          <b-form-input
-            v-model="articleCreateDto.title"
-            required
-          ></b-form-input>
-        </b-col>
-        <b-col cols="12" md="12" class="mb-3">
-          <label>
-            URL
-            <span class="red-text">*</span>
-          </label>
-          <b-form-input v-model="articleCreateDto.url" required></b-form-input>
-        </b-col>
-        <b-col cols="12" md="12" class="mb-3">
-          <label>
-            설명글
-            <span class="red-text">*</span>
-          </label>
-          <textarea
-            class="form-control"
-            maxlength="100"
-            style="min-height:100px"
-            v-model="articleCreateDto.desc"
-          ></textarea>
-          <p
-            class="text-length text-right"
-            v-if="articleCreateDto.desc && articleCreateDto.desc.length"
-          >
-            <b class="text-primary">{{ articleCreateDto.desc.length }}</b> / 100
-          </p>
+        <b-col cols="12" lg="6" class="mb-3">
+          <b-form-row>
+            <b-col cols="12" class="mb-3">
+              <label>
+                언론사
+                <span class="red-text">*</span>
+              </label>
+              <b-form-input
+                v-model="articleCreateDto.mediaName"
+                required
+              ></b-form-input>
+            </b-col>
+            <b-col cols="12" class="mb-3">
+              <label>
+                타이틀
+                <span class="red-text">*</span>
+              </label>
+              <b-form-input
+                v-model="articleCreateDto.title"
+                required
+              ></b-form-input>
+            </b-col>
+            <b-col cols="12" class="mb-3">
+              <label>
+                URL
+                <span class="red-text">*</span>
+              </label>
+              <b-form-input
+                v-model="articleCreateDto.url"
+                required
+              ></b-form-input>
+            </b-col>
+            <b-col cols="12" class="mb-3">
+              <label>
+                설명글
+                <span class="red-text">*</span>
+              </label>
+              <textarea
+                class="form-control"
+                maxlength="100"
+                style="min-height:100px"
+                v-model="articleCreateDto.desc"
+              ></textarea>
+              <p
+                class="text-length text-right"
+                v-if="articleCreateDto.desc && articleCreateDto.desc.length"
+              >
+                <b class="text-primary">{{ articleCreateDto.desc.length }}</b> /
+                100
+              </p>
+            </b-col>
+          </b-form-row>
         </b-col>
       </b-form-row>
     </b-modal>
@@ -237,6 +284,11 @@ import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.se
 import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 import toast from '../../../../resources/assets/js/services/toast.js';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 
 @Component({
   name: 'ArticleList',
@@ -252,8 +304,14 @@ export default class ArticleList extends BaseComponent {
   private articleCreateDto = new ArticleDto();
   private articleImage: FileAttachmentDto[] = [];
 
-  search(isPagination?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
+    if (!isPagination) {
+      this.pagination.page = 1;
+    } else {
+      if (isSearch) this.pagination.page = 1;
+      RouterQueryParamMapper(this.articleSearchDto, this.pagination);
+    }
     ArticleService.findAll(this.articleSearchDto, this.pagination).subscribe(
       res => {
         if (res) {
@@ -265,14 +323,21 @@ export default class ArticleList extends BaseComponent {
     );
   }
 
+  search() {
+    this.findAll(true, true);
+  }
+
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
   }
 
   clearOut() {
-    this.pagination.page = 1;
-    this.articleSearchDto = new ArticleListDto();
-    this.search();
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.articleSearchDto = new ArticleListDto();
+      this.findAll();
+    }
   }
 
   createArticle() {
@@ -280,7 +345,7 @@ export default class ArticleList extends BaseComponent {
     ArticleService.create(this.articleCreateDto).subscribe(res => {
       if (res) {
         toast.success('추가완료');
-        this.search();
+        this.clearOut();
       }
     });
   }
@@ -307,8 +372,19 @@ export default class ArticleList extends BaseComponent {
   }
 
   created() {
-    this.pagination.page = 1;
-    this.search();
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.articleSearchDto = query;
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
+    } else {
+      this.findAll();
+    }
   }
 }
 </script>

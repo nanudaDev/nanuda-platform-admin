@@ -3,63 +3,87 @@
     <SectionTitle title="배달형 상담 신청" divider />
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <div class="form-row">
-        <div class="col-6 col-lg-1 mb-3">
-          <label for="space_id">공간 ID</label>
-          <input
-            type="text"
-            class="form-control"
-            id="space_id"
-            v-model="deliveryFounderConsultSearchDto.deliverySpaceNo"
-          />
-        </div>
-        <div class="col-6 col-lg-2 mb-3">
-          <label for="user_name">사용자명</label>
-          <input
-            type="text"
-            class="form-control"
-            id="user_name"
-            v-model="deliveryFounderConsultSearchDto.nanudaUserName"
-          />
-        </div>
-        <div class="col-6 col-lg-3 mb-3">
-          <label for="user_phone">휴대폰 번호</label>
-          <input
-            type="text"
-            class="form-control"
-            id="user_phone"
-            v-model="deliveryFounderConsultSearchDto.phone"
-          />
-        </div>
-        <div class="col-6 col-lg-1 mb-3">
-          <label for="user_gender">성별</label>
-          <select
-            class="custom-select"
-            id="user_gender"
-            v-model="deliveryFounderConsultSearchDto.gender"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="gender in genderSelect"
-              :key="gender"
-              :value="gender"
-              >{{ gender | enumTransformer }}</option
+        <b-col cols="6" md="3" lg="2">
+          <b-form-group label="공간 ID">
+            <b-form-input
+              type="text"
+              class="form-control"
+              id="space_id"
+              v-model="deliveryFounderConsultSearchDto.deliverySpaceNo"
+            />
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="3" lg="2">
+          <b-form-group label="사용자명">
+            <b-form-input
+              type="text"
+              class="form-control"
+              id="user_name"
+              v-model="deliveryFounderConsultSearchDto.nanudaUserName"
+            />
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="3" lg="2">
+          <b-form-group label="휴대폰 번호">
+            <b-form-input
+              type="text"
+              class="form-control"
+              id="user_phone"
+              v-model="deliveryFounderConsultSearchDto.phone"
+            />
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="3" lg="1">
+          <b-form-group label="성별">
+            <b-form-select
+              class="custom-select"
+              id="user_gender"
+              v-model="deliveryFounderConsultSearchDto.gender"
             >
-          </select>
-        </div>
-        <div class="col-6 col-lg-1 mb-3">
-          <label for="changup_exp_yn">창업 경험</label>
-          <select
-            class="custom-select"
-            id="changup_exp_yn"
-            v-model="deliveryFounderConsultSearchDto.changUpExpYn"
-          >
-            <option value selected>전체</option>
-            <option v-for="yn in delYn" :key="yn" :value="yn">{{
-              yn | enumTransformer
-            }}</option>
-          </select>
-        </div>
-        <div class="col-6 col-lg-2 mb-3">
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="gender in genderSelect"
+                :key="gender"
+                :value="gender"
+                >{{ gender | enumTransformer }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="3" lg="1">
+          <b-form-group label="창업 경험">
+            <b-form-select
+              class="custom-select"
+              id="changup_exp_yn"
+              v-model="deliveryFounderConsultSearchDto.changUpExpYn"
+            >
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option v-for="yn in delYn" :key="yn" :value="yn">{{
+                yn | enumTransformer
+              }}</b-form-select-option>
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="3" lg="2">
+          <b-form-group label="시작 날짜">
+            <b-form-datepicker
+              id="started"
+              v-model="deliveryFounderConsultSearchDto.started"
+            ></b-form-datepicker>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="3" lg="2">
+          <b-form-group label="종료 날짜">
+            <b-form-datepicker
+              id="ended"
+              v-model="deliveryFounderConsultSearchDto.ended"
+              :disabled="deliveryFounderConsultSearchDto.started ? false : true"
+            ></b-form-datepicker>
+          </b-form-group>
+        </b-col>
+      </div>
+      <b-form-row>
+        <b-col cols="6" md="3" lg="2">
           <b-form-group label="업체명">
             <b-form-input
               list="company_lsit"
@@ -74,117 +98,99 @@
               >
             </datalist>
           </b-form-group>
-        </div>
-        <div class="col-12 col-lg-2 mb-3">
-          <label for="company_district">업체 지점</label>
-          <input
-            type="text"
-            class="form-control"
-            id="company_district"
-            v-model="deliveryFounderConsultSearchDto.companyDistrictNameKr"
-          />
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="col-6 col-lg-2 mb-3">
-          <label for="admin_user">관리자명</label>
-          <template>
+        </b-col>
+        <b-col cols="6" md="3" lg="2">
+          <b-form-group label="업체 지점">
             <b-form-input
-              list="admin_list"
-              id="admin_user"
-              v-model="deliveryFounderConsultSearchDto.adminUserName"
-            ></b-form-input>
-            <datalist id="admin_list">
-              <option
-                v-for="admin in adminList.items"
-                :key="admin.no"
-                :value="admin.name"
-                >{{ admin.name }}</option
+              v-model="deliveryFounderConsultSearchDto.companyDistrictNameKr"
+            />
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="3" lg="2">
+          <b-form-group label="관리자">
+            <template>
+              <b-form-input
+                list="admin_list"
+                id="admin_user"
+                v-model="deliveryFounderConsultSearchDto.adminUserName"
+              ></b-form-input>
+              <datalist id="admin_list">
+                <option
+                  v-for="admin in adminList.items"
+                  :key="admin.no"
+                  :value="admin.name"
+                  >{{ admin.name }}</option
+                >
+              </datalist>
+            </template>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="3" lg="1">
+          <b-form-group label="희망 시간대">
+            <b-form-select
+              class="custom-select"
+              id="hope_time"
+              v-model="deliveryFounderConsultSearchDto.hopeTime"
+            >
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="time in availableTimesSelect"
+                :key="time.no"
+                :value="time.key"
+                >{{ time.value }}</b-form-select-option
               >
-            </datalist>
-          </template>
-        </div>
-        <div class="col-6 col-lg-1 mb-3">
-          <label for="view_count">열람 유무</label>
-          <select
-            class="custom-select"
-            id="view_count"
-            v-model="deliveryFounderConsultSearchDto.viewCount"
-          >
-            <option value selected>전체</option>
-            <option v-for="yn in delYn" :key="yn" :value="yn">{{
-              yn | stringViewTransformer
-            }}</option>
-          </select>
-        </div>
-        <div class="col-6 col-lg-1 mb-3">
-          <label for="hope_time">희망 시간대</label>
-          <select
-            class="custom-select"
-            id="hope_time"
-            v-model="deliveryFounderConsultSearchDto.hopeTime"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="time in availableTimesSelect"
-              :key="time.no"
-              :value="time.key"
-              >{{ time.value }}</option
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="3" lg="1">
+          <b-form-group label="열람 유무">
+            <b-form-select
+              class="custom-select"
+              id="view_count"
+              v-model="deliveryFounderConsultSearchDto.viewCount"
             >
-          </select>
-        </div>
-        <div class="col-6 col-lg-2 mb-3">
-          <label for="status">신청 상태</label>
-          <select
-            class="custom-select"
-            id="status"
-            v-model="deliveryFounderConsultSearchDto.status"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="status in statusSelect"
-              :key="status.no"
-              :value="status.key"
-              >{{ status.value }}</option
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option v-for="yn in delYn" :key="yn" :value="yn">{{
+                yn | stringViewTransformer
+              }}</b-form-select-option>
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="3" lg="2">
+          <b-form-group label="신청 상태">
+            <b-form-select
+              class="custom-select"
+              id="status"
+              v-model="deliveryFounderConsultSearchDto.status"
             >
-          </select>
-        </div>
-        <div class="col-6 col-lg-2 mb-3">
-          <label for="status">업체 상태</label>
-          <select
-            class="custom-select"
-            id="status"
-            v-model="deliveryFounderConsultSearchDto.companyDecisionStatus"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="status in statusB2BSelect"
-              :key="status.no"
-              :value="status.key"
-              >{{ status.value }}</option
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="status in statusSelect"
+                :key="status.no"
+                :value="status.key"
+                >{{ status.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="3" lg="2">
+          <b-form-group label="업체 상태">
+            <b-form-select
+              class="custom-select"
+              id="status"
+              v-model="deliveryFounderConsultSearchDto.companyDecisionStatus"
             >
-          </select>
-        </div>
-        <div class="col-6 col-lg-2 mb-3">
-          <div>
-            <label for="ended">시작 날짜</label>
-            <b-form-datepicker
-              id="started"
-              v-model="deliveryFounderConsultSearchDto.started"
-            ></b-form-datepicker>
-          </div>
-        </div>
-        <div class="col-6 col-md-2 mb-3">
-          <div>
-            <label for="ended">종료 날짜</label>
-            <b-form-datepicker
-              id="ended"
-              v-model="deliveryFounderConsultSearchDto.ended"
-              :disabled="deliveryFounderConsultSearchDto.started ? false : true"
-            ></b-form-datepicker>
-          </div>
-        </div>
-      </div>
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="status in statusB2BSelect"
+                :key="status.no"
+                :value="status.key"
+                >{{ status.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
       <b-row align-h="center">
         <div>
           <b-button variant="secondary" @click="clearOut()">초기화</b-button>
@@ -233,12 +239,12 @@
         >
       </div>
     </div>
-    <div v-if="!dataLoading">
-      <div
-        class="table-responsive border"
-        v-if="deliveryFounderConsultTotalCount"
-      >
-        <table class="table table-hover table-sm text-center table-fixed">
+    <template v-if="!dataLoading">
+      <div class="bg-white table-responsive">
+        <table
+          class="table table-hover table-sm text-center table-nowrap"
+          v-if="deliveryFounderConsultTotalCount"
+        >
           <colgroup>
             <col width="60" />
             <col width="60" />
@@ -257,7 +263,6 @@
             <col width="100" />
             <col width="100" />
             <col width="150" />
-            <!-- <col width="100" /> -->
           </colgroup>
           <thead>
             <tr>
@@ -347,7 +352,7 @@
                   highlighted: deliveryFounderConsultSearchDto.adminUserName,
                 }"
               >
-                관리자명
+                관리자
               </th>
               <th
                 scope="col"
@@ -367,8 +372,7 @@
                 업체 상태
               </th>
               <th scope="col">공간 공실 수</th>
-              <th scope="col">생성날짜</th>
-              <!-- <th scope="col"></th> -->
+              <th scope="col">신청일</th>
             </tr>
           </thead>
 
@@ -376,7 +380,7 @@
             <tr
               v-for="deliveryFounderConsult in deliveryFounderConsultListDto"
               :key="deliveryFounderConsult.no"
-              @click="
+              @click.stop="
                 $router.push(
                   `/delivery-founder-consult/${deliveryFounderConsult.no}`,
                 )
@@ -384,7 +388,18 @@
               style="cursor:pointer"
             >
               <th scope="row">{{ deliveryFounderConsult.no }}</th>
-              <td>{{ deliveryFounderConsult.deliverySpaceNo }}</td>
+              <td @click.stop>
+                <router-link
+                  :to="{
+                    name: 'DeliverySpaceDetail',
+                    params: {
+                      id: deliveryFounderConsult.deliverySpaceNo,
+                    },
+                  }"
+                  class="text-primary"
+                  >{{ deliveryFounderConsult.deliverySpaceNo }}</router-link
+                >
+              </td>
               <td>
                 <template
                   v-if="
@@ -481,7 +496,6 @@
                 <template v-if="deliveryFounderConsult.admin">
                   {{ deliveryFounderConsult.admin.name }}
                 </template>
-                <template v-else>-</template>
               </td>
               <td>
                 <b-badge
@@ -531,8 +545,9 @@
             </tr>
           </tbody>
         </table>
+        <div v-else class="empty-data border">검색결과가 없습니다.</div>
       </div>
-      <div v-else class="empty-data border">검색결과가 없습니다.</div>
+
       <b-pagination
         v-model="pagination.page"
         v-if="deliveryFounderConsultTotalCount"
@@ -542,11 +557,15 @@
         @input="paginateSearch"
         class="mt-4 justify-content-center"
       ></b-pagination>
-    </div>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+    </template>
+    <template v-else>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+      </div>
+    </template>
     <b-modal
       id="add_founder_consult"
       size="xl"
@@ -724,7 +743,7 @@
         </b-col>
       </b-form-row>
     </b-modal>
-    <NanudaUserList />
+    <DeliveryFounderConsultNanudaUserList />
   </section>
 </template>
 <script lang="ts">
@@ -751,7 +770,7 @@ import DeliverySpaceService from '@/services/delivery-space.service';
 import FoodCategoryService from '../../../services/food-category.service';
 import SpaceTypeService from '../../../services/space-type.service';
 
-import NanudaUserList from './NanudaUserList.vue';
+import DeliveryFounderConsultNanudaUserList from './DeliveryFounderConsultNanudaUserList.vue';
 
 import toast from '../../../../resources/assets/js/services/toast.js';
 
@@ -775,12 +794,16 @@ import {
   YN,
   CONST_YN,
 } from '../../../common';
-import { ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 
 @Component({
   name: 'DeliveryFounderConsultList',
   components: {
-    NanudaUserList,
+    DeliveryFounderConsultNanudaUserList,
   },
 })
 export default class DeliveryFounderConsult extends BaseComponent {
@@ -932,35 +955,46 @@ export default class DeliveryFounderConsult extends BaseComponent {
   }
 
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
+  }
+
+  search() {
+    this.findAll(true, true);
   }
 
   // 검색하기
-  search(isPagination?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
+    this.pagination.limit = this.newLimit;
     if (!isPagination) {
       this.pagination.page = 1;
+    } else {
+      if (isSearch) this.pagination.page = 1;
+      RouterQueryParamMapper(
+        this.deliveryFounderConsultSearchDto,
+        this.pagination,
+      );
     }
-    this.pagination.limit = this.newLimit;
     DeliveryFounderConsultService.findAll(
       this.deliveryFounderConsultSearchDto,
       this.pagination,
     ).subscribe(res => {
-      this.dataLoading = false;
-      this.deliveryFounderConsultListDto = res.data.items;
-      this.deliveryFounderConsultTotalCount = res.data.totalCount;
-      this.$router.push({
-        query: Object.assign(this.deliveryFounderConsultSearchDto),
-      });
+      if (res) {
+        this.dataLoading = false;
+        this.deliveryFounderConsultListDto = res.data.items;
+        this.deliveryFounderConsultTotalCount = res.data.totalCount;
+      }
     });
-    window.scrollTo(0, 0);
   }
 
   // 초기화
   clearOut() {
-    this.pagination = new Pagination();
-    this.deliveryFounderConsultSearchDto = new DeliveryFounderConsultListDto();
-    this.search();
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.deliveryFounderConsultSearchDto = new DeliveryFounderConsultListDto();
+      this.findAll();
+    }
   }
 
   create() {
@@ -985,18 +1019,26 @@ export default class DeliveryFounderConsult extends BaseComponent {
   }
 
   created() {
-    this.newLimit = 50;
-    this.pagination.limit = this.newLimit;
+    this.newLimit = PaginationCount.TWENTY;
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.deliveryFounderConsultSearchDto = query;
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.newLimit = +query.limit;
+        // this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
+    } else {
+      this.findAll();
     }
     this.getAvailableTimes();
     this.getCompanies();
     this.getFounderConsultCodes();
     this.getFoodCategories();
     this.getAdmin();
-    this.search();
   }
 
   mounted() {

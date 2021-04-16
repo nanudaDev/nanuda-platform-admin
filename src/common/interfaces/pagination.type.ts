@@ -5,6 +5,7 @@ export class PaginatedResponse<T> {
 
 export class Pagination {
   limit = 20;
-  page!: number;
+  page = 1;
+  // page!: number;
   totalCount?: number;
 }

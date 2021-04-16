@@ -3,6 +3,7 @@
     <SectionTitle
       v-if="companyDto && companyDto.nameKr"
       :title="`${companyDto.nameKr} - 업체 정보`"
+      divider
     >
       <template v-slot:rightArea>
         <router-link to="/company" class="btn btn-secondary text-center"
@@ -156,7 +157,18 @@
       <div class="my-3 col-12 col-lg-6" v-if="companyDto">
         <BaseCard title="업체 지점 정보" no-body>
           <template v-slot:head>
-            <b-button variant="outline-info" @click="findAllDistrict()"
+            <b-button
+              variant="outline-info"
+              @click="
+                $router.push({
+                  path: '/company/company-district',
+                  query: {
+                    companyNameKr: companyDto.nameKr,
+                    page: pagination.page,
+                    limit: pagination.limit,
+                  },
+                })
+              "
               >전체보기</b-button
             >
           </template>
@@ -166,7 +178,18 @@
       <div class="my-3 col-12 col-lg-6" v-if="companyDto">
         <BaseCard title="업체 사용자 정보" no-body>
           <template v-slot:head>
-            <b-button variant="outline-info" @click="findAllCompanyUser()"
+            <b-button
+              variant="outline-info"
+              @click="
+                $router.push({
+                  path: '/company/company-user',
+                  query: {
+                    companyNameKr: companyDto.nameKr,
+                    page: pagination.page,
+                    limit: pagination.limit,
+                  },
+                })
+              "
               >전체보기</b-button
             >
           </template>
@@ -240,11 +263,11 @@
         <b>{{ selectedAdmin.name }}</b>
       </div>
       <b-pagination
-        v-model="pagination.page"
+        v-model="paginationAdmin.page"
         v-if="adminListCount"
         pills
         :total-rows="adminListCount"
-        :per-page="pagination.limit"
+        :per-page="paginationAdmin.limit"
         @input="paginateSearch"
         class="mt-4 justify-content-center"
       ></b-pagination>
@@ -383,7 +406,7 @@
             <option value>전체</option>
             <option
               v-for="status in approvalStatusSelect"
-              :key="status"
+              :key="status.key"
               :value="status.key"
               >{{ status.value }}</option
             >
@@ -447,6 +470,7 @@ export default class CompanyDetail extends BaseComponent {
   private companyUpdateRefusalDto = new CompanyUpdateRefusalDto();
   private companyUpdateRefusalReasonDto = (this.companyUpdateRefusalDto.refusalReasons = new CompanyUpdateRefusalReasonDto());
   private pagination = new Pagination();
+  private paginationAdmin = new Pagination();
   private selectedAdmin: AdminDto = new AdminDto(BaseUser);
   private newLogo: FileAttachmentDto[] = [];
   private logoChanged = false;
@@ -466,33 +490,15 @@ export default class CompanyDetail extends BaseComponent {
 
   findAdmin(isPagination: boolean) {
     if (!isPagination) {
-      this.pagination.page = 1;
+      this.paginationAdmin.page = 1;
     }
-    this.pagination.limit = 5;
-    AdminService.findAll(this.adminListDto, this.pagination).subscribe(res => {
-      this.adminList = res.data.items;
-      this.adminListCount = res.data.totalCount;
-    });
-  }
-
-  // 업체 지점 전체 보기
-  findAllDistrict() {
-    this.$router.push({
-      name: 'CompanyDistrictList',
-      params: {
-        companyNo: this.$route.params.id,
+    this.paginationAdmin.limit = 5;
+    AdminService.findAll(this.adminListDto, this.paginationAdmin).subscribe(
+      res => {
+        this.adminList = res.data.items;
+        this.adminListCount = res.data.totalCount;
       },
-    });
-  }
-
-  // 업체 사용자 전체 보기
-  findAllCompanyUser() {
-    this.$router.push({
-      name: 'CompanyUserList',
-      params: {
-        companyNo: this.$route.params.id,
-      },
-    });
+    );
   }
 
   findApprovalStatus() {

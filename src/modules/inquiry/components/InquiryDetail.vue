@@ -183,6 +183,9 @@ export default class InquiryDetail extends BaseComponent {
       min-height: 400px;
       padding: 0.5rem;
     }
+    .board-view-attachments {
+      margin-bottom: 1rem;
+    }
     .board-view-url {
       border-top: 1px solid #a7a7a7;
       padding: 1rem 0.5rem 0;

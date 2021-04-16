@@ -42,6 +42,17 @@ const nonNavBarRouter: RouteConfig[] = [
       title: '마이 페이지',
     },
   },
+  {
+    path: '/analysis',
+    name: 'Analysis',
+    component: () => import('../../modules/analysis/Analysis.vue'),
+    meta: {
+      authRequired: true,
+      layout: 'AnalysisLayout',
+      roles: [...CONST_ADMIN_USER],
+      title: '상권분석',
+    },
+  },
 ];
 
 export default nonNavBarRouter;

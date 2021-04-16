@@ -1,64 +1,73 @@
 <template>
   <section v-if="articleDto">
-    <SectionTitle title="기사 관리" divider>
-      <template v-slot:rightArea>
-        <router-link to="/article" class="btn btn-secondary"
-          >목록으로</router-link
-        >
-      </template>
-    </SectionTitle>
-    <b-row>
-      <b-col cols="12" class="my-3">
-        <BaseCard title="기사 정보">
-          <template v-slot:head>
-            <div>
-              <b-button variant="danger" v-b-modal.delete_article
-                >삭제하기</b-button
-              >
-              <b-button
-                variant="primary"
-                v-b-modal.update_article
-                @click="showUpdateModal()"
-                >수정하기</b-button
-              >
-            </div>
-          </template>
-          <template v-slot:body>
-            <b-row aligh-h="start" align-v="start">
-              <b-col cols="12" md="4">
-                <div
-                  v-if="articleDto.image && articleDto.image.length > 0"
-                  class="mb-4"
-                >
-                  <div v-for="image in articleDto.image" :key="image.endpoint">
-                    <b-img-lazy
-                      :src="image.endpoint"
-                      class="rounded mx-auto d-block article-image"
-                      style="max-height:300px"
-                    />
-                  </div>
-                </div>
-              </b-col>
-              <b-col cols="12" md="4">
-                <div>
-                  <ul class="u-lsit">
-                    <li>제목 : {{ articleDto.title }}</li>
-                    <li>언론사 :{{ articleDto.mediaName }}</li>
-                    <li>
-                      URL :
-                      <a :href="articleDto.url" target="_blank">
-                        {{ articleDto.url }}
-                      </a>
-                    </li>
-                    <li>설명글 : {{ articleDto.desc }}</li>
-                  </ul>
-                </div>
-              </b-col>
-            </b-row>
-          </template>
-        </BaseCard>
-      </b-col>
-    </b-row>
+    <div class="board-view">
+      <div class="board-view-header">
+        <div class="board-view-title">
+          <b-badge variant="warning" class="board-view-category">
+            {{ articleDto.mediaName }}
+          </b-badge>
+          <h3>{{ articleDto.title }}</h3>
+        </div>
+        <div class="board-view-info">
+          <span
+            class="baord-view-user"
+            v-if="articleDto.admin && articleDto.admin.name"
+            >{{ articleDto.admin.name }}</span
+          >
+          <span class="baord-view-date">{{
+            articleDto.createdAt | dateTransformer
+          }}</span>
+        </div>
+      </div>
+      <div class="board-view-body">
+        <div class="board-view-content">
+          <b-row>
+            <b-col
+              cols="12"
+              md="4"
+              v-if="articleDto.image && articleDto.image[0]"
+              class="mb-3"
+            >
+              <b-img-lazy
+                :src="articleDto.image[0].endpoint"
+                :alt="articleDto.title"
+              ></b-img-lazy>
+            </b-col>
+            <b-col
+              cols="12"
+              :md="articleDto.image && articleDto.image[0] ? 8 : 12"
+              v-html="articleDto.desc"
+            >
+              {{ articleDto.desc }} ss</b-col
+            >
+          </b-row>
+        </div>
+        <div v-if="articleDto.url" class="board-view-url">
+          <strong>URL</strong>
+          <a :href="getLinkUrl(articleDto.url)" target="_blank">{{
+            articleDto.url
+          }}</a>
+        </div>
+      </div>
+      <div class="board-view-footer clearfix">
+        <div class="float-left">
+          <b-button variant="danger" v-b-modal.delete_article
+            >삭제하기</b-button
+          >
+        </div>
+        <div class="float-right">
+          <router-link to="/article" class="btn btn-secondary text-center"
+            >목록으로</router-link
+          >
+          <b-button
+            variant="primary"
+            v-b-modal.update_article
+            @click="showUpdateModal()"
+            >수정하기</b-button
+          >
+        </div>
+      </div>
+    </div>
     <!-- 기사 수정 모달 -->
     <b-modal
       id="update_article"
@@ -66,7 +75,7 @@
       ok-title="수정"
       cancel-title="취소"
       @ok="updateArticle()"
-      size="lg"
+      size="xl"
     >
       <b-row no-gutters align-h="end">
         <b-form-group
@@ -85,13 +94,11 @@
         </b-form-group>
       </b-row>
       <b-form-row>
-        <b-col cols="12" md="6" class="mb-3 offset-3">
+        <b-col cols="12" lg="6" class="mb-3">
           <label>기사 이미지</label>
           <div class="my-2">
             <div
-              v-if="
-                articleDto.image && articleDto.image.length > 0 && !imageChanged
-              "
+              v-if="articleDto.image && articleDto.image[0] && !imageChanged"
               class="mb-4"
             >
               <div v-for="image in articleDto.image" :key="image.endpoint">
@@ -102,7 +109,15 @@
                 />
               </div>
             </div>
-            <div v-if="!articleDto.image && !newArticleImage" class="mb-4">
+            <div
+              v-if="
+                articleDto.image &&
+                  !articleDto.image.length &&
+                  !newArticleImage.length
+              "
+              class="mb-4"
+              style="background-color:#ddd;"
+            >
               <b-img-lazy
                 class="rounded mx-auto d-block article-image"
                 :src="
@@ -140,41 +155,44 @@
             ></b-form-file>
           </div>
         </b-col>
-        <b-col cols="12" md="12" class="mb-3">
-          <label>
-            언론사
-            <span class="red-text">*</span>
-          </label>
-          <b-form-input v-model="articleUpdateDto.mediaName"></b-form-input>
-        </b-col>
-        <b-col cols="12" class="mb-3">
-          <label>
-            제목
-            <span class="red-text">*</span>
-          </label>
-          <b-form-input v-model="articleUpdateDto.title"></b-form-input>
-        </b-col>
-        <b-col cols="12" class="mb-3">
-          <label>
-            URL
-            <span class="red-text">*</span>
-          </label>
-          <b-form-input v-model="articleUpdateDto.url"></b-form-input>
-        </b-col>
-        <b-col cols="12" class="mb-3">
-          <label>기사 설명</label>
-          <textarea
-            class="form-control"
-            maxlength="100"
-            style="min-height:100px"
-            v-model="articleUpdateDto.desc"
-          ></textarea>
-          <p
-            class="text-length text-right"
-            v-if="articleUpdateDto.desc && articleUpdateDto.desc.length"
-          >
-            <b class="text-primary">{{ articleUpdateDto.desc.length }}</b> / 100
-          </p>
+        <b-col cols="12" lg="6">
+          <b-form-group>
+            <label>
+              언론사
+              <span class="red-text">*</span>
+            </label>
+            <b-form-input v-model="articleUpdateDto.mediaName"></b-form-input>
+          </b-form-group>
+          <b-form-group>
+            <label>
+              제목
+              <span class="red-text">*</span>
+            </label>
+            <b-form-input v-model="articleUpdateDto.title"></b-form-input>
+          </b-form-group>
+          <b-form-group>
+            <label>
+              URL
+              <span class="red-text">*</span>
+            </label>
+            <b-form-input v-model="articleUpdateDto.url"></b-form-input>
+          </b-form-group>
+          <b-form-group>
+            <label>기사 설명</label>
+            <textarea
+              class="form-control"
+              maxlength="100"
+              style="min-height:100px"
+              v-model="articleUpdateDto.desc"
+            ></textarea>
+            <p
+              class="text-length text-right"
+              v-if="articleUpdateDto.desc && articleUpdateDto.desc.length"
+            >
+              <b class="text-primary">{{ articleUpdateDto.desc.length }}</b> /
+              100
+            </p>
+          </b-form-group>
         </b-col>
       </b-form-row>
     </b-modal>
@@ -221,6 +239,10 @@ export default class ArticleDetail extends BaseComponent {
   private showYn: YN[] = [...CONST_YN];
   private imageChanged = false;
 
+  getLinkUrl(linkUrl: string) {
+    return linkUrl.includes('//') ? linkUrl : `//${linkUrl}`;
+  }
+
   findOne(id) {
     ArticleService.findOne(id).subscribe(res => {
       if (res) {
@@ -258,13 +280,11 @@ export default class ArticleDetail extends BaseComponent {
   }
 
   updateArticle() {
-    console.log('ss', this.articleUpdateDto.image);
     if (this.newArticleImage.length > 0) {
       this.articleUpdateDto.image = this.newArticleImage;
     } else {
       delete this.articleUpdateDto.image;
     }
-
     ArticleService.update(
       this.$route.params.id,
       this.articleUpdateDto,
@@ -291,3 +311,80 @@ export default class ArticleDetail extends BaseComponent {
   }
 }
 </script>
+<style lang="scss">
+.board-view {
+  background-color: #fff;
+  border-radius: 0.25rem;
+  padding: 2rem;
+
+  .board-view-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    .board-view-title {
+      font-weight: 500;
+
+      .board-view-category {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        margin-bottom: 0.25rem;
+      }
+    }
+
+    .board-view-info {
+      span {
+        position: relative;
+        + span {
+          padding-left: 1em;
+          margin-left: 1em;
+          &:before {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            margin-top: -5px;
+            display: inline-block;
+            content: '';
+            width: 1px;
+            height: 10px;
+            background-color: #a7a7a7;
+          }
+        }
+
+        .board-view-date {
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+  .board-view-body {
+    padding: 1rem 0;
+    margin: 1rem 0;
+    border-top: 1px solid #a7a7a7;
+    border-bottom: 1px solid #a7a7a7;
+    .board-view-content {
+      min-height: 400px;
+      padding: 0.5rem;
+    }
+    .board-view-attachments {
+      margin-bottom: 1rem;
+    }
+    .board-view-url {
+      border-top: 1px solid #a7a7a7;
+      padding: 1rem 0.5rem 0;
+      line-height: 1;
+      strong {
+        margin-right: 1em;
+      }
+    }
+  }
+  @media screen and (max-width: 1023px) {
+    .board-view-header {
+      display: block;
+    }
+    .board-view-info {
+      margin-top: 1em;
+    }
+  }
+}
+</style>

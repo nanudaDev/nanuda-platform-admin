@@ -39,6 +39,7 @@ import {
   BizNoPipeTransformer,
   StringInquiryPipeTransformer,
   StringShowPipeTransformer,
+  StringTruncatePipeTransformer,
   CurrencyPipeTransformer,
   SpaceTypePipeTransformer,
   NumberPipeTransformer,
@@ -81,6 +82,7 @@ StringPipeTransformer();
 StringDistrictPipeTransformer();
 StringInquiryPipeTransformer();
 StringShowPipeTransformer();
+StringTruncatePipeTransformer();
 StringViewPipeTransformer();
 SpaceTypePipeTransformer();
 

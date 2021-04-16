@@ -2,7 +2,7 @@
   <div id="app" class="page-content">
     <section :id="this.$route.name">
       <NavBar />
-      <div id="app-main" class="container-fluid">
+      <div id="app-main" class="main-conetnt container-fluid">
         <router-view :key="$route.fullPath" />
       </div>
     </section>
@@ -68,9 +68,6 @@ export default class MainLayout extends BaseComponent {}
   100% {
     transform: rotate(360deg);
   }
-}
-#app {
-  padding: 0 1rem;
 }
 #Dashboard {
   #app-main {

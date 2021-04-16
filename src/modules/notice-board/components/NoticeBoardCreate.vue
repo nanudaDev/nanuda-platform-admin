@@ -255,9 +255,9 @@ export default class NoticeBoardCreate extends BaseComponent {
       if (res) {
         this.$router.push('/notice-board');
         if (isTempSaveYn === YN.NO) {
-          toast.success('임시저장완료');
+          toast.success('등록 완료');
         } else {
-          toast.success('등록완료');
+          toast.success('임시 저장 완료');
         }
       }
     });

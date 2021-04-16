@@ -10,5 +10,5 @@ export class AttendeesListDto extends BaseDto<AttendeesDto> {
   eventNo?: number;
   isAttended?: YN;
   isContracted?: YN;
-  orderByNo: OrderByValue;
+  orderByNo?: OrderByValue;
 }

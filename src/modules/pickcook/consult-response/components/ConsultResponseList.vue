@@ -283,7 +283,11 @@ import {
 import { getStatusColor } from '@/core/utils/status-color.util';
 import CommonCodeService from '@/services/pickcook/common-code.service';
 import { PickcookCodeManagementDto } from '@/services/init/dto';
-import { ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 
 @Component({
   name: 'ConsultResponseList',
@@ -365,22 +369,18 @@ export default class ConsultResponseList extends BaseComponent {
       this.pagination.page = 1;
     } else {
       if (isSearch) this.pagination.page = 1;
-      this.searchPramsDto = Object.assign(
-        this.consultResponseSerchDto,
-        this.pagination,
-      );
+      RouterQueryParamMapper(this.consultResponseSerchDto, this.pagination);
     }
 
     ConsultResponseService.findAll(
       this.consultResponseSerchDto,
       this.pagination,
     ).subscribe(res => {
-      this.dataLoading = false;
-      this.consultResponseList = res.data.items;
-      this.consultResponseTotalCount = res.data.totalCount;
-      this.$router.push({
-        query: this.searchPramsDto,
-      });
+      if (res) {
+        this.dataLoading = false;
+        this.consultResponseList = res.data.items;
+        this.consultResponseTotalCount = res.data.totalCount;
+      }
     });
   }
 
@@ -393,8 +393,12 @@ export default class ConsultResponseList extends BaseComponent {
   }
 
   clearOut() {
-    this.consultResponseSerchDto = new ConsultResponseListDto();
-    this.$router.push({ query: null });
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.consultResponseSerchDto = new ConsultResponseListDto();
+      this.findAll();
+    }
   }
 
   created() {

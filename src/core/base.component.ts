@@ -18,13 +18,17 @@ export default class BaseComponent extends Vue {
     const navBar = document.querySelector('.navbar');
     const windowWidth = window.innerWidth;
     let navBarHeight;
-    if (windowWidth >= 992) {
-      navBarHeight = navBar.getBoundingClientRect().height;
-    } else {
-      navBarHeight = 56;
-    }
-    if (navBarHeight) {
-      document.getElementById('app-main').style.marginTop = `${navBarHeight}px`;
+    if (navBar) {
+      if (windowWidth >= 992) {
+        navBarHeight = navBar.getBoundingClientRect().height;
+      } else {
+        navBarHeight = 56;
+      }
+      if (navBarHeight) {
+        document.getElementById(
+          'app-main',
+        ).style.marginTop = `${navBarHeight}px`;
+      }
     }
   }
 

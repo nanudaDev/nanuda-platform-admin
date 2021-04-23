@@ -9,58 +9,25 @@
           <router-link class="navbar-brand brand-text" to="/analysis"
             >NND ANALYSIS</router-link
           >
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-              <div v-for="item in items" :key="item.path">
-                <b-nav-item v-if="!item.meta.detailPage" :to="item.path">
-                  <template>{{ item.meta.title }}</template>
-                </b-nav-item>
-              </div>
-            </ul>
-            <div>
-              <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown">
-                  <a
-                    class="nav-link dropdown-toggle"
-                    href="#"
-                    id="navbarDropdown"
-                    role="button"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                    v-if="admin"
-                    >{{ admin.name }}</a
-                  >
-                  <div
-                    class="dropdown-menu dropdown-menu-right"
-                    aria-labelledby="navbarDropdown"
-                  >
-                    <a class="dropdown-item" href="/my-page">마이 프로필</a>
-                    <a class="dropdown-item" href="/dashboard">대시보드</a>
-                    <a class="dropdown-item" href="/pickcook/consult-response"
-                      >픽쿡</a
-                    >
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" @click="logout()">로그아웃</a>
-                  </div>
-                </li>
-              </ul>
-            </div>
+          <div>
+            <NavBarAccount class="d-inline-block d-lg-none mr-4" />
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
           </div>
+
+          <NavBarList :items="items" />
         </div>
       </nav>
-      <div id="analysis-main">
+      <div id="app-main" class="main-content">
         <router-view />
       </div>
     </section>
@@ -74,25 +41,28 @@ import analysisComponentRouter from '@/router/modules/analysis-component';
 import AdminService from '../../../services/admin.service';
 import { AdminDto } from '@/dto';
 import { BaseUser } from '@/services/shared/auth';
+import NavBarList from '../NavBar/NavBarList.layout.vue';
+import NavBarAccount from '../NavBar/NavBarAccount.layout.vue';
 
 @Component({
   name: 'AnalysisLayout',
+  components: {
+    NavBarList,
+    NavBarAccount,
+  },
 })
 export default class AnalysisLayout extends BaseComponent {
   private items = analysisComponentRouter;
-  private admin = new AdminDto(BaseUser);
-
-  created() {
-    AdminService.findMe().subscribe(res => {
-      this.admin = res.data;
-    });
-  }
 }
 </script>
 <style lang="scss">
-#analysis-main {
-  margin-top: 55px;
-  font-size: 11px;
+#analysis-app {
+  padding: 0;
+
+  #app-main {
+    margin-top: 55px;
+    font-size: 11px;
+  }
 }
 
 .half-circle-spinner,
@@ -134,9 +104,6 @@ export default class AnalysisLayout extends BaseComponent {
   100% {
     transform: rotate(360deg);
   }
-}
-#app {
-  padding: 0 1rem;
 }
 #Dashboard {
   #app-main {

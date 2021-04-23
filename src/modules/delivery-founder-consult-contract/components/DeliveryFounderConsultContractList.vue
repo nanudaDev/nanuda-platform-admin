@@ -1,20 +1,9 @@
 <template>
   <section>
-    <div class="title pb-2 mb-2">
-      <h3>배달형 계약 내역 관리</h3>
-    </div>
-    <div class="divider"></div>
+    <SectionTitle title="배달형 계약 내역" divider />
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <!-- <b-col sm="12" lg="1" class="mb-3">
-          <label for="contract_id">계약 ID</label>
-          <b-form-input
-            type="text"
-            id="contract_id"
-            v-model="deliveryFounderConsultContractSearchDto.no"
-          ></b-form-input>
-        </b-col> -->
-        <b-col sm="12" lg="3" class="mb-3">
+        <b-col cols="12" md="6" lg="3">
           <b-form-group label="업체명">
             <b-form-input
               list="company_lsit"
@@ -30,13 +19,30 @@
             </datalist>
           </b-form-group>
         </b-col>
-        <b-col sm="12" lg="3" class="mb-3">
-          <label for="contract_districat">지점명</label>
-          <b-form-input
-            type="text"
-            id="contract_districat"
-            v-model="deliveryFounderConsultContractSearchDto.companyDistrictNo"
-          ></b-form-input>
+        <b-col cols="12" md="6" lg="3">
+          <b-form-group label="지점명">
+            <b-form-input
+              type="text"
+              id="contract_districat"
+              v-model="
+                deliveryFounderConsultContractSearchDto.companyDistrictNo
+              "
+            ></b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="12" md="6" lg="3">
+          <b-form-group label="이름">
+            <b-form-input
+              v-model="deliveryFounderConsultContractSearchDto.nameKr"
+            ></b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="12" md="6" lg="3">
+          <b-form-group label="연락처">
+            <b-form-input
+              v-model="deliveryFounderConsultContractSearchDto.phone"
+            ></b-form-input>
+          </b-form-group>
         </b-col>
       </b-form-row>
       <b-row align-h="center">
@@ -54,6 +60,20 @@
             deliveryFounderConsultContractTotalCount
           }}</strong>
         </h5>
+        <b-form-select
+          v-model="newLimit"
+          size="sm"
+          class="select-limit ml-3"
+          @change="search()"
+          v-if="deliveryFounderConsultContractTotalCount"
+        >
+          <b-form-select-option
+            v-for="count in paginationCount"
+            :key="count"
+            :value="count"
+            >{{ count }}개</b-form-select-option
+          >
+        </b-form-select>
       </div>
       <div>
         <download-excel
@@ -70,151 +90,149 @@
         </download-excel>
       </div>
     </div>
-    <div v-if="!dataLoading" class="border table-responsive">
-      <table
-        class="table table-sm table-hover table-nowrap"
-        v-if="deliveryFounderConsultContractTotalCount"
-      >
-        <thead>
-          <tr>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: deliveryFounderConsultContractSearchDto.no,
-              }"
-            >
-              ID
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted:
-                  deliveryFounderConsultContractSearchDto.founderConsultNo,
-              }"
-            >
-              CONSULT NO
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted:
-                  deliveryFounderConsultContractSearchDto.companyNameKr,
-              }"
-            >
-              COMPANY
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted:
-                  deliveryFounderConsultContractSearchDto.companyDistrictNo,
-              }"
-            >
-              DISTRICT
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted:
-                  deliveryFounderConsultContractSearchDto.deliverySpaceNo,
-              }"
-            >
-              TYPE
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted:
-                  deliveryFounderConsultContractSearchDto.nanudaUserNo,
-              }"
-            >
-              NAME
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted:
-                  deliveryFounderConsultContractSearchDto.nanudaUserNo,
-              }"
-            >
-              PHONE
-            </th>
-            <!-- <th
-              scope="col"
-              v-bind:class="{
-                highlighted: deliveryFounderConsultContractSearchDto.createdAt,
-              }"
-            >
-              CREATED
-            </th> -->
-            <!-- <th scope="col"></th> -->
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="contract in deliveryFounderConsultContractList"
-            :key="contract.no"
-            @click="
-              $router.push(`/delivery-founder-consult-contract/${contract.no}`)
-            "
-            style="cursor:pointer;"
-          >
-            <th scope="row">{{ contract.no }}</th>
-            <td>
-              <router-link
-                :to="{
-                  name: 'DeliveryFounderConsultDetail',
-                  params: {
-                    id: contract.deliveryFounderConsultNo,
-                  },
+    <template v-if="!dataLoading">
+      <div class="bg-white table-responsive">
+        <table
+          class="table table-hover table-sm text-center table-nowrap"
+          v-if="deliveryFounderConsultContractTotalCount"
+        >
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: deliveryFounderConsultContractSearchDto.no,
                 }"
               >
-                {{ contract.deliveryFounderConsultNo }}
-              </router-link>
-            </td>
-            <td>{{ contract.deliverySpace.companyDistrict.company.nameKr }}</td>
-            <td>{{ contract.deliverySpace.companyDistrict.nameKr }}</td>
-            <td>{{ contract.deliverySpace.typeName }}</td>
-            <td>{{ contract.nanudaUser.name }}</td>
-            <td class="text-nowrap">
-              {{ contract.nanudaUser.phone | phoneTransformer }}
-            </td>
-            <!-- <td>
-              {{ contract.createdAt | dateTransformer }}
-            </td> -->
-            <!-- <td>
-              <router-link
-                class="btn btn-sm btn-secondary text-nowrap"
-                :to="{
-                  name: 'DeliveryFounderConsultContractDetail',
-                  params: {
-                    id: contract.no,
-                  },
+                ID
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted:
+                    deliveryFounderConsultContractSearchDto.founderConsultNo,
                 }"
               >
-                상세보기
-              </router-link>
-            </td> -->
-          </tr>
-        </tbody>
-      </table>
-      <div v-else class="empty-data border">
-        검색결과가 없습니다.
+                상담신청 ID
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted:
+                    deliveryFounderConsultContractSearchDto.companyNameKr,
+                }"
+              >
+                업체명
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted:
+                    deliveryFounderConsultContractSearchDto.companyDistrictNo,
+                }"
+              >
+                지점명
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted:
+                    deliveryFounderConsultContractSearchDto.deliverySpaceNo,
+                }"
+              >
+                타입명
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted:
+                    deliveryFounderConsultContractSearchDto.nanudaUserNo,
+                }"
+              >
+                이름
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted:
+                    deliveryFounderConsultContractSearchDto.nanudaUserNo,
+                }"
+              >
+                연락처
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted:
+                    deliveryFounderConsultContractSearchDto.createdAt,
+                }"
+              >
+                계약일
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="contract in deliveryFounderConsultContractList"
+              :key="contract.no"
+              @click.stop="
+                $router.push(
+                  `/delivery-founder-consult-contract/${contract.no}`,
+                )
+              "
+              style="cursor:pointer;"
+            >
+              <th scope="row">{{ contract.no }}</th>
+              <td @click.stop>
+                <router-link
+                  :to="{
+                    name: 'DeliveryFounderConsultDetail',
+                    params: {
+                      id: contract.deliveryFounderConsultNo,
+                    },
+                  }"
+                  class="text-primary"
+                >
+                  {{ contract.deliveryFounderConsultNo }}
+                </router-link>
+              </td>
+              <td>
+                {{ contract.deliverySpace.companyDistrict.company.nameKr }}
+              </td>
+              <td>{{ contract.deliverySpace.companyDistrict.nameKr }}</td>
+              <td>{{ contract.deliverySpace.typeName }}</td>
+              <td>{{ contract.nanudaUser.name }}</td>
+              <td class="text-nowrap">
+                {{ contract.nanudaUser.phone | phoneTransformer }}
+              </td>
+              <td>
+                {{ contract.createdAt | dateTransformer }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div v-else class="empty-data border">
+          검색결과가 없습니다.
+        </div>
       </div>
-    </div>
-    <b-pagination
-      v-model="pagination.page"
-      v-if="deliveryFounderConsultContractTotalCount"
-      pills
-      :total-rows="deliveryFounderConsultContractTotalCount"
-      :per-page="pagination.limit"
-      @input="search(true)"
-      class="mt-4 justify-content-center"
-    ></b-pagination>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+      <b-pagination
+        v-model="pagination.page"
+        v-if="deliveryFounderConsultContractTotalCount"
+        pills
+        :total-rows="deliveryFounderConsultContractTotalCount"
+        :per-page="pagination.limit"
+        @input="paginateSearch()"
+        class="mt-4 justify-content-center"
+      ></b-pagination>
+    </template>
+    <template v-else>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+      </div>
+    </template>
   </section>
 </template>
 <script lang="ts">
@@ -233,12 +251,18 @@ import { CodeManagementDto } from '../../../services/init/dto';
 import {
   APPROVAL_STATUS,
   CONST_APPROVAL_STATUS,
+  CONST_PAGINATION_COUNT,
+  PaginationCount,
 } from '../../../services/shared';
 
 import AmenityService from '../../../services/amenity.service';
 import { getStatusColor } from '../../../core/utils/status-color.util';
 import deliveryFounderConsultContractService from '@/services/delivery-founder-consult-contract.service';
-import { ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 
 @Component({
   name: 'DeliveryFounderConsultContractList',
@@ -247,7 +271,7 @@ export default class DeliveryFounderConsultContractList extends BaseComponent {
   private deliveryFounderConsultContractList: CompanyDistrictDto[] = Array<
     CompanyDistrictDto
   >();
-  private deliveryFounderConsultContractTotalCount = 0;
+  private deliveryFounderConsultContractTotalCount = null;
   private deliveryFounderConsultContractSearchDto = new DeliveryFounderConsultContractListDto();
   private pagination = new Pagination();
   private approvalStatus: APPROVAL_STATUS[] = [...CONST_APPROVAL_STATUS];
@@ -256,6 +280,9 @@ export default class DeliveryFounderConsultContractList extends BaseComponent {
   private addressData = {
     address: '',
   };
+
+  private newLimit = null;
+  private paginationCount: PaginationCount[] = [...CONST_PAGINATION_COUNT];
 
   private commonAmenityList = [];
 
@@ -284,36 +311,62 @@ export default class DeliveryFounderConsultContractList extends BaseComponent {
     });
   }
 
-  search(isPagination?: boolean) {
+  paginateSearch() {
+    this.findAll(true);
+  }
+
+  search() {
+    this.findAll(true, true);
+  }
+
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
+    this.pagination.limit = this.newLimit;
     if (!isPagination) {
       this.pagination.page = 1;
+    } else {
+      if (isSearch) this.pagination.page = 1;
+      RouterQueryParamMapper(
+        this.deliveryFounderConsultContractSearchDto,
+        this.pagination,
+      );
     }
     deliveryFounderConsultContractService
       .findAll(this.deliveryFounderConsultContractSearchDto, this.pagination)
       .subscribe(res => {
-        this.dataLoading = false;
-        this.deliveryFounderConsultContractList = res.data.items;
-        this.deliveryFounderConsultContractTotalCount = res.data.totalCount;
-        this.$router.push({
-          query: Object.assign(this.deliveryFounderConsultContractSearchDto),
-        });
+        if (res) {
+          this.dataLoading = false;
+          this.deliveryFounderConsultContractList = res.data.items;
+          this.deliveryFounderConsultContractTotalCount = res.data.totalCount;
+        }
       });
-    window.scrollTo(0, 0);
   }
 
   clearOut() {
-    this.pagination = new Pagination();
-    this.deliveryFounderConsultContractSearchDto = new DeliveryFounderConsultContractListDto();
-    this.search();
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.deliveryFounderConsultContractSearchDto = new DeliveryFounderConsultContractListDto();
+      this.findAll();
+    }
   }
 
   created() {
+    this.newLimit = PaginationCount.TWENTY;
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.deliveryFounderConsultContractSearchDto = query;
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.newLimit = +query.limit;
+        // this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
+    } else {
+      this.findAll();
     }
-    this.search();
     this.getCompanies();
   }
 }

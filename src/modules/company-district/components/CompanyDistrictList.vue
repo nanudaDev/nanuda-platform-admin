@@ -3,15 +3,7 @@
     <SectionTitle title="업체 지점 관리" divider></SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <!-- <b-col sm="12" lg="1" class="mb-3">
-          <label for="district_id">지점 ID</label>
-          <b-form-input
-            type="text"
-            id="district_id"
-            v-model="companyDistrictSearchDto.no"
-          ></b-form-input>
-        </b-col>-->
-        <b-col sm="12" lg="2" class="mb-3">
+        <b-col sm="12" lg="2">
           <b-form-group label="업체명">
             <b-form-input
               list="company_lsit"
@@ -27,166 +19,171 @@
             </datalist>
           </b-form-group>
         </b-col>
-        <b-col sm="12" lg="2" class="mb-3">
-          <label for="district_name_kr">지점명</label>
-          <b-form-input
-            type="text"
-            id="district_name_kr"
-            v-model="companyDistrictSearchDto.nameKr"
-          ></b-form-input>
+        <b-col sm="12" lg="2">
+          <b-form-group label="지점명">
+            <b-form-input
+              type="text"
+              id="district_name_kr"
+              v-model="companyDistrictSearchDto.nameKr"
+            ></b-form-input>
+          </b-form-group>
         </b-col>
-        <b-col sm="12" lg="6" class="mb-3">
-          <label for="district_address">주소</label>
-          <b-form-input
-            type="text"
-            id="district_address"
-            v-model="companyDistrictSearchDto.address"
-          ></b-form-input>
+        <b-col sm="12" lg="6">
+          <b-form-group label="주소">
+            <b-form-input
+              type="text"
+              id="district_address"
+              v-model="companyDistrictSearchDto.address"
+            ></b-form-input>
+          </b-form-group>
         </b-col>
-        <b-col sm="12" lg="2" class="mb-3">
-          <label for="district_status">승인 상태</label>
-          <b-form-select
-            id="district_status"
-            v-model="companyDistrictSearchDto.companyDistrictStatus"
-          >
-            <b-select-option value>전체</b-select-option>
-            <b-form-select-option
-              v-for="status in approvalStatus"
-              :key="status"
-              :value="status"
-              >{{ status | enumTransformer }}</b-form-select-option
+        <b-col sm="12" lg="2">
+          <b-form-group label="승인 상태">
+            <b-form-select
+              id="district_status"
+              v-model="companyDistrictSearchDto.companyDistrictStatus"
             >
-          </b-form-select>
+              <b-select-option value>전체</b-select-option>
+              <b-form-select-option
+                v-for="status in approvalStatus"
+                :key="status"
+                :value="status"
+                >{{ status | enumTransformer }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
         </b-col>
       </b-form-row>
       <b-row align-h="center">
-        <b-btn-group>
-          <b-button variant="primary" @click="clearOut()">초기화</b-button>
-          <b-button variant="success" @click="search()">검색</b-button>
-        </b-btn-group>
+        <div>
+          <b-button variant="secondary" @click="clearOut()">초기화</b-button>
+          <b-button variant="primary" @click="search()">검색</b-button>
+        </div>
       </b-row>
     </div>
     <div class="table-top">
       <div class="total-count">
         <h5>
           <span>TOTAL</span>
-          <strong class="text-primary">{{ companyDistrictListCount }}</strong>
+          <strong class="text-primary">{{ companyDistrictTotalCount }}</strong>
         </h5>
       </div>
-      <b-button
-        variant="primary"
-        v-b-modal.add_company_district
-        @click="showCreateModal()"
+      <b-button variant="primary" v-b-modal.add_company_district
         >업체 지점 추가</b-button
       >
     </div>
-    <div v-if="!dataLoading" class="table-bordered table-responsive">
-      <table class="table table-sm table-hover" v-if="companyDistrictListCount">
-        <thead>
-          <tr>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: companyDistrictSearchDto.no,
-              }"
-            >
-              ID
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: companyDistrictSearchDto.companyNameKr,
-              }"
-            >
-              COMPANY
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: companyDistrictSearchDto.nameKr,
-              }"
-            >
-              DISTRICT
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: companyDistrictSearchDto.address,
-              }"
-            >
-              ADDRESS
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: companyDistrictSearchDto.createdAt,
-              }"
-            >
-              CREATED
-            </th>
-            <th
-              scope="col"
-              v-bind:class="{
-                highlighted: companyDistrictSearchDto.companyDistrictStatus,
-              }"
-            >
-              STATUS
-            </th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="district in companyDistrictList" :key="district.no">
-            <th scope="row">{{ district.no }}</th>
-            <td>{{ district.company.nameKr }}</td>
-            <td>{{ district.nameKr }}</td>
-            <td class="text-left">{{ district.address }}</td>
-            <td>
-              {{ district.createdAt | dateTransformer }}
-              <!-- <br />
-            <span class="text-primary"
-              >수정일 : {{ district.updatedAt | dateTransformer }}</span
-              >-->
-            </td>
-            <td>
-              <b-badge
-                :variant="getStatusColor(district.companyDistrictStatus)"
-                class="badge-pill p-2"
+    <template v-if="!dataLoading">
+      <div class="bg-white table-responsive">
+        <table
+          class="table table-hover table-sm text-center table-nowrap"
+          v-if="companyDistrictTotalCount"
+        >
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: companyDistrictSearchDto.no,
+                }"
               >
-                {{ district.companyDistrictStatus | enumTransformer }}
-                {{ companyDistrictList.no }}
-              </b-badge>
-            </td>
-            <td>
-              <router-link
-                class="btn btn-sm btn-secondary text-nowrap"
-                :to="{
+                ID
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: companyDistrictSearchDto.companyNameKr,
+                }"
+              >
+                업체명
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: companyDistrictSearchDto.nameKr,
+                }"
+              >
+                지점명
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: companyDistrictSearchDto.address,
+                }"
+              >
+                지점 주소
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: companyDistrictSearchDto.createdAt,
+                }"
+              >
+                등록일
+              </th>
+              <th
+                scope="col"
+                v-bind:class="{
+                  highlighted: companyDistrictSearchDto.companyDistrictStatus,
+                }"
+              >
+                승인 상태
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="district in companyDistrictList"
+              :key="district.no"
+              @click="
+                $router.push({
                   name: 'CompanyDistrictDetail',
                   params: {
                     id: district.no,
                   },
-                }"
-                >상세보기</router-link
-              >
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div v-else class="empty-data border">검색결과가 없습니다.</div>
-    </div>
-    <b-pagination
-      v-model="pagination.page"
-      v-if="companyDistrictListCount"
-      pills
-      :total-rows="companyDistrictListCount"
-      :per-page="pagination.limit"
-      @input="paginateSearch()"
-      class="mt-4 justify-content-center"
-    ></b-pagination>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+                })
+              "
+              style="cursor:pointer"
+            >
+              <th scope="row">{{ district.no }}</th>
+              <td>{{ district.company.nameKr }}</td>
+              <td>{{ district.nameKr }}</td>
+              <td class="text-left">{{ district.address }}</td>
+              <td>
+                {{ district.createdAt | dateTransformer }}
+              </td>
+              <td>
+                <b-badge
+                  :variant="getStatusColor(district.companyDistrictStatus)"
+                  class="badge-pill p-2"
+                >
+                  {{ district.companyDistrictStatus | enumTransformer }}
+                  {{ companyDistrictList.no }}
+                </b-badge>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div v-else class="empty-data border">검색결과가 없습니다.</div>
+      </div>
+      <b-pagination
+        v-model="pagination.page"
+        v-if="companyDistrictTotalCount"
+        pills
+        :total-rows="companyDistrictTotalCount"
+        :per-page="pagination.limit"
+        @input="paginateSearch()"
+        class="mt-4 justify-content-center"
+      ></b-pagination>
+    </template>
+    <template v-else>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+      </div>
+    </template>
+
     <!-- 지점 추가 모달 -->
     <b-modal
       id="add_company_district"
@@ -344,8 +341,13 @@ import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.se
 import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 import { getStatusColor } from '../../../core/utils/status-color.util';
-import { ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 import { CompanyDistrictCreateDto } from '@/dto';
+import toast from '../../../../resources/assets/js/services/toast.js';
 
 @Component({
   name: 'CompanyDistrictList',
@@ -354,7 +356,7 @@ export default class CompanyDistrictList extends BaseComponent {
   private companyDistrictList: CompanyDistrictDto[] = Array<
     CompanyDistrictDto
   >();
-  private companyDistrictListCount = 0;
+  private companyDistrictTotalCount = null;
   private companyDistrictSearchDto = new CompanyDistrictListDto();
   private pagination = new Pagination();
   private approvalStatus: APPROVAL_STATUS[] = [...CONST_APPROVAL_STATUS];
@@ -378,11 +380,6 @@ export default class CompanyDistrictList extends BaseComponent {
     CompanyService.findAllForSelect().subscribe(res => {
       this.companySelect = res.data;
     });
-  }
-
-  // show company district modal
-  showCreateModal() {
-    this.getAmenities();
   }
 
   // show address modal
@@ -415,34 +412,44 @@ export default class CompanyDistrictList extends BaseComponent {
   }
 
   // serach district
-  search(isPagination?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
-      this.pagination.page = 1;
+      this.pagination.page = 1; // 최초 페이지 진입시 페이지 초기화
+    } else {
+      if (isSearch) this.pagination.page = 1; // 검색버튼 클릭시 페이지 초기화
+      RouterQueryParamMapper(this.companyDistrictSearchDto, this.pagination);
     }
     CompanyDistrictService.findAll(
       this.companyDistrictSearchDto,
       this.pagination,
     ).subscribe(res => {
-      this.dataLoading = false;
-      this.companyDistrictList = res.data.items;
-      this.companyDistrictListCount = res.data.totalCount;
-      this.$router.push({
-        query: Object.assign(this.companyDistrictSearchDto),
-      });
+      if (res) {
+        this.dataLoading = false;
+        this.companyDistrictList = res.data.items;
+        this.companyDistrictTotalCount = res.data.totalCount;
+      }
     });
   }
 
   // paginate
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
+  }
+
+  // search
+  search() {
+    this.findAll(true, true);
   }
 
   // clear out district search dto
   clearOut() {
-    this.pagination = new Pagination();
-    this.companyDistrictSearchDto = new CompanyDistrictListDto();
-    this.search();
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.companyDistrictSearchDto = new CompanyDistrictListDto();
+      this.findAll();
+    }
   }
 
   // create company district
@@ -453,7 +460,8 @@ export default class CompanyDistrictList extends BaseComponent {
     CompanyDistrictService.createCompanyDistrict(
       this.companyDistrictCreateDto,
     ).subscribe(res => {
-      this.search();
+      toast.success('추가완료');
+      this.clearOut();
     });
   }
 
@@ -485,17 +493,21 @@ export default class CompanyDistrictList extends BaseComponent {
   }
 
   created() {
-    if (this.$route.params.companyNo) {
-      this.companyDistrictSearchDto.companyNo = parseInt(
-        this.$route.params.companyNo,
-      );
-    }
-    this.getCompanies();
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.companyDistrictSearchDto = query;
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
+    } else {
+      this.findAll();
     }
-    this.search();
+    this.getCompanies();
+    this.getAmenities();
   }
 }
 </script>

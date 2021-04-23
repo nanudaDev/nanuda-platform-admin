@@ -1,7 +1,7 @@
 <template>
   <section>
     <SectionTitle title="브랜드 관리" divider></SectionTitle>
-    <div class="search-box my-4" v-on:keyup.enter="search(true, true)">
+    <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
         <b-col cols="6" sm="4" md="3">
           <b-form-group label="업종">
@@ -26,7 +26,7 @@
               class="custom-select"
               v-model="brandSearchDto.isRecommendedYn"
             >
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="yn in ynSelect"
                 :key="yn"
@@ -47,7 +47,7 @@
               class="custom-select"
               v-model="brandSearchDto.showYn"
             >
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="yn in ynSelect"
                 :key="yn"
@@ -60,7 +60,7 @@
         <b-col cols="6" sm="4" md="3">
           <b-form-group label="창업 비용">
             <b-form-select class="custom-select" v-model="brandSearchDto.cost">
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="cost in costValues"
                 :key="cost.no"
@@ -76,7 +76,7 @@
               class="custom-select"
               v-model="brandSearchDto.difficulty"
             >
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="difficulty in difficultyValues"
                 :key="difficulty.no"
@@ -92,7 +92,7 @@
               class="custom-select"
               v-model="brandSearchDto.storeCount"
             >
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="storeCount in storeCountValues"
                 :key="storeCount.no"
@@ -123,9 +123,7 @@
       <b-row align-h="center">
         <div>
           <b-button variant="secondary" @click="clearOut()">초기화</b-button>
-          <b-button variant="primary" @click="search(true, true)"
-            >검색</b-button
-          >
+          <b-button variant="primary" @click="search()">검색</b-button>
         </div>
       </b-row>
     </div>
@@ -212,7 +210,7 @@
             <tr
               v-for="brand in brandList"
               :key="brand.no"
-              @click="findOne(brand.no)"
+              @click="$router.push(`/brand/${brand.no}`)"
               style="cursor:pointer"
             >
               <td>{{ brand.no }}</td>
@@ -288,9 +286,11 @@
       ></b-pagination>
     </template>
     <template v-else>
-      <div class="half-circle-spinner py-4">
-        <div class="circle circle-1"></div>
-        <div class="circle circle-2"></div>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
       </div>
     </template>
     <!-- 브랜드 추가 모달 -->
@@ -471,7 +471,11 @@ import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { CodeManagementDto } from '@/services/init/dto';
-import { ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 import { BRAND_TYPE } from '@/services/shared';
 
 @Component({
@@ -494,16 +498,16 @@ export default class BrandList extends BaseComponent {
   private brandCreateDto = new BrandDto();
   private brandLogo: FileAttachmentDto[] = [];
   private brandType: CodeManagementDto[] = [];
-  private searchPramsDto: any = {};
+  private searchQueryParamsDto: any = {};
 
   // search brand
-  search(isPagination?: boolean, isSearch?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1; // 최초 페이지 진입시 페이지 초기화
     } else {
       if (isSearch) this.pagination.page = 1; // 검색버튼 클릭시 페이지 초기화
-      this.searchPramsDto = Object.assign(this.brandSearchDto, this.pagination);
+      RouterQueryParamMapper(this.brandSearchDto, this.pagination);
     }
     BrandService.findAll(this.brandSearchDto, this.pagination).subscribe(
       res => {
@@ -511,18 +515,19 @@ export default class BrandList extends BaseComponent {
           this.dataLoading = false;
           this.brandList = res.data.items;
           this.brandTotalCount = res.data.totalCount;
-          this.$router
-            .push({
-              query: this.searchPramsDto,
-            })
-            .catch();
         }
       },
     );
   }
 
+  // pagination
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
+  }
+
+  // serach
+  search() {
+    this.findAll(true, true);
   }
 
   // get food category
@@ -550,13 +555,12 @@ export default class BrandList extends BaseComponent {
 
   // clear brand search dto
   clearOut() {
-    this.brandSearchDto = new BrandListDto();
-    this.$router.replace({ query: null });
-  }
-
-  // find brand detail
-  findOne(id) {
-    this.$router.push(`/brand/${id}`);
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.brandSearchDto = new BrandListDto();
+      this.findAll();
+    }
   }
 
   // create brand
@@ -600,11 +604,15 @@ export default class BrandList extends BaseComponent {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.brandSearchDto = query;
-      this.pagination.limit = +query.limit;
-      this.pagination.page = +query.page;
-      this.search(true);
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
     } else {
-      this.search();
+      this.findAll();
     }
 
     this.getCommonCodes();

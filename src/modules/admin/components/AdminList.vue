@@ -1,10 +1,10 @@
 <template>
   <section>
     <SectionTitle title="관리자 관리" divider></SectionTitle>
-    <div class="search-box my-4" v-on:keyup.enter="search(true, true)">
+    <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
         <b-col cols="12" sm="6" md="3">
-          <b-form-group label="ID">
+          <b-form-group label="관리자 ID">
             <b-form-input v-model="adminSearchDto.no"></b-form-input>
           </b-form-group>
         </b-col>
@@ -21,7 +21,7 @@
         <b-col cols="12" sm="6" md="3">
           <b-form-group label="담당 공유주방">
             <b-form-select id="space_type" v-model="adminSearchDto.spaceTypeNo">
-              <b-form-select-option>전체</b-form-select-option>
+              <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="spaceType in spaceTypes"
                 :key="spaceType.no"
@@ -36,9 +36,7 @@
       <b-row align-h="center">
         <div>
           <b-button variant="secondary" @click="clearOut()">초기화</b-button>
-          <b-button variant="primary" @click="search(true, true)"
-            >검색</b-button
-          >
+          <b-button variant="primary" @click="search()">검색</b-button>
         </div>
       </b-row>
     </div>
@@ -94,7 +92,7 @@
             <tr
               v-for="admin in adminList"
               :key="admin.no"
-              @click="findOne(admin.no)"
+              @click="$router.push(`/admin/${admin.no}`)"
               style="cursor:pointer"
             >
               <td>{{ admin.no }}</td>
@@ -124,9 +122,11 @@
       ></b-pagination>
     </template>
     <template v-else>
-      <div class="half-circle-spinner py-4">
-        <div class="circle circle-1"></div>
-        <div class="circle circle-2"></div>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
       </div>
     </template>
     <!-- 관리자 추가 모달 -->
@@ -197,7 +197,11 @@ import AdminService from '@/services/admin.service';
 import SpaceTypeService from '@/services/space-type.service';
 import { AdminDto, AdminListDto, SpaceTypeDto } from '@/dto';
 import { Pagination } from '@/common';
-import { ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 import { BaseUser } from '@/services/shared/auth';
 import toast from '../../../../resources/assets/js/services/toast.js';
 
@@ -212,16 +216,16 @@ export default class AdminList extends BaseComponent {
   private adminTotalCount = null;
   private dataLoading = false;
   private spaceTypes: SpaceTypeDto[] = [];
-  private searchPramsDto: any = {};
+  private searchQueryParamsDto: any = {};
 
-  // search admin
-  search(isPagination?: boolean, isSearch?: boolean) {
-    this.dataLoading = false;
+  // findAll admin
+  findAll(isPagination?: boolean, isSearch?: boolean) {
+    this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
     } else {
       if (isSearch) this.pagination.page = 1;
-      this.searchPramsDto = Object.assign(this.adminSearchDto, this.pagination);
+      RouterQueryParamMapper(this.adminSearchDto, this.pagination);
     }
     AdminService.findAll(this.adminSearchDto, this.pagination).subscribe(
       res => {
@@ -229,34 +233,39 @@ export default class AdminList extends BaseComponent {
           this.dataLoading = false;
           this.adminList = res.data.items;
           this.adminTotalCount = res.data.totalCount;
-          this.$router.push({
-            query: this.searchPramsDto,
-          });
         }
       },
     );
   }
 
-  // find brand detail
-  findOne(id) {
-    this.$router.push(`/admin/${id}`);
+  // search admin
+  search() {
+    this.findAll(true, true);
   }
 
+  // pagination
+  paginateSearch() {
+    this.findAll(true);
+  }
+
+  // clearout search dto
   clearOut() {
-    this.adminSearchDto = new AdminListDto();
-    this.$router.replace({ query: null });
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.adminSearchDto = new AdminListDto();
+      this.findAll();
+    }
   }
 
-  clearOutCreateDto() {
-    this.adminCreateDto = new AdminDto(BaseUser);
-  }
-
-  findSpaceType() {
+  // get space type
+  getSpaceTypes() {
     SpaceTypeService.findForSelect().subscribe(res => {
       this.spaceTypes = res.data;
     });
   }
 
+  // create admin
   createAdmin() {
     AdminService.create(this.adminCreateDto).subscribe(res => {
       if (res) {
@@ -266,17 +275,26 @@ export default class AdminList extends BaseComponent {
     });
   }
 
+  // clearout create dto
+  clearOutCreateDto() {
+    this.adminCreateDto = new AdminDto(BaseUser);
+  }
+
   created() {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.adminSearchDto = query;
-      this.pagination.limit = +query.limit;
-      this.pagination.page = +query.page;
-      this.search(true);
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
     } else {
-      this.search();
+      this.findAll();
     }
-    this.findSpaceType();
+    this.getSpaceTypes();
   }
 }
 </script>

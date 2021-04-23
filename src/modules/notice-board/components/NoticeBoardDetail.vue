@@ -4,43 +4,45 @@
       <b-alert
         variant="info"
         show
-        v-if="noticeBoard.tempSaveYn === 'Y'"
+        v-if="noticeBoardDto.tempSaveYn === 'Y'"
         class="my-4"
       >
         <p class="text-center">
-          <b>{{ noticeBoard.tempSavedAt | dateTransformer }}</b> 에 임시 저장된
-          글입니다 수정하기 버튼을 클릭하여 작성 완료해주세요.
+          <b>{{ noticeBoardDto.tempSavedAt | dateTransformer }}</b> 에 임시
+          저장된 글입니다 수정하기 버튼을 클릭하여 작성 완료해주세요.
         </p>
       </b-alert>
       <div class="board-view-header">
         <div class="board-view-title">
           <b-badge variant="warning" class="board-view-category">
-            {{ noticeBoard.noticeBoardType | enumTransformer }}
+            {{ noticeBoardDto.noticeBoardType | enumTransformer }}
           </b-badge>
-          <h3>{{ noticeBoard.title }}</h3>
+          <h3>{{ noticeBoardDto.title }}</h3>
         </div>
         <div class="board-view-info">
           <span
             class="baord-view-user"
-            v-if="noticeBoard.admin && noticeBoard.admin.name"
-            >{{ noticeBoard.admin.name }}</span
+            v-if="noticeBoardDto.admin && noticeBoardDto.admin.name"
+            >{{ noticeBoardDto.admin.name }}</span
           >
           <span class="baord-view-date">{{
-            noticeBoard.createdAt | dateTransformer
+            noticeBoardDto.createdAt | dateTransformer
           }}</span>
         </div>
       </div>
       <div class="board-view-body">
-        <div v-if="noticeBoard.started">
+        <div v-if="noticeBoardDto.started">
           <strong>이벤트 기간</strong>
-          <span>{{ noticeBoard.started }}</span> ~
-          <span>{{ noticeBoard.ended }}</span>
+          <span>{{ noticeBoardDto.started }}</span> ~
+          <span>{{ noticeBoardDto.ended }}</span>
         </div>
-        <div v-html="noticeBoard.content" class="board-view-content">
-          {{ noticeBoard.content }}
+        <div v-html="noticeBoardDto.content" class="board-view-content">
+          {{ noticeBoardDto.content }}
         </div>
         <div
-          v-if="noticeBoard.attachments && noticeBoard.attachments.length > 0"
+          v-if="
+            noticeBoardDto.attachments && noticeBoardDto.attachments.length > 0
+          "
           class="board-view-attachments"
         >
           <a
@@ -48,16 +50,18 @@
             target="_blank"
             download
             class="btn btn-outline-info btn-small m-1"
-            v-for="attachment in noticeBoard.attachments"
+            v-for="attachment in noticeBoardDto.attachments"
             :key="attachment.key"
           >
             {{ attachment.originFilename }}
             <b-icon icon="cloud-download" class="ml-2"></b-icon>
           </a>
         </div>
-        <div v-if="noticeBoard.url" class="board-view-url">
+        <div v-if="noticeBoardDto.url" class="board-view-url">
           <strong>URL</strong>
-          <a :href="noticeBoard.url" target="_blank">{{ noticeBoard.url }}</a>
+          <a :href="getLinkUrl(noticeBoardDto.url)" target="_blank">{{
+            noticeBoardDto.url
+          }}</a>
         </div>
       </div>
       <div class="board-view-footer clearfix">
@@ -94,7 +98,7 @@
   <section v-else>
     <NoticeBoardUpdate
       :editMode="editMode"
-      :uploadedAttachments="uploadedAttachments"
+      :oldAttachments="noticeBoardDto.attachments"
       @cancelUpdate="cancelUpdate()"
     />
   </section>
@@ -104,14 +108,10 @@ import Component from 'vue-class-component';
 import BaseComponent from '../../../core/base.component';
 import { NoticeBoardDto } from '../../../dto';
 import NoticeBoardService from '../../../services/notice-board.service';
-import FileUploadService from '../../../services/shared/file-upload/file-upload.service';
-import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';
-import {
-  ATTACHMENT_REASON_TYPE,
-  FileAttachmentDto,
-} from '../../../services/shared/file-upload/dto';
+import { FileAttachmentDto } from '../../../services/shared/file-upload/dto';
 import toast from '../../../../resources/assets/js/services/toast.js';
 import NoticeBoardUpdate from '../../../modules/notice-board/components/NoticeBoardUpdate.vue';
+import { ClearOutQueryParamMapper, ReverseQueryParamMapper } from '@/core';
 
 @Component({
   name: 'NoticeBoardDetail',
@@ -120,24 +120,27 @@ import NoticeBoardUpdate from '../../../modules/notice-board/components/NoticeBo
   },
 })
 export default class NoticeBoardDetail extends BaseComponent {
-  private noticeBoard = new NoticeBoardDto();
-  private environments = null;
+  private noticeBoardDto = new NoticeBoardDto();
   private editMode = false;
-  private selectedAttachments: FileAttachmentDto[] = [];
-  private uploadedAttachments: FileAttachmentDto[] = [];
+
+  getLinkUrl(linkUrl: string) {
+    return linkUrl.includes('//') ? linkUrl : `//${linkUrl}`;
+  }
 
   findOne(id) {
     NoticeBoardService.findOne(id).subscribe(res => {
       if (res) {
-        this.noticeBoard = res.data;
+        this.noticeBoardDto = res.data;
       }
     });
   }
 
   deleteOne() {
     NoticeBoardService.deleteOne(this.$route.params.id).subscribe(res => {
-      toast.success('공지사항 삭제했습니다');
-      this.$router.push('/notice-board');
+      if (res) {
+        toast.success('삭제 완료');
+        this.$router.push('/notice-board');
+      }
     });
   }
 
@@ -145,19 +148,21 @@ export default class NoticeBoardDetail extends BaseComponent {
     if (!this.$route.params.query) {
       this.editMode = true;
       this.$router.push({ query: { editMode: '1' } });
-      this.selectedAttachments = this.noticeBoard.attachments;
-      this.uploadedAttachments = [...this.selectedAttachments];
     }
   }
 
   cancelUpdate() {
     if (this.editMode) {
       this.editMode = false;
-      this.$router.push({ query: { editMode: '0' } });
+      ClearOutQueryParamMapper();
     }
   }
 
   created() {
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.editMode = Boolean(query.editMode);
+    }
     const id = this.$route.params.id;
     this.findOne(id);
   }
@@ -217,6 +222,9 @@ export default class NoticeBoardDetail extends BaseComponent {
     .board-view-content {
       min-height: 400px;
       padding: 0.5rem;
+    }
+    .board-view-attachments {
+      margin-bottom: 1rem;
     }
     .board-view-url {
       border-top: 1px solid #a7a7a7;

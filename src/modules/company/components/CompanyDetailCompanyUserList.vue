@@ -1,38 +1,45 @@
 <template>
-  <div v-if="companyUserListCount > 0" class="table-responsive">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th scope="col">NO</th>
-          <th scope="col">NAME</th>
-          <th scope="col">PHONE</th>
-          <th scope="col">EMAIL</th>
-          <th scope="col">STATUS</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="companyUser in companyUserList"
-          :key="companyUser.no"
-          @click="findOne(companyUser.no)"
-          style="cursor:pointer"
-        >
-          <th scope="row">{{ companyUser.no }}</th>
-          <td>
-            <strong class="text-danger" v-if="companyUser.authCode === 'ADMIN_COMPANY_USER'">M</strong>
-            {{ companyUser.name }}
-          </td>
-          <td>{{ companyUser.phone }}</td>
-          <td>{{ companyUser.email }}</td>
-          <td>
-            <b-badge
-              :variant="getStatusColor(companyUser.companyUserStatus)"
-              class="badge-pill p-2 mr-2"
-            >{{ companyUser.companyUserStatus | enumTransformer }}</b-badge>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div v-if="companyUserListCount">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">이름</th>
+            <th scope="col">휴대폰번호</th>
+            <th scope="col">이메일</th>
+            <th scope="col">승인상태</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="companyUser in companyUserList"
+            :key="companyUser.no"
+            @click="findOne(companyUser.no)"
+            style="cursor:pointer"
+          >
+            <th scope="row">{{ companyUser.no }}</th>
+            <td>
+              <strong
+                class="text-danger"
+                v-if="companyUser.authCode === 'ADMIN_COMPANY_USER'"
+                >M</strong
+              >
+              {{ companyUser.name }}
+            </td>
+            <td>{{ companyUser.phone }}</td>
+            <td>{{ companyUser.email }}</td>
+            <td>
+              <b-badge
+                :variant="getStatusColor(companyUser.companyUserStatus)"
+                class="badge-pill p-2 mr-2"
+                >{{ companyUser.companyUserStatus | enumTransformer }}</b-badge
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <b-pagination
       v-model="pagination.page"
       v-if="companyUserListCount"

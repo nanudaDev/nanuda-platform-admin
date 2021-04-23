@@ -72,14 +72,30 @@ select {
   font: inherit;
 }
 
+.navbar {
+  @media screen and (max-width: 991px) {
+    position: absolute;
+  }
+}
+
+.page-content {
+  padding: 1.5rem 0;
+  @media screen and (min-width: 992px) {
+    padding: 1.5rem 1rem;
+  }
+}
+
 .table-top {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  // flex-direction: row-reverse;
   margin-bottom: 1rem;
+
   .total-count {
     display: flex;
     align-items: center;
+    margin-top: 1rem;
     h5 {
       font-size: 14px;
       margin: 0;
@@ -87,6 +103,9 @@ select {
     .text-primary {
       margin-left: 0.25rem;
     }
+  }
+  .btn-wrap {
+    text-align: right;
   }
   .select-limit {
     width: 100px;
@@ -158,7 +177,8 @@ img {
   font-weight: bold;
 }
 
-.empty-data {
+.empty-data,
+.loading-spinner {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -226,6 +246,17 @@ img {
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 90px;
+}
+
+.cropped-img {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
 }
 
 @media screen and (max-width: 540px) {

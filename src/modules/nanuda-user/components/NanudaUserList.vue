@@ -1,9 +1,9 @@
 <template>
   <section>
     <SectionTitle title="사용자 관리" divider></SectionTitle>
-    <div class="search-box my-4" v-on:keyup.enter="search(true, true)">
+    <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <!-- <b-col cols="6" md="2" class="mb-2">
+        <b-col cols="12" sm="6" md="3" class="mb-3">
           <label for="user_no">사용자 ID</label>
           <input
             type="text"
@@ -11,7 +11,7 @@
             id="user_no"
             v-model="nanudaUserSearchDto.no"
           />
-        </b-col>-->
+        </b-col>
         <b-col cols="12" sm="6" md="3" class="mb-3">
           <label>사용자명</label>
           <input
@@ -32,9 +32,7 @@
       <b-row align-h="center">
         <div>
           <b-button variant="secondary" @click="clearOut()">초기화</b-button>
-          <b-button variant="primary" @click="search(true, true)"
-            >검색</b-button
-          >
+          <b-button variant="primary" @click="search()">검색</b-button>
         </div>
       </b-row>
     </div>
@@ -101,18 +99,6 @@
               <td>{{ user.name }}</td>
               <td>{{ user.phone | phoneTransformer }}</td>
               <td>{{ user.createdAt | dateTransformer }}</td>
-              <!-- <td>
-              <router-link
-                class="btn btn-sm btn-secondary text-nowrap"
-                :to="{
-                  name: 'NanudaUserDetail',
-                  params: {
-                    id: user.no,
-                  },
-                }"
-                >상세보기</router-link
-              >
-            </td> -->
             </tr>
           </tbody>
         </table>
@@ -129,9 +115,11 @@
       ></b-pagination>
     </template>
     <template v-else>
-      <div class="half-circle-spinner py-4">
-        <div class="circle circle-1"></div>
-        <div class="circle circle-2"></div>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
       </div>
     </template>
     <!-- 사용자 추가 모달 -->
@@ -203,7 +191,11 @@ import NanudaUserService from '../../../services/nanuda-user.service';
 import { CONST_YN, Pagination, YN } from '@/common';
 import { BaseUser } from '@/services/shared/auth';
 import toast from '../../../../resources/assets/js/services/toast.js';
-import { ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 
 @Component({
   name: 'NanudaUserList',
@@ -216,45 +208,50 @@ export default class NanudaUserList extends BaseComponent {
   private pagination = new Pagination();
   private dataLoading = false;
   private yn: YN[] = [...CONST_YN];
-  private searchPramsDto: any = {};
+  private searchQueryParamsDto: any = {};
 
-  // search nanuda user
-  search(isPagination?: boolean, isSearch?: boolean) {
+  // find All Nanuda user
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
     } else {
       if (isSearch) this.pagination.page = 1;
-      this.searchPramsDto = Object.assign(
-        this.nanudaUserSearchDto,
-        this.pagination,
-      );
+      RouterQueryParamMapper(this.nanudaUserSearchDto, this.pagination);
     }
     NanudaUserService.findAll(
       this.nanudaUserSearchDto,
       this.pagination,
     ).subscribe(res => {
-      this.dataLoading = false;
       if (res) {
+        this.dataLoading = false;
         this.nanudaUserList = res.data.items;
         this.nanudaUserTotalCount = res.data.totalCount;
-
-        this.$router.push({
-          query: this.searchPramsDto,
-        });
       }
     });
   }
 
+  // search nanuda user
+  search() {
+    this.findAll(true, true);
+  }
+
+  // clearout search dto
   clearOut() {
-    this.nanudaUserSearchDto = new NanudaUserListDto();
-    this.$router.replace({ query: null });
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.nanudaUserSearchDto = new NanudaUserListDto();
+      this.findAll();
+    }
   }
 
+  // pagination
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
   }
 
+  // create nanuda user
   createUser() {
     NanudaUserService.create(this.nanudaUserCreateDto).subscribe(res => {
       if (res) {
@@ -264,6 +261,7 @@ export default class NanudaUserList extends BaseComponent {
     });
   }
 
+  // clearout create dto
   clearOutCreateDto() {
     this.nanudaUserCreateDto = new NanudaUserDto(BaseUser);
   }
@@ -272,11 +270,15 @@ export default class NanudaUserList extends BaseComponent {
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.nanudaUserSearchDto = query;
-      this.pagination.limit = +query.limit;
-      this.pagination.page = +query.page;
-      this.search(true);
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
     } else {
-      this.search();
+      this.findAll();
     }
   }
 }

@@ -8,65 +8,24 @@
             to="/pickcook/consult-response"
             >PICKCOOK</router-link
           >
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-              <div v-for="item in items" :key="item.path">
-                <b-nav-item-dropdown :text="item.name" left>
-                  <template>
-                    <div v-for="children in item.children" :key="children.path">
-                      <b-dropdown-item
-                        v-if="!children.meta.detailPage"
-                        :to="children.path"
-                      >
-                        <template>{{ children.meta.title }}</template>
-                      </b-dropdown-item>
-                    </div>
-                  </template>
-                </b-nav-item-dropdown>
-              </div>
-            </ul>
-            <div>
-              <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown">
-                  <a
-                    class="nav-link dropdown-toggle"
-                    href="#"
-                    id="navbarDropdown"
-                    role="button"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                    v-if="admin"
-                    >{{ admin.name }}</a
-                  >
-                  <div
-                    class="dropdown-menu dropdown-menu-right"
-                    aria-labelledby="navbarDropdown"
-                  >
-                    <a class="dropdown-item" href="/my-page">마이 프로필</a>
-                    <a class="dropdown-item" href="/dashboard">대시보드</a>
-                    <a class="dropdown-item" href="/analysis">상권분석</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" @click="logout()">로그아웃</a>
-                  </div>
-                </li>
-              </ul>
-            </div>
+          <div>
+            <NavBarAccount class="d-inline-block d-lg-none mr-4" />
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
           </div>
+          <NavBarList :items="items" />
         </div>
       </nav>
-      <div id="pickcook-main" class="container-fluid">
+      <div id="app-main" class="container-fluid">
         <router-view :key="$route.fullPath" />
       </div>
     </section>
@@ -80,31 +39,29 @@ import pickcookComponentRouter from '@/router/modules/pickcook-component';
 import AdminService from '../../../services/admin.service';
 import { AdminDto } from '@/dto';
 import { BaseUser } from '@/services/shared/auth';
+import NavBarList from '../NavBar/NavBarList.layout.vue';
+import NavBarAccount from '../NavBar/NavBarAccount.layout.vue';
 
 @Component({
   name: 'PickcookLayout',
+  components: {
+    NavBarList,
+    NavBarAccount,
+  },
 })
 export default class PickcookLayout extends BaseComponent {
   private items = pickcookComponentRouter;
-  private admin = new AdminDto(BaseUser);
-
-  created() {
-    AdminService.findMe().subscribe(res => {
-      this.admin = res.data;
-    });
-  }
 }
 </script>
 <style lang="scss">
 #pickcook-app {
-  padding: 0 1rem;
   #nav {
     background-color: #0b538d;
   }
-}
-#pickcook-main {
-  margin-top: 80px;
-  font-size: 11px;
+  #app-main {
+    margin-top: 80px;
+    font-size: 11px;
+  }
 }
 
 .half-circle-spinner,

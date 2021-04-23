@@ -3,7 +3,7 @@
     <SectionTitle title="프로모션 관리" divider />
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <b-col cols="2">
+        <b-col cols="12" md="6" lg="3">
           <b-form-group label="프로모션 타입">
             <b-form-select v-model="promotionSearchDto.promotionType">
               <b-form-select-option value>전체</b-form-select-option>
@@ -16,6 +16,19 @@
             </b-form-select>
           </b-form-group>
         </b-col>
+        <b-col cols="12" md="6" lg="3">
+          <b-form-group label="노출 여부">
+            <b-form-select v-model="promotionSearchDto.showYn">
+              <b-form-select-option value>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="type in showYn"
+                :key="type"
+                :value="type"
+                >{{ type | stringShowTransformer }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
       </b-form-row>
       <b-row align-h="center">
         <div>
@@ -24,44 +37,73 @@
         </div>
       </b-row>
     </div>
-    <div v-if="!dataLoading">
-      <div class="table-top">
-        <div class="total-count">
-          <h5>
-            <span>TOTAL</span>
-            <strong class="text-primary">{{ promotionTotalCount }}</strong>
-          </h5>
-        </div>
-        <div>
-          <b-button variant="primary" v-b-modal.add_promotion
-            >프로모션 추가</b-button
-          >
-        </div>
+    <div class="table-top">
+      <div class="total-count">
+        <h5>
+          <span>TOTAL</span>
+          <strong class="text-primary">{{ promotionTotalCount }}</strong>
+        </h5>
       </div>
-
-      <div class="table-responsive" v-if="promotionTotalCount">
-        <table class="table table-hover table-sm border">
+      <div class="text-right">
+        <b-button variant="primary" v-b-modal.add_promotion
+          >프로모션 추가</b-button
+        >
+      </div>
+    </div>
+    <template v-if="!dataLoading">
+      <div class="bg-white table-responsive">
+        <table
+          class="table table-hover table-sm table-nowrap"
+          v-if="promotionTotalCount"
+        >
           <thead>
             <tr>
               <th scope="col">ID</th>
-              <th scope="col">프로모션 타입</th>
+              <th scope="col">진행 여부</th>
+              <th
+                scope="col"
+                v-bind:class="{ highlighted: promotionSearchDto.promotionType }"
+              >
+                프로모션 타입
+              </th>
               <th scope="col">프로모션 제목</th>
               <th scope="col">프로모션 제목 (노출용)</th>
               <th scope="col">프로모션 내용 요약</th>
               <th scope="col">프로모션 기간</th>
-              <th scope="col">만료</th>
-              <th scope="col">노출 여부</th>
+              <th
+                scope="col"
+                v-bind:class="{ highlighted: promotionSearchDto.showYn }"
+              >
+                노출 여부
+              </th>
+              <th>등록일</th>
             </tr>
           </thead>
           <tbody>
             <tr
               v-for="promotion in promotionList"
               :key="promotion.no"
-              @click="findOne(promotion.no)"
+              @click="
+                $router.push({
+                  name: 'CompanyDistrictPromotionDetail',
+                  params: {
+                    id: promotion.no,
+                  },
+                })
+              "
               style="cursor:pointer"
             >
               <td>
                 {{ promotion.no }}
+              </td>
+              <td>
+                <b-badge
+                  variant="secondary"
+                  v-if="new Date(promotion.ended) < new Date()"
+                >
+                  종료
+                </b-badge>
+                <b-badge variant="warning" v-else>진행중</b-badge>
               </td>
               <td>
                 {{ promotion.codeManagement.value }}
@@ -72,7 +114,7 @@
               <td>
                 {{ promotion.displayTitle }}
               </td>
-              <td>
+              <td class="text-left">
                 {{ promotion.summary }}
               </td>
               <td>
@@ -80,23 +122,19 @@
                 {{ promotion.ended | dateTransformer }}
               </td>
               <td>
-                <span v-if="promotion.ended < new Date()">
-                  만료
-                </span>
-                <span v-else>진행중</span>
-              </td>
-              <td>
                 <b-badge
                   :variant="promotion.showYn === 'Y' ? 'success' : 'danger'"
                   >{{ promotion.showYn }}</b-badge
                 >
               </td>
+              <td>
+                {{ promotion.createdAt | dateTransformer }}
+              </td>
             </tr>
           </tbody>
         </table>
+        <div v-else class="empty-data border">검색결과가 없습니다.</div>
       </div>
-
-      <div v-else class="empty-data border">검색결과가 없습니다.</div>
       <b-pagination
         v-model="pagination.page"
         v-if="promotionTotalCount"
@@ -106,13 +144,16 @@
         @input="paginateSearch()"
         class="mt-4 justify-content-center"
       ></b-pagination>
-    </div>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+    </template>
+    <template v-else>
+      <div class="half-circle-spinner mt-5">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+      </div>
+    </template>
+    <!-- 프로모션 추가 모달 -->
     <b-modal
-      size="lg"
+      size="xl"
       id="add_promotion"
       title="프로모션 추가"
       @ok="createPromotion()"
@@ -136,7 +177,7 @@
             </b-form-group>
           </b-row>
         </b-col>
-        <b-col cols="12">
+        <b-col cols="12" md="6">
           <b-form-group label="프로모션 타입">
             <b-form-select v-model="promotionCreateDto.promotionType">
               <b-form-select-option
@@ -148,34 +189,22 @@
             </b-form-select>
           </b-form-group>
         </b-col>
-        <b-col cols="12">
+        <b-col cols="12" md="6">
           <b-form-group label="프로모션 제목">
             <b-form-input v-model="promotionCreateDto.title"></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="12">
+        <b-col cols="12" md="6">
           <b-form-group label="프로모션 제목 (노출용)">
             <b-form-input
               v-model="promotionCreateDto.displayTitle"
             ></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="12">
+        <b-col cols="12" md="6">
           <b-form-group label="프로모션 내용 요약">
             <b-form-input v-model="promotionCreateDto.summary"></b-form-input>
           </b-form-group>
-        </b-col>
-        <b-col cols="12" class="mb-4">
-          <label for="create_content">
-            내용
-            <span class="red-text">*</span>
-          </label>
-          <vue-editor
-            id="create_content"
-            class="bg-white"
-            v-model="promotionCreateDto.desc"
-            :editorToolbar="editorToolbar"
-          ></vue-editor>
         </b-col>
         <b-col cols="12" md="6">
           <b-form-group label="프로모션 시작 날짜">
@@ -194,13 +223,24 @@
             ></b-form-datepicker>
           </b-form-group>
         </b-col>
-        <b-col cols="12">
+        <b-col cols="12" md="6" class="mb-4">
+          <label for="create_content">
+            내용
+            <span class="red-text">*</span>
+          </label>
+          <vue-editor
+            id="create_content"
+            class="bg-white"
+            v-model="promotionCreateDto.desc"
+            :editorToolbar="editorToolbar"
+          ></vue-editor>
+        </b-col>
+        <b-col cols="12" md="6">
           <b-form-group label="프로모션 지점 선택">
             <b-row>
               <b-col
                 cols="12"
                 md="6"
-                lg="4"
                 v-for="district in companyDistrictSelect"
                 :key="district.no"
                 :value="district.no"
@@ -235,9 +275,14 @@ import toast from '../../../../resources/assets/js/services/toast.js';
 import { APPROVAL_STATUS } from '@/services/shared';
 import { VueEditor } from 'vue2-editor';
 import { EditorConfig } from '../../../config';
+import {
+  ClearOutQueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 
 @Component({
-  name: 'PromotionList',
+  name: 'CompanyDistrictPromotionList',
   components: {
     VueEditor,
   },
@@ -256,29 +301,41 @@ export default class PromotionList extends BaseComponent {
   private companyDistrictIds: number[] = [];
   private editorToolbar = EditorConfig;
 
-  search(isPagination?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
+    this.dataLoading = true;
     if (!isPagination) {
       this.pagination.page = 1;
+    } else {
+      if (isSearch) this.pagination.page = 1;
+      RouterQueryParamMapper(this.promotionSearchDto, this.pagination);
     }
     CompanyDistrictPromotionService.findAll(
       this.promotionSearchDto,
       this.pagination,
     ).subscribe(res => {
       if (res) {
+        this.dataLoading = false;
         this.promotionList = res.data.items;
         this.promotionTotalCount = res.data.totalCount;
       }
     });
   }
 
-  clearOut() {
-    this.pagination.page = 1;
-    this.promotionSearchDto = new CompanyDistrictPromotionListDto();
-    this.search();
+  search() {
+    this.findAll(true, true);
   }
 
-  findOne(id) {
-    this.$router.push(`/company-district-promotion/${id}`);
+  paginateSearch() {
+    this.findAll(true);
+  }
+
+  clearOut() {
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.promotionSearchDto = new CompanyDistrictPromotionListDto();
+      this.findAll();
+    }
   }
 
   getCommonCodes() {
@@ -311,24 +368,32 @@ export default class PromotionList extends BaseComponent {
     }
   }
 
-  paginateSearch() {
-    this.search(true);
-  }
-
   createPromotion() {
     this.promotionCreateDto.companyDistrictIds = this.companyDistrictIds;
     CompanyDistrictPromotionService.create(this.promotionCreateDto).subscribe(
       res => {
         if (res) {
           toast.success('추가완료');
-          this.search();
+          this.clearOut();
         }
       },
     );
   }
 
   created() {
-    this.search();
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.promotionSearchDto = query;
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
+    } else {
+      this.findAll();
+    }
     this.getCommonCodes();
     this.getCompanyDistrict();
   }

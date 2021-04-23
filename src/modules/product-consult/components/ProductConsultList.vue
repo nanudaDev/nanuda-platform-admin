@@ -3,111 +3,118 @@
     <SectionTitle title="상품 상담 신청" divider></SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <b-col cols="12" md="6" xl="2" class="mb-3">
-          <label>이름</label>
-          <b-form-input
-            v-model="productConsultSearchDto.nanudaUserName"
-          ></b-form-input>
-        </b-col>
-        <b-col cols="12" md="6" xl="2" class="mb-3">
-          <label>연락처</label>
-          <b-form-input
-            v-model="productConsultSearchDto.nanudaUserPhone"
-          ></b-form-input>
-        </b-col>
-        <b-col cols="6" xl="1" class="mb-3">
-          <label for="user_gender">성별</label>
-          <select
-            class="custom-select"
-            id="user_gender"
-            v-model="productConsultSearchDto.gender"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="gender in genderSelect"
-              :key="gender.no"
-              :value="gender.key"
-              >{{ gender.value }}</option
-            >
-          </select>
-        </b-col>
-        <b-col cols="6" xl="1" class="mb-3">
-          <label for="hope_time">희망 시간대</label>
-          <select
-            class="custom-select"
-            id="hope_time"
-            v-model="productConsultSearchDto.hopeTime"
-          >
-            <option value selected>전체</option>
-            <option
-              v-for="time in availableTimesSelect"
-              :key="time.no"
-              :value="time.key"
-              >{{ time.value }}</option
-            >
-          </select>
-        </b-col>
-        <b-col cols="12" xl="2" class="mb-3">
-          <label for="brand_list">브랜드명</label>
-          <b-form-input
-            list="brand_list"
-            v-model="productConsultSearchDto.brandName"
-          ></b-form-input>
-          <datalist id="brand_list">
-            <option
-              v-for="brand in brandList"
-              :key="brand.nameKr"
-              :value="brand.nameKr"
-              >{{ brand.nameKr }}</option
-            >
-          </datalist>
-        </b-col>
-        <b-col cols="12" md="4" xl="1" class="mb-3">
-          <label for="changup_exp_yn">창업 경험</label>
-          <select
-            class="custom-select"
-            id="changup_exp_yn"
-            v-model="productConsultSearchDto.changUpExpYn"
-          >
-            <option value selected>전체</option>
-            <option v-for="yn in expYn" :key="yn" :value="yn">
-              {{ yn | enumTransformer }}
-            </option>
-          </select>
-        </b-col>
-
-        <b-col cols="12" md="4" xl="2" class="mb-3">
-          <label>담당자</label>
-          <template>
+        <b-col cols="6" md="4" lg="3">
+          <b-form-group label="이름">
             <b-form-input
-              list="admin_list"
-              id="admin_user"
-              v-model="productConsultSearchDto.adminName"
+              v-model="productConsultSearchDto.nanudaUserName"
             ></b-form-input>
-            <datalist id="admin_list">
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="3">
+          <b-form-group label="연락처">
+            <b-form-input
+              v-model="productConsultSearchDto.nanudaUserPhone"
+            ></b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="3">
+          <b-form-group label="성별">
+            <b-form-select
+              class="custom-select"
+              id="user_gender"
+              v-model="productConsultSearchDto.gender"
+            >
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="gender in genderSelect"
+                :key="gender.no"
+                :value="gender.key"
+                >{{ gender.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="3">
+          <b-form-group label="희망 상담 시간대">
+            <b-form-select
+              class="custom-select"
+              id="hope_time"
+              v-model="productConsultSearchDto.hopeTime"
+            >
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option
+                v-for="time in availableTimesSelect"
+                :key="time.no"
+                :value="time.key"
+                >{{ time.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="3">
+          <b-form-group label="브랜드명">
+            <b-form-input
+              list="brand_list"
+              v-model="productConsultSearchDto.brandName"
+            ></b-form-input>
+            <datalist id="brand_list">
               <option
-                v-for="admin in adminList.items"
-                :key="admin.no"
-                :value="admin.name"
-                >{{ admin.name }}</option
+                v-for="brand in brandList"
+                :key="brand.nameKr"
+                :value="brand.nameKr"
+                >{{ brand.nameKr }}</option
               >
             </datalist>
-          </template>
+          </b-form-group>
         </b-col>
-        <b-col cols="12" md="4" xl="1" class="mb-3">
-          <label for="product_approve_status">신청 상태</label>
-          <b-form-select
-            id="product_approve_status"
-            v-model="productConsultSearchDto.status"
-          >
-            <b-select-option value>전체</b-select-option>
-            <b-form-select-option
-              v-for="status in statusSelect"
-              :key="status.no"
-              :value="status.key"
-              >{{ status.value }}</b-form-select-option
+        <b-col cols="6" md="4" lg="3">
+          <b-form-group label="창업 경험">
+            <b-form-select
+              class="custom-select"
+              id="changup_exp_yn"
+              v-model="productConsultSearchDto.changUpExpYn"
             >
-          </b-form-select>
+              <b-form-select-option value selected>전체</b-form-select-option>
+              <b-form-select-option v-for="yn in expYn" :key="yn" :value="yn">
+                {{ yn | enumTransformer }}
+              </b-form-select-option>
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="3">
+          <b-form-group label="관리자">
+            <template>
+              <b-form-input
+                list="admin_list"
+                id="admin_user"
+                v-model="productConsultSearchDto.adminName"
+              ></b-form-input>
+              <datalist id="admin_list">
+                <option
+                  v-for="admin in adminList.items"
+                  :key="admin.no"
+                  :value="admin.name"
+                  >{{ admin.name }}</option
+                >
+              </datalist>
+            </template>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6" md="4" lg="3">
+          <b-form-group label="신청 상태">
+            <b-form-select
+              id="product_approve_status"
+              v-model="productConsultSearchDto.status"
+            >
+              <b-select-option value>전체</b-select-option>
+              <b-form-select-option
+                v-for="status in statusSelect"
+                :key="status.no"
+                :value="status.key"
+                >{{ status.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
         </b-col>
       </b-form-row>
       <!-- second row -->
@@ -118,71 +125,56 @@
         </div>
       </b-row>
     </div>
-    <div v-if="!dataLoading">
-      <div class="table-top">
-        <div class="total-count">
-          <h5>
-            <span>TOTAL</span>
-            <strong class="text-primary">{{ productConsultTotalCount }}</strong>
-          </h5>
-          <b-form-select
-            v-model="newLimit"
-            size="sm"
-            class="select-limit ml-3"
-            @change="search()"
-            v-if="productConsultTotalCount"
+    <div class="table-top">
+      <div class="total-count">
+        <h5>
+          <span>TOTAL</span>
+          <strong class="text-primary">{{ productConsultTotalCount }}</strong>
+        </h5>
+        <b-form-select
+          v-model="newLimit"
+          size="sm"
+          class="select-limit ml-3"
+          @change="search()"
+          v-if="productConsultTotalCount"
+        >
+          <b-form-select-option
+            v-for="count in paginationCount"
+            :key="count"
+            :value="count"
+            >{{ count }}개</b-form-select-option
           >
-            <b-form-select-option
-              v-for="count in paginationCount"
-              :key="count"
-              :value="count"
-              >{{ count }}개</b-form-select-option
-            >
-          </b-form-select>
-        </div>
-        <div>
-          <b-button
-            variant="primary"
-            v-b-modal.update_product_consult_status_nos
-            v-if="selectedProductConsultNos.length > 0"
-            @click="getProductConsultCodes()"
-            >신청 상태 수정</b-button
-          >
-
-          <download-excel
-            class="btn btn-outline-success"
-            :data="productConsultListDto"
-            :fields="fields"
-            :stringifyLongNum="true"
-            worksheet="상품 상담 리스트"
-            :name="`product_consult_${newDate}.xls`"
-            v-if="productConsultTotalCount"
-          >
-            <b-icon icon="file-earmark-arrow-down"></b-icon>
-            엑셀 다운로드
-          </download-excel>
-        </div>
+        </b-form-select>
       </div>
-      <div class="table-responsive border" v-if="productConsultTotalCount">
+      <div>
+        <b-button
+          variant="primary"
+          v-b-modal.update_product_consult_status_nos
+          v-if="selectedProductConsultNos.length > 0"
+          @click="getProductConsultCodes()"
+          >신청 상태 수정</b-button
+        >
+
+        <download-excel
+          class="btn btn-outline-success"
+          :data="productConsultListDto"
+          :fields="fields"
+          :stringifyLongNum="true"
+          worksheet="상품 상담 리스트"
+          :name="`product_consult_${newDate}.xls`"
+          v-if="productConsultTotalCount"
+        >
+          <b-icon icon="file-earmark-arrow-down"></b-icon>
+          엑셀 다운로드
+        </download-excel>
+      </div>
+    </div>
+    <template v-if="!dataLoading">
+      <div class="bg-white table-responsive">
         <table
           v-if="productConsultTotalCount"
-          class="table table-hover table-sm table-fixed"
+          class="table table-hover table-sm text-center table-nowrap"
         >
-          <colgroup>
-            <col width="60" />
-            <col width="60" />
-            <col width="100" />
-            <col width="100" />
-            <col width="80" />
-            <col width="100" />
-            <col width="100" />
-            <col width="100" />
-            <col width="500" />
-            <col width="100" />
-            <col width="150" />
-            <col width="100" />
-            <!-- <col width="100" /> -->
-          </colgroup>
           <thead>
             <tr>
               <th></th>
@@ -239,7 +231,7 @@
                   highlighted: productConsultSearchDto.adminName,
                 }"
               >
-                담당자
+                관리자
               </th>
               <th scope="col">
                 신청일
@@ -362,8 +354,8 @@
             </tr>
           </tbody>
         </table>
+        <div v-else class="empty-data border">검색결과가 없습니다.</div>
       </div>
-      <div v-else class="empty-data border">검색결과가 없습니다.</div>
       <b-pagination
         v-model="pagination.page"
         v-if="productConsultTotalCount"
@@ -373,11 +365,15 @@
         @input="paginateSearch()"
         class="mt-4 justify-content-center"
       ></b-pagination>
-    </div>
-    <div class="half-circle-spinner mt-5" v-if="dataLoading">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-    </div>
+    </template>
+    <template v-else>
+      <div class="loading-spinner">
+        <div class="half-circle-spinner">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+      </div>
+    </template>
     <!-- 상태값 변경 -->
     <b-modal
       id="update_product_consult_status"
@@ -385,7 +381,7 @@
       @ok="updateProductConsult()"
     >
       <b-form-row>
-        <b-col cols="12" class="mb-3">
+        <b-col cols="6" class="mb-3">
           <b-form-group label="상품상담 상태값">
             <b-form-select v-model="productConsultDto.status" class="mt-2">
               <b-form-select-option
@@ -405,7 +401,7 @@
       @ok="updateProductConsultNos()"
     >
       <b-form-row>
-        <b-col cols="12" class="mb-3">
+        <b-col cols="6" class="mb-3">
           <div>
             <b-form-select
               v-model="productConsultUpdateStatusDto.status"
@@ -436,7 +432,12 @@ import {
 } from '@/dto';
 import ProductConsultService from '@/services/product-consult.service';
 import { CONST_YN, OrderByValue, Pagination, YN } from '@/common';
-import { QueryParamMapper, ReverseQueryParamMapper } from '@/core';
+import {
+  ClearOutQueryParamMapper,
+  QueryParamMapper,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core';
 import {
   APPROVAL_STATUS,
   CONST_APPROVAL_STATUS,
@@ -570,44 +571,60 @@ export default class ProductConsultList extends BaseComponent {
     });
   }
 
-  search(isPagination?: boolean) {
+  findAll(isPagination?: boolean, isSearch?: boolean) {
     this.dataLoading = true;
+    this.pagination.limit = this.newLimit;
     if (!isPagination) {
       this.pagination.page = 1;
+    } else {
+      if (isSearch) this.pagination.page = 1;
+      RouterQueryParamMapper(this.productConsultSearchDto, this.pagination);
     }
-    this.pagination.limit = this.newLimit;
     ProductConsultService.findAll(
       this.productConsultSearchDto,
       this.pagination,
     ).subscribe(res => {
-      this.productConsultListDto = res.data.items;
-      this.productConsultTotalCount = res.data.totalCount;
-      this.dataLoading = false;
-      this.$router.push({
-        query: Object.assign(this.productConsultSearchDto),
-      });
+      if (res) {
+        this.dataLoading = false;
+        this.productConsultListDto = res.data.items;
+        this.productConsultTotalCount = res.data.totalCount;
+      }
     });
   }
 
   paginateSearch() {
-    this.search(true);
+    this.findAll(true);
+  }
+
+  search() {
+    this.findAll(true, true);
   }
 
   clearOut() {
-    this.pagination.page = 1;
-    this.productConsultSearchDto = new ProductConsultListDto();
-    this.search();
+    if (location.search) {
+      ClearOutQueryParamMapper();
+    } else {
+      this.productConsultSearchDto = new ProductConsultListDto();
+      this.findAll();
+    }
   }
 
   created() {
-    this.newLimit = 50;
-    this.pagination.limit = this.newLimit;
+    this.newLimit = PaginationCount.TWENTY;
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
       this.productConsultSearchDto = query;
+      if (!isNaN(+query.limit) && !isNaN(+query.page)) {
+        this.newLimit = +query.limit;
+        // this.pagination.limit = +query.limit;
+        this.pagination.page = +query.page;
+      } else {
+        this.pagination = new Pagination();
+      }
+      this.paginateSearch();
+    } else {
+      this.findAll();
     }
-    this.pagination.page = 1;
-    this.search();
     this.getProductConsultCodes();
     this.findBrands();
     this.getAvailableTimes();

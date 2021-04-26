@@ -515,7 +515,7 @@
                 >
                 <a
                   :href="
-                    `${homepageSiteUrl}/delivery-kitchen/${deliveryFounderConsultDto.deliverySpace.no}`
+                    `${env.homepageSiteUrl}delivery-kitchen/${deliveryFounderConsultDto.deliverySpace.no}`
                   "
                   target="_blank"
                   class="btn btn-outline-info"

@@ -128,8 +128,8 @@
       title="사용자 추가"
       ok-title="추가"
       cancel-title="취소"
-      @ok="createUser()"
-      @cancel="clearOutCreateDto()"
+      hide-footer
+      no-close-on-backdrop
       @hide="clearOutCreateDto()"
     >
       <b-form-row>
@@ -180,6 +180,14 @@
           >
         </b-col>
       </b-form-row>
+      <div class="text-right pt-3 mt-4 border-top">
+        <b-button variant="secondary" @click="clearOutCreateDto()"
+          >취소</b-button
+        >
+        <b-button type="submit" variant="primary" @click="createUser()"
+          >추가</b-button
+        >
+      </div>
     </b-modal>
   </section>
 </template>
@@ -257,6 +265,7 @@ export default class NanudaUserList extends BaseComponent {
       if (res) {
         toast.success('추가완료');
         this.clearOut();
+        this.$bvModal.hide('add_user');
       }
     });
   }
@@ -264,6 +273,7 @@ export default class NanudaUserList extends BaseComponent {
   // clearout create dto
   clearOutCreateDto() {
     this.nanudaUserCreateDto = new NanudaUserDto(BaseUser);
+    this.$bvModal.hide('add_user');
   }
 
   created() {

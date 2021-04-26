@@ -179,13 +179,13 @@
                 <b-carousel-slide
                   v-for="image in founderConsultDto.space.images"
                   :key="image.no"
-                  :img-src="`${homepageBaseUrl}/${image.filePath}`"
+                  :img-src="`${env.homepageBaseUrl}${image.filePath}`"
                 ></b-carousel-slide>
               </b-carousel>
               <div class="text-right mt-4">
                 <a
                   :href="
-                    `${homepageSiteUrl}/restaurant-kitchen/${founderConsultDto.space.no}`
+                    `${env.homepageSiteUrl}restaurant-kitchen/${founderConsultDto.space.no}`
                   "
                   target="_blank"
                   class="btn btn-outline-info"

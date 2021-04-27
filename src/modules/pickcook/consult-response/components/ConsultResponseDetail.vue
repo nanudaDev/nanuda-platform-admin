@@ -943,7 +943,7 @@ export default class ConsultResponseDetail extends BaseComponent {
           this.consultResponseDto.reservation &&
           this.consultResponseDto.reservation.isCancelYn !== 'Y'
         ) {
-          this.reservationUpdateDto.reservationDate = this.consultResponseDto.reservation.reservationDate;
+          this.reservationUpdateDto.reservationDate = this.consultResponseDto.reservation.formatReservationDate;
           this.reservationUpdateDto.reservationTime = this.consultResponseDto.reservation.reservationTime;
           this.getReservationTimes(
             this.consultResponseDto.reservation.reservationDate

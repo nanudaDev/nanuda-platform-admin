@@ -49,7 +49,7 @@ const pickcookComponentRouter: RouteConfig[] = [
     children: [
       {
         path: '/pickcook/consult-response-v2',
-        name: 'ConsultResponseList',
+        name: 'ConsultResponseV2List',
         component: () =>
           import(
             '../../modules/pickcook/consult-response-v2/components/ConsultResponseV2List.vue'
@@ -63,7 +63,7 @@ const pickcookComponentRouter: RouteConfig[] = [
       },
       {
         path: '/pickcook/consult-response-v2/:id([0-9]+)',
-        name: 'ConsultResponseDetail',
+        name: 'ConsultResponseV2Detail',
         component: () =>
           import(
             '../../modules/pickcook/consult-response-v2/components/ConsultResponseV2Detail.vue'

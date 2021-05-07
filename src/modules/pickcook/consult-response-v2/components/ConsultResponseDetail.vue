@@ -146,7 +146,7 @@
                     <p class="mt-2 text-primary">
                       A.
                       <span v-for="given in question.givens" :key="given.id">
-                        {{ given.givenDetails.displayName }}
+                        {{ given.given }}
                       </span>
                     </p>
                   </div>

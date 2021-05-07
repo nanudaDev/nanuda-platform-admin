@@ -51,7 +51,7 @@
             </b-form-select>
           </b-form-group>
         </b-col>
-        <b-col cols="12" sm="6" md="3">
+        <!-- <b-col cols="12" sm="6" md="3">
           <b-form-group label="미팅 취소사유">
             <b-form-select v-model="consultResponseSerchDto.deleteReason">
               <b-form-select-option value>전체</b-form-select-option>
@@ -63,7 +63,7 @@
               >
             </b-form-select>
           </b-form-group>
-        </b-col>
+        </b-col> -->
       </b-form-row>
       <b-row align-h="center">
         <div>
@@ -124,14 +124,12 @@
         >
           <colgroup>
             <col width="60" />
-            <col width="100" />
-            <col width="150" />
-            <col width="100" />
-            <col width="150" />
+            <col width="200" />
+            <col width="200" />
             <col width="auto" />
-            <col width="150" />
-            <col width="150" />
-            <col width="150" />
+            <col width="200" />
+            <col width="200" />
+            <col width="200" />
           </colgroup>
           <thead>
             <tr>
@@ -157,18 +155,18 @@
               >
                 사용자명
               </th>
-              <th scope="col">
+              <!-- <th scope="col">
                 나이
-              </th>
+              </th> -->
               <th
                 scope="col"
                 v-bind:class="{ highlighted: consultResponseSerchDto.phone }"
               >
                 휴대폰 번호
               </th>
-              <th scope="col">
+              <!-- <th scope="col">
                 미팅날짜
-              </th>
+              </th> -->
               <th scope="col">
                 담당자
               </th>
@@ -204,13 +202,13 @@
                 </template>
               </td>
               <td>{{ consult.name }}</td>
-              <td>
+              <!-- <td>
                 <template v-if="consult.ageGroupCodeStatus">
                   {{ consult.ageGroupCodeStatus.displayName }}
                 </template>
-              </td>
+              </td> -->
               <td>{{ consult.phone | phoneTransformer }}</td>
-              <td>
+              <!-- <td>
                 <template v-if="consult.reservation">
                   <template v-if="consult.reservation.isCancelYn !== 'Y'">
                     {{
@@ -230,7 +228,7 @@
                     </p>
                   </template>
                 </template>
-              </td>
+              </td> -->
               <td>
                 <template v-if="consult.admin">
                   {{ consult.admin.name }}
@@ -329,12 +327,12 @@ export default class ConsultResponseList extends BaseComponent {
   private fields = {
     ID: 'id',
     이름: 'name',
-    나이: 'ageGroupCodeStatus.displayName',
+    // 나이: 'ageGroupCodeStatus.displayName',
     연락처: 'phone',
-    미팅예약날짜: 'reservation.reservationDate',
-    미팅예약시간: 'reservation.reservationTime',
-    미팅취소사유: 'reservation.deleteReason',
-    취소기타사유: 'reservation.deleteReasonEtc',
+    // 미팅예약날짜: 'reservation.reservationDate',
+    // 미팅예약시간: 'reservation.reservationTime',
+    // 미팅취소사유: 'reservation.deleteReason',
+    // 취소기타사유: 'reservation.deleteReasonEtc',
     담당자: 'admin.name',
     신청상태: 'consultCodeStatus.comment',
     신청일: 'created',

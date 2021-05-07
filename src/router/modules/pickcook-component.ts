@@ -43,14 +43,16 @@ const pickcookComponentRouter: RouteConfig[] = [
     path: '/pickcook/consult-response-v2',
     name: '상담신청 V2',
     component: () =>
-      import('../../modules/pickcook/consult-response-v2/ConsultResponse.vue'),
+      import(
+        '../../modules/pickcook/consult-response-v2/ConsultResponseV2.vue'
+      ),
     children: [
       {
         path: '/pickcook/consult-response-v2',
-        name: 'ConsultResponseList',
+        name: 'ConsultResponseV2List',
         component: () =>
           import(
-            '../../modules/pickcook/consult-response-v2/components/ConsultResponseList.vue'
+            '../../modules/pickcook/consult-response-v2/components/ConsultResponseV2List.vue'
           ),
         meta: {
           authRequired: true,
@@ -61,10 +63,10 @@ const pickcookComponentRouter: RouteConfig[] = [
       },
       {
         path: '/pickcook/consult-response-v2/:id([0-9]+)',
-        name: 'ConsultResponseDetail',
+        name: 'ConsultResponseV2Detail',
         component: () =>
           import(
-            '../../modules/pickcook/consult-response-v2/components/ConsultResponseDetail.vue'
+            '../../modules/pickcook/consult-response-v2/components/ConsultResponseV2Detail.vue'
           ),
         meta: {
           authRequired: true,

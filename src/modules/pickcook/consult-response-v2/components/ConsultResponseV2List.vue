@@ -8,7 +8,7 @@
           <input
             type="text"
             class="form-control"
-            v-model="consultResponseSerchDto.name"
+            v-model="consultResponseV2SerchDto.name"
           />
         </b-col>
         <b-col cols="12" sm="6" md="3" class="mb-3">
@@ -16,14 +16,14 @@
           <input
             type="text"
             class="form-control"
-            v-model="consultResponseSerchDto.phone"
+            v-model="consultResponseV2SerchDto.phone"
           />
         </b-col>
         <b-col cols="12" sm="6" md="3">
           <b-form-group label="창업자 유형">
             <b-form-select
               id="space_type"
-              v-model="consultResponseSerchDto.fnbOwnerStatus"
+              v-model="consultResponseV2SerchDto.fnbOwnerStatus"
             >
               <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
@@ -39,7 +39,7 @@
           <b-form-group label="신청 상태">
             <b-form-select
               id="space_type"
-              v-model="consultResponseSerchDto.consultStatus"
+              v-model="consultResponseV2SerchDto.consultStatus"
             >
               <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
@@ -53,7 +53,7 @@
         </b-col>
         <!-- <b-col cols="12" sm="6" md="3">
           <b-form-group label="미팅 취소사유">
-            <b-form-select v-model="consultResponseSerchDto.deleteReason">
+            <b-form-select v-model="consultResponseV2SerchDto.deleteReason">
               <b-form-select-option value>전체</b-form-select-option>
               <b-form-select-option
                 v-for="reason in reservationDeleteReasons"
@@ -104,7 +104,7 @@
 
         <download-excel
           class="btn btn-outline-success"
-          :data="consultResponseList"
+          :data="consultResponseV2List"
           :fields="fields"
           :stringifyLongNum="true"
           worksheet="픽쿡 상담 리스트"
@@ -135,14 +135,14 @@
             <tr>
               <th
                 scope="col"
-                v-bind:class="{ highlighted: consultResponseSerchDto.id }"
+                v-bind:class="{ highlighted: consultResponseV2SerchDto.id }"
               >
                 ID
               </th>
               <th
                 scope="col"
                 v-bind:class="{
-                  highlighted: consultResponseSerchDto.fnbOwnerStatus,
+                  highlighted: consultResponseV2SerchDto.fnbOwnerStatus,
                 }"
               >
                 유형
@@ -150,7 +150,7 @@
               <th
                 scope="col"
                 v-bind:class="{
-                  highlighted: consultResponseSerchDto.name,
+                  highlighted: consultResponseV2SerchDto.name,
                 }"
               >
                 사용자명
@@ -160,7 +160,7 @@
               </th> -->
               <th
                 scope="col"
-                v-bind:class="{ highlighted: consultResponseSerchDto.phone }"
+                v-bind:class="{ highlighted: consultResponseV2SerchDto.phone }"
               >
                 휴대폰 번호
               </th>
@@ -178,7 +178,7 @@
           </thead>
           <tbody>
             <tr
-              v-for="consult in consultResponseList"
+              v-for="consult in consultResponseV2List"
               :key="consult.id"
               @click="
                 $router.push(`/pickcook/consult-response-v2/${consult.id}`)
@@ -270,10 +270,10 @@
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
 import { Component } from 'vue-property-decorator';
-import ConsultResponseServiceV2 from '@/services/pickcook/consult-response-v2.service';
+import ConsultResponseV2Service from '@/services/pickcook/consult-response-v2.service';
 import {
-  ConsultResponseDto,
-  ConsultResponseListDto,
+  ConsultResponseV2Dto,
+  ConsultResponseV2ListDto,
   ProductConsultStatusUpdateDto,
 } from '@/dto';
 import { Pagination } from '@/common';
@@ -301,8 +301,8 @@ import {
   name: 'ConsultResponseList',
 })
 export default class ConsultResponseList extends BaseComponent {
-  private consultResponseList: ConsultResponseDto[] = [];
-  private consultResponseSerchDto = new ConsultResponseListDto();
+  private consultResponseV2List: ConsultResponseV2Dto[] = [];
+  private consultResponseV2SerchDto = new ConsultResponseV2ListDto();
   private pagination = new Pagination();
   private consultResponseTotalCount = null;
   private newLimit = null;
@@ -377,16 +377,16 @@ export default class ConsultResponseList extends BaseComponent {
       this.pagination.page = 1;
     } else {
       if (isSearch) this.pagination.page = 1;
-      RouterQueryParamMapper(this.consultResponseSerchDto, this.pagination);
+      RouterQueryParamMapper(this.consultResponseV2SerchDto, this.pagination);
     }
 
-    ConsultResponseServiceV2.findAll(
-      this.consultResponseSerchDto,
+    ConsultResponseV2Service.findAll(
+      this.consultResponseV2SerchDto,
       this.pagination,
     ).subscribe(res => {
       if (res) {
         this.dataLoading = false;
-        this.consultResponseList = res.data.items;
+        this.consultResponseV2List = res.data.items;
         this.consultResponseTotalCount = res.data.totalCount;
       }
     });
@@ -404,7 +404,7 @@ export default class ConsultResponseList extends BaseComponent {
     if (location.search) {
       ClearOutQueryParamMapper();
     } else {
-      this.consultResponseSerchDto = new ConsultResponseListDto();
+      this.consultResponseV2SerchDto = new ConsultResponseV2ListDto();
       this.findAll();
     }
   }
@@ -413,7 +413,7 @@ export default class ConsultResponseList extends BaseComponent {
     this.newLimit = PaginationCount.TWENTY;
     const query = ReverseQueryParamMapper(location.search);
     if (query) {
-      this.consultResponseSerchDto = query;
+      this.consultResponseV2SerchDto = query;
       this.pagination.page = +query.page;
       this.newLimit = +query.limit;
       this.paginateSearch();

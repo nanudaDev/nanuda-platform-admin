@@ -1,5 +1,5 @@
 <template>
-  <section v-if="consultResponseDto">
+  <section v-if="consultResponseV2Dto">
     <SectionTitle title="상담 신청" divider>
       <template v-slot:rightArea>
         <router-link
@@ -13,7 +13,7 @@
       <b-col lg="6" class="my-3">
         <BaseCard title="사용자 정보">
           <template v-slot:head>
-            <div v-if="consultResponseDto">
+            <div v-if="consultResponseV2Dto">
               <!-- <b-button variant="outline-info" v-b-modal.send_message>
                 <b-icon icon="envelope"></b-icon>
                 <span class="ml-2">문자전송</span>
@@ -33,25 +33,31 @@
             </div>
           </template>
           <template v-slot:body>
-            <div v-if="consultResponseDto">
+            <div v-if="consultResponseV2Dto">
               <ul class="u-list">
-                <li v-if="consultResponseDto && consultResponseDto.name">
-                  사용자명 : {{ consultResponseDto.name }}
+                <li v-if="consultResponseV2Dto && consultResponseV2Dto.name">
+                  사용자명 : {{ consultResponseV2Dto.name }}
                 </li>
-                <li v-if="consultResponseDto.phone">
+                <li v-if="consultResponseV2Dto.phone">
                   휴대폰 번호 :
-                  <span>{{ consultResponseDto.phone | phoneTransformer }}</span>
+                  <span>{{
+                    consultResponseV2Dto.phone | phoneTransformer
+                  }}</span>
                 </li>
                 <li
                   v-if="
-                    consultResponseDto.proformaConsultResult &&
-                      consultResponseDto.proformaConsultResult.hdong
+                    consultResponseV2Dto.proformaConsultResult &&
+                      consultResponseV2Dto.proformaConsultResult.hdong
                   "
                 >
                   운영/희망 주소:
-                  {{ consultResponseDto.proformaConsultResult.hdong.sidoName }}
-                  {{ consultResponseDto.proformaConsultResult.hdong.guName }}
-                  {{ consultResponseDto.proformaConsultResult.hdong.hdongName }}
+                  {{
+                    consultResponseV2Dto.proformaConsultResult.hdong.sidoName
+                  }}
+                  {{ consultResponseV2Dto.proformaConsultResult.hdong.guName }}
+                  {{
+                    consultResponseV2Dto.proformaConsultResult.hdong.hdongName
+                  }}
                 </li>
               </ul>
               <!-- 지도 노출 -->
@@ -65,7 +71,7 @@
           <template v-slot:head>
             <div>
               <b-button
-                v-if="!consultResponseDto.adminId"
+                v-if="!consultResponseV2Dto.adminId"
                 variant="info"
                 @click="assignYourselfAdmin()"
                 >본인으로 정하기</b-button
@@ -79,23 +85,23 @@
             </div>
           </template>
           <template v-slot:body>
-            <div v-if="consultResponseDto.admin">
+            <div v-if="consultResponseV2Dto.admin">
               <ul>
                 <li>
                   관리자 ID :
                   <span>
-                    {{ consultResponseDto.admin.no }}
+                    {{ consultResponseV2Dto.admin.no }}
                   </span>
                 </li>
                 <li>
                   관리자명 :
                   <span>
-                    {{ consultResponseDto.admin.name }}
+                    {{ consultResponseV2Dto.admin.name }}
                   </span>
                 </li>
                 <li>
                   휴대폰 번호 :
-                  {{ consultResponseDto.admin.phone | phoneTransformer }}
+                  {{ consultResponseV2Dto.admin.phone | phoneTransformer }}
                 </li>
               </ul>
             </div>
@@ -114,31 +120,31 @@
           </template>
           <template v-slot:body>
             <b-row>
-              <b-col lg="6" v-if="consultResponseDto.proformaConsultResult">
+              <b-col lg="6" v-if="consultResponseV2Dto.proformaConsultResult">
                 <div class="mt-2">
                   <div
                     class="card border p-3 mt-2"
                     v-if="
-                      consultResponseDto.proformaConsultResult.fnbOwnerStatus
+                      consultResponseV2Dto.proformaConsultResult.fnbOwnerStatus
                     "
                   >
                     <p>Q. 창업자 유형</p>
                     <p class="mt-2 text-primary">
                       A.
                       {{
-                        consultResponseDto.proformaConsultResult.fnbOwnerStatus
-                          | enumTransformer
+                        consultResponseV2Dto.proformaConsultResult
+                          .fnbOwnerStatus | enumTransformer
                       }}
                     </p>
                   </div>
                 </div>
                 <div
-                  v-if="consultResponseDto.proformaConsultResult"
+                  v-if="consultResponseV2Dto.proformaConsultResult"
                   class="mt-2"
                 >
                   <div
-                    v-for="question in consultResponseDto.proformaConsultResult
-                      .questions"
+                    v-for="question in consultResponseV2Dto
+                      .proformaConsultResult.questions"
                     :key="question.id"
                     class="card border p-3 mt-2"
                   >
@@ -167,8 +173,11 @@
                       >
                     </b-form-select>
                   </b-form-group>
-                  <p class="text-right mt-1" v-if="consultResponseDto.updated">
-                    ({{ consultResponseDto.updated | dateTransformer }})
+                  <p
+                    class="text-right mt-1"
+                    v-if="consultResponseV2Dto.updated"
+                  >
+                    ({{ consultResponseV2Dto.updated | dateTransformer }})
                   </p>
                 </div>
                 <!-- <div class="my-2">
@@ -176,17 +185,17 @@
                     label="
                       미팅 예약 코드
                     "
-                    v-if="consultResponseDto.reservationCode"
+                    v-if="consultResponseV2Dto.reservationCode"
                   >
                     <b-form-input
-                      v-model="consultResponseDto.reservationCode"
+                      v-model="consultResponseV2Dto.reservationCode"
                       disabled
                     >
                     </b-form-input>
                   </b-form-group>
-                  <template v-if="consultResponseDto.reservation">
+                  <template v-if="consultResponseV2Dto.reservation">
                     <template
-                      v-if="consultResponseDto.reservation.isCancelYn !== 'Y'"
+                      v-if="consultResponseV2Dto.reservation.isCancelYn !== 'Y'"
                     >
                       <b-form-row>
                         <b-col cols="6">
@@ -228,12 +237,12 @@
                       <p class="red-text">
                         <b-badge variant="danger">취소</b-badge>
                         <template
-                          v-if="consultResponseDto.reservation.deleteReasonEtc"
+                          v-if="consultResponseV2Dto.reservation.deleteReasonEtc"
                         >
-                          {{ consultResponseDto.reservation.deleteReasonEtc }}
+                          {{ consultResponseV2Dto.reservation.deleteReasonEtc }}
                         </template>
                         <template v-else>
-                          {{ consultResponseDto.reservation.deleteReason }}
+                          {{ consultResponseV2Dto.reservation.deleteReason }}
                         </template>
                       </p>
                     </template>
@@ -290,7 +299,7 @@
         </BaseCard>
       </b-col>
       <b-col lg="12" class="my-3">
-        <BaseCard title="분석 결과 정보" v-if="consultResponseDto" no-body>
+        <BaseCard title="분석 결과 정보" v-if="consultResponseV2Dto" no-body>
           <template v-slot:head>
             <!-- <b-button variant="primary" @click="updateConsultResponse()">
               수정하기
@@ -298,14 +307,14 @@
           </template>
           <div
             class="bg-light p-3 px-4 border-top"
-            v-if="consultResponseDto.proformaConsultResult"
+            v-if="consultResponseV2Dto.proformaConsultResult"
           >
             <div class="rank-item">
               <b-row class="gutter-sm">
                 <b-col
                   cols="12"
                   lg="4"
-                  v-for="(item, index) in consultResponseDto
+                  v-for="(item, index) in consultResponseV2Dto
                     .proformaConsultResult.rankDataWCScore"
                   :key="index"
                 >
@@ -391,12 +400,12 @@
                       <header class="section-header">
                         <h6>
                           {{
-                            consultResponseDto.proformaConsultResult.hdong
+                            consultResponseV2Dto.proformaConsultResult.hdong
                               .hdongName
                           }}의 고객들은 <br />
                           <template
                             v-if="
-                              consultResponseDto.proformaConsultResult
+                              consultResponseV2Dto.proformaConsultResult
                                 .deliveryRatioData.deliveryRatio > 30
                             "
                           >
@@ -406,7 +415,7 @@
                           </template>
                           <template
                             v-else-if="
-                              consultResponseDto.proformaConsultResult
+                              consultResponseV2Dto.proformaConsultResult
                                 .deliveryRatioData.deliveryRatio < 30
                             "
                           >
@@ -432,7 +441,7 @@
                                   class="chart-bar chart-bar-restaurant"
                                   :style="{
                                     width:
-                                      consultResponseDto.proformaConsultResult
+                                      consultResponseV2Dto.proformaConsultResult
                                         .deliveryRatioData.restaurantRatio +
                                       '%',
                                   }"
@@ -441,7 +450,8 @@
                                   <div class="bar-stack">
                                     <span class="bar-percent"
                                       >{{
-                                        consultResponseDto.proformaConsultResult
+                                        consultResponseV2Dto
+                                          .proformaConsultResult
                                           .deliveryRatioData.restaurantRatio
                                       }}%</span
                                     >
@@ -451,7 +461,7 @@
                                   class="chart-bar chart-bar-delivery"
                                   :style="{
                                     width:
-                                      consultResponseDto.proformaConsultResult
+                                      consultResponseV2Dto.proformaConsultResult
                                         .deliveryRatioData.deliveryRatio + '%',
                                   }"
                                 >
@@ -459,7 +469,8 @@
                                   <div class="bar-stack">
                                     <span class="bar-percent"
                                       >{{
-                                        consultResponseDto.proformaConsultResult
+                                        consultResponseV2Dto
+                                          .proformaConsultResult
                                           .deliveryRatioData.deliveryRatio
                                       }}%</span
                                     >
@@ -473,7 +484,7 @@
                                 <span>
                                   <template
                                     v-if="
-                                      consultResponseDto.proformaConsultResult
+                                      consultResponseV2Dto.proformaConsultResult
                                         .fnbOwnerStatus === 'NEW_FNB_OWNER'
                                     "
                                   >
@@ -481,7 +492,7 @@
                                     <strong class="text-primary">
                                       <template
                                         v-if="
-                                          consultResponseDto
+                                          consultResponseV2Dto
                                             .proformaConsultResult
                                             .deliveryRatioData.deliveryRatio >
                                             30
@@ -491,7 +502,7 @@
                                       </template>
                                       <template
                                         v-else-if="
-                                          consultResponseDto
+                                          consultResponseV2Dto
                                             .proformaConsultResult
                                             .deliveryRatioData.deliveryRatio <
                                             30
@@ -510,7 +521,7 @@
                                     <strong class="text-primary">
                                       <template
                                         v-if="
-                                          consultResponseDto
+                                          consultResponseV2Dto
                                             .proformaConsultResult
                                             .deliveryRatioData.deliveryRatio >
                                             30
@@ -520,7 +531,7 @@
                                       </template>
                                       <template
                                         v-else-if="
-                                          consultResponseDto
+                                          consultResponseV2Dto
                                             .proformaConsultResult
                                             .deliveryRatioData.deliveryRatio <
                                             30
@@ -546,7 +557,7 @@
                 <b-col cols="12" lg="6" class="my-3">
                   <template
                     v-if="
-                      consultResponseDto.proformaConsultResult
+                      consultResponseV2Dto.proformaConsultResult
                         .fnbOwnerStatus === 'NEW_FNB_OWNER'
                     "
                   >
@@ -581,7 +592,7 @@
                                           item.estimatedIncreasedRevenuePercentage,
                                         ),
                                     }"
-                                    v-for="(item, index) in consultResponseDto
+                                    v-for="(item, index) in consultResponseV2Dto
                                       .proformaConsultResult.rankDataWCScore"
                                     :key="index"
                                     :style="{
@@ -608,7 +619,7 @@
                                 <div class="chart-labels">
                                   <span
                                     class="chart-label"
-                                    v-for="(item, index) in consultResponseDto
+                                    v-for="(item, index) in consultResponseV2Dto
                                       .proformaConsultResult.rankDataWCScore"
                                     :key="index"
                                   >
@@ -663,25 +674,25 @@
     </b-row>
     <!-- 문자 전송 모달 -->
     <!-- <b-modal
-      v-if="consultResponseDto || consultResponseDto.nonUserName"
+      v-if="consultResponseV2Dto || consultResponseV2Dto.nonUserName"
       id="send_message"
       ok-title="전송"
       cancel-title="취소"
       :title="
-        consultResponseDto
-          ? `${consultResponseDto.name} 사용자에게 문자하기`
-          : `${consultResponseDto.nonUserName} (비회원) 사용자에게 문자하기`
+        consultResponseV2Dto
+          ? `${consultResponseV2Dto.name} 사용자에게 문자하기`
+          : `${consultResponseV2Dto.nonUserName} (비회원) 사용자에게 문자하기`
       "
       @ok="sendMessage()"
     >
       <p class="mb-2">
         휴대폰 번호 :
         <b class="text-primary">
-          <template v-if="consultResponseDto">
-            {{ consultResponseDto.phone | phoneTransformer }}
+          <template v-if="consultResponseV2Dto">
+            {{ consultResponseV2Dto.phone | phoneTransformer }}
           </template>
-          <template v-else-if="consultResponseDto.nonUserPhone">
-            {{ consultResponseDto.nonUserPhone | phoneTransformer }}
+          <template v-else-if="consultResponseV2Dto.nonUserPhone">
+            {{ consultResponseV2Dto.nonUserPhone | phoneTransformer }}
           </template>
         </b>
       </p>
@@ -836,8 +847,8 @@ import {
   AdminDto,
   AdminListDto,
   AdminSendMessageDto,
-  ConsultResponseDto,
-  ConsultResponseUpdateDto,
+  ConsultResponseV2Dto,
+  ConsultResponseV2UpdateDto,
   ReservationCheckTimeDto,
   ReservationCreateDto,
   ReservationDeleteReasonDto,
@@ -861,7 +872,7 @@ import { BaseUser } from '@/services/shared/auth';
 import AdminService from '@/services/admin.service';
 import { CONST_YN, Pagination, YN } from '@/common';
 import { PickcookCodeManagementDto } from '@/services/init/dto';
-import ConsultResponseServiceV2 from '@/services/pickcook/consult-response-v2.service';
+import ConsultResponseV2Service from '@/services/pickcook/consult-response-v2.service';
 import CommonCodeService from '@/services/pickcook/common-code.service';
 import ReservationService from '@/services/pickcook/reservation.service';
 
@@ -869,8 +880,8 @@ import ReservationService from '@/services/pickcook/reservation.service';
   name: 'ConsultResponseDetail',
 })
 export default class ConsultResponseDetail extends BaseComponent {
-  private consultResponseDto = new ConsultResponseDto();
-  private consultResponseUpdateDto = new ConsultResponseUpdateDto();
+  private consultResponseV2Dto = new ConsultResponseV2Dto();
+  private consultResponseUpdateDto = new ConsultResponseV2UpdateDto();
   private adminSendMessageDto = new AdminSendMessageDto();
   private brandConsultStatus: PickcookCodeManagementDto[] = [];
   private codeManagementDto = new PickcookCodeManagementDto();
@@ -920,7 +931,7 @@ export default class ConsultResponseDetail extends BaseComponent {
 
   // get max revenue value
   get maxRevenueValue() {
-    const arr = this.consultResponseDto.proformaConsultResult.rankDataWCScore.map(
+    const arr = this.consultResponseV2Dto.proformaConsultResult.rankDataWCScore.map(
       e => {
         return Math.abs(e.estimatedHighestRevenue);
       },
@@ -930,7 +941,7 @@ export default class ConsultResponseDetail extends BaseComponent {
 
   // get max revenue
   get maxRevenue() {
-    const arr = this.consultResponseDto.proformaConsultResult.rankDataWCScore.map(
+    const arr = this.consultResponseV2Dto.proformaConsultResult.rankDataWCScore.map(
       e => {
         return Math.abs(e.estimatedIncreasedRevenuePercentage);
       },
@@ -940,7 +951,7 @@ export default class ConsultResponseDetail extends BaseComponent {
 
   // get min revenue
   get minRevenue() {
-    const arr = this.consultResponseDto.proformaConsultResult.rankDataWCScore.map(
+    const arr = this.consultResponseV2Dto.proformaConsultResult.rankDataWCScore.map(
       e => {
         return Math.abs(e.estimatedIncreasedRevenuePercentage);
       },
@@ -978,9 +989,9 @@ export default class ConsultResponseDetail extends BaseComponent {
 
   // get location info detail
   getLocationInfoDetail() {
-    if (this.consultResponseDto.proformaConsultResult.hdong) {
-      ConsultResponseServiceV2.getLocationInfoDetail(
-        this.consultResponseDto.proformaConsultResult.hdong.hdongCode,
+    if (this.consultResponseV2Dto.proformaConsultResult.hdong) {
+      ConsultResponseV2Service.getLocationInfoDetail(
+        this.consultResponseV2Dto.proformaConsultResult.hdong.hdongCode,
       ).subscribe(res => {
         let filterArray = [...Object.values(res.data)];
         filterArray = filterArray.filter((arr: any) => {
@@ -1031,15 +1042,15 @@ export default class ConsultResponseDetail extends BaseComponent {
 
   // 담당자 본인으로 정하기
   assignYourselfAdmin() {
-    ConsultResponseServiceV2.assignAdmin(this.consultResponseDto.id).subscribe(
-      res => {
-        this.findOne(this.consultResponseDto.id);
-      },
-    );
+    ConsultResponseV2Service.assignAdmin(
+      this.consultResponseV2Dto.id,
+    ).subscribe(res => {
+      this.findOne(this.consultResponseV2Dto.id);
+    });
   }
 
   // 지도 가져오기
-  // setMap(district: consultResponseDto) {
+  // setMap(district: consultResponseV2Dto) {
   //   const mapContainer = document.getElementById('map'),
   //     mapOption = {
   //       center: new window.kakao.maps.LatLng(district.lat, district.lon),
@@ -1078,24 +1089,24 @@ export default class ConsultResponseDetail extends BaseComponent {
   // }
 
   findOne(id) {
-    ConsultResponseServiceV2.findOne(id).subscribe(res => {
+    ConsultResponseV2Service.findOne(id).subscribe(res => {
       if (res) {
-        this.consultResponseDto = res.data;
+        this.consultResponseV2Dto = res.data;
         // this.getLocationInfoDetail();
-        this.consultResponseUpdateDto.consultStatus = this.consultResponseDto.consultStatus;
-        this.consultResponseUpdateDto.description = this.consultResponseDto.description;
-        if (
-          this.consultResponseDto.reservation &&
-          this.consultResponseDto.reservation.isCancelYn !== 'Y'
-        ) {
-          this.reservationUpdateDto.reservationDate = this.consultResponseDto.reservation.formatReservationDate;
-          this.reservationUpdateDto.reservationTime = this.consultResponseDto.reservation.reservationTime;
-          this.getReservationTimes(
-            this.consultResponseDto.reservation.reservationDate
-              .toString()
-              .slice(0, 10),
-          );
-        }
+        this.consultResponseUpdateDto.consultStatus = this.consultResponseV2Dto.consultStatus;
+        this.consultResponseUpdateDto.description = this.consultResponseV2Dto.description;
+        // if (
+        //   this.consultResponseV2Dto.reservation &&
+        //   this.consultResponseV2Dto.reservation.isCancelYn !== 'Y'
+        // ) {
+        //   this.reservationUpdateDto.reservationDate = this.consultResponseV2Dto.reservation.formatReservationDate;
+        //   this.reservationUpdateDto.reservationTime = this.consultResponseV2Dto.reservation.reservationTime;
+        //   this.getReservationTimes(
+        //     this.consultResponseV2Dto.reservation.reservationDate
+        //       .toString()
+        //       .slice(0, 10),
+        //   );
+        // }
       }
     });
   }
@@ -1105,7 +1116,7 @@ export default class ConsultResponseDetail extends BaseComponent {
     if (this.selectedAdmin) {
       this.consultResponseUpdateDto.adminId = this.selectedAdmin.no;
     }
-    ConsultResponseServiceV2.update(
+    ConsultResponseV2Service.update(
       this.$route.params.id,
       this.consultResponseUpdateDto,
     ).subscribe(res => {
@@ -1118,8 +1129,8 @@ export default class ConsultResponseDetail extends BaseComponent {
 
   // create reservation
   createReservation() {
-    this.reservationCreateDto.consultId = this.consultResponseDto.id;
-    this.reservationCreateDto.reservationCode = this.consultResponseDto.reservationCode;
+    this.reservationCreateDto.consultId = this.consultResponseV2Dto.id;
+    this.reservationCreateDto.reservationCode = this.consultResponseV2Dto.reservationCode;
     ReservationService.create(this.reservationCreateDto).subscribe(res => {
       if (res) {
         toast.success('추가완료');
@@ -1129,17 +1140,17 @@ export default class ConsultResponseDetail extends BaseComponent {
   }
 
   // update reservation
-  updateReservation() {
-    ReservationService.update(
-      this.consultResponseDto.reservation.id,
-      this.reservationUpdateDto,
-    ).subscribe(res => {
-      if (res) {
-        toast.success('변경완료');
-        this.findOne(this.$route.params.id);
-      }
-    });
-  }
+  // updateReservation() {
+  //   ReservationService.update(
+  //     this.consultResponseV2Dto.reservation.id,
+  //     this.reservationUpdateDto,
+  //   ).subscribe(res => {
+  //     if (res) {
+  //       toast.success('변경완료');
+  //       this.findOne(this.$route.params.id);
+  //     }
+  //   });
+  // }
 
   onSelectDeleteReason(value) {
     if (value !== RESERVATION_DELETE_REASON.ETC) {
@@ -1155,18 +1166,18 @@ export default class ConsultResponseDetail extends BaseComponent {
   }
 
   // cancel reservation
-  cancelReservation() {
-    ReservationService.deleteOne(
-      this.consultResponseDto.reservation.id,
-      this.reservationDeleteReasonDto,
-    ).subscribe(res => {
-      if (res) {
-        toast.success('취소완료');
-        this.$bvModal.hide('cancel_reservation');
-        this.findOne(this.$route.params.id);
-      }
-    });
-  }
+  // cancelReservation() {
+  //   ReservationService.deleteOne(
+  //     this.consultResponseV2Dto.reservation.id,
+  //     this.reservationDeleteReasonDto,
+  //   ).subscribe(res => {
+  //     if (res) {
+  //       toast.success('취소완료');
+  //       this.$bvModal.hide('cancel_reservation');
+  //       this.findOne(this.$route.params.id);
+  //     }
+  //   });
+  // }
 
   created() {
     const id = this.$route.params.id;

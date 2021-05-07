@@ -1,13 +1,13 @@
 import { Pagination } from '@/common';
 import { BaseService } from '@/core';
 import {
-  ConsultResponseDto,
-  ConsultResponseListDto,
-  ConsultResponseUpdateDto,
+  ConsultResponseV2Dto,
+  ConsultResponseV2ListDto,
+  ConsultResponseV2UpdateDto,
 } from '@/dto';
 import { ApiUrlType } from '../../../environments';
 
-class ConsultResponseService extends BaseService {
+class ConsultResponseV2Service extends BaseService {
   constructor() {
     super();
   }
@@ -18,8 +18,8 @@ class ConsultResponseService extends BaseService {
    * @param pagination
    * @returns
    */
-  findAll(filter: ConsultResponseListDto, pagination?: Pagination) {
-    return super.paginate<ConsultResponseDto>(
+  findAll(filter: ConsultResponseV2ListDto, pagination?: Pagination) {
+    return super.paginate<ConsultResponseV2Dto>(
       'v2/admin/consult-response',
       filter,
       pagination,
@@ -33,7 +33,7 @@ class ConsultResponseService extends BaseService {
    * @returns
    */
   findOne(consultNo: string) {
-    return super.get<ConsultResponseDto>(
+    return super.get<ConsultResponseV2Dto>(
       `v2/admin/consult-response/${consultNo}`,
       null,
       ApiUrlType.PICKCOOK,
@@ -48,9 +48,9 @@ class ConsultResponseService extends BaseService {
    */
   update(
     consultNo: string,
-    consultResponseUpdateDto: ConsultResponseUpdateDto,
+    consultResponseUpdateDto: ConsultResponseV2UpdateDto,
   ) {
-    return super.patch<ConsultResponseUpdateDto>(
+    return super.patch<ConsultResponseV2UpdateDto>(
       `v2/admin/consult-response/${consultNo}`,
       consultResponseUpdateDto,
       ApiUrlType.PICKCOOK,
@@ -85,4 +85,4 @@ class ConsultResponseService extends BaseService {
   }
 }
 
-export default new ConsultResponseService();
+export default new ConsultResponseV2Service();

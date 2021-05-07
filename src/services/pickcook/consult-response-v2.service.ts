@@ -7,7 +7,7 @@ import {
 } from '@/dto';
 import { ApiUrlType } from '../../../environments';
 
-class ConsultResponseServiceV2 extends BaseService {
+class ConsultResponseService extends BaseService {
   constructor() {
     super();
   }
@@ -20,7 +20,7 @@ class ConsultResponseServiceV2 extends BaseService {
    */
   findAll(filter: ConsultResponseListDto, pagination?: Pagination) {
     return super.paginate<ConsultResponseDto>(
-      'admin/consult-response',
+      'v2/admin/consult-response',
       filter,
       pagination,
       ApiUrlType.PICKCOOK,
@@ -34,7 +34,7 @@ class ConsultResponseServiceV2 extends BaseService {
    */
   findOne(consultNo: string) {
     return super.get<ConsultResponseDto>(
-      `admin/consult-response/${consultNo}`,
+      `v2/admin/consult-response/${consultNo}`,
       null,
       ApiUrlType.PICKCOOK,
     );
@@ -51,7 +51,7 @@ class ConsultResponseServiceV2 extends BaseService {
     consultResponseUpdateDto: ConsultResponseUpdateDto,
   ) {
     return super.patch<ConsultResponseUpdateDto>(
-      `admin/consult-response/${consultNo}`,
+      `v2/admin/consult-response/${consultNo}`,
       consultResponseUpdateDto,
       ApiUrlType.PICKCOOK,
     );
@@ -63,7 +63,7 @@ class ConsultResponseServiceV2 extends BaseService {
    */
   assignAdmin(consultResponseId) {
     return super.patch<any>(
-      `admin/consult-response/${consultResponseId}/assign-myself`,
+      `v2/admin/consult-response/${consultResponseId}/assign-myself`,
       null,
       ApiUrlType.PICKCOOK,
     );
@@ -85,4 +85,4 @@ class ConsultResponseServiceV2 extends BaseService {
   }
 }
 
-export default new ConsultResponseServiceV2();
+export default new ConsultResponseService();

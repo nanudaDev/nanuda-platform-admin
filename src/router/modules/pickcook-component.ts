@@ -39,6 +39,45 @@ const pickcookComponentRouter: RouteConfig[] = [
       },
     ],
   },
+  {
+    path: '/pickcook/consult-response-v2',
+    name: '상담신청 V2',
+    component: () =>
+      import(
+        '../../modules/pickcook/consult-response-v2/ConsultResponseV2.vue'
+      ),
+    children: [
+      {
+        path: '/pickcook/consult-response-v2',
+        name: 'ConsultResponseV2List',
+        component: () =>
+          import(
+            '../../modules/pickcook/consult-response-v2/components/ConsultResponseV2List.vue'
+          ),
+        meta: {
+          authRequired: true,
+          layout: 'PickcookLayout',
+          roles: [...CONST_ADMIN_USER],
+          title: '상담신청 관리',
+        },
+      },
+      {
+        path: '/pickcook/consult-response-v2/:id([0-9]+)',
+        name: 'ConsultResponseV2Detail',
+        component: () =>
+          import(
+            '../../modules/pickcook/consult-response-v2/components/ConsultResponseV2Detail.vue'
+          ),
+        meta: {
+          authRequired: true,
+          layout: 'PickcookLayout',
+          roles: [...CONST_ADMIN_USER],
+          detailPage: true,
+          title: '상담신청',
+        },
+      },
+    ],
+  },
 ];
 
 export default pickcookComponentRouter;

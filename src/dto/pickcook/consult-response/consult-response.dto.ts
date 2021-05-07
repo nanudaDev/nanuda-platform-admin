@@ -38,6 +38,7 @@ export class ConsultResponseDto extends BaseDto<ConsultResponseDto> {
   consultCodeStatus?: BRAND_CONSULT;
   operationSentenceResponse?: any;
   proforma?: any;
+  proformaConsultResult?: any;
   adminId?: number;
   admin?: ADMIN_USER;
   reservation?: ReservationDto;

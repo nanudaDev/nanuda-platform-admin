@@ -7,7 +7,7 @@ import {
 } from '@/dto';
 import { ApiUrlType } from '../../../environments';
 
-class ConsultResponseServiceV2 extends BaseService {
+class ConsultResponseService extends BaseService {
   constructor() {
     super();
   }
@@ -85,4 +85,4 @@ class ConsultResponseServiceV2 extends BaseService {
   }
 }
 
-export default new ConsultResponseServiceV2();
+export default new ConsultResponseService();

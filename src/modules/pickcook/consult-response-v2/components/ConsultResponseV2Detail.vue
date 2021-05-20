@@ -390,6 +390,98 @@
                     </b-collapse>
                   </div>
                 </b-col>
+                <template
+                  v-if="
+                    consultResponseV2Dto.proformaConsultResult
+                      .otherMenuRecommendations &&
+                      consultResponseV2Dto.proformaConsultResult
+                        .otherMenuRecommendations.length > 0
+                  "
+                >
+                  <b-col
+                    cols="12"
+                    lg="4"
+                    v-for="(item,
+                    index) in consultResponseV2Dto.proformaConsultResult.otherMenuRecommendations.slice(
+                      0,
+                      2,
+                    )"
+                    :key="index + 1"
+                  >
+                    <div class="my-2">
+                      <div class="card shadow flex-row d-lg-block">
+                        <div
+                          class="card-img-left"
+                          v-if="item.sSmallCategoryCode"
+                        >
+                          <b-img-lazy
+                            :src="
+                              `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/${item.sSmallCategoryCode}.jpg`
+                            "
+                            alt=""
+                          />
+                        </div>
+                        <div class="card-body">
+                          <div class="card-badge">
+                            <!-- <b-badge pill variant="primary" v-if="index === 0"
+                            >최고적합률</b-badge
+                          > -->
+                            <b-badge pill variant="info" v-if="index + 1 === 1"
+                              >적합률높음</b-badge
+                            >
+                            <b-badge
+                              pill
+                              variant="warning"
+                              v-if="index + 1 === 2"
+                              >적합률보통</b-badge
+                            >
+                            <b-badge pill variant="secondary">{{
+                              item.pickcookSmallCategoryInfo
+                                .pkMediumCategoryName
+                            }}</b-badge>
+                            <b-badge pill variant="dark">{{
+                              item.pickcookSmallCategoryInfo.pkSmallCategoryName
+                            }}</b-badge>
+                          </div>
+                          <h4 class="card-title">
+                            {{ item.pickcookSmallCategoryInfo.pkMenuName }}
+                          </h4>
+                          <p class="card-text">
+                            <b-icon icon="graph-up"></b-icon>
+                            <span class="mx-1"
+                              >추천지수
+                              <strong
+                                >{{
+                                  Math.round(item.appliedFitnessScore)
+                                }}%</strong
+                              ></span
+                            >
+                          </p>
+                          <!-- <span class="btn-toggle">
+                          <span class="txt-tiny">더 보기</span>
+                          <span class="icon-toggle-arrow">
+                            <b-icon icon="chevron-down"></b-icon>
+                          </span>
+                        </span> -->
+                        </div>
+                      </div>
+                      <!-- <b-collapse class="card-collapse" :id="`item0${index + 1}`">
+                      <div class="card-desc">
+                        <p class="txt-tiny">
+                          빅데이터 상권지수({{ item.bigDataLocationScore }}%)와
+                          조리경험 ({{ item.cookingExperienceScore }}%),
+                          운영경험({{ item.operationExperienceScore }}%),
+                          창업자금({{ item.initialCostScore }}%)을 종합하였을때
+                          <strong class="text-primary txt-bold">
+                            추천하는 아이템</strong
+                          >
+                          입니다.
+                        </p>
+                      </div>
+                    </b-collapse> -->
+                    </div>
+                  </b-col>
+                </template>
               </b-row>
             </div>
             <div class="mt-4">
@@ -406,7 +498,7 @@
                           <template
                             v-if="
                               consultResponseV2Dto.proformaConsultResult
-                                .deliveryRatioData.deliveryRatio > 30
+                                .deliveryRatioData.deliveryRatio > 20
                             "
                           >
                             <strong class="text-primary"
@@ -416,7 +508,7 @@
                           <template
                             v-else-if="
                               consultResponseV2Dto.proformaConsultResult
-                                .deliveryRatioData.deliveryRatio < 30
+                                .deliveryRatioData.deliveryRatio < 20
                             "
                           >
                             <strong class="text-primary"
@@ -495,7 +587,7 @@
                                           consultResponseV2Dto
                                             .proformaConsultResult
                                             .deliveryRatioData.deliveryRatio >
-                                            30
+                                            20
                                         "
                                       >
                                         위험이 낮은 공유주방
@@ -505,7 +597,7 @@
                                           consultResponseV2Dto
                                             .proformaConsultResult
                                             .deliveryRatioData.deliveryRatio <
-                                            30
+                                            20
                                         "
                                       >
                                         매장이 있는 공유주방
@@ -524,7 +616,7 @@
                                           consultResponseV2Dto
                                             .proformaConsultResult
                                             .deliveryRatioData.deliveryRatio >
-                                            30
+                                            20
                                         "
                                       >
                                         배달 판매하여
@@ -534,7 +626,7 @@
                                           consultResponseV2Dto
                                             .proformaConsultResult
                                             .deliveryRatioData.deliveryRatio <
-                                            30
+                                            20
                                         "
                                       >
                                         매장에 추가하여

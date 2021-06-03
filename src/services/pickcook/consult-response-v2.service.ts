@@ -32,9 +32,9 @@ class ConsultResponseV2Service extends BaseService {
    * @param consultNo
    * @returns
    */
-  findOne(consultNo: string) {
+  findOne(id: string) {
     return super.get<ConsultResponseV2Dto>(
-      `v2/admin/consult-response/${consultNo}`,
+      `v2/admin/consult-response/${id}`,
       null,
       ApiUrlType.PICKCOOK,
     );
@@ -46,12 +46,9 @@ class ConsultResponseV2Service extends BaseService {
    * @param consultResponseUpdateDto
    * @returns
    */
-  update(
-    consultNo: string,
-    consultResponseUpdateDto: ConsultResponseV2UpdateDto,
-  ) {
+  update(id: string, consultResponseUpdateDto: ConsultResponseV2UpdateDto) {
     return super.patch<ConsultResponseV2UpdateDto>(
-      `v2/admin/consult-response/${consultNo}`,
+      `v2/admin/consult-response/${id}`,
       consultResponseUpdateDto,
       ApiUrlType.PICKCOOK,
     );

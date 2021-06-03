@@ -32,9 +32,9 @@ class ConsultResponseService extends BaseService {
    * @param consultNo
    * @returns
    */
-  findOne(consultNo: string) {
+  findOne(id: number | string) {
     return super.get<ConsultResponseDto>(
-      `admin/consult-response/${consultNo}`,
+      `admin/consult-response/${id}`,
       null,
       ApiUrlType.PICKCOOK,
     );
@@ -47,11 +47,11 @@ class ConsultResponseService extends BaseService {
    * @returns
    */
   update(
-    consultNo: string,
+    id: number | string,
     consultResponseUpdateDto: ConsultResponseUpdateDto,
   ) {
     return super.patch<ConsultResponseUpdateDto>(
-      `admin/consult-response/${consultNo}`,
+      `admin/consult-response/${id}`,
       consultResponseUpdateDto,
       ApiUrlType.PICKCOOK,
     );

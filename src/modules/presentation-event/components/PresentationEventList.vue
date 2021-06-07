@@ -438,20 +438,6 @@ export default class PresentationEventList extends BaseComponent {
     this.mobieImageChanged = false;
   }
 
-  getCommonCodes() {
-    CodeManagementService.findAnyCode('PRESENTATION_EVENT_TYPE').subscribe(
-      res => {
-        this.eventTypeSelect = res.data;
-      },
-    );
-
-    CodeManagementService.findAnyCode('PRESENTATION_DISPLAY_TYPE').subscribe(
-      res => {
-        this.displayTypeSelect = res.data;
-      },
-    );
-  }
-
   findOne(id) {
     this.$router.push(`/presentation-event/${id}`);
   }
@@ -534,7 +520,8 @@ export default class PresentationEventList extends BaseComponent {
     } else {
       this.findAll();
     }
-    this.getCommonCodes();
+    this.getCommonCodes('eventTypeSelect', 'PRESENTATION_EVENT_TYPE');
+    this.getCommonCodes('displayTypeSelect', 'PRESENTATION_DISPLAY_TYPE');
   }
 }
 </script>

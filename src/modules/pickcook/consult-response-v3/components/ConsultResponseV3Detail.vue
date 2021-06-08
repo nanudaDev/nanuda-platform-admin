@@ -3,7 +3,7 @@
     <SectionTitle title="상담 신청" divider>
       <template v-slot:rightArea>
         <router-link
-          to="/pickcook/consult-response-v2"
+          to="/pickcook/consult-response-v3"
           class="btn btn-secondary"
           >목록으로</router-link
         >

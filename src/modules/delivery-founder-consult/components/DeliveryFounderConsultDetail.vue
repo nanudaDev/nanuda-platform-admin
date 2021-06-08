@@ -13,67 +13,75 @@
       </template>
     </SectionTitle>
     <b-row align-h="start" align-v="stretch">
-      <b-col
-        :lg="
-          deliveryFounderConsultDto.deliverySpace &&
-          deliveryFounderConsultDto.deliverySpace.companyDistrict.bCode
-            ? 5
-            : 12
-        "
-        class="my-3"
-      >
-        <div id="map" style="width:100%; height:558px"></div>
-      </b-col>
-      <b-col
-        lg="7"
-        class="my-3"
+      <template
         v-if="
           deliveryFounderConsultDto.deliverySpace &&
-            deliveryFounderConsultDto.deliverySpace.companyDistrict.bCode
+            deliveryFounderConsultDto.deliverySpace.companyDistrict
         "
       >
-        <div id="tab-section">
-          <b-card no-body>
-            <b-tabs card fill>
-              <b-tab title="요약" no-body>
-                <AnalysisSummary
-                  :bdongCode="
-                    deliveryFounderConsultDto.deliverySpace.companyDistrict
-                      .bCode
-                  "
-                />
-              </b-tab>
-              <b-tab title="매출분석" no-body @click="revenueClicked = true">
-                <AnalysisSales
-                  :bdongCode="
-                    deliveryFounderConsultDto.deliverySpace.companyDistrict
-                      .bCode
-                  "
-                  v-if="revenueClicked"
-                />
-              </b-tab>
-              <b-tab title="업종분석" no-body @click="categoryClicked = true">
-                <AnalysisCategory
-                  :bdongCode="
-                    deliveryFounderConsultDto.deliverySpace.companyDistrict
-                      .bCode
-                  "
-                  v-if="categoryClicked"
-                />
-              </b-tab>
-              <b-tab title="인구분석" no-body @click="populationClicked = true">
-                <AnalysisPopulation
-                  :bdongCode="
-                    deliveryFounderConsultDto.deliverySpace.companyDistrict
-                      .bCode
-                  "
-                  v-if="populationClicked"
-                />
-              </b-tab>
-            </b-tabs>
-          </b-card>
-        </div>
-      </b-col>
+        <b-col
+          :lg="
+            deliveryFounderConsultDto.deliverySpace.companyDistrict.bCode
+              ? 5
+              : 12
+          "
+          class="my-3"
+        >
+          <div id="map" style="width:100%; height:558px"></div>
+        </b-col>
+        <b-col
+          lg="7"
+          class="my-3"
+          v-if="deliveryFounderConsultDto.deliverySpace.companyDistrict.bCode"
+        >
+          <div id="tab-section">
+            <b-card no-body>
+              <b-tabs card fill>
+                <b-tab title="요약" no-body>
+                  <AnalysisSummary
+                    :bdongCode="
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
+                        .bCode
+                    "
+                  />
+                </b-tab>
+                <b-tab title="매출분석" no-body @click="revenueClicked = true">
+                  <AnalysisSales
+                    :bdongCode="
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
+                        .bCode
+                    "
+                    v-if="revenueClicked"
+                  />
+                </b-tab>
+                <b-tab title="업종분석" no-body @click="categoryClicked = true">
+                  <AnalysisCategory
+                    :bdongCode="
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
+                        .bCode
+                    "
+                    v-if="categoryClicked"
+                  />
+                </b-tab>
+                <b-tab
+                  title="인구분석"
+                  no-body
+                  @click="populationClicked = true"
+                >
+                  <AnalysisPopulation
+                    :bdongCode="
+                      deliveryFounderConsultDto.deliverySpace.companyDistrict
+                        .bCode
+                    "
+                    v-if="populationClicked"
+                  />
+                </b-tab>
+              </b-tabs>
+            </b-card>
+          </div>
+        </b-col>
+      </template>
+
       <b-col lg="4" class="my-3">
         <BaseCard title="사용자 정보">
           <template v-slot:head>
@@ -204,7 +212,12 @@
       <b-col lg="4" class="my-3">
         <BaseCard title="업체 정보">
           <template v-slot:body>
-            <div v-if="deliveryFounderConsultDto.deliverySpace">
+            <div
+              v-if="
+                deliveryFounderConsultDto.deliverySpace &&
+                  deliveryFounderConsultDto.deliverySpace.companyDistrict
+              "
+            >
               <ul>
                 <li>
                   업체명 :
@@ -515,7 +528,7 @@
                 >
                 <a
                   :href="
-                    `${homepageSiteUrl}/delivery-kitchen/${deliveryFounderConsultDto.deliverySpace.no}`
+                    `${env.homepageSiteUrl}delivery-kitchen/${deliveryFounderConsultDto.deliverySpace.no}`
                   "
                   target="_blank"
                   class="btn btn-outline-info"
@@ -1126,7 +1139,7 @@
     >
       <table
         class="table table-hover table-sm text-center table-fixed"
-        v-if="deliveryFounderConsultRecordDto.length > 0"
+        v-if="deliveryFounderConsultRecordList.length > 0"
       >
         <thead>
           <tr>
@@ -1136,29 +1149,45 @@
             <th>현재 업체</th>
             <th>현재 공간</th>
             <th>현재 공간 공실 수</th>
+            <th>변경 날짜</th>
           </tr>
         </thead>
         <tbody>
           <tr
-            v-for="record in deliveryFounderConsultRecordDto"
+            v-for="record in deliveryFounderConsultRecordList"
             :key="record.no"
           >
-            <th>{{ record.no }}</th>
-            <th>
-              {{ record.prevDeliverySpace.companyDistrict.company.nameKr }}
-            </th>
-            <th>
-              {{ record.prevDeliverySpace.companyDistrict.nameKr }}
-              {{ record.prevDeliverySpace.name }}
-            </th>
-            <th>
-              {{ record.newDeliverySpace.companyDistrict.company.nameKr }}
-            </th>
-            <th>
-              {{ record.newDeliverySpace.companyDistrict.nameKr }}
-              {{ record.newDeliverySpace.name }}
-            </th>
-            <th>남은 공실: {{ record.newDeliverySpace.remainingCount }}개</th>
+            <template
+              v-if="record.prevDeliverySpace && record.newDeliverySpace"
+            >
+              <th>{{ record.no }}</th>
+              <td>
+                <template v-if="record.prevDeliverySpace.companyDistrict">
+                  {{ record.prevDeliverySpace.companyDistrict.company.nameKr }}
+                </template>
+              </td>
+              <td>
+                <template v-if="record.prevDeliverySpace.companyDistrict">
+                  {{ record.prevDeliverySpace.companyDistrict.nameKr }}
+                  {{ record.prevDeliverySpace.name }}
+                </template>
+              </td>
+              <td>
+                <template v-if="record.newDeliverySpace.companyDistrict">
+                  {{ record.newDeliverySpace.companyDistrict.company.nameKr }}
+                </template>
+              </td>
+              <td>
+                <template v-if="record.newDeliverySpace.companyDistrict">
+                  {{ record.newDeliverySpace.companyDistrict.nameKr }}
+                  {{ record.newDeliverySpace.name }}
+                </template>
+              </td>
+              <td>남은 공실: {{ record.newDeliverySpace.remainingCount }}개</td>
+              <td>
+                {{ record.createdAt | dateTransformer }}
+              </td>
+            </template>
           </tr>
         </tbody>
       </table>
@@ -1274,7 +1303,7 @@ export default class FounderConsultDetail extends BaseComponent {
   private availableCompanies: CompanyDto[] = [];
   private availableDistricts: CompanyDistrictDto[] = [];
   private availableSpaces: DeliverySpaceDto[] = [];
-  private deliveryFounderConsultRecordDto: DeliveryFounderConsultRecordDto[] = [];
+  private deliveryFounderConsultRecordList: DeliveryFounderConsultRecordDto[] = [];
   private companySelect = '';
   private districtSelect = '';
   private paginationReply = new Pagination();
@@ -1425,23 +1454,32 @@ export default class FounderConsultDetail extends BaseComponent {
   findOne(id) {
     // find founder consult detail
     DeliveryFounderConsultService.findOne(id).subscribe(res => {
-      this.deliveryFounderConsultDto = res.data;
-      this.deliveredTime = res.data.deliveredAt;
+      if (res) {
+        this.deliveryFounderConsultDto = res.data;
+        this.deliveredTime = res.data.deliveredAt;
 
-      if (this.deliveredTime) {
-        this.createdTime = new Date(res.data.createdAt);
-        this.deliveredTime = new Date(res.data.deliveredAt);
-        this.getElapsedTime(this.createdTime, this.deliveredTime);
+        if (this.deliveredTime) {
+          this.createdTime = new Date(res.data.createdAt);
+          this.deliveredTime = new Date(res.data.deliveredAt);
+          this.getElapsedTime(this.createdTime, this.deliveredTime);
+        }
+        if (this.deliveryFounderConsultDto.status === 'F_DIST_COMPLETE') {
+          this.statusDistComplete = true;
+        }
+
+        if (
+          this.deliveryFounderConsultDto.deliverySpace &&
+          this.deliveryFounderConsultDto.deliverySpace.companyDistrict
+        ) {
+          const withInSeoul = this.deliveryFounderConsultDto.deliverySpace
+            .companyDistrict.region1DepthName;
+          if (withInSeoul === '서울') {
+            this.isSeoul = true;
+          }
+        }
+
+        this.findConsultReply();
       }
-      if (this.deliveryFounderConsultDto.status === 'F_DIST_COMPLETE') {
-        this.statusDistComplete = true;
-      }
-      const withInSeoul = this.deliveryFounderConsultDto.deliverySpace
-        .companyDistrict.region1DepthName;
-      if (withInSeoul === '서울') {
-        this.isSeoul = true;
-      }
-      this.findConsultReply();
     });
   }
 
@@ -1486,7 +1524,7 @@ export default class FounderConsultDetail extends BaseComponent {
     DeliveryFounderConsultService.findSpaceChangeRecords(
       this.deliveryFounderConsultDto.no,
     ).subscribe(res => {
-      this.deliveryFounderConsultRecordDto = res.data;
+      this.deliveryFounderConsultRecordList = res.data;
     });
   }
 
@@ -1499,6 +1537,7 @@ export default class FounderConsultDetail extends BaseComponent {
     if (!isPagination) {
       this.paginationReply.page = 1;
     }
+
     DeliveryFounderConsultReplyService.findAll(
       this.deliveryFounderConsultDto.no,
       this.deliveryFounderconsultReplyListDto,
@@ -1587,48 +1626,54 @@ export default class FounderConsultDetail extends BaseComponent {
     DeliveryFounderConsultService.findOne(id).subscribe(res => {
       if (res) {
         this.deliveryFounderConsultMap = res.data;
-        const mapContainer = document.getElementById('map'),
-          mapOption = {
+
+        if (
+          this.deliveryFounderConsultMap.deliverySpace &&
+          this.deliveryFounderConsultMap.deliverySpace.companyDistrict
+        ) {
+          const mapContainer = document.getElementById('map'),
+            mapOption = {
+              center: new window.kakao.maps.LatLng(
+                this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lat,
+                this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lon,
+              ),
+              level: 5,
+              maxLevel: 6,
+              minLevel: 3,
+              mapTypeId: window.kakao.maps.MapTypeId.ROADMAP,
+            };
+
+          const map = new window.kakao.maps.Map(mapContainer, mapOption);
+          const content = `<span class="badge badge-primary" style="font-size:21px;border-radius: 100px;opacity: 82%">Here</span>`;
+          const markerPosition = new window.kakao.maps.LatLng(
+            this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lat,
+            this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lon,
+          );
+
+          const customOverlay = new window.kakao.maps.CustomOverlay({
+            position: markerPosition,
+            content: content,
+            // image: markerImage,
+          });
+
+          const circle = new window.kakao.maps.Circle({
+            map: map,
             center: new window.kakao.maps.LatLng(
               this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lat,
               this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lon,
             ),
-            level: 5,
-            maxLevel: 6,
-            minLevel: 3,
-            mapTypeId: window.kakao.maps.MapTypeId.ROADMAP,
-          };
-
-        const map = new window.kakao.maps.Map(mapContainer, mapOption);
-        const content = `<span class="badge badge-primary" style="font-size:21px;border-radius: 100px;opacity: 82%">Here</span>`;
-        const markerPosition = new window.kakao.maps.LatLng(
-          this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lat,
-          this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lon,
-        );
-
-        const customOverlay = new window.kakao.maps.CustomOverlay({
-          position: markerPosition,
-          content: content,
-          // image: markerImage,
-        });
-
-        const circle = new window.kakao.maps.Circle({
-          map: map,
-          center: new window.kakao.maps.LatLng(
-            this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lat,
-            this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lon,
-          ),
-          strokeWeight: 2,
-          strokeColor: '#FF00FF',
-          strokeOpacity: 0.8,
-          strokeStyle: 'dashed',
-          fillColor: '#00EEEE',
-          fillOpacity: 0.5,
-        });
-        circle.setRadius(1000);
-        circle.setMap(map);
-        customOverlay.setMap(map);
-        this.map = map;
+            strokeWeight: 2,
+            strokeColor: '#FF00FF',
+            strokeOpacity: 0.8,
+            strokeStyle: 'dashed',
+            fillColor: '#00EEEE',
+            fillOpacity: 0.5,
+          });
+          circle.setRadius(1000);
+          circle.setMap(map);
+          customOverlay.setMap(map);
+          this.map = map;
+        }
       }
     });
   }

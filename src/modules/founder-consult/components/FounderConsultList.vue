@@ -254,7 +254,7 @@
               <td @click.stop>
                 <a
                   :href="
-                    `${env.homepageSiteUrl}/restaurant-kitchen/${founderConsult.spaceNo}`
+                    `${env.homepageSiteUrl}restaurant-kitchen/${founderConsult.spaceNo}`
                   "
                   class="text-primary"
                   target="_blank"

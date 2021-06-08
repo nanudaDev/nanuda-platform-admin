@@ -530,8 +530,6 @@ export default class DeliverySpaceList extends BaseComponent {
 
   // 타입 상세 보기
   findOne(id) {
-    this.findOnePrevious(id);
-    this.findOneNext(id);
     if (id !== this.$route.params.id) {
       this.$route.params.id = id;
       this.$router.push(`/company/delivery-space/${this.$route.params.id}`);
@@ -539,6 +537,8 @@ export default class DeliverySpaceList extends BaseComponent {
     DeliverySpaceService.findOne(this.$route.params.id).subscribe(res => {
       if (res) {
         this.deliverySpaceDto = res.data;
+        this.findOnePrevious(id);
+        this.findOneNext(id);
         this.$root.$emit('find_contract_list', this.$route.params.id);
       }
     });

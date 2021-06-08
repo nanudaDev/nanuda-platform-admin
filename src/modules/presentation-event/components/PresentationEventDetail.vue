@@ -571,20 +571,6 @@ export default class PresentationEventDetail extends BaseComponent {
     ],
   ];
 
-  getCommonCodes() {
-    CodeManagementService.findAnyCode('PRESENTATION_EVENT_TYPE').subscribe(
-      res => {
-        this.eventTypeSelect = res.data;
-      },
-    );
-
-    CodeManagementService.findAnyCode('PRESENTATION_DISPLAY_TYPE').subscribe(
-      res => {
-        this.displayTypeSelect = res.data;
-      },
-    );
-  }
-
   findOne(id) {
     PresentationEventService.findOne(this.$route.params.id).subscribe(res => {
       if (res) {
@@ -753,7 +739,8 @@ export default class PresentationEventDetail extends BaseComponent {
     } else {
       this.findAll();
     }
-    this.getCommonCodes();
+    this.getCommonCodes('eventTypeSelect', 'PRESENTATION_EVENT_TYPE');
+    this.getCommonCodes('displayTypeSelect', 'PRESENTATION_DISPLAY_TYPE');
     this.getGender();
   }
 }

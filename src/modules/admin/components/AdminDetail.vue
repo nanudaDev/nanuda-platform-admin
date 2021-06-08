@@ -75,7 +75,7 @@
       cancel-title="취소"
       @ok="updateAdmin()"
     >
-      <form ref="form" @submit.stop.prevent="handleSubmit">
+      <form ref="form" @submit.stop.prevent="updateAdmin()">
         <b-form-row>
           <!-- <b-col cols="6" class="mt-2">
             <label>

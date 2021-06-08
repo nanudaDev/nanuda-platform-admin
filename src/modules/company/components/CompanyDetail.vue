@@ -92,6 +92,7 @@
                 <li v-if="companyDto.createdAt">
                   승인 상태 :
                   <b-badge
+                    v-if="companyDto.companyStatus"
                     :variant="getStatusColor(companyDto.companyStatus)"
                     class="badge-pill p-2 mr-2"
                     >{{ companyDto.companyStatus | enumTransformer }}</b-badge

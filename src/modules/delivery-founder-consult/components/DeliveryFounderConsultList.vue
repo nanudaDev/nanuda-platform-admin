@@ -433,7 +433,12 @@
                 </template>
               </td>
               <td>
-                <template v-if="deliveryFounderConsult.deliverySpace">
+                <template
+                  v-if="
+                    deliveryFounderConsult.deliverySpace &&
+                      deliveryFounderConsult.deliverySpace.companyDistrict
+                  "
+                >
                   {{
                     deliveryFounderConsult.deliverySpace.companyDistrict.company
                       .nameKr
@@ -441,7 +446,12 @@
                 </template>
               </td>
               <td>
-                <template v-if="deliveryFounderConsult.deliverySpace">
+                <template
+                  v-if="
+                    deliveryFounderConsult.deliverySpace &&
+                      deliveryFounderConsult.deliverySpace.companyDistrict
+                  "
+                >
                   {{
                     deliveryFounderConsult.deliverySpace.companyDistrict.nameKr
                   }}

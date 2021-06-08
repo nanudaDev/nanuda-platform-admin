@@ -956,18 +956,6 @@ export default class BrandDetail extends BaseComponent {
     });
   }
 
-  getCommonCodes() {
-    CodeManagementService.findAnyCode('BRAND').subscribe(res => {
-      this.costValues = res.data;
-    });
-    CodeManagementService.findAnyCode('STORE_COUNT').subscribe(res => {
-      this.storeCountValues = res.data;
-    });
-    CodeManagementService.findAnyCode('DIFFICULTY').subscribe(res => {
-      this.difficultyValues = res.data;
-    });
-  }
-
   // upload brand logo
   async upload(file: File) {
     if (file) {
@@ -1105,7 +1093,9 @@ export default class BrandDetail extends BaseComponent {
   created() {
     const id = this.$route.params.id;
     this.pagination.page = 1;
-    this.getCommonCodes();
+    this.getCommonCodes('costValues', 'BRAND');
+    this.getCommonCodes('storeCountValues', 'STORE_COUNT');
+    this.getCommonCodes('difficultyValues', 'DIFFICULTY');
     this.searchMenus();
     this.findOne(id);
   }

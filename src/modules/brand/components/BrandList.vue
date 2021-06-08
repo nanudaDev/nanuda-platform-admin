@@ -537,22 +537,6 @@ export default class BrandList extends BaseComponent {
     });
   }
 
-  // get common codes
-  getCommonCodes() {
-    CodeManagementService.findAnyCode('BRAND').subscribe(res => {
-      this.costValues = res.data;
-    });
-    CodeManagementService.findAnyCode('STORE_COUNT').subscribe(res => {
-      this.storeCountValues = res.data;
-    });
-    CodeManagementService.findAnyCode('DIFFICULTY').subscribe(res => {
-      this.difficultyValues = res.data;
-    });
-    CodeManagementService.findAnyCode('BRAND_TYPE').subscribe(res => {
-      this.brandType = res.data;
-    });
-  }
-
   // clear brand search dto
   clearOut() {
     if (location.search) {
@@ -615,7 +599,10 @@ export default class BrandList extends BaseComponent {
       this.findAll();
     }
 
-    this.getCommonCodes();
+    this.getCommonCodes('costValues', 'BRAND');
+    this.getCommonCodes('storeCountValues', 'STORE_COUNT');
+    this.getCommonCodes('difficultyValues', 'DIFFICULTY');
+    this.getCommonCodes('brandType', 'BRAND_TYPE');
     this.getFoodCategories();
   }
 }

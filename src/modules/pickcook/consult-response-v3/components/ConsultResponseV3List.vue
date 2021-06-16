@@ -94,14 +94,13 @@
         </b-form-select>
       </div>
       <div>
-        <b-button
+        <!-- <b-button
           variant="primary"
           v-b-modal.update_product_consult_status_nos
           v-if="selectedProductConsultNos.length > 0"
           @click="getProductConsultCodes()"
           >신청 상태 수정</b-button
-        >
-
+        > -->
         <download-excel
           class="btn btn-outline-success"
           :data="consultResponseV3List"
@@ -114,6 +113,12 @@
           <b-icon icon="file-earmark-arrow-down"></b-icon>
           엑셀 다운로드
         </download-excel>
+        <b-button
+          variant="primary"
+          v-b-modal.add_consult
+          @click="createProforma()"
+          >상담신청 추가</b-button
+        >
       </div>
     </div>
     <template v-if="!dataLoading">
@@ -265,6 +270,41 @@
         <div class="circle circle-2"></div>
       </div>
     </template>
+    <!-- 상담신청 추가 모달 -->
+    <b-modal id="add_consult" title="상담신청 추가" @ok="createConsult()">
+      <b-form-row>
+        <b-col cols="12">
+          <b-form-group label="창업자 유형">
+            <b-form-select v-model="consultResponseV3CreateDto.fnbOwnerStatus">
+              <b-form-select-option
+                v-for="status in fnbOwnerStatus"
+                :key="status.key"
+                :value="status.value"
+                >{{ status.comment }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6">
+          <b-form-group label="이름">
+            <b-form-input v-model="consultResponseV3CreateDto.name">
+            </b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6">
+          <b-form-group label="휴대폰 번호">
+            <b-form-input v-model="consultResponseV3CreateDto.phone">
+            </b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="12">
+          <b-form-group label="내용">
+            <b-form-textarea v-model="consultResponseV3CreateDto.description">
+            </b-form-textarea>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+    </b-modal>
   </section>
 </template>
 <script lang="ts">
@@ -277,6 +317,7 @@ import {
 } from '@/core';
 import BaseComponent from '@/core/base.component';
 import {
+  ConsultResponseV3CreateDto,
   ConsultResponseV3Dto,
   ConsultResponseV3ListDto,
   ProductConsultStatusUpdateDto,
@@ -288,16 +329,22 @@ import {
   RESERVATION_DELETE_REASON,
   CONST_RESERVATION_DELETE_REASON,
   BRAND_CONSULT,
+  FNB_OWNER,
+  CONST_FNB_OWNER,
 } from '@/services/shared';
 import { Component } from 'vue-property-decorator';
 import CommonCodeService from '@/services/pickcook/common-code.service';
 import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.service';
+import axios from 'axios';
+import toast from '../../../../../resources/assets/js/services/toast.js';
+
 @Component({
   name: 'ConsultResponseV3List',
 })
 export default class ConsultResponseV3List extends BaseComponent {
   private consultResponseV3List: ConsultResponseV3Dto[] = [];
   private consultResponseV3SearchDto = new ConsultResponseV3ListDto();
+  private consultResponseV3CreateDto = new ConsultResponseV3CreateDto();
   private pagination = new Pagination();
   private consultResponseTotalCount = null;
   private newLimit = null;
@@ -402,6 +449,24 @@ export default class ConsultResponseV3List extends BaseComponent {
       this.consultResponseV3SearchDto = new ConsultResponseV3ListDto();
       this.findAll();
     }
+  }
+
+  createProforma() {
+    axios.get('https://api.ipify.org?format=json').then(res => {
+      this.consultResponseV3CreateDto.ipAddress = res.data.ip;
+    });
+  }
+
+  createConsult() {
+    ConsultResponseV3Service.create(this.consultResponseV3CreateDto).subscribe(
+      res => {
+        if (res) {
+          console.log(this.consultResponseV3CreateDto);
+          toast.success('추가완료');
+          this.clearOut();
+        }
+      },
+    );
   }
 
   created() {

@@ -14,18 +14,6 @@
         <BaseCard title="사용자 정보">
           <template v-slot:head>
             <div v-if="consultResponseV3Dto">
-              <!-- <b-button variant="outline-info" v-b-modal.send_message>
-                <b-icon icon="envelope"></b-icon>
-                <span class="ml-2">문자전송</span>
-              </b-button> -->
-              <!-- <b-button
-                variant="primary"
-                @click="updateNanudaUser()"
-                v-b-modal.nanuda_user
-                >수정하기</b-button
-              > -->
-            </div>
-            <div v-else>
               <b-button variant="outline-info" v-b-modal.send_message>
                 <b-icon icon="envelope"></b-icon>
                 <span class="ml-2">문자전송</span>
@@ -44,7 +32,12 @@
                     consultResponseV3Dto.phone | phoneTransformer
                   }}</span>
                 </li>
-                <li>
+                <li
+                  v-if="
+                    consultResponseV3Dto.proformaConsultResult &&
+                      consultResponseV3Dto.proformaConsultResult.fnbOwnerStatus
+                  "
+                >
                   창업자 유형:
                   {{
                     consultResponseV3Dto.proformaConsultResult.fnbOwnerStatus
@@ -67,8 +60,6 @@
                   }}
                 </li>
               </ul>
-              <!-- 지도 노출 -->
-              <!-- <div id="map" style="width:100%; height:300px"></div> -->
             </div>
           </template>
         </BaseCard>
@@ -307,16 +298,12 @@
       </b-col>
     </b-row>
     <!-- 문자 전송 모달 -->
-    <!-- <b-modal
-      v-if="consultResponseV3Dto || consultResponseV3Dto.nonUserName"
+    <b-modal
+      v-if="consultResponseV3Dto"
       id="send_message"
       ok-title="전송"
       cancel-title="취소"
-      :title="
-        consultResponseV3Dto
-          ? `${consultResponseV3Dto.name} 사용자에게 문자하기`
-          : `${consultResponseV3Dto.nonUserName} (비회원) 사용자에게 문자하기`
-      "
+      :title="`${consultResponseV3Dto.name} 사용자에게 문자하기`"
       @ok="sendMessage()"
     >
       <p class="mb-2">
@@ -325,25 +312,46 @@
           <template v-if="consultResponseV3Dto">
             {{ consultResponseV3Dto.phone | phoneTransformer }}
           </template>
-          <template v-else-if="consultResponseV3Dto.nonUserPhone">
-            {{ consultResponseV3Dto.nonUserPhone | phoneTransformer }}
-          </template>
         </b>
       </p>
-      <b-form-input
-        id="title"
-        placeholder="제목"
-        class="mb-2"
-        v-model="adminSendMessageDto.title"
-      ></b-form-input>
       <b-form-textarea
         id="message"
         placeholder="메세지를 입력해주세요.."
         rows="3"
         max-rows="6"
-        v-model="adminSendMessageDto.message"
+        v-model="consultResponseV3SendMessageDto.message"
       ></b-form-textarea>
-    </b-modal> -->
+      <div
+        class="mt-2 text-right"
+        v-if="
+          consultResponseV3Dto.messages &&
+            consultResponseV3Dto.messages.length > 0
+        "
+      >
+        <b-button variant="outline-info" v-b-modal.messages_log
+          >문자 전송 내역</b-button
+        >
+      </div>
+    </b-modal>
+    <!-- 메세지 전송 내역 모달 -->
+    <b-modal id="messages_log" title="문자 전송 내역" hide-footer>
+      <template v-if="consultResponseV3Dto.messages">
+        <div
+          class="border rounded p-3 mt-2"
+          v-for="messageLog in consultResponseV3Dto.messages"
+          :key="messageLog.id"
+        >
+          <p class="text-secondary">
+            <small v-if="messageLog.created">
+              {{ messageLog.created | dateTransformer }}
+            </small>
+          </p>
+          <p v-html="messageLog.message" class="mt-2">
+            {{ messageLog.message }}
+          </p>
+        </div>
+      </template>
+    </b-modal>
     <!-- 관리자 수정 모달 -->
     <b-modal
       id="admin_list"
@@ -489,6 +497,7 @@ import {
   ReservationCheckTimeDto,
   AdminDto,
   AdminListDto,
+  ConsultResponseV3SendMessageDto,
 } from '@/dto';
 import { PickcookCodeManagementDto } from '@/services/init/dto';
 import {
@@ -511,6 +520,7 @@ import AdminService from '@/services/admin.service';
 export default class ConsultResponseV3Detail extends BaseComponent {
   private consultResponseV3Dto = new ConsultResponseV3Dto();
   private consultResponseUpdateDto = new ConsultResponseV3UpdateDto();
+  private consultResponseV3SendMessageDto = new ConsultResponseV3SendMessageDto();
   private adminSendMessageDto = new AdminSendMessageDto();
   private brandConsultStatus: PickcookCodeManagementDto[] = [];
   private codeManagementDto = new PickcookCodeManagementDto();
@@ -682,6 +692,22 @@ export default class ConsultResponseV3Detail extends BaseComponent {
     } else {
       this.deleteReasonText = '';
     }
+  }
+
+  // send massage
+  sendMessage() {
+    ConsultResponseV3Service.sendMessage(
+      this.consultResponseV3Dto.id,
+      this.consultResponseV3SendMessageDto,
+    ).subscribe(res => {
+      if (res) {
+        this.consultResponseV3SendMessageDto = new ConsultResponseV3SendMessageDto();
+        toast.success('문자가 발송 되었습니다.');
+        this.findOne(this.$route.params.id);
+      } else {
+        return;
+      }
+    });
   }
 
   created() {

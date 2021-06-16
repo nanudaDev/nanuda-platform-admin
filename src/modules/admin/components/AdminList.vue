@@ -133,13 +133,11 @@
     <b-modal
       id="add_admin"
       title="관리자 추가"
-      ok-title="추가"
-      cancel-title="취소"
-      @ok="createAdmin()"
-      @cancel="clearOutCreateDto()"
+      hide-footer
+      no-close-on-backdrop
       @hide="clearOutCreateDto()"
     >
-      <form ref="form" @submit.stop.prevent="handleSubmit">
+      <b-form ref="form" @submit.stop.prevent="createAdmin()">
         <b-form-row>
           <b-col cols="6" class="mt-2">
             <label>
@@ -186,7 +184,13 @@
             />
           </b-col>
         </b-form-row>
-      </form>
+        <div class="text-right pt-3 mt-4 border-top">
+          <b-button variant="secondary" @click="clearOutCreateDto()"
+            >취소</b-button
+          >
+          <b-button type="submit" variant="primary">추가</b-button>
+        </div>
+      </b-form>
     </b-modal>
   </section>
 </template>
@@ -278,6 +282,7 @@ export default class AdminList extends BaseComponent {
   // clearout create dto
   clearOutCreateDto() {
     this.adminCreateDto = new AdminDto(BaseUser);
+    this.$bvModal.hide('add_admin');
   }
 
   created() {

@@ -174,14 +174,6 @@ export default class CompanyDistrictPromotionDetail extends BaseComponent {
     });
   }
 
-  getCommonCodes() {
-    CodeManagementService.findAnyCode('B2B_EVENT_TYPE').subscribe(res => {
-      if (res) {
-        this.promitionTypeSelect = res.data;
-      }
-    });
-  }
-
   getCompanyDistrict() {
     const companyDistrictDto = new CompanyDistrictDto();
     CompanyDistrictService.findForSelectOption(companyDistrictDto).subscribe(
@@ -239,7 +231,7 @@ export default class CompanyDistrictPromotionDetail extends BaseComponent {
   created() {
     this.findOne(this.$route.params.id);
     this.getCompanyDistrict();
-    this.getCommonCodes();
+    this.getCommonCodes('promitionTypeSelect', 'B2B_EVENT_TYPE');
   }
 }
 </script>

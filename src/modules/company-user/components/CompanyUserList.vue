@@ -322,7 +322,7 @@ import {
 @Component({
   name: 'CompanyUserList',
 })
-export default class Company extends BaseComponent {
+export default class CompanyUserList extends BaseComponent {
   private companyUserSearchDto = new CompanyUserListDto();
   private companyUserList: CompanyUserDto[] = Array<CompanyUserDto>();
   private companyUserTotalCount = null;

@@ -4,6 +4,7 @@ import { GENDER } from '@/services/shared';
 import { BaseDto } from '@/core';
 
 export class NanudaUserListDto extends BaseDto<NanudaUserDto> {
+  no?: number;
   name?: string;
   phone?: string;
   gender?: GENDER;

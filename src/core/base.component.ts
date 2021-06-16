@@ -6,6 +6,7 @@ import {
   StagingEnvironment,
 } from '../../environments';
 import { Component, Vue } from 'vue-property-decorator';
+import CodeManagementService from '../services/code-management.service';
 
 @Component
 export default class BaseComponent extends Vue {
@@ -14,6 +15,7 @@ export default class BaseComponent extends Vue {
     fileInput: any;
   };
 
+  // get nav bar height
   getNavBarHeight() {
     const navBar = document.querySelector('.navbar');
     const windowWidth = window.innerWidth;
@@ -30,6 +32,13 @@ export default class BaseComponent extends Vue {
         ).style.marginTop = `${navBarHeight}px`;
       }
     }
+  }
+
+  // get common codes
+  getCommonCodes(data: string, code: string) {
+    CodeManagementService.findAnyCode(code).subscribe(res => {
+      this[data] = res.data;
+    });
   }
 
   created() {

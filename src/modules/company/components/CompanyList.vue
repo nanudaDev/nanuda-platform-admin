@@ -389,7 +389,7 @@ import toast from '../../../../resources/assets/js/services/toast.js';
 @Component({
   name: 'CompanyList',
 })
-export default class Company extends BaseComponent {
+export default class CompanyList extends BaseComponent {
   constructor() {
     super();
   }

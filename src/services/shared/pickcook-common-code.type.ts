@@ -88,3 +88,24 @@ export enum TENTATIVE_OPEN_OPTION {
   STILL_WONDERING = 'STILL_WONDERING',
 }
 export const CONST_TENTATIVE_OPEN_OPTION = Object.values(TENTATIVE_OPEN_OPTION);
+
+export enum STORE_TYPE {
+  RESTAURANT = '매장',
+  DELIVERY = '배달',
+}
+export const CONST_STORE_TYPE = Object.values(STORE_TYPE);
+
+export enum KB_MEDIUM_CATEGORY_KOREAN {
+  F01 = '주점',
+  F12 = '중식',
+  F14 = '커피/음료',
+  F15 = '패스트푸드',
+  F10 = '일식',
+  F16 = '한식',
+  F04 = '분식',
+  F07 = '양식',
+}
+
+export const CONST_KB_MEDIUM_CATEGORY_KOREAN = Object.values(
+  KB_MEDIUM_CATEGORY_KOREAN,
+);

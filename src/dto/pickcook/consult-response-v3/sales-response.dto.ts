@@ -1,0 +1,43 @@
+import { BaseDto } from '@/core';
+import { KB_MEDIUM_CATEGORY } from '@/services/shared';
+
+export class SalesResponseDto extends BaseDto<SalesResponseDto> {
+  id: number;
+  yymm: number;
+  hdongCode: string;
+  mediumCategoryCode: KB_MEDIUM_CATEGORY;
+  minRevenue: string;
+  maxRevenue: string;
+  livingPopulation: string;
+  sedeCount: string;
+  employeeCount: string;
+  gaguRatio: any;
+  mainGagu: number;
+  mainGaguRatio: number;
+  mainAgeGroupRatio: number;
+  ageRatio: any;
+  mainAgeGroup: number;
+  offlineRevenueRatio: number;
+  deliveryRevenueRatio: number;
+  guDongType: string;
+  mediumCategoryStoreRatio: number;
+  closedStoreRate: number;
+  mediumCategoryClosedStoreRate: number;
+  survivalYears: number;
+  mediumCategorySurvivalYears: number;
+  storeType: any;
+  mediumCategoryRevenueRatio: any;
+  mediumCategoryGenderRevenueRatio: any;
+  mainAge: number;
+  revenuePerOrder: any;
+  weekDayRevenueRatio: any;
+  hourRevenueRatio: any;
+  recommendedMenu: any;
+  scoreValues: any;
+  mainHourHdong: string;
+  mainGenderHdong: any;
+  mainAgeHdong: any;
+  recommendMenuHdong: any;
+  hdong: any;
+  kbCategory: any;
+}

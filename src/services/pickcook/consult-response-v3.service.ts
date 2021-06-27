@@ -2,9 +2,12 @@ import { BaseService } from '@/core';
 import {
   ConsultResponseV3CreateDto,
   ConsultResponseV3ListDto,
-  ConsultResponseV3SendMessageDto,
   ConsultResponseV3UpdateDto,
+  ConsultResponseV3SendMessageDto,
+  SalesRequestDto,
+  SalesResponseDto,
 } from '@/dto';
+import { BaeminReportCreateDto } from '@/dto/pickcook/consult-response-v3/baemin-report-create.dto';
 import { ApiUrlType } from '../../../environments';
 import { Pagination } from '../../common/interfaces/pagination.type';
 import { ConsultResponseV3Dto } from '../../dto/pickcook/consult-response-v3/consult-response-v3.dto';
@@ -109,6 +112,26 @@ class ConsultResponseV3Service extends BaseService {
     return super.post<ConsultResponseV3SendMessageDto>(
       `v3/admin/consult-response/${id}/send-message`,
       consultResponseV3SendMessageDto,
+      ApiUrlType.PICKCOOK,
+    );
+  }
+
+  /**
+   *
+   * @param salesRequestDto
+   * @returns
+   */
+  getSalesData(salesRequestDto: SalesRequestDto) {
+    return super.get<SalesResponseDto>(
+      'v3/admin/pickcook-sales',
+      salesRequestDto,
+      ApiUrlType.PICKCOOK,
+    );
+  }
+  postBaeminReport(id: string, baeminReportCreateDto: BaeminReportCreateDto) {
+    return super.post<any>(
+      `v3/admin/consult-result/${id}/consult-baemin-report`,
+      baeminReportCreateDto,
       ApiUrlType.PICKCOOK,
     );
   }

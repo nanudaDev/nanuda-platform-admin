@@ -12,6 +12,7 @@ import {
   TENTATIVE_OPEN_OPTION,
 } from '@/services/shared';
 import { ReservationDto } from '../reservation';
+import { BaeminReportCreateDto } from './baemin-report-create.dto';
 
 export class ConsultResponseV3Dto extends BaseDto<ConsultResponseV3Dto> {
   id: number;
@@ -29,4 +30,7 @@ export class ConsultResponseV3Dto extends BaseDto<ConsultResponseV3Dto> {
   proformaConsultResult?: any;
   consultCodeStatus?: PickcookCodeManagementDto;
   admin?: AdminDto;
+  consultBaeminReport: Partial<
+    BaeminReportCreateDto
+  > = new BaeminReportCreateDto();
 }

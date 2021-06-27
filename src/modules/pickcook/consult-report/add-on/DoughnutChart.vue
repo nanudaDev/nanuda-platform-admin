@@ -27,6 +27,7 @@ export default class DoughnutChart extends Vue {
       },
       responsive: true,
       maintainAspectRatio: false,
+      cutoutPercentage: 80,
       legend: {
         display: false,
       },

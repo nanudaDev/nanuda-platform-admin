@@ -12,7 +12,7 @@
         </template>
         <section class="section">
           <header class="section-header">
-            <h3 class="title">상담신청 고객정보</h3>
+            <h3 class="title">상권분석 요약자료</h3>
           </header>
           <div class="section-content">
             <b-row>
@@ -127,6 +127,30 @@
                           이며,
                           <strong class="text-primary">20~40대</strong>입니다.
                         </p>
+                      </b-col>
+                    </b-row>
+                    <b-row>
+                      <b-col cols="12" md="6">
+                        <div class="doughnut-chart-container">
+                          <div class="doughnut-chart-wrapper">
+                            <DoughnutChart
+                              :chartData="weekDayRevenueChartData"
+                            />
+                            <div class="doughnut-chart-text">
+                              <span>{{ maxRevenueWeekday }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </b-col>
+                      <b-col cols="12" md="6">
+                        <div class="doughnut-chart-container">
+                          <div class="doughnut-chart-wrapper">
+                            <DoughnutChart :chartData="timeRevenueChartData" />
+                            <div class="doughnut-chart-text">
+                              <span>{{ maxRevenueTime }}</span>
+                            </div>
+                          </div>
+                        </div>
                       </b-col>
                     </b-row>
                   </div>
@@ -312,6 +336,11 @@
                           <h5>
                             업종별 매출비중
                           </h5>
+                          <div class="mt-4">
+                            <BarChart
+                              :chartData="foodCategoryRevenueChartData"
+                            />
+                          </div>
                         </div>
                       </b-col>
                       <b-col cols="12" xl="4">
@@ -319,59 +348,197 @@
                           <h5>
                             성별 매출비중
                           </h5>
+                          <b-row no-gutters class="mt-4">
+                            <b-col cols="2">
+                              <p class="consumption-pattern-labels">
+                                <span class="consumption-pattern-label">
+                                  남성
+                                </span>
+
+                                <strong
+                                  class="consumption-pattern-value value-restaurant"
+                                  >80%</strong
+                                >
+                              </p>
+                            </b-col>
+                            <b-col cols="8">
+                              <div class="consumption-pattern-bar-charts">
+                                <div
+                                  class="consumption-pattern-bar bar-restaurant"
+                                ></div>
+                                <div
+                                  class="consumption-pattern-bar bar-delivery"
+                                ></div>
+                              </div>
+                            </b-col>
+                            <b-col cols="2">
+                              <p class="consumption-pattern-labels">
+                                <span class="consumption-pattern-label">
+                                  여성
+                                </span>
+                                <strong
+                                  class="consumption-pattern-value value-delivery"
+                                  >80%</strong
+                                >
+                              </p>
+                            </b-col>
+                          </b-row>
                         </div>
                       </b-col>
                       <b-col cols="12" xl="4">
-                        <div class="row-box">
-                          <h5>
-                            요일별 매출비중
-                          </h5>
-                          <div class="doughnut-chart-wrapper">
-                            <DoughnutChart :chartData="dayRevenueChartData" />
-                            <div class="doughnut-chart-text">
-                              <span>금요일</span>
+                        <b-row>
+                          <b-col cols="12" md="6" xl="12">
+                            <div class="doughnut-chart-container my-2">
+                              <div class="doughnut-chart-wrapper">
+                                <DoughnutChart
+                                  :chartData="weekDayRevenueChartData"
+                                />
+                                <div class="doughnut-chart-text">
+                                  <span>{{ maxRevenueWeekday }}</span>
+                                </div>
+                              </div>
+                              <div class="doughnut-chart-legend">
+                                <div class="legend-label-list">
+                                  <p
+                                    v-for="(label,
+                                    index) in weekDayRevenueChartData.labels"
+                                    :key="index"
+                                  >
+                                    <span class="legend-label-point"></span>
+                                    <span class="legend-label-text">
+                                      {{ label }}</span
+                                    >
+                                  </p>
+                                </div>
+                                <div class="legend-value-list">
+                                  <p
+                                    v-for="(data,
+                                    index) in weekDayRevenueChartData
+                                      .datasets[0].data"
+                                    :key="index"
+                                  >
+                                    <span class="legend-value">
+                                      {{ data }}%</span
+                                    >
+                                  </p>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                          <div class="doughnut-chart-legend">
-                            <div class="legend-label-list">
-                              <p
-                                v-for="label in dayRevenueChartData.labels"
-                                :key="label"
-                              >
-                                <span class="legend-label-point"></span>
-                                <span class="legend-label-text">
-                                  {{ label }}</span
-                                >
-                              </p>
+                          </b-col>
+                          <b-col cols="12" md="6" xl="12">
+                            <div class="doughnut-chart-container my-2">
+                              <div class="doughnut-chart-wrapper">
+                                <DoughnutChart
+                                  :chartData="timeRevenueChartData"
+                                />
+                                <div class="doughnut-chart-text">
+                                  <span>{{ maxRevenueTime }}</span>
+                                </div>
+                              </div>
+                              <div class="doughnut-chart-legend">
+                                <div class="legend-label-list">
+                                  <p
+                                    v-for="(label,
+                                    index) in timeRevenueChartData.labels"
+                                    :key="index"
+                                  >
+                                    <span class="legend-label-point"></span>
+                                    <span class="legend-label-text">
+                                      {{ label }}</span
+                                    >
+                                  </p>
+                                </div>
+                                <div class="legend-value-list">
+                                  <p
+                                    v-for="(data, index) in timeRevenueChartData
+                                      .datasets[0].data"
+                                    :key="index"
+                                  >
+                                    <span class="legend-value">
+                                      {{ data }}%</span
+                                    >
+                                  </p>
+                                </div>
+                              </div>
                             </div>
-                            <div class="legend-value-list">
-                              <p
-                                v-for="data in dayRevenueChartData.datasets[0]
-                                  .data"
-                                :key="data"
-                              >
-                                <span class="legend-value"> {{ data }}</span>
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row-box">
-                          <h5>
-                            시간대별 매출비중
-                          </h5>
-                          <div>
-                            <DoughnutChart :chartData="timeRevenueChartData" />
-                          </div>
+                          </b-col>
+                        </b-row>
+                      </b-col>
+                    </b-row>
+                  </div>
+                  <div class="data-info-box-content">
+                    <p>
+                      해당 행정동에서
+                      <strong class="text-primary">한식(선택 업종)</strong>의
+                      매출은 <strong class="text-primary">6순위</strong>입니다.
+                      <br />
+                      <strong class="text-primary">한식(선택 업종)</strong>의
+                      경우
+                      <strong class="text-primary"
+                        >20대 여성(업종 연령 소비 반영)</strong
+                      >의 매출이 가장 높으며, <br />
+                      <strong class="text-primary">다인</strong> 메뉴의 판매가
+                      높습니다. <br />
+                      <strong class="text-primary">금요일</strong> 매출이
+                      우세하며,
+                      <strong class="text-primary">점심 또는 야간</strong>에
+                      주력할 수 있는 메뉴를 도입해야 합니다.
+                    </p>
+                  </div>
+                </div>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col cols="12">
+                <div class="data-info-box">
+                  <header class="data-info-box-header">
+                    <h4>
+                      논현1동 추천메뉴
+                    </h4>
+                  </header>
+                  <div class="data-info-box-content"></div>
+                </div>
+              </b-col>
+              <b-col cols="12">
+                <div class="data-info-box">
+                  <header class="data-info-box-header">
+                    <h4>
+                      반경 3km이내의 추천 메뉴
+                    </h4>
+                  </header>
+                  <div class="data-info-box-content">
+                    <b-row>
+                      <b-col
+                        cols="4"
+                        v-for="(menu, index) in recommendMenus"
+                        :key="index"
+                      >
+                        <b-img-lazy
+                          :src="
+                            `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/pickcook_${menu}.png`
+                          "
+                        ></b-img-lazy>
+                        <div class="text-center">
+                          <p>{{ index + 1 }}위 {{ menu }}</p>
                         </div>
                       </b-col>
                     </b-row>
+                    <div class="row-box  mt-4">
+                      <p>
+                        해당 행정동에서는 외식업 전체적으로
+                        <strong class="text-primary">점심, 남성, 20대</strong>의
+                        매출이 높습니다. <br />
+                        이와 유사한 지역에서는
+                        <strong class="text-primary">치킨, 떡볶이, 피자</strong>
+                        메뉴의 판매량이 높습니다.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </b-col>
             </b-row>
           </div>
         </section>
-        <div class="section-header"></div>
       </b-tab>
       <b-tab>
         <template #title>
@@ -502,32 +669,68 @@
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
-import { DeliveryFounderConsultDto } from '@/dto';
+import {
+  AnalysisTabListDto,
+  DeliveryFounderConsultDto,
+  SalesRequestDto,
+} from '@/dto';
 import {
   BEST_FOOD_CATEGORY,
   CONST_BEST_FOOD_CATEGORY,
+  CONST_KB_MEDIUM_CATEGORY,
+  KB_MEDIUM_CATEGORY,
 } from '@/services/shared';
 import { Component } from 'vue-property-decorator';
 import DeliveryFounderConsultService from '../../../../services/delivery-founder-consult.service';
 import ResultRevenueChart from '@/modules/pickcook/consult-response/add-on/ResultRevenueChart.vue';
 import DoughnutChart from '../add-on/DoughnutChart.vue';
-import DashboardBarChart from '@/modules/dashboard/add-on/DashboardBarChart.vue';
+import BarChart from '../add-on/BarChart.vue';
+
+import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.service';
 
 @Component({
   name: 'ConsultReportDetail',
   components: {
     ResultRevenueChart,
     DoughnutChart,
-    DashboardBarChart,
+    BarChart,
   },
 })
 export default class ConsultReportDetail extends BaseComponent {
+  // sales data
+  private salesRequestDto = new SalesRequestDto();
+  private salesData: any;
+
+  private recommendMenus = [];
+
   // 창업업종
-  private selectedFoodCategory: BEST_FOOD_CATEGORY = BEST_FOOD_CATEGORY.F16;
-  private foodCategories: BEST_FOOD_CATEGORY[] = [...CONST_BEST_FOOD_CATEGORY];
+  private selectedFoodCategory: KB_MEDIUM_CATEGORY = KB_MEDIUM_CATEGORY.F16;
+  private foodCategories: KB_MEDIUM_CATEGORY[] = [...CONST_KB_MEDIUM_CATEGORY];
+
+  // 업종별 매출 비율
+
+  private foodCategoryRevenueChartData = {
+    labels: this.foodCategories,
+    datasets: [
+      {
+        data: [10, 40, 30, 20, 10, 40, 30, 20],
+        backgroundColor: [
+          'rgb(68, 114, 196)',
+          'rgb(68, 114, 196)',
+          'rgb(68, 114, 196)',
+          'rgb(68, 114, 196)',
+          'rgb(68, 114, 196)',
+          'rgb(68, 114, 196)',
+          'rgb(68, 114, 196)',
+          'rgb(68, 114, 196)',
+        ],
+      },
+    ],
+  };
 
   // 요일별 매출 비율 차트
-  private dayRevenueChartData = {
+  private maxRevenueWeekday = '금';
+  private weekDayRevenueChartData = {
     labels: [
       '월요일',
       '화요일',
@@ -539,7 +742,7 @@ export default class ConsultReportDetail extends BaseComponent {
     ],
     datasets: [
       {
-        data: [12.6, 13.7, 13.7, 15.0, 15.3, 15.0, 15],
+        data: [12, 11.5, 9.2, 12.2, 16, 20.3, 18.5],
         backgroundColor: [
           'rgb(46, 79, 139)',
           'rgb(55, 93, 161)',
@@ -554,6 +757,7 @@ export default class ConsultReportDetail extends BaseComponent {
   };
 
   // 시간대별 매출 비율 차트
+  private maxRevenueTime = '점심';
   private timeRevenueChartData = {
     labels: ['아침', '점심', '저녁', '야식'],
     datasets: [
@@ -648,7 +852,27 @@ export default class ConsultReportDetail extends BaseComponent {
     });
   }
 
+  getSalesData() {
+    this.salesRequestDto.hdongCode = '1150060400';
+    this.salesRequestDto.mediumCategoryCode = KB_MEDIUM_CATEGORY.F16;
+    ConsultResponseV3Service.getSalesData(this.salesRequestDto).subscribe(
+      res => {
+        if (res) {
+          this.salesData = res.data;
+          if (this.salesData) {
+            this.recommendMenus = [
+              ...Object.values(res.data.recommendMenuHdong),
+            ];
+          }
+          console.log('res.data', res.data);
+          console.log(this.recommendMenus);
+        }
+      },
+    );
+  }
+
   created() {
+    this.getSalesData();
     this.setMap('279');
   }
 }
@@ -804,38 +1028,57 @@ export default class ConsultReportDetail extends BaseComponent {
     margin-top: 1.5em;
   }
 }
-.doughnut-chart-wrapper {
-  position: relative;
-  .doughnut-chart-text {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-}
-.doughnut-chart-legend {
+.doughnut-chart-container {
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  .legend-label-list {
-    .legend-label-point {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      background-color: #0b538d;
-      border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+
+  .doughnut-chart-wrapper {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin-top: 1em;
+    .chartjs-render-monitor {
+      height: 160px !important;
     }
-    .legend-label-text {
-      font-size: 16px;
+    .doughnut-chart-text {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: bold;
     }
   }
-  .legend-value-list {
-    .legend-value {
-      font-size: 16px;
+  .doughnut-chart-legend {
+    width: 100px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    white-space: nowrap;
+    margin-left: 1em;
+    .legend-label-list {
+      .legend-label-point {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background-color: #0b538d;
+        border-radius: 50%;
+      }
+      .legend-label-text {
+        font-size: 16px;
+      }
+    }
+    .legend-value-list {
+      .legend-value {
+        font-size: 16px;
+        margin-left: 0.5em;
+        font-weight: bold;
+      }
     }
   }
 }

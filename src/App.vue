@@ -195,6 +195,10 @@ img {
   color: white;
 }
 
+.text-primary {
+  color: #0b538d !important;
+}
+
 // list
 .u-list {
   padding: 0;

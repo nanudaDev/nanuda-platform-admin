@@ -1,6 +1,19 @@
 <template>
   <section>
-    <SectionTitle title="상담신청 목록 V3" divider></SectionTitle>
+    <SectionTitle title="상담 신청 V3" divider>
+      <template v-slot:rightArea>
+        <b-button
+          variant="outline-info"
+          @click="$router.push('/pickcook/consult-response')"
+          >상담신청 V1</b-button
+        >
+        <b-button
+          variant="outline-info"
+          @click="$router.push('/pickcook/consult-response-v2')"
+          >상담신청 V2</b-button
+        >
+      </template>
+    </SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
         <b-col cols="12" sm="6" md="3" class="mb-3">

@@ -46,6 +46,8 @@ import {
 } from '@/core';
 import '@/core/guards/auth-role.guard';
 
+import utilityPlugin from '@/plugins/custom/utility';
+
 let env = new Environment();
 if (process.env.NODE_ENV === EnvironmentType.development) {
   console.log(process.env.NODE_ENV);
@@ -95,9 +97,10 @@ Vue.use(datePicker);
 // daum kakao
 Vue.use(VueDaumPostcode);
 
+Vue.use(utilityPlugin);
+
 new Vue({
   router,
   store,
-
   render: h => h(App),
 }).$mount('#app');

@@ -1,5 +1,5 @@
 <template>
-  <div id="report">
+  <div id="report" v-if="salesResponseDto">
     <b-tabs fill>
       <b-tab active>
         <template #title>
@@ -37,18 +37,30 @@
                 <b-form-row>
                   <b-col cols="4">
                     <b-form-group label="창업 지역" label-align="left">
-                      <b-form-input value="서울시 종로구 무학동"></b-form-input>
+                      <template v-if="salesResponseDto.hdong">
+                        <b-form-input
+                          :value="
+                            `${salesResponseDto.hdong.sidoName} ${salesResponseDto.hdong.guName} ${salesResponseDto.hdong.hdongName}`
+                          "
+                          disabled
+                        ></b-form-input>
+                      </template>
+                      <template v-else>
+                        <b-form-input></b-form-input>
+                      </template>
                     </b-form-group>
                   </b-col>
                   <b-col cols="4">
                     <b-form-group label="창업 업종" label-align="left">
-                      <b-form-select v-model="selectedFoodCategory">
+                      <b-form-select
+                        v-model="salesRequestDto.mediumCategoryCode"
+                      >
                         <b-form-select-option
-                          v-for="category in foodCategories"
+                          v-for="category in kbMediumCategories"
                           :key="category"
-                          value=""
+                          :value="category"
                         >
-                          {{ category }}
+                          {{ category | kbCategoryTransformer }}
                         </b-form-select-option>
                       </b-form-select>
                     </b-form-group>
@@ -57,12 +69,13 @@
                     <b-row align-v="end" no-gutters>
                       <b-col cols="8">
                         <b-form-group label="창업 유형" label-align="left">
-                          <b-form-select>
-                            <b-form-select-option value="">
-                              매장
-                            </b-form-select-option>
-                            <b-form-select-option value="">
-                              배달
+                          <b-form-select v-model="salesRequestDto.storeType">
+                            <b-form-select-option
+                              v-for="type in storeTypes"
+                              :key="type"
+                              :value="type"
+                            >
+                              {{ type }}
                             </b-form-select-option>
                           </b-form-select>
                         </b-form-group>
@@ -74,6 +87,7 @@
                           block
                           class="ml-2"
                           style="margin-bottom:1rem"
+                          @click="getSalesData()"
                         >
                           상권분석
                         </b-button></b-col
@@ -86,7 +100,10 @@
                     <h4>상권매출 현황</h4>
                   </header>
                   <div class="data-info-box-content">
-                    <ResultRevenueChart :chartData="revenueChartData" />
+                    <RevenueChart
+                      :chartData="revenueChartData"
+                      :revenueData="revenueData"
+                    />
                   </div>
                 </div>
               </b-col>
@@ -105,10 +122,29 @@
                   </header>
                   <div class="data-info-box-content">
                     <p>
-                      <strong class="text-primary"
-                        >거주인구 22,712명/세대수 14,412세대/직장인구
-                        29,777명</strong
-                      >
+                      <strong class="text-primary">
+                        <span
+                          >거주인구
+                          {{
+                            salesResponseDto.livingPopulation
+                              | numeralTransformer
+                          }}명</span
+                        >
+                        /
+                        <span>
+                          세대수
+                          {{
+                            salesResponseDto.sedeCount | numeralTransformer
+                          }}세대
+                        </span>
+                        /
+                        <span>
+                          직장인구
+                          {{
+                            salesResponseDto.employeeCount | numeralTransformer
+                          }}명
+                        </span>
+                      </strong>
                       상주 중입니다.
                     </p>
                   </div>
@@ -123,9 +159,14 @@
                       </b-col>
                       <b-col cols="8">
                         <p>
-                          <strong class="text-primary">1~2인 가구 </strong>
+                          <strong class="text-primary"
+                            >{{ computedMainGagu }}
+                          </strong>
                           이며,
-                          <strong class="text-primary">20~40대</strong>입니다.
+                          <strong class="text-primary">{{
+                            computedMainAgeGroup
+                          }}</strong
+                          >입니다.
                         </p>
                       </b-col>
                     </b-row>
@@ -134,10 +175,17 @@
                         <div class="doughnut-chart-container">
                           <div class="doughnut-chart-wrapper">
                             <DoughnutChart
-                              :chartData="weekDayRevenueChartData"
+                              :chartData="mainGaguChartData"
+                              :labels="Object.keys(salesResponseDto.gaguRatio)"
+                              :datasetsData="
+                                Object.values(salesResponseDto.gaguRatio)
+                              "
                             />
                             <div class="doughnut-chart-text">
-                              <span>{{ maxRevenueWeekday }}</span>
+                              <div>
+                                <span>{{ computedMainGagu }}</span>
+                                <p>{{ salesResponseDto.mainGaguRatio }}%</p>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -145,9 +193,19 @@
                       <b-col cols="12" md="6">
                         <div class="doughnut-chart-container">
                           <div class="doughnut-chart-wrapper">
-                            <DoughnutChart :chartData="timeRevenueChartData" />
+                            <DoughnutChart
+                              :chartData="mainAgeGroupChartData"
+                              :labels="Object.keys(salesResponseDto.ageRatio)"
+                              :datasetsData="
+                                Object.values(salesResponseDto.ageRatio)
+                              "
+                            />
+
                             <div class="doughnut-chart-text">
-                              <span>{{ maxRevenueTime }}</span>
+                              <div>
+                                <span>{{ computedMainAgeGroup }}</span>
+                                <p>{{ salesResponseDto.mainAgeGroupRatio }}%</p>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -194,7 +252,11 @@
 
                               <strong
                                 class="consumption-pattern-value value-restaurant"
-                                >80%</strong
+                                >{{
+                                  salesResponseDto.offlineRevenueRatio.toFixed(
+                                    2,
+                                  )
+                                }}%</strong
                               >
                             </p>
                           </b-col>
@@ -202,9 +264,15 @@
                             <div class="consumption-pattern-bar-charts">
                               <div
                                 class="consumption-pattern-bar bar-restaurant"
+                                :style="
+                                  `width: ${salesResponseDto.offlineRevenueRatio}%`
+                                "
                               ></div>
                               <div
                                 class="consumption-pattern-bar bar-delivery"
+                                :style="
+                                  `width: ${salesResponseDto.deliveryRevenueRatio}%`
+                                "
                               ></div>
                             </div>
                           </b-col>
@@ -215,7 +283,11 @@
                               </span>
                               <strong
                                 class="consumption-pattern-value value-delivery"
-                                >80%</strong
+                                >{{
+                                  salesResponseDto.deliveryRevenueRatio.toFixed(
+                                    2,
+                                  )
+                                }}%</strong
                               >
                             </p>
                           </b-col>
@@ -240,13 +312,18 @@
                               </h6>
                               <div class="mb-4">
                                 <p>
-                                  <span class="store-status-info-label"
-                                    >한식</span
-                                  >
+                                  <span class="store-status-info-label">{{
+                                    salesRequestDto.mediumCategoryCode
+                                      | kbCategoryTransformer
+                                  }}</span>
                                   <strong
                                     class="store-status-info-value text-primary"
                                   >
-                                    36%
+                                    {{
+                                      salesResponseDto.mediumCategoryStoreRatio.toFixed(
+                                        0,
+                                      )
+                                    }}%
                                   </strong>
                                 </p>
                               </div>
@@ -265,17 +342,26 @@
                                   <strong
                                     class="store-status-info-value text-primary"
                                   >
-                                    54%
+                                    {{
+                                      salesResponseDto.closedStoreRate.toFixed(
+                                        0,
+                                      )
+                                    }}%
                                   </strong>
                                 </p>
                                 <p>
-                                  <span class="store-status-info-label"
-                                    >한식</span
-                                  >
+                                  <span class="store-status-info-label">{{
+                                    salesRequestDto.mediumCategoryCode
+                                      | kbCategoryTransformer
+                                  }}</span>
                                   <strong
                                     class="store-status-info-value text-primary"
                                   >
-                                    60%
+                                    {{
+                                      salesResponseDto.mediumCategoryClosedStoreRate.toFixed(
+                                        0,
+                                      )
+                                    }}%
                                   </strong>
                                 </p>
                               </div>
@@ -296,17 +382,22 @@
                                   <strong
                                     class="store-status-info-value text-primary"
                                   >
-                                    4.1년
+                                    {{ salesResponseDto.survivalYears }}년
                                   </strong>
                                 </p>
                                 <p>
-                                  <span class="store-status-info-label"
-                                    >한식</span
+                                  <span class="store-status-info-label">
+                                    {{
+                                      salesRequestDto.mediumCategoryCode
+                                        | kbCategoryTransformer
+                                    }}</span
                                   >
                                   <strong
                                     class="store-status-info-value text-primary"
                                   >
-                                    4.5년
+                                    {{
+                                      salesResponseDto.mediumCategorySurvivalYears
+                                    }}년
                                   </strong>
                                 </p>
                               </div>
@@ -338,7 +429,17 @@
                           </h5>
                           <div class="mt-4">
                             <BarChart
-                              :chartData="foodCategoryRevenueChartData"
+                              :chartData="kbCategoryRevenueChartData"
+                              :labels="
+                                Object.keys(
+                                  salesResponseDto.mediumCategoryRevenueRatio,
+                                )
+                              "
+                              :datasetsData="
+                                Object.values(
+                                  salesResponseDto.mediumCategoryRevenueRatio,
+                                )
+                              "
                             />
                           </div>
                         </div>
@@ -357,7 +458,10 @@
 
                                 <strong
                                   class="consumption-pattern-value value-restaurant"
-                                  >80%</strong
+                                  >{{
+                                    salesResponseDto
+                                      .mediumCategoryGenderRevenueRatio['1']
+                                  }}%</strong
                                 >
                               </p>
                             </b-col>
@@ -365,9 +469,15 @@
                               <div class="consumption-pattern-bar-charts">
                                 <div
                                   class="consumption-pattern-bar bar-restaurant"
+                                  :style="
+                                    `width: ${salesResponseDto.mediumCategoryGenderRevenueRatio['1']}%`
+                                  "
                                 ></div>
                                 <div
                                   class="consumption-pattern-bar bar-delivery"
+                                  :style="
+                                    `width: ${salesResponseDto.mediumCategoryGenderRevenueRatio['2']}%`
+                                  "
                                 ></div>
                               </div>
                             </b-col>
@@ -378,7 +488,10 @@
                                 </span>
                                 <strong
                                   class="consumption-pattern-value value-delivery"
-                                  >80%</strong
+                                  >{{
+                                    salesResponseDto
+                                      .mediumCategoryGenderRevenueRatio['2']
+                                  }}%</strong
                                 >
                               </p>
                             </b-col>
@@ -392,29 +505,53 @@
                               <div class="doughnut-chart-wrapper">
                                 <DoughnutChart
                                   :chartData="weekDayRevenueChartData"
+                                  :labels="
+                                    Object.keys(
+                                      salesResponseDto.weekDayRevenueRatio,
+                                    )
+                                  "
+                                  :datasetsData="
+                                    Object.values(
+                                      salesResponseDto.weekDayRevenueRatio,
+                                    )
+                                  "
                                 />
                                 <div class="doughnut-chart-text">
-                                  <span>{{ maxRevenueWeekday }}</span>
+                                  <div>
+                                    <p>
+                                      {{
+                                        maxRevenueWeekday | weekDayTransformer
+                                      }}
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
                               <div class="doughnut-chart-legend">
                                 <div class="legend-label-list">
                                   <p
-                                    v-for="(label,
-                                    index) in weekDayRevenueChartData.labels"
+                                    v-for="(label, index) in Object.keys(
+                                      salesResponseDto.weekDayRevenueRatio,
+                                    )"
                                     :key="index"
                                   >
-                                    <span class="legend-label-point"></span>
+                                    <span
+                                      class="legend-label-point"
+                                      :style="{
+                                        'background-color':
+                                          weekDayRevenueChartData.datasets[0]
+                                            .backgroundColor[index],
+                                      }"
+                                    ></span>
                                     <span class="legend-label-text">
-                                      {{ label }}</span
+                                      {{ label | weekDayTransformer }}</span
                                     >
                                   </p>
                                 </div>
                                 <div class="legend-value-list">
                                   <p
-                                    v-for="(data,
-                                    index) in weekDayRevenueChartData
-                                      .datasets[0].data"
+                                    v-for="(data, index) in Object.values(
+                                      salesResponseDto.weekDayRevenueRatio,
+                                    )"
                                     :key="index"
                                   >
                                     <span class="legend-value">
@@ -429,29 +566,52 @@
                             <div class="doughnut-chart-container my-2">
                               <div class="doughnut-chart-wrapper">
                                 <DoughnutChart
-                                  :chartData="timeRevenueChartData"
+                                  :chartData="hourRevenueChartData"
+                                  :labels="
+                                    Object.keys(
+                                      salesResponseDto.hourRevenueRatio,
+                                    )
+                                  "
+                                  :datasetsData="
+                                    Object.values(
+                                      salesResponseDto.hourRevenueRatio,
+                                    )
+                                  "
                                 />
                                 <div class="doughnut-chart-text">
-                                  <span>{{ maxRevenueTime }}</span>
+                                  <div>
+                                    <p>
+                                      {{ maxRevenueHour | hourTransformer }}
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
                               <div class="doughnut-chart-legend">
                                 <div class="legend-label-list">
                                   <p
-                                    v-for="(label,
-                                    index) in timeRevenueChartData.labels"
+                                    v-for="(label, index) in Object.keys(
+                                      salesResponseDto.hourRevenueRatio,
+                                    )"
                                     :key="index"
                                   >
-                                    <span class="legend-label-point"></span>
+                                    <span
+                                      class="legend-label-point"
+                                      :style="{
+                                        'background-color':
+                                          hourRevenueChartData.datasets[0]
+                                            .backgroundColor[index],
+                                      }"
+                                    ></span>
                                     <span class="legend-label-text">
-                                      {{ label }}</span
+                                      {{ label | hourTransformer }}</span
                                     >
                                   </p>
                                 </div>
                                 <div class="legend-value-list">
                                   <p
-                                    v-for="(data, index) in timeRevenueChartData
-                                      .datasets[0].data"
+                                    v-for="(data, index) in Object.values(
+                                      salesResponseDto.hourRevenueRatio,
+                                    )"
                                     :key="index"
                                   >
                                     <span class="legend-value">
@@ -469,20 +629,38 @@
                   <div class="data-info-box-content">
                     <p>
                       해당 행정동에서
-                      <strong class="text-primary">한식(선택 업종)</strong>의
-                      매출은 <strong class="text-primary">6순위</strong>입니다.
+                      <strong class="text-primary">
+                        {{
+                          salesRequestDto.mediumCategoryCode
+                            | kbCategoryTransformer
+                        }}(선택 업종)</strong
+                      >의 매출은
+                      <strong class="text-primary">6순위</strong>입니다.
                       <br />
-                      <strong class="text-primary">한식(선택 업종)</strong>의
-                      경우
+                      <strong class="text-primary">
+                        {{
+                          salesRequestDto.mediumCategoryCode
+                            | kbCategoryTransformer
+                        }}(선택 업종)</strong
+                      >의 경우
                       <strong class="text-primary"
-                        >20대 여성(업종 연령 소비 반영)</strong
+                        >{{ salesResponseDto.mainAge }}대
+                        {{
+                          parseInt(mainGender) | genderNumberTransformer
+                        }}(업종 연령 소비 반영)</strong
                       >의 매출이 가장 높으며, <br />
-                      <strong class="text-primary">다인</strong> 메뉴의 판매가
-                      높습니다. <br />
-                      <strong class="text-primary">금요일</strong> 매출이
-                      우세하며,
-                      <strong class="text-primary">점심 또는 야간</strong>에
-                      주력할 수 있는 메뉴를 도입해야 합니다.
+                      <strong class="text-primary">{{
+                        salesResponseDto.revenuePerOrder
+                      }}</strong>
+                      메뉴의 판매가 높습니다. <br />
+                      <strong class="text-primary">{{
+                        maxRevenueWeekday | weekDayTransformer
+                      }}</strong>
+                      매출이 우세하며,
+                      <strong class="text-primary">{{
+                        maxRevenueHour | hourTransformer
+                      }}</strong
+                      >에 주력할 수 있는 메뉴를 도입해야 합니다.
                     </p>
                   </div>
                 </div>
@@ -496,7 +674,23 @@
                       논현1동 추천메뉴
                     </h4>
                   </header>
-                  <div class="data-info-box-content"></div>
+                  <div class="data-info-box-content">
+                    <b-row>
+                      <b-col
+                        cols="4"
+                        v-for="(code, index) in Object.values(
+                          salesResponseDto.recommendedMenu,
+                        )"
+                        :key="index"
+                      >
+                        <b-img-lazy
+                          :src="
+                            `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/${code}.jpg`
+                          "
+                        ></b-img-lazy>
+                      </b-col>
+                    </b-row>
+                  </div>
                 </div>
               </b-col>
               <b-col cols="12">
@@ -510,7 +704,7 @@
                     <b-row>
                       <b-col
                         cols="4"
-                        v-for="(menu, index) in recommendMenus"
+                        v-for="(menu, index) in recommendMenuHdong"
                         :key="index"
                       >
                         <b-img-lazy
@@ -526,10 +720,23 @@
                     <div class="row-box  mt-4">
                       <p>
                         해당 행정동에서는 외식업 전체적으로
-                        <strong class="text-primary">점심, 남성, 20대</strong>의
-                        매출이 높습니다. <br />
+                        <strong class="text-primary"
+                          >{{
+                            salesResponseDto.mainHourHdong | hourTransformer
+                          }},
+                          {{
+                            salesResponseDto.mainGenderHdong
+                              | genderNumberTransformer
+                          }}, {{ salesResponseDto.mainAgeHdong }}</strong
+                        >의 매출이 높습니다. <br />
                         이와 유사한 지역에서는
-                        <strong class="text-primary">치킨, 떡볶이, 피자</strong>
+                        <strong class="text-primary">
+                          {{
+                            Object.values(
+                              salesResponseDto.recommendMenuHdong,
+                            ).join(',')
+                          }}
+                        </strong>
                         메뉴의 판매량이 높습니다.
                       </p>
                     </div>
@@ -540,7 +747,7 @@
           </div>
         </section>
       </b-tab>
-      <b-tab>
+      <b-tab @click="getBaeminData()">
         <template #title>
           <div class="tab-header">
             <h4>
@@ -554,7 +761,7 @@
             <div class="baemin-info-box">
               <div>
                 <p class="baemin-info-value">
-                  <strong>4.9</strong>
+                  <strong>{{ consultBaeminReport.averageScore }}</strong>
                 </p>
                 <p class="baemin-info-label">
                   <span>평점</span>
@@ -566,7 +773,7 @@
             <div class="baemin-info-box">
               <div>
                 <p class="baemin-info-value">
-                  <strong>10,200</strong>
+                  <strong>{{ consultBaeminReport.averageOrderRate }}</strong>
                 </p>
                 <p class="baemin-info-label">
                   <span>평균 주문수<br />(6개월 합산)</span>
@@ -578,7 +785,9 @@
             <div class="baemin-info-box">
               <div>
                 <p class="baemin-info-value">
-                  <strong>1,700</strong>
+                  <strong>{{
+                    consultBaeminReport.averageMonthlyOrderRate
+                  }}</strong>
                 </p>
                 <p class="baemin-info-label">
                   <span>월 평균 주문수</span>
@@ -590,7 +799,7 @@
             <div class="baemin-info-box">
               <div>
                 <p class="baemin-info-value">
-                  <strong>8,480</strong>
+                  <strong>{{ consultBaeminReport.minimumOrderPrice }}</strong>
                 </p>
                 <p class="baemin-info-label">
                   <span>최소 주문금액</span>
@@ -602,7 +811,7 @@
             <div class="baemin-info-box">
               <div>
                 <p class="baemin-info-value">
-                  <strong>1,900</strong>
+                  <strong>{{ consultBaeminReport.averageDeliveryTip }}</strong>
                 </p>
                 <p class="baemin-info-label">
                   <span>배달팁</span>
@@ -614,7 +823,7 @@
             <div class="baemin-info-box">
               <div>
                 <p class="baemin-info-value">
-                  <strong>2,529</strong>
+                  <strong>{{ consultBaeminReport.averageLikeRate }}</strong>
                 </p>
                 <p class="baemin-info-label">
                   <span>찜 수</span>
@@ -670,19 +879,20 @@
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
 import {
-  AnalysisTabListDto,
+  BaeminReportDto,
   DeliveryFounderConsultDto,
   SalesRequestDto,
+  SalesResponseDto,
 } from '@/dto';
 import {
-  BEST_FOOD_CATEGORY,
-  CONST_BEST_FOOD_CATEGORY,
   CONST_KB_MEDIUM_CATEGORY,
+  CONST_STORE_TYPE,
   KB_MEDIUM_CATEGORY,
+  STORE_TYPE,
 } from '@/services/shared';
 import { Component } from 'vue-property-decorator';
 import DeliveryFounderConsultService from '../../../../services/delivery-founder-consult.service';
-import ResultRevenueChart from '@/modules/pickcook/consult-response/add-on/ResultRevenueChart.vue';
+import RevenueChart from '../add-on/RevenueChart.vue';
 import DoughnutChart from '../add-on/DoughnutChart.vue';
 import BarChart from '../add-on/BarChart.vue';
 
@@ -691,7 +901,7 @@ import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.se
 @Component({
   name: 'ConsultReportDetail',
   components: {
-    ResultRevenueChart,
+    RevenueChart,
     DoughnutChart,
     BarChart,
   },
@@ -699,21 +909,23 @@ import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.se
 export default class ConsultReportDetail extends BaseComponent {
   // sales data
   private salesRequestDto = new SalesRequestDto();
-  private salesData: any;
+  private salesResponseDto: any = new SalesResponseDto();
 
-  private recommendMenus = [];
+  // 반경내 추천메뉴
+  private recommendMenuHdong = [];
 
-  // 창업업종
-  private selectedFoodCategory: KB_MEDIUM_CATEGORY = KB_MEDIUM_CATEGORY.F16;
-  private foodCategories: KB_MEDIUM_CATEGORY[] = [...CONST_KB_MEDIUM_CATEGORY];
+  // 창업 업종
+  private kbMediumCategories: KB_MEDIUM_CATEGORY[] = [
+    ...CONST_KB_MEDIUM_CATEGORY,
+  ];
+
+  // 창업 유형
+  private storeTypes: STORE_TYPE[] = [...CONST_STORE_TYPE];
 
   // 업종별 매출 비율
-
-  private foodCategoryRevenueChartData = {
-    labels: this.foodCategories,
+  private kbCategoryRevenueChartData = {
     datasets: [
       {
-        data: [10, 40, 30, 20, 10, 40, 30, 20],
         backgroundColor: [
           'rgb(68, 114, 196)',
           'rgb(68, 114, 196)',
@@ -728,21 +940,60 @@ export default class ConsultReportDetail extends BaseComponent {
     ],
   };
 
-  // 요일별 매출 비율 차트
-  private maxRevenueWeekday = '금';
-  private weekDayRevenueChartData = {
-    labels: [
-      '월요일',
-      '화요일',
-      '수요일',
-      '목요일',
-      '금요일',
-      '토요일',
-      '일요일',
-    ],
+  // 주 소비층
+  get computedMainGagu() {
+    if (this.salesResponseDto.mainGagu === 1) {
+      return '1~2인 가구';
+    } else {
+      return '3~4인 가구';
+    }
+  }
+
+  get computedMainAgeGroup() {
+    if (this.salesResponseDto.mainAgeGroup === 2) {
+      return '20~40대';
+    } else {
+      return '30~50대';
+    }
+  }
+
+  private mainGaguChartData = {
     datasets: [
       {
-        data: [12, 11.5, 9.2, 12.2, 16, 20.3, 18.5],
+        backgroundColor: [
+          'rgb(46, 79, 139)',
+          'rgb(55, 93, 161)',
+          'rgb(61, 104, 179)',
+          'rgb(68, 114, 196)',
+          'rgb(129, 151, 208)',
+          'rgb(167, 181, 219)',
+          'rgb(195, 204, 229)',
+        ],
+      },
+    ],
+  };
+
+  private mainAgeGroupChartData = {
+    datasets: [
+      {
+        backgroundColor: [
+          'rgb(46, 79, 139)',
+          'rgb(55, 93, 161)',
+          'rgb(61, 104, 179)',
+          'rgb(68, 114, 196)',
+          'rgb(129, 151, 208)',
+          'rgb(167, 181, 219)',
+          'rgb(195, 204, 229)',
+        ],
+      },
+    ],
+  };
+
+  // 요일별 매출 비율 차트
+  private maxRevenueWeekday: any;
+  private weekDayRevenueChartData = {
+    datasets: [
+      {
         backgroundColor: [
           'rgb(46, 79, 139)',
           'rgb(55, 93, 161)',
@@ -757,12 +1008,10 @@ export default class ConsultReportDetail extends BaseComponent {
   };
 
   // 시간대별 매출 비율 차트
-  private maxRevenueTime = '점심';
-  private timeRevenueChartData = {
-    labels: ['아침', '점심', '저녁', '야식'],
+  private maxRevenueHour: any;
+  private hourRevenueChartData = {
     datasets: [
       {
-        data: [10, 20, 40, 30],
         backgroundColor: [
           'rgb(46, 79, 139)',
           'rgb(61, 104, 179)',
@@ -778,7 +1027,6 @@ export default class ConsultReportDetail extends BaseComponent {
     labels: ['', '최저매출', '평균매출', '최고매출', ''],
     datasets: [
       {
-        data: [125, 534, 754, 922, 1800],
         pointRadius: [0, 5, 15, 5, 0],
         pointHoverRadius: [0, 5, 20, 5, 0],
         pointBackgroundColor: [
@@ -791,11 +1039,17 @@ export default class ConsultReportDetail extends BaseComponent {
       },
     ],
   };
+  private revenueData = [];
 
+  private mainGender: any;
+
+  // 배달의민족 상세현황
+  private consultBaeminReport = new BaeminReportDto();
+
+  // 지도 가져오기
   private map;
   private deliveryFounderConsultMap = new DeliveryFounderConsultDto();
 
-  // 지도 가져오기
   setMap(id) {
     DeliveryFounderConsultService.findOne(id).subscribe(res => {
       if (res) {
@@ -853,25 +1107,70 @@ export default class ConsultReportDetail extends BaseComponent {
   }
 
   getSalesData() {
-    this.salesRequestDto.hdongCode = '1150060400';
-    this.salesRequestDto.mediumCategoryCode = KB_MEDIUM_CATEGORY.F16;
     ConsultResponseV3Service.getSalesData(this.salesRequestDto).subscribe(
       res => {
         if (res) {
-          this.salesData = res.data;
-          if (this.salesData) {
-            this.recommendMenus = [
+          this.salesResponseDto = res.data;
+          if (this.salesResponseDto) {
+            this.recommendMenuHdong = [
               ...Object.values(res.data.recommendMenuHdong),
             ];
+
+            // 상권매출현황 차트 데이터
+            this.revenueData = [
+              0,
+              this.salesResponseDto.minRevenue,
+              this.salesResponseDto.medianRevenue,
+              this.salesResponseDto.maxRevenue,
+              parseInt(this.salesResponseDto.maxRevenue) +
+                parseInt(this.salesResponseDto.maxRevenue) / 2,
+            ];
+
+            // 요일별 매출 분석
+            const weekDayRatioObj = this.salesResponseDto.weekDayRevenueRatio;
+            this.maxRevenueWeekday = Object.keys(weekDayRatioObj).reduce(
+              (a: string, b: string) => {
+                return weekDayRatioObj[a] > weekDayRatioObj[b] ? a : b;
+              },
+            );
+
+            // 시간대별 매출 분석
+            const maxHourRatioObj = this.salesResponseDto.hourRevenueRatio;
+            this.maxRevenueHour = Object.keys(maxHourRatioObj).reduce(
+              (a: string, b: string) => {
+                return maxHourRatioObj[a] > maxHourRatioObj[b] ? a : b;
+              },
+            );
+
+            // 성별 매출 분석
+            const maxGenderRatioObj = this.salesResponseDto
+              .mediumCategoryGenderRevenueRatio;
+            this.mainGender = Object.keys(maxGenderRatioObj).reduce(
+              (a: string, b: string) => {
+                return maxGenderRatioObj[a] > maxGenderRatioObj[b] ? a : b;
+              },
+            );
           }
-          console.log('res.data', res.data);
-          console.log(this.recommendMenus);
         }
       },
     );
   }
 
+  getBaeminData() {
+    ConsultResponseV3Service.findOne(this.$route.params.id).subscribe(res => {
+      if (res) {
+        this.consultBaeminReport = res.data.consultBaeminReport;
+      }
+    });
+  }
+
   created() {
+    if (this.salesRequestDto) {
+      this.salesRequestDto.hdongCode = '1150060400';
+      this.salesRequestDto.mediumCategoryCode = KB_MEDIUM_CATEGORY.F16;
+      this.salesRequestDto.storeType = STORE_TYPE.DELIVERY;
+    }
+
     this.getSalesData();
     this.setMap('279');
   }
@@ -1050,8 +1349,14 @@ export default class ConsultReportDetail extends BaseComponent {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
       font-weight: bold;
+      text-align: center;
+      span {
+        font-size: 14px;
+      }
+      p {
+        font-size: 32px;
+      }
     }
   }
   .doughnut-chart-legend {

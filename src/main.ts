@@ -43,6 +43,11 @@ import {
   CurrencyPipeTransformer,
   SpaceTypePipeTransformer,
   NumberPipeTransformer,
+  KbCategoryPipeTransformer,
+  NumeralPipeTransformer,
+  WeekDayPipeTransformer,
+  HourPipeTransformer,
+  GenderNumberPipeTransformer,
 } from '@/core';
 import '@/core/guards/auth-role.guard';
 
@@ -87,6 +92,11 @@ StringShowPipeTransformer();
 StringTruncatePipeTransformer();
 StringViewPipeTransformer();
 SpaceTypePipeTransformer();
+KbCategoryPipeTransformer();
+NumeralPipeTransformer();
+WeekDayPipeTransformer();
+HourPipeTransformer();
+GenderNumberPipeTransformer();
 
 // bootstrap
 Vue.use(BootstrapVue);

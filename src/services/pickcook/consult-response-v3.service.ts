@@ -136,6 +136,15 @@ class ConsultResponseV3Service extends BaseService {
       ApiUrlType.PICKCOOK,
     );
   }
+
+  getSmallCategoryInfo(code: string) {
+    return super.get<any>(
+      `v3/admin/pickcook-small-category-info`,
+      { sSmallCategoryCode: code },
+      ApiUrlType.PICKCOOK,
+    );
+  }
+
   patchBaeminReport(id: string, baeminReportPatchDto: BaeminReportPatchDto) {
     return super.patch<BaeminReportPatchDto>(
       `v3/admin/consult-baemin-report/${id}`,

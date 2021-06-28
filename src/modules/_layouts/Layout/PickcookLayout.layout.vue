@@ -5,7 +5,7 @@
         <div class="container-fluid">
           <router-link
             class="navbar-brand brand-text"
-            to="/pickcook/consult-response"
+            to="/pickcook/consult-response-v3"
             >PICKCOOK</router-link
           >
           <div>

@@ -1,7 +1,9 @@
 import { BaseService } from '@/core';
 import {
+  ConsultResponseV3CreateDto,
   ConsultResponseV3ListDto,
   ConsultResponseV3UpdateDto,
+  ConsultResponseV3SendMessageDto,
   SalesRequestDto,
   SalesResponseDto,
 } from '@/dto';
@@ -83,6 +85,37 @@ class ConsultResponseV3Service extends BaseService {
       ApiUrlType.PICKCOOK,
     );
   }
+
+  /**
+   *
+   * @param consultResponseV3CreateDto
+   * @returns
+   */
+  create(consultResponseV3CreateDto: ConsultResponseV3CreateDto) {
+    return super.post<ConsultResponseV3CreateDto>(
+      'v3/admin/consult-response',
+      consultResponseV3CreateDto,
+      ApiUrlType.PICKCOOK,
+    );
+  }
+
+  /**
+   *
+   * @param id
+   * @param consultResponseV3SendMessageDto
+   * @returns
+   */
+  sendMessage(
+    id: number,
+    consultResponseV3SendMessageDto: ConsultResponseV3SendMessageDto,
+  ) {
+    return super.post<ConsultResponseV3SendMessageDto>(
+      `v3/admin/consult-response/${id}/send-message`,
+      consultResponseV3SendMessageDto,
+      ApiUrlType.PICKCOOK,
+    );
+  }
+
   /**
    *
    * @param salesRequestDto

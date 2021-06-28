@@ -299,13 +299,15 @@
       <b-col lg="6" class="my-3">
         <BaseCard title="리포트 입력하기">
           <template v-slot:body>
-            <b-row>
-              <b-btn
-                @click="showAddressModal"
-                v-if="!consultResponseV3Dto.consultBaeminReport.hdongCode"
-                >주소입력</b-btn
-              >
+            <b-row v-if="!consultResponseV3Dto.consultBaeminReport.hdongCode">
+              <b-btn @click="showAddressModal">주소입력</b-btn>
+              <p>(*서울,경기,인천,부산,제주 외 불가능)</p>
               <p>{{ baeminReportAddress }}</p>
+            </b-row>
+            <b-row v-if="salesResponseDto.hdong">
+              {{
+                `${salesResponseDto.hdong.sidoName} ${salesResponseDto.hdong.guName} ${salesResponseDto.hdong.hdongName}`
+              }}
             </b-row>
             <b-btn
               @click="$router.push(`${$route.path}/report`)"
@@ -393,7 +395,7 @@
               v-if="!consultResponseV3Dto.consultBaeminReport.hdongCode"
               >확인</b-btn
             >
-            <b-btn v-else>수정하기</b-btn>
+            <b-btn v-else @click="patchBaeminReport">수정하기</b-btn>
           </template>
         </BaseCard>
       </b-col>
@@ -609,6 +611,7 @@ import {
   SalesRequestDto,
   SalesResponseDto,
   BaeminReportCreateDto,
+  BaeminReportPatchDto,
 } from '@/dto';
 import { PickcookCodeManagementDto } from '@/services/init/dto';
 import {
@@ -683,6 +686,8 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   private kbMediumCategory = KB_MEDIUM_CATEGORY_KOREAN;
   private baeminReportCreateDto = new BaeminReportCreateDto();
   private baeminReportAddress = '';
+  private baeminReportPatchDto = new BaeminReportPatchDto();
+
   toggleId(index: number) {
     return 'item0' + index;
   }
@@ -770,6 +775,11 @@ export default class ConsultResponseV3Detail extends BaseComponent {
       if (res) {
         if (res.data.consultBaeminReport) {
           this.consultResponseV3Dto = res.data;
+          if (this.consultResponseV3Dto.consultBaeminReport.hdongCode) {
+            this.salesRequestDto.hdongCode = this.consultResponseV3Dto.consultBaeminReport.hdongCode;
+            this.salesRequestDto.mediumCategoryCode = this.consultResponseV3Dto.consultBaeminReport.mediumCategoryCode;
+            this.getSalesData();
+          }
         }
 
         // this.getLocationInfoDetail();
@@ -807,7 +817,6 @@ export default class ConsultResponseV3Detail extends BaseComponent {
       }
     });
   }
-
   onSelectDeleteReason(value) {
     if (value !== RESERVATION_DELETE_REASON.ETC) {
       this.deleteReasonText = value;
@@ -854,6 +863,21 @@ export default class ConsultResponseV3Detail extends BaseComponent {
         this.findOne(this.$route.params.id);
       }
     });
+  }
+  patchBaeminReport() {
+    this.$setSameKeyValue(
+      this.consultResponseV3Dto.consultBaeminReport,
+      this.baeminReportPatchDto,
+      ConsultResponseV3Service.patchBaeminReport(
+        this.consultResponseV3Dto.consultBaeminReport.id,
+        this.baeminReportPatchDto,
+      ).subscribe(res => {
+        if (res) {
+          toast.success('수정완료');
+          this.findOne(this.$route.params.id);
+        }
+      }),
+    );
   }
   setAddress(res) {
     this.baeminReportAddress = res.address;

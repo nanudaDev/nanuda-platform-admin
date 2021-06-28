@@ -135,5 +135,13 @@ class ConsultResponseV3Service extends BaseService {
       ApiUrlType.PICKCOOK,
     );
   }
+
+  getSmallCategoryInfo(code: string) {
+    return super.get<any>(
+      `v3/admin/pickcook-small-category-info`,
+      { sSmallCategoryCode: code },
+      ApiUrlType.PICKCOOK,
+    );
+  }
 }
 export default new ConsultResponseV3Service();

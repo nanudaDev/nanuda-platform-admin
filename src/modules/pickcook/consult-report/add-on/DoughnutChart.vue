@@ -12,11 +12,18 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
   components: { ChartDataLabels },
 })
 export default class DoughnutChart extends Vue {
-  @Prop() private readonly chartData: any;
   public renderChart!: (chartData: any, options?: any) => void;
+  @Prop() private readonly chartData: any;
+  @Prop() private datasetsData: any;
+  @Prop() private labels?: any;
 
   mounted(): void {
-    const chart = this.renderChart(this.chartData, {
+    if (this.labels.length > 0) {
+      this.chartData.labels = this.labels;
+    }
+    this.chartData.datasets[0].data = this.datasetsData;
+
+    this.renderChart(this.chartData, {
       plugins: {
         datalabels: {
           color: 'transparent',

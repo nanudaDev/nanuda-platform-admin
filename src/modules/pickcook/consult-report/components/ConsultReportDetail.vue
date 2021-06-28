@@ -747,7 +747,7 @@
           </div>
         </section>
       </b-tab>
-      <b-tab>
+      <b-tab @click="getBaeminData()">
         <template #title>
           <div class="tab-header">
             <h4>
@@ -761,7 +761,7 @@
             <div class="baemin-info-box">
               <div>
                 <p class="baemin-info-value">
-                  <strong>4.9</strong>
+                  <strong>{{ consultBaeminReport.averageScore }}</strong>
                 </p>
                 <p class="baemin-info-label">
                   <span>평점</span>
@@ -773,7 +773,7 @@
             <div class="baemin-info-box">
               <div>
                 <p class="baemin-info-value">
-                  <strong>10,200</strong>
+                  <strong>{{ consultBaeminReport.averageOrderRate }}</strong>
                 </p>
                 <p class="baemin-info-label">
                   <span>평균 주문수<br />(6개월 합산)</span>
@@ -785,7 +785,9 @@
             <div class="baemin-info-box">
               <div>
                 <p class="baemin-info-value">
-                  <strong>1,700</strong>
+                  <strong>{{
+                    consultBaeminReport.averageMonthlyOrderRate
+                  }}</strong>
                 </p>
                 <p class="baemin-info-label">
                   <span>월 평균 주문수</span>
@@ -797,7 +799,7 @@
             <div class="baemin-info-box">
               <div>
                 <p class="baemin-info-value">
-                  <strong>8,480</strong>
+                  <strong>{{ consultBaeminReport.minimumOrderPrice }}</strong>
                 </p>
                 <p class="baemin-info-label">
                   <span>최소 주문금액</span>
@@ -809,7 +811,7 @@
             <div class="baemin-info-box">
               <div>
                 <p class="baemin-info-value">
-                  <strong>1,900</strong>
+                  <strong>{{ consultBaeminReport.averageDeliveryTip }}</strong>
                 </p>
                 <p class="baemin-info-label">
                   <span>배달팁</span>
@@ -821,7 +823,7 @@
             <div class="baemin-info-box">
               <div>
                 <p class="baemin-info-value">
-                  <strong>2,529</strong>
+                  <strong>{{ consultBaeminReport.averageLikeRate }}</strong>
                 </p>
                 <p class="baemin-info-label">
                   <span>찜 수</span>
@@ -877,14 +879,12 @@
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
 import {
-  AnalysisTabListDto,
+  BaeminReportDto,
   DeliveryFounderConsultDto,
   SalesRequestDto,
   SalesResponseDto,
 } from '@/dto';
 import {
-  BEST_FOOD_CATEGORY,
-  CONST_BEST_FOOD_CATEGORY,
   CONST_KB_MEDIUM_CATEGORY,
   CONST_STORE_TYPE,
   KB_MEDIUM_CATEGORY,
@@ -1043,6 +1043,9 @@ export default class ConsultReportDetail extends BaseComponent {
 
   private mainGender: any;
 
+  // 배달의민족 상세현황
+  private consultBaeminReport = new BaeminReportDto();
+
   // 지도 가져오기
   private map;
   private deliveryFounderConsultMap = new DeliveryFounderConsultDto();
@@ -1151,6 +1154,14 @@ export default class ConsultReportDetail extends BaseComponent {
         }
       },
     );
+  }
+
+  getBaeminData() {
+    ConsultResponseV3Service.findOne(this.$route.params.id).subscribe(res => {
+      if (res) {
+        this.consultBaeminReport = res.data.consultBaeminReport;
+      }
+    });
   }
 
   created() {

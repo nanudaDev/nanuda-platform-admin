@@ -1,4 +1,5 @@
 import { BaseDto } from '@/core';
+import { BaeminReportDto } from '@/dto';
 import { AdminDto } from '@/dto/platform';
 import { PickcookCodeManagementDto } from '@/services/init/dto';
 import {
@@ -30,7 +31,5 @@ export class ConsultResponseV3Dto extends BaseDto<ConsultResponseV3Dto> {
   proformaConsultResult?: any;
   consultCodeStatus?: PickcookCodeManagementDto;
   admin?: AdminDto;
-  consultBaeminReport: Partial<
-    BaeminReportCreateDto
-  > = new BaeminReportCreateDto();
+  consultBaeminReport: BaeminReportDto;
 }

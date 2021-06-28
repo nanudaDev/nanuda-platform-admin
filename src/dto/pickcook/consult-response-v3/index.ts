@@ -7,3 +7,4 @@ export * from './sales-request.dto';
 export * from './sales-response.dto';
 export * from './baemin-report-create.dto';
 export * from './baemin-report.dto';
+export * from './baemin-report-patch.dto';

@@ -50,10 +50,9 @@
                     <b-form-group label="창업 지역" label-align="left">
                       <template v-if="salesResponseDto.hdong">
                         <b-form-input
-                          :value="
-                            `${salesResponseDto.hdong.sidoName} ${salesResponseDto.hdong.guName} ${salesResponseDto.hdong.hdongName}`
-                          "
-                          disabled
+                          v-model="reportAddress"
+                          readonly
+                          @click="showAddressModal"
                         ></b-form-input>
                       </template>
                       <template v-else>
@@ -897,6 +896,13 @@
         </div>
       </b-tab>
     </b-tabs>
+    <!-- 주소 검색 모달 -->
+    <b-modal id="postcode" title="주소 검색" hide-footer>
+      <vue-daum-postcode
+        style="height:500px; overflow-y:auto;"
+        @complete="setAddress($event)"
+      />
+    </b-modal>
   </div>
 </template>
 <script lang="ts">
@@ -1073,7 +1079,7 @@ export default class ConsultReportDetail extends BaseComponent {
 
   // 배달의민족 상세현황
   private consultBaeminReport = new BaeminReportDto();
-
+  private reportAddress = '';
   // 지도 가져오기
   setMap() {
     const geocoder = new window.kakao.maps.services.Geocoder();
@@ -1118,10 +1124,7 @@ export default class ConsultReportDetail extends BaseComponent {
       }
     };
 
-    geocoder.addressSearch(
-      `${this.salesResponseDto.hdong.sidoName} ${this.salesResponseDto.hdong.guName} ${this.salesResponseDto.hdong.hdongName}`,
-      callback,
-    );
+    geocoder.addressSearch(this.reportAddress, callback);
   }
 
   getSalesData() {
@@ -1129,17 +1132,18 @@ export default class ConsultReportDetail extends BaseComponent {
       res => {
         if (res) {
           this.salesResponseDto = res.data;
+          this.reportAddress = `${this.salesResponseDto.hdong.sidoName} ${this.salesResponseDto.hdong.guName} ${this.salesResponseDto.hdong.hdongName}`;
           if (this.salesResponseDto) {
             this.recommendMenuHdong = [
               ...Object.values(res.data.recommendMenuHdong),
             ];
 
-            // 상권매출현황 차트 데이터
+            //상권매출현황 차트 데이터
             this.revenueData = [
               0,
-              this.salesResponseDto.minRevenue,
-              this.salesResponseDto.medianRevenue,
-              this.salesResponseDto.maxRevenue,
+              +this.salesResponseDto.minRevenue,
+              +this.salesResponseDto.medianRevenue,
+              +this.salesResponseDto.maxRevenue,
               parseInt(this.salesResponseDto.maxRevenue) +
                 parseInt(this.salesResponseDto.maxRevenue) / 2,
             ];
@@ -1201,6 +1205,23 @@ export default class ConsultReportDetail extends BaseComponent {
         this.getSalesData();
       }
     });
+  }
+
+  setAddress(res) {
+    console.log('res', res);
+    this.reportAddress = `${res.sido} ${res.sigungu} ${res.bname}`;
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    const callback = (results, status) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        console.log('+results[0].address.h_code', +results[0].address.h_code);
+        this.salesRequestDto.hdongCode = +results[0].address.h_code;
+      }
+    };
+    geocoder.addressSearch(res.address, callback);
+    this.$bvModal.hide('postcode');
+  }
+  showAddressModal() {
+    this.$bvModal.show('postcode');
   }
 
   created() {

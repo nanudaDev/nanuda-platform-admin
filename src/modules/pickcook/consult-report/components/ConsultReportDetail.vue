@@ -19,18 +19,29 @@
               <b-col cols="12" lg="8">
                 <b-form-row>
                   <b-col cols="4">
-                    <b-form-group label="창엄자명" label-align="left">
-                      <b-form-input value="이현우" readonly></b-form-input>
+                    <b-form-group label="창업자명" label-align="left">
+                      <b-form-input
+                        v-model="consultResponseV3Dto.name"
+                        readonly
+                      ></b-form-input>
                     </b-form-group>
                   </b-col>
                   <b-col cols="4">
                     <b-form-group label="연락처" label-align="left">
-                      <b-form-input value="01041537907" readonly></b-form-input>
+                      <b-form-input
+                        v-model="consultResponseV3Dto.phone"
+                        readonly
+                      ></b-form-input>
                     </b-form-group>
                   </b-col>
                   <b-col cols="4">
                     <b-form-group label="창업자유형" label-align="left">
-                      <b-form-input value="신규창업자" readonly></b-form-input>
+                      <b-form-input
+                        v-model="
+                          consultResponseV3Dto.fnbOwnerCodeStatus.comment
+                        "
+                        readonly
+                      ></b-form-input>
                     </b-form-group>
                   </b-col>
                 </b-form-row>
@@ -184,7 +195,13 @@
                             <div class="doughnut-chart-text">
                               <div>
                                 <span>{{ computedMainGagu }}</span>
-                                <p>{{ salesResponseDto.mainGaguRatio }}%</p>
+                                <p>
+                                  {{
+                                    Math.round(
+                                      salesResponseDto.mainGaguRatio * 10,
+                                    ) / 10
+                                  }}%
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -204,7 +221,13 @@
                             <div class="doughnut-chart-text">
                               <div>
                                 <span>{{ computedMainAgeGroup }}</span>
-                                <p>{{ salesResponseDto.mainAgeGroupRatio }}%</p>
+                                <p>
+                                  {{
+                                    Math.round(
+                                      salesResponseDto.mainAgeGroupRatio * 10,
+                                    ) / 10
+                                  }}%
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -880,6 +903,7 @@
 import BaseComponent from '@/core/base.component';
 import {
   BaeminReportDto,
+  ConsultResponseV3Dto,
   DeliveryFounderConsultDto,
   SalesRequestDto,
   SalesResponseDto,
@@ -888,6 +912,7 @@ import {
   CONST_KB_MEDIUM_CATEGORY,
   CONST_STORE_TYPE,
   KB_MEDIUM_CATEGORY,
+  KB_MEDIUM_CATEGORY_KOREAN,
   STORE_TYPE,
 } from '@/services/shared';
 import { Component } from 'vue-property-decorator';
@@ -910,7 +935,7 @@ export default class ConsultReportDetail extends BaseComponent {
   // sales data
   private salesRequestDto = new SalesRequestDto();
   private salesResponseDto: any = new SalesResponseDto();
-
+  private consultResponseV3Dto = new ConsultResponseV3Dto();
   // 반경내 추천메뉴
   private recommendMenuHdong = [];
 
@@ -927,6 +952,9 @@ export default class ConsultReportDetail extends BaseComponent {
     datasets: [
       {
         backgroundColor: [
+          'rgb(68, 114, 196)',
+          'rgb(68, 114, 196)',
+          'rgb(68, 114, 196)',
           'rgb(68, 114, 196)',
           'rgb(68, 114, 196)',
           'rgb(68, 114, 196)',
@@ -1047,63 +1075,53 @@ export default class ConsultReportDetail extends BaseComponent {
   private consultBaeminReport = new BaeminReportDto();
 
   // 지도 가져오기
-  private map;
-  private deliveryFounderConsultMap = new DeliveryFounderConsultDto();
+  setMap() {
+    const geocoder = new window.kakao.maps.services.Geocoder();
 
-  setMap(id) {
-    DeliveryFounderConsultService.findOne(id).subscribe(res => {
-      if (res) {
-        this.deliveryFounderConsultMap = res.data;
+    const callback = function(result, status) {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const mapContainer = document.getElementById('map');
+        const mapOption = {
+          center: new window.kakao.maps.LatLng(result[0].y, result[0].x),
+          level: 6,
+          maxLevel: 6,
+          minLevel: 3,
+        };
 
-        if (
-          this.deliveryFounderConsultMap.deliverySpace &&
-          this.deliveryFounderConsultMap.deliverySpace.companyDistrict
-        ) {
-          const mapContainer = document.getElementById('map'),
-            mapOption = {
-              center: new window.kakao.maps.LatLng(
-                this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lat,
-                this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lon,
-              ),
-              level: 6,
-              maxLevel: 6,
-              minLevel: 3,
-              mapTypeId: window.kakao.maps.MapTypeId.ROADMAP,
-            };
+        const map = new window.kakao.maps.Map(mapContainer, mapOption);
 
-          const map = new window.kakao.maps.Map(mapContainer, mapOption);
-          const content = `<span class="badge badge-primary" style="font-size:21px;border-radius: 100px;opacity: 82%">Here</span>`;
-          const markerPosition = new window.kakao.maps.LatLng(
-            this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lat,
-            this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lon,
-          );
+        const content = `<span class="badge badge-primary" style="font-size:21px;border-radius: 100px;opacity: 82%">Here</span>`;
+        const markerPosition = new window.kakao.maps.LatLng(
+          result[0].y,
+          result[0].x,
+        );
 
-          const customOverlay = new window.kakao.maps.CustomOverlay({
-            position: markerPosition,
-            content: content,
-            // image: markerImage,
-          });
+        const customOverlay = new window.kakao.maps.CustomOverlay({
+          position: markerPosition,
+          content: content,
+          // image: markerImage,
+        });
 
-          const circle = new window.kakao.maps.Circle({
-            map: map,
-            center: new window.kakao.maps.LatLng(
-              this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lat,
-              this.deliveryFounderConsultMap.deliverySpace.companyDistrict.lon,
-            ),
-            strokeWeight: 2,
-            strokeColor: '#FF00FF',
-            strokeOpacity: 0.8,
-            strokeStyle: 'dashed',
-            fillColor: '#00EEEE',
-            fillOpacity: 0.5,
-          });
-          circle.setRadius(1000);
-          circle.setMap(map);
-          customOverlay.setMap(map);
-          this.map = map;
-        }
+        const circle = new window.kakao.maps.Circle({
+          map: map,
+          center: new window.kakao.maps.LatLng(result[0].y, result[0].x),
+          strokeWeight: 2,
+          strokeColor: '#FF00FF',
+          strokeOpacity: 0.8,
+          strokeStyle: 'dashed',
+          fillColor: '#00EEEE',
+          fillOpacity: 0.5,
+        });
+        circle.setRadius(1000);
+        circle.setMap(map);
+        customOverlay.setMap(map);
       }
-    });
+    };
+
+    geocoder.addressSearch(
+      `${this.salesResponseDto.hdong.sidoName} ${this.salesResponseDto.hdong.guName} ${this.salesResponseDto.hdong.hdongName}`,
+      callback,
+    );
   }
 
   getSalesData() {
@@ -1150,7 +1168,21 @@ export default class ConsultReportDetail extends BaseComponent {
                 return maxGenderRatioObj[a] > maxGenderRatioObj[b] ? a : b;
               },
             );
+            //kb 중분류 코드에서 한글로 변경
+            const mediumCategoryRevenueRatio = this.salesResponseDto
+              .mediumCategoryRevenueRatio;
+            const tempObj = {};
+            Object.keys(mediumCategoryRevenueRatio).map(e => {
+              tempObj[KB_MEDIUM_CATEGORY_KOREAN[e]] =
+                mediumCategoryRevenueRatio[e];
+            });
+            this.$set(
+              this.salesResponseDto,
+              'mediumCategoryRevenueRatio',
+              tempObj,
+            );
           }
+          this.setMap();
         }
       },
     );
@@ -1159,20 +1191,20 @@ export default class ConsultReportDetail extends BaseComponent {
   getBaeminData() {
     ConsultResponseV3Service.findOne(this.$route.params.id).subscribe(res => {
       if (res) {
+        this.consultResponseV3Dto = res.data;
         this.consultBaeminReport = res.data.consultBaeminReport;
+        this.salesRequestDto.hdongCode = this.consultBaeminReport.hdongCode;
+        this.salesRequestDto.mediumCategoryCode = this.consultBaeminReport.mediumCategoryCode;
+        //   this.salesRequestDto.hdongCode = '1150060400';
+        // this.salesRequestDto.mediumCategoryCode = KB_MEDIUM_CATEGORY.F16;
+        // this.salesRequestDto.storeType = STORE_TYPE.DELIVERY;
+        this.getSalesData();
       }
     });
   }
 
   created() {
-    if (this.salesRequestDto) {
-      this.salesRequestDto.hdongCode = '1150060400';
-      this.salesRequestDto.mediumCategoryCode = KB_MEDIUM_CATEGORY.F16;
-      this.salesRequestDto.storeType = STORE_TYPE.DELIVERY;
-    }
-
-    this.getSalesData();
-    this.setMap('279');
+    this.getBaeminData();
   }
 }
 </script>

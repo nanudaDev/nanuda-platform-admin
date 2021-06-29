@@ -297,107 +297,230 @@
         </BaseCard>
       </b-col>
       <b-col lg="6" class="my-3">
-        <BaseCard title="리포트 입력하기">
+        <BaseCard title="배민 리포트 정보">
           <template v-slot:body>
-            <b-row v-if="!consultResponseV3Dto.consultBaeminReport.hdongCode">
-              <b-btn @click="showAddressModal">주소입력</b-btn>
-              <p>(*서울,경기,인천,부산,제주 외 불가능)</p>
-              <p>{{ baeminReportAddress }}</p>
-            </b-row>
-            <b-row v-if="salesResponseDto.hdong">
-              {{
-                `${salesResponseDto.hdong.sidoName} ${salesResponseDto.hdong.guName} ${salesResponseDto.hdong.hdongName}`
-              }}
-            </b-row>
-            <b-btn
-              @click="$router.push(`${$route.path}/report`)"
-              v-if="consultResponseV3Dto.consultBaeminReport.hdongCode"
-              >리포트로 이동</b-btn
-            >
-            <b-row>
-              <b-form-group label="kb카테고리 선택">
-                <b-form-select
-                  class="custom-select"
-                  v-model="
-                    consultResponseV3Dto.consultBaeminReport.mediumCategoryCode
-                  "
+            <!-- 배민 리포트 수정 폼 -->
+            <template v-if="consultResponseV3Dto.consultBaeminReport">
+              <b-form-row>
+                <template v-if="salesResponseDto.hdong">
+                  <b-col cols="12">
+                    <b-form-group label="창업 지역">
+                      <b-form-input
+                        :value="
+                          `${salesResponseDto.hdong.sidoName} ${salesResponseDto.hdong.guName} ${salesResponseDto.hdong.hdongName}`
+                        "
+                        readonly
+                      ></b-form-input>
+                    </b-form-group>
+                  </b-col>
+                </template>
+                <b-col cols="12">
+                  <b-form-group label="kb카테고리 선택">
+                    <b-form-select
+                      class="custom-select"
+                      v-model="
+                        consultResponseV3Dto.consultBaeminReport
+                          .mediumCategoryCode
+                      "
+                    >
+                      <b-form-select-option
+                        v-for="(value, name, index) in kbMediumCategory"
+                        :key="index"
+                        :value="name"
+                        >{{ value }}</b-form-select-option
+                      >
+                    </b-form-select>
+                  </b-form-group>
+                </b-col>
+                <b-col cols="6">
+                  <label for="average_score">평점</label>
+                  <b-form-input
+                    v-model="
+                      consultResponseV3Dto.consultBaeminReport.averageScore
+                    "
+                    id="average_score"
+                    number
+                  ></b-form-input>
+                </b-col>
+                <b-col cols="6">
+                  <b-form-group label="평균 주문수">
+                    <b-form-input
+                      v-model="
+                        consultResponseV3Dto.consultBaeminReport
+                          .averageOrderRate
+                      "
+                      id="average_order_rate"
+                      number
+                    ></b-form-input>
+                  </b-form-group>
+                </b-col>
+                <b-col cols="6">
+                  <b-form-group label="월 평균 주문수">
+                    <b-form-input
+                      v-model="
+                        consultResponseV3Dto.consultBaeminReport
+                          .averageMonthlyOrderRate
+                      "
+                      id="average_monthly_order_rate"
+                      number
+                    ></b-form-input>
+                  </b-form-group>
+                </b-col>
+                <b-col cols="6">
+                  <b-form-group label="최소 주문금액">
+                    <b-form-input
+                      v-model="
+                        consultResponseV3Dto.consultBaeminReport
+                          .minimumOrderPrice
+                      "
+                      number
+                      id="minimum_order_price"
+                    ></b-form-input>
+                  </b-form-group>
+                </b-col>
+                <b-col cols="6">
+                  <label for="average_delivery_tip">배달 팁</label>
+                  <b-form-input
+                    v-model="
+                      consultResponseV3Dto.consultBaeminReport
+                        .averageDeliveryTip
+                    "
+                    id="average_delivery_tip"
+                    number
+                  ></b-form-input>
+                </b-col>
+                <b-col cols="6">
+                  <label for="average_like_rate">찜 수</label>
+                  <b-form-input
+                    v-model="
+                      consultResponseV3Dto.consultBaeminReport.averageLikeRate
+                    "
+                    id="average_like_rate"
+                    number
+                  ></b-form-input>
+                </b-col>
+              </b-form-row>
+              <div class="text-right mt-4">
+                <b-btn size="lg" variant="primary" @click="patchBaeminReport()"
+                  >수정하기</b-btn
                 >
-                  <b-form-select-option
-                    v-for="(value, name, index) in kbMediumCategory"
-                    :key="index"
-                    :value="name"
-                    >{{ value }}</b-form-select-option
-                  >
-                </b-form-select>
-              </b-form-group>
-            </b-row>
-            <b-row>
-              <label for="average_score">평점</label>
-              <b-form-input
-                v-model="consultResponseV3Dto.consultBaeminReport.averageScore"
-                id="average_score"
-                number
-              ></b-form-input>
-            </b-row>
-            <b-row>
-              <label for="average_order_rate">평균 주문수</label>
-              <b-form-input
-                v-model="
-                  consultResponseV3Dto.consultBaeminReport.averageOrderRate
-                "
-                id="average_order_rate"
-                number
-              ></b-form-input>
-            </b-row>
-            <b-row>
-              <label for="average_monthly_order_rate">월 평균 주문수</label>
-              <b-form-input
-                v-model="
-                  consultResponseV3Dto.consultBaeminReport
-                    .averageMonthlyOrderRate
-                "
-                id="average_monthly_order_rate"
-                number
-              ></b-form-input>
-            </b-row>
-            <b-row>
-              <label for="minimum_order_price">최소 주문금액</label>
-              <b-form-input
-                v-model="
-                  consultResponseV3Dto.consultBaeminReport.minimumOrderPrice
-                "
-                number
-                id="minimum_order_price"
-              ></b-form-input>
-            </b-row>
-            <b-row>
-              <label for="average_delivery_tip">배달 팁</label>
-              <b-form-input
-                v-model="
-                  consultResponseV3Dto.consultBaeminReport.averageDeliveryTip
-                "
-                id="average_delivery_tip"
-                number
-              ></b-form-input>
-            </b-row>
-            <b-row>
-              <label for="average_like_rate">찜 수</label>
-              <b-form-input
-                v-model="
-                  consultResponseV3Dto.consultBaeminReport.averageLikeRate
-                "
-                id="average_like_rate"
-                number
-              ></b-form-input>
-            </b-row>
-            <b-btn
-              @click="createBaeminReport"
-              v-if="!consultResponseV3Dto.consultBaeminReport.hdongCode"
-              >확인</b-btn
-            >
-            <b-btn v-else @click="patchBaeminReport">수정하기</b-btn>
+              </div>
+            </template>
+            <template v-else>
+              <!-- 배민 리포트 추가 폼 -->
+              <b-form-row>
+                <b-col cols="12">
+                  <b-row align-v="end" no-gutters>
+                    <b-col cols="9">
+                      <b-form-group label="창업 지역">
+                        <b-form-input
+                          :value="codeHdongAddress"
+                          readonly
+                        ></b-form-input>
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="3">
+                      <b-btn
+                        size="lg"
+                        variant="secondary"
+                        block
+                        @click="showAddressModal()"
+                        style="margin-bottom:1.5em; margin-left:0.5em;"
+                        >주소입력</b-btn
+                      >
+                    </b-col>
+                    <b-col cols="12">
+                      <b-alert variant="danger" show>
+                        <p>(*서울,경기,인천,부산,제주 외 불가능)</p>
+                      </b-alert>
+                    </b-col>
+                  </b-row>
+                </b-col>
+                <b-col cols="12">
+                  <b-form-group label="kb카테고리 선택">
+                    <b-form-select
+                      class="custom-select"
+                      v-model="baeminReportCreateDto.mediumCategoryCode"
+                    >
+                      <b-form-select-option
+                        v-for="(value, name, index) in kbMediumCategory"
+                        :key="index"
+                        :value="name"
+                        >{{ value }}</b-form-select-option
+                      >
+                    </b-form-select>
+                  </b-form-group>
+                </b-col>
+                <b-col cols="6">
+                  <label for="average_score">평점</label>
+                  <b-form-input
+                    v-model="baeminReportCreateDto.averageScore"
+                    id="average_score"
+                    number
+                  ></b-form-input>
+                </b-col>
+                <b-col cols="6">
+                  <b-form-group label="평균 주문수">
+                    <b-form-input
+                      v-model="baeminReportCreateDto.averageOrderRate"
+                      id="average_order_rate"
+                      number
+                    ></b-form-input>
+                  </b-form-group>
+                </b-col>
+                <b-col cols="6">
+                  <b-form-group label="월 평균 주문수">
+                    <b-form-input
+                      v-model="baeminReportCreateDto.averageMonthlyOrderRate"
+                      id="average_monthly_order_rate"
+                      number
+                    ></b-form-input>
+                  </b-form-group>
+                </b-col>
+                <b-col cols="6">
+                  <b-form-group label="최소 주문금액">
+                    <b-form-input
+                      v-model="baeminReportCreateDto.minimumOrderPrice"
+                      number
+                      id="minimum_order_price"
+                    ></b-form-input>
+                  </b-form-group>
+                </b-col>
+                <b-col cols="6">
+                  <label for="average_delivery_tip">배달 팁</label>
+                  <b-form-input
+                    v-model="baeminReportCreateDto.averageDeliveryTip"
+                    id="average_delivery_tip"
+                    number
+                  ></b-form-input>
+                </b-col>
+                <b-col cols="6">
+                  <label for="average_like_rate">찜 수</label>
+                  <b-form-input
+                    v-model="baeminReportCreateDto.averageLikeRate"
+                    id="average_like_rate"
+                    number
+                  ></b-form-input>
+                </b-col>
+              </b-form-row>
+              <div class="text-right mt-4">
+                <b-btn size="lg" variant="primary" @click="createBaeminReport()"
+                  >추가하기</b-btn
+                >
+              </div>
+            </template>
           </template>
         </BaseCard>
+      </b-col>
+      <b-col cols="12">
+        <b-btn
+          variant="info"
+          block
+          size="lg"
+          style="height:4em"
+          @click="getConsultReport()"
+          >상권분석 리포트</b-btn
+        >
       </b-col>
     </b-row>
     <!-- 문자 전송 모달 -->
@@ -417,13 +540,46 @@
           </template>
         </b>
       </p>
-      <b-form-textarea
-        id="message"
-        placeholder="메세지를 입력해주세요.."
-        rows="3"
-        max-rows="6"
-        v-model="consultResponseV3SendMessageDto.message"
-      ></b-form-textarea>
+      <div>
+        <b-form-group>
+          <b-form-radio
+            v-model="selectedTemplateType"
+            v-for="(type, index) in messageTemplateTypes"
+            :key="index"
+            :value="type.id"
+            >{{ type.name }}</b-form-radio
+          >
+        </b-form-group>
+        <b-form-group label="상담시간대">
+          <b-form-input v-model="availableTime" placeholder=""></b-form-input>
+        </b-form-group>
+        <!-- <template v-if="selectedTemplateType === 'consult'">
+          <b-form-textarea
+            id="message"
+            placeholder="메세지를 입력해주세요.."
+            rows="3"
+            max-rows="6"
+            v-model="templateMsg.consult"
+          >
+          </b-form-textarea>
+        </template> -->
+        <template v-if="selectedTemplateType === 'meeting'">
+          <b-form-group label="구글 미트 URL">
+            <b-form-input
+              v-model="consultResponseV3SendMessageDto.googleMeetUrl"
+            ></b-form-input>
+          </b-form-group>
+          <!-- <b-form-textarea
+            id="message"
+            placeholder="메세지를 입력해주세요.."
+            rows="3"
+            max-rows="6"
+            v-model="templateMsg.meeting"
+          >
+          </b-form-textarea> -->
+        </template>
+      </div>
+
       <div
         class="mt-2 text-right"
         v-if="
@@ -612,6 +768,7 @@ import {
   SalesResponseDto,
   BaeminReportCreateDto,
   BaeminReportPatchDto,
+  CodeHdongDto,
 } from '@/dto';
 import { PickcookCodeManagementDto } from '@/services/init/dto';
 import {
@@ -630,6 +787,7 @@ import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.se
 import toast from '../../../../../resources/assets/js/services/toast.js';
 import AdminService from '@/services/admin.service';
 import consultResponseService from '@/services/pickcook/consult-response.service.js';
+import CodeHdongService from '@/services/pickcook/code-hdong.service';
 
 @Component({
   name: 'ConsultResponseV3Detail',
@@ -639,6 +797,18 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   private consultResponseUpdateDto = new ConsultResponseV3UpdateDto();
   private consultResponseV3SendMessageDto = new ConsultResponseV3SendMessageDto();
   private adminSendMessageDto = new AdminSendMessageDto();
+  private messageTemplateTypes = [
+    { id: 'consult', name: '유선상담용' },
+    { id: 'meeting', name: '미팅용' },
+  ];
+
+  private selectedTemplateType = this.messageTemplateTypes[0].id;
+  private availableTime = '';
+  private templateMsg = {
+    consult: '',
+    meeting: '',
+  };
+
   private brandConsultStatus: PickcookCodeManagementDto[] = [];
   private codeManagementDto = new PickcookCodeManagementDto();
   private paginationCode = new Pagination();
@@ -688,8 +858,31 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   private baeminReportAddress = '';
   private baeminReportPatchDto = new BaeminReportPatchDto();
 
-  toggleId(index: number) {
-    return 'item0' + index;
+  // hdong code
+  private hdongCode;
+  private codeHdongAddress = '';
+  private codeHdongDto = new CodeHdongDto();
+
+  // 상권분석 리포트 보기
+  getConsultReport() {
+    let params = {};
+    if (this.consultResponseV3Dto.consultBaeminReport) {
+      params = {
+        hdongCode: String(
+          this.consultResponseV3Dto.consultBaeminReport.hdongCode,
+        ),
+        kbMediumCategory: this.consultResponseV3Dto.consultBaeminReport
+          .mediumCategoryCode,
+      };
+    }
+    const routeData = this.$router.resolve({
+      name: 'ConsultReportDetail',
+      params: {
+        ...params,
+      },
+    });
+    // 새탭으로 열기
+    window.open(routeData.href, '_blank');
   }
 
   // get status color
@@ -773,13 +966,14 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   findOne(id) {
     ConsultResponseV3Service.findOne(id).subscribe(res => {
       if (res) {
-        if (res.data.consultBaeminReport) {
-          this.consultResponseV3Dto = res.data;
-          if (this.consultResponseV3Dto.consultBaeminReport.hdongCode) {
-            this.salesRequestDto.hdongCode = this.consultResponseV3Dto.consultBaeminReport.hdongCode;
-            this.salesRequestDto.mediumCategoryCode = this.consultResponseV3Dto.consultBaeminReport.mediumCategoryCode;
-            this.getSalesData();
-          }
+        this.consultResponseV3Dto = res.data;
+        if (
+          this.consultResponseV3Dto.consultBaeminReport &&
+          this.consultResponseV3Dto.consultBaeminReport.hdongCode
+        ) {
+          this.salesRequestDto.hdongCode = this.consultResponseV3Dto.consultBaeminReport.hdongCode;
+          this.salesRequestDto.mediumCategoryCode = this.consultResponseV3Dto.consultBaeminReport.mediumCategoryCode;
+          this.getSalesData();
         }
 
         // this.getLocationInfoDetail();
@@ -828,6 +1022,12 @@ export default class ConsultResponseV3Detail extends BaseComponent {
 
   // send massage
   sendMessage() {
+    this.templateMsg.consult = `[픽쿡 상담안내]\n안녕하세요 창업자님!\n데이터로 창업의 시작과 매출을올려드리는 픽쿡입니다.\n픽쿡을 신청해 주셔서 감사합니다.\n오늘 "${this.availableTime}" 사이에 상담전화를 드리겠습니다.\n감사합니다.`;
+    this.templateMsg.meeting = `[픽쿡 상권분석 일정안내]\n안녕하세요 ${this.consultResponseV3Dto.name}창업자님!^^\n오늘 ${this.availableTime}에 픽쿡 상권분석 미팅이 예정되어 있어서 문자드립니다!\n구글 미트로 화상미팅이 진행될 예정이며, 아래 첨부된 링크로 접속이 가능하며, 앱 다운로드가있을 수 있습니다. \n해당 시간에 링크에 입장 하시면 담당자분이 대기 예정입니다.\n감사합니다.`;
+    this.consultResponseV3SendMessageDto.message =
+      this.selectedTemplateType === 'consult'
+        ? this.templateMsg.consult
+        : this.templateMsg.meeting;
     ConsultResponseV3Service.sendMessage(
       this.consultResponseV3Dto.id,
       this.consultResponseV3SendMessageDto,
@@ -850,10 +1050,6 @@ export default class ConsultResponseV3Detail extends BaseComponent {
     );
   }
   createBaeminReport() {
-    this.$setSameKeyValue(
-      this.consultResponseV3Dto.consultBaeminReport,
-      this.baeminReportCreateDto,
-    );
     ConsultResponseV3Service.postBaeminReport(
       this.$route.params.id,
       this.baeminReportCreateDto,
@@ -865,30 +1061,45 @@ export default class ConsultResponseV3Detail extends BaseComponent {
     });
   }
   patchBaeminReport() {
-    this.$setSameKeyValue(
-      this.consultResponseV3Dto.consultBaeminReport,
+    ConsultResponseV3Service.patchBaeminReport(
+      this.consultResponseV3Dto.consultBaeminReport.id,
       this.baeminReportPatchDto,
-      ConsultResponseV3Service.patchBaeminReport(
-        this.consultResponseV3Dto.consultBaeminReport.id,
-        this.baeminReportPatchDto,
-      ).subscribe(res => {
-        if (res) {
-          toast.success('수정완료');
-          this.findOne(this.$route.params.id);
-        }
-      }),
-    );
+    ).subscribe(res => {
+      if (res) {
+        toast.success('수정완료');
+        this.findOne(this.$route.params.id);
+      }
+    });
   }
+
   setAddress(res) {
     this.baeminReportAddress = res.address;
     const geocoder = new window.kakao.maps.services.Geocoder();
     const callback = (results, status) => {
       if (status === window.kakao.maps.services.Status.OK) {
+        console.log('h_code', results[0].address.h_code);
+        this.hdongCode = +results[0].address.h_code;
         this.baeminReportCreateDto.hdongCode = +results[0].address.h_code;
+        if (this.hdongCode) {
+          this.getHdong(this.hdongCode);
+        }
       }
     };
     geocoder.addressSearch(res.address, callback);
     this.$bvModal.hide('postcode');
+  }
+
+  getHdong(code: string) {
+    CodeHdongService.getHdongCode(code).subscribe(res => {
+      if (res) {
+        this.codeHdongDto = res.data;
+        if (this.codeHdongDto) {
+          this.codeHdongAddress = `${this.codeHdongDto.sidoName} ${this.codeHdongDto.guName} ${this.codeHdongDto.hdongName}`;
+        }
+
+        console.log('codeHdongDto', this.codeHdongDto);
+      }
+    });
   }
 
   showAddressModal() {

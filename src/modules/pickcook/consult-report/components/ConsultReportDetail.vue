@@ -1,5 +1,5 @@
 <template>
-  <div id="report" v-if="salesResponseDto">
+  <div id="report" v-if="consultResponseV3Dto">
     <b-tabs fill>
       <b-tab active>
         <template #title>
@@ -15,452 +15,297 @@
             <h3 class="title">상권분석 요약자료</h3>
           </header>
           <div class="section-content">
-            <b-row>
-              <b-col cols="12" lg="8">
-                <b-form-row>
-                  <b-col cols="4">
-                    <b-form-group label="창엄자명" label-align="left">
-                      <b-form-input value="이현우" readonly></b-form-input>
-                    </b-form-group>
-                  </b-col>
-                  <b-col cols="4">
-                    <b-form-group label="연락처" label-align="left">
-                      <b-form-input value="01041537907" readonly></b-form-input>
-                    </b-form-group>
-                  </b-col>
-                  <b-col cols="4">
-                    <b-form-group label="창업자유형" label-align="left">
-                      <b-form-input value="신규창업자" readonly></b-form-input>
-                    </b-form-group>
-                  </b-col>
-                </b-form-row>
-                <b-form-row>
-                  <b-col cols="4">
-                    <b-form-group label="창업 지역" label-align="left">
-                      <template v-if="salesResponseDto.hdong">
+            <template v-if="salesResponseDto">
+              <b-row>
+                <b-col
+                  cols="12"
+                  :lg="
+                    salesResponseDto.hdong && salesResponseDto.hdong.hdongCode
+                      ? 8
+                      : 12
+                  "
+                >
+                  <b-form-row v-if="consultResponseV3Dto">
+                    <b-col cols="4">
+                      <b-form-group label="창엄자명" label-align="left">
                         <b-form-input
-                          :value="
-                            `${salesResponseDto.hdong.sidoName} ${salesResponseDto.hdong.guName} ${salesResponseDto.hdong.hdongName}`
-                          "
-                          disabled
+                          v-model="consultResponseV3Dto.name"
+                          readonly
                         ></b-form-input>
-                      </template>
-                      <template v-else>
-                        <b-form-input></b-form-input>
-                      </template>
-                    </b-form-group>
-                  </b-col>
-                  <b-col cols="4">
-                    <b-form-group label="창업 업종" label-align="left">
-                      <b-form-select
-                        v-model="salesRequestDto.mediumCategoryCode"
-                      >
-                        <b-form-select-option
-                          v-for="category in kbMediumCategories"
-                          :key="category"
-                          :value="category"
-                        >
-                          {{ category | kbCategoryTransformer }}
-                        </b-form-select-option>
-                      </b-form-select>
-                    </b-form-group>
-                  </b-col>
-                  <b-col cols="4">
-                    <b-row align-v="end" no-gutters>
-                      <b-col cols="8">
-                        <b-form-group label="창업 유형" label-align="left">
-                          <b-form-select v-model="salesRequestDto.storeType">
-                            <b-form-select-option
-                              v-for="type in storeTypes"
-                              :key="type"
-                              :value="type"
-                            >
-                              {{ type }}
-                            </b-form-select-option>
-                          </b-form-select>
-                        </b-form-group>
-                      </b-col>
-                      <b-col cols="4"
-                        ><b-button
-                          variant="info"
-                          size="lg"
-                          block
-                          class="ml-2"
-                          style="margin-bottom:1rem"
-                          @click="getSalesData()"
-                        >
-                          상권분석
-                        </b-button></b-col
-                      >
-                    </b-row>
-                  </b-col>
-                </b-form-row>
-                <div class="data-info-box">
-                  <header class="data-info-box-header">
-                    <h4>상권매출 현황</h4>
-                  </header>
-                  <div class="data-info-box-content">
-                    <RevenueChart
-                      :chartData="revenueChartData"
-                      :revenueData="revenueData"
-                    />
-                  </div>
-                </div>
-              </b-col>
-              <b-col cols="12" lg="4">
-                <div id="map" style="width:100%; height:100%"></div>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col cols="12">
-                <div class="data-info-box">
-                  <header class="data-info-box-header">
-                    <h4>
-                      인구 및 주 소비 패턴 분석
-                      <span> (선택한 행정동 기준)</span>
-                    </h4>
-                  </header>
-                  <div class="data-info-box-content">
-                    <p>
-                      <strong class="text-primary">
-                        <span
-                          >거주인구
-                          {{
-                            salesResponseDto.livingPopulation
-                              | numeralTransformer
-                          }}명</span
-                        >
-                        /
-                        <span>
-                          세대수
-                          {{
-                            salesResponseDto.sedeCount | numeralTransformer
-                          }}세대
-                        </span>
-                        /
-                        <span>
-                          직장인구
-                          {{
-                            salesResponseDto.employeeCount | numeralTransformer
-                          }}명
-                        </span>
-                      </strong>
-                      상주 중입니다.
-                    </p>
-                  </div>
-                </div>
-              </b-col>
-              <b-col cols="12" lg="5">
-                <div class="data-info-box">
-                  <div class="data-info-box-content">
-                    <b-row>
-                      <b-col cols="4">
-                        <h5>주 소비층</h5>
-                      </b-col>
-                      <b-col cols="8">
-                        <p>
-                          <strong class="text-primary"
-                            >{{ computedMainGagu }}
-                          </strong>
-                          이며,
-                          <strong class="text-primary">{{
-                            computedMainAgeGroup
-                          }}</strong
-                          >입니다.
-                        </p>
-                      </b-col>
-                    </b-row>
-                    <b-row>
-                      <b-col cols="12" md="6">
-                        <div class="doughnut-chart-container">
-                          <div class="doughnut-chart-wrapper">
-                            <DoughnutChart
-                              :chartData="mainGaguChartData"
-                              :labels="Object.keys(salesResponseDto.gaguRatio)"
-                              :datasetsData="
-                                Object.values(salesResponseDto.gaguRatio)
-                              "
-                            />
-                            <div class="doughnut-chart-text">
-                              <div>
-                                <span>{{ computedMainGagu }}</span>
-                                <p>{{ salesResponseDto.mainGaguRatio }}%</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </b-col>
-                      <b-col cols="12" md="6">
-                        <div class="doughnut-chart-container">
-                          <div class="doughnut-chart-wrapper">
-                            <DoughnutChart
-                              :chartData="mainAgeGroupChartData"
-                              :labels="Object.keys(salesResponseDto.ageRatio)"
-                              :datasetsData="
-                                Object.values(salesResponseDto.ageRatio)
-                              "
-                            />
-
-                            <div class="doughnut-chart-text">
-                              <div>
-                                <span>{{ computedMainAgeGroup }}</span>
-                                <p>{{ salesResponseDto.mainAgeGroupRatio }}%</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </b-col>
-                    </b-row>
-                  </div>
-                  <div></div>
-                </div>
-              </b-col>
-              <b-col cols="12" lg="7">
-                <div class="data-info-box">
-                  <div class="data-info-box-content">
-                    <b-row>
-                      <b-col cols="12" xl="2">
-                        <h5>
-                          소비 패턴<br />
-                          <span>식사&amp;배달 비중</span>
-                        </h5>
-                      </b-col>
-                      <b-col cols="12" xl="10">
-                        <template v-if="true">
-                          <p>
-                            <strong class="text-primary">배달</strong>을
-                            <strong class="text-primary"
-                              >필수적으로 병행하여 운영</strong
-                            >
-                            해야 합니다
-                          </p>
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="4">
+                      <b-form-group label="연락처" label-align="left">
+                        <b-form-input
+                          v-model="consultResponseV3Dto.phone"
+                          readonly
+                        ></b-form-input>
+                      </b-form-group>
+                    </b-col>
+                    <b-col
+                      cols="4"
+                      v-if="consultResponseV3Dto.fnbOwnerCodeStatus"
+                    >
+                      <b-form-group label="창업자유형" label-align="left">
+                        <b-form-input
+                          v-model="
+                            consultResponseV3Dto.fnbOwnerCodeStatus.comment
+                          "
+                          readonly
+                        ></b-form-input>
+                      </b-form-group>
+                    </b-col>
+                  </b-form-row>
+                  <b-form-row>
+                    <b-col cols="4">
+                      <b-form-group label="창업 지역" label-align="left">
+                        <template v-if="salesRequestDto.hdongCode">
+                          <b-form-input
+                            v-model="salesRequestDto.hdongCode"
+                          ></b-form-input>
                         </template>
                         <template v-else>
-                          <p>
-                            <strong class="text-primary">배달</strong>을
-                            <strong class="text-primary"
-                              >함께 병행하여 운영</strong
-                            >하면 좋습니다
-                          </p>
+                          <b-form-input
+                            v-model="salesRequestDto.hdongCode"
+                          ></b-form-input>
                         </template>
-                        <b-row no-gutters class="mt-4">
-                          <b-col cols="2">
-                            <p class="consumption-pattern-labels">
-                              <span class="consumption-pattern-label">
-                                매장 식사 비중
-                              </span>
-
-                              <strong
-                                class="consumption-pattern-value value-restaurant"
-                                >{{
-                                  salesResponseDto.offlineRevenueRatio.toFixed(
-                                    2,
-                                  )
-                                }}%</strong
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="4">
+                      <b-form-group label="창업 업종" label-align="left">
+                        <b-form-select
+                          v-model="salesRequestDto.mediumCategoryCode"
+                        >
+                          <b-form-select-option
+                            v-for="category in kbMediumCategories"
+                            :key="category"
+                            :value="category"
+                          >
+                            {{ category | kbCategoryTransformer }}
+                          </b-form-select-option>
+                        </b-form-select>
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="4">
+                      <b-row align-v="end" no-gutters>
+                        <b-col cols="8">
+                          <b-form-group label="창업 유형" label-align="left">
+                            <b-form-select v-model="salesRequestDto.storeType">
+                              <b-form-select-option
+                                v-for="type in storeTypes"
+                                :key="type"
+                                :value="type"
                               >
-                            </p>
-                          </b-col>
-                          <b-col cols="8">
-                            <div class="consumption-pattern-bar-charts">
-                              <div
-                                class="consumption-pattern-bar bar-restaurant"
-                                :style="
-                                  `width: ${salesResponseDto.offlineRevenueRatio}%`
-                                "
-                              ></div>
-                              <div
-                                class="consumption-pattern-bar bar-delivery"
-                                :style="
-                                  `width: ${salesResponseDto.deliveryRevenueRatio}%`
-                                "
-                              ></div>
-                            </div>
-                          </b-col>
-                          <b-col cols="2">
-                            <p class="consumption-pattern-labels">
-                              <span class="consumption-pattern-label">
-                                배달 식사 비중
-                              </span>
-                              <strong
-                                class="consumption-pattern-value value-delivery"
-                                >{{
-                                  salesResponseDto.deliveryRevenueRatio.toFixed(
-                                    2,
-                                  )
-                                }}%</strong
-                              >
-                            </p>
-                          </b-col>
-                        </b-row>
-                      </b-col>
-                    </b-row>
+                                {{ type }}
+                              </b-form-select-option>
+                            </b-form-select>
+                          </b-form-group>
+                        </b-col>
+                        <b-col cols="4"
+                          ><b-button
+                            variant="info"
+                            size="lg"
+                            block
+                            class="ml-2"
+                            style="margin-bottom:1rem"
+                            @click="getSalesData()"
+                          >
+                            상권분석
+                          </b-button></b-col
+                        >
+                      </b-row>
+                    </b-col>
+                  </b-form-row>
+                  <div
+                    class="data-info-box"
+                    v-if="salesResponseDto && revenueData.length > 0"
+                  >
+                    <header class="data-info-box-header">
+                      <h4>상권매출 현황</h4>
+                    </header>
+                    <div class="data-info-box-content">
+                      <RevenueChart
+                        :chartData="revenueChartData"
+                        :revenueData="revenueData"
+                      />
+                    </div>
                   </div>
-                  <div class="data-info-box-content">
-                    <b-row>
-                      <b-col cols="12" xl="2">
-                        <h5>
-                          음식점 현황<br />
-                          <span>식사&amp;배달 비중</span>
-                        </h5>
-                      </b-col>
-                      <b-col cols="12" xl="10">
-                        <b-row no-gutters>
-                          <b-col cols="4">
-                            <div class="store-status-info-box">
-                              <h6>
-                                <b-badge variant="info">점포수</b-badge>
-                              </h6>
-                              <div class="mb-4">
-                                <p>
-                                  <span class="store-status-info-label">{{
-                                    salesRequestDto.mediumCategoryCode
-                                      | kbCategoryTransformer
-                                  }}</span>
-                                  <strong
-                                    class="store-status-info-value text-primary"
-                                  >
-                                    {{
-                                      salesResponseDto.mediumCategoryStoreRatio.toFixed(
-                                        0,
-                                      )
-                                    }}%
-                                  </strong>
-                                </p>
-                              </div>
-                            </div>
-                          </b-col>
-                          <b-col cols="4">
-                            <div class="store-status-info-box">
-                              <h6>
-                                <b-badge variant="info">폐업률</b-badge>
-                              </h6>
-                              <div class="mb-4">
-                                <p>
-                                  <span class="store-status-info-label"
-                                    >상권평균</span
-                                  >
-                                  <strong
-                                    class="store-status-info-value text-primary"
-                                  >
-                                    {{
-                                      salesResponseDto.closedStoreRate.toFixed(
-                                        0,
-                                      )
-                                    }}%
-                                  </strong>
-                                </p>
-                                <p>
-                                  <span class="store-status-info-label">{{
-                                    salesRequestDto.mediumCategoryCode
-                                      | kbCategoryTransformer
-                                  }}</span>
-                                  <strong
-                                    class="store-status-info-value text-primary"
-                                  >
-                                    {{
-                                      salesResponseDto.mediumCategoryClosedStoreRate.toFixed(
-                                        0,
-                                      )
-                                    }}%
-                                  </strong>
-                                </p>
-                              </div>
-                            </div>
-                          </b-col>
-                          <b-col cols="4">
-                            <div class="store-status-info-box">
-                              <h6>
-                                <b-badge variant="info"
-                                  >평균 영업 기간
-                                </b-badge>
-                              </h6>
-                              <div class="mb-4">
-                                <p>
-                                  <span class="store-status-info-label"
-                                    >상권평균</span
-                                  >
-                                  <strong
-                                    class="store-status-info-value text-primary"
-                                  >
-                                    {{ salesResponseDto.survivalYears }}년
-                                  </strong>
-                                </p>
-                                <p>
-                                  <span class="store-status-info-label">
-                                    {{
-                                      salesRequestDto.mediumCategoryCode
-                                        | kbCategoryTransformer
-                                    }}</span
-                                  >
-                                  <strong
-                                    class="store-status-info-value text-primary"
-                                  >
-                                    {{
-                                      salesResponseDto.mediumCategorySurvivalYears
-                                    }}년
-                                  </strong>
-                                </p>
-                              </div>
-                            </div>
-                          </b-col>
-                        </b-row>
-                      </b-col>
-                    </b-row>
+                </b-col>
+                <b-col
+                  cols="12"
+                  lg="4"
+                  v-if="
+                    salesResponseDto.hdong && salesResponseDto.hdong.hdongCode
+                  "
+                >
+                  <div id="map" style="width:100%; height:100%"></div>
+                </b-col>
+              </b-row>
+              <b-row v-if="salesResponseDto">
+                <b-col cols="12" v-if="salesResponseDto.livingPopulation">
+                  <div class="data-info-box">
+                    <header class="data-info-box-header">
+                      <h4>
+                        인구 및 주 소비 패턴 분석
+                        <span> (선택한 행정동 기준)</span>
+                      </h4>
+                    </header>
+                    <div class="data-info-box-content">
+                      <p>
+                        <strong class="text-primary">
+                          <span
+                            >거주인구
+                            {{
+                              salesResponseDto.livingPopulation
+                                | numeralTransformer
+                            }}명</span
+                          >
+                          /
+                          <span>
+                            세대수
+                            {{
+                              salesResponseDto.sedeCount | numeralTransformer
+                            }}세대
+                          </span>
+                          /
+                          <span>
+                            직장인구
+                            {{
+                              salesResponseDto.employeeCount
+                                | numeralTransformer
+                            }}명
+                          </span>
+                        </strong>
+                        상주 중입니다.
+                      </p>
+                    </div>
                   </div>
-                  <div></div>
-                </div>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col cols="12">
-                <div class="data-info-box">
-                  <header class="data-info-box-header">
-                    <h4>
-                      매출 분석
-                      <span> (업종별 매출 기준)</span>
-                    </h4>
-                  </header>
-                  <div class="data-info-box-content">
-                    <b-row>
-                      <b-col cols="12" xl="4">
-                        <div>
-                          <h5>
-                            업종별 매출비중
-                          </h5>
-                          <div class="mt-4">
-                            <BarChart
-                              :chartData="kbCategoryRevenueChartData"
-                              :labels="
-                                Object.keys(
-                                  salesResponseDto.mediumCategoryRevenueRatio,
-                                )
-                              "
-                              :datasetsData="
-                                Object.values(
-                                  salesResponseDto.mediumCategoryRevenueRatio,
-                                )
-                              "
-                            />
+                </b-col>
+                <b-col
+                  cols="12"
+                  lg="5"
+                  v-if="
+                    salesResponseDto.mainAgeGroup && salesResponseDto.mainGagu
+                  "
+                >
+                  <div class="data-info-box">
+                    <div class="data-info-box-content">
+                      <b-row>
+                        <b-col cols="4">
+                          <h5>주 소비층</h5>
+                        </b-col>
+                        <b-col cols="8">
+                          <p>
+                            <strong class="text-primary"
+                              >{{ computedMainGagu }}
+                            </strong>
+                            이며,
+                            <strong class="text-primary">{{
+                              computedMainAgeGroup
+                            }}</strong
+                            >입니다.
+                          </p>
+                        </b-col>
+                      </b-row>
+                      <b-row>
+                        <b-col cols="12" md="6">
+                          <div class="doughnut-chart-container">
+                            <div class="doughnut-chart-wrapper">
+                              <DoughnutChart
+                                :chartData="mainGaguChartData"
+                                :labels="
+                                  Object.keys(salesResponseDto.gaguRatio)
+                                "
+                                :datasetsData="
+                                  Object.values(salesResponseDto.gaguRatio)
+                                "
+                              />
+                              <div class="doughnut-chart-text">
+                                <div>
+                                  <span>{{ computedMainGagu }}</span>
+                                  <p>{{ salesResponseDto.mainGaguRatio }}%</p>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </b-col>
-                      <b-col cols="12" xl="4">
-                        <div>
+                        </b-col>
+                        <b-col cols="12" md="6">
+                          <div class="doughnut-chart-container">
+                            <div class="doughnut-chart-wrapper">
+                              <DoughnutChart
+                                :chartData="mainAgeGroupChartData"
+                                :labels="Object.keys(salesResponseDto.ageRatio)"
+                                :datasetsData="
+                                  Object.values(salesResponseDto.ageRatio)
+                                "
+                              />
+
+                              <div class="doughnut-chart-text">
+                                <div>
+                                  <span>{{ computedMainAgeGroup }}</span>
+                                  <p>
+                                    {{ salesResponseDto.mainAgeGroupRatio }}%
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </b-col>
+                      </b-row>
+                    </div>
+                    <div></div>
+                  </div>
+                </b-col>
+                <b-col
+                  cols="12"
+                  lg="7"
+                  v-if="
+                    salesResponseDto.offlineRevenueRatio &&
+                      salesResponseDto.deliveryRevenueRatio
+                  "
+                >
+                  <div class="data-info-box">
+                    <div class="data-info-box-content">
+                      <b-row>
+                        <b-col cols="12" xl="2">
                           <h5>
-                            성별 매출비중
+                            소비 패턴<br />
+                            <span>식사&amp;배달 비중</span>
                           </h5>
+                        </b-col>
+                        <b-col cols="12" xl="10">
+                          <template
+                            v-if="salesResponseDto.deliveryRevenueRatio >= 20"
+                          >
+                            <p>
+                              <strong class="text-primary">배달</strong>을
+                              <strong class="text-primary"
+                                >필수적으로 병행하여 운영</strong
+                              >
+                              해야 합니다
+                            </p>
+                          </template>
+                          <template v-else>
+                            <p>
+                              <strong class="text-primary">배달</strong>을
+                              <strong class="text-primary"
+                                >함께 병행하여 운영</strong
+                              >하면 좋습니다
+                            </p>
+                          </template>
                           <b-row no-gutters class="mt-4">
                             <b-col cols="2">
                               <p class="consumption-pattern-labels">
                                 <span class="consumption-pattern-label">
-                                  남성
+                                  매장 식사 비중
                                 </span>
 
                                 <strong
                                   class="consumption-pattern-value value-restaurant"
                                   >{{
-                                    salesResponseDto
-                                      .mediumCategoryGenderRevenueRatio['1']
+                                    salesResponseDto.offlineRevenueRatio.toFixed(
+                                      2,
+                                    )
                                   }}%</strong
                                 >
                               </p>
@@ -470,13 +315,13 @@
                                 <div
                                   class="consumption-pattern-bar bar-restaurant"
                                   :style="
-                                    `width: ${salesResponseDto.mediumCategoryGenderRevenueRatio['1']}%`
+                                    `width: ${salesResponseDto.offlineRevenueRatio}%`
                                   "
                                 ></div>
                                 <div
                                   class="consumption-pattern-bar bar-delivery"
                                   :style="
-                                    `width: ${salesResponseDto.mediumCategoryGenderRevenueRatio['2']}%`
+                                    `width: ${salesResponseDto.deliveryRevenueRatio}%`
                                   "
                                 ></div>
                               </div>
@@ -484,266 +329,520 @@
                             <b-col cols="2">
                               <p class="consumption-pattern-labels">
                                 <span class="consumption-pattern-label">
-                                  여성
+                                  배달 식사 비중
                                 </span>
                                 <strong
                                   class="consumption-pattern-value value-delivery"
                                   >{{
-                                    salesResponseDto
-                                      .mediumCategoryGenderRevenueRatio['2']
+                                    salesResponseDto.deliveryRevenueRatio.toFixed(
+                                      2,
+                                    )
                                   }}%</strong
                                 >
                               </p>
                             </b-col>
                           </b-row>
-                        </div>
-                      </b-col>
-                      <b-col cols="12" xl="4">
-                        <b-row>
-                          <b-col cols="12" md="6" xl="12">
-                            <div class="doughnut-chart-container my-2">
-                              <div class="doughnut-chart-wrapper">
-                                <DoughnutChart
-                                  :chartData="weekDayRevenueChartData"
-                                  :labels="
-                                    Object.keys(
-                                      salesResponseDto.weekDayRevenueRatio,
-                                    )
-                                  "
-                                  :datasetsData="
-                                    Object.values(
-                                      salesResponseDto.weekDayRevenueRatio,
-                                    )
-                                  "
-                                />
-                                <div class="doughnut-chart-text">
-                                  <div>
-                                    <p>
+                        </b-col>
+                      </b-row>
+                    </div>
+                    <div class="data-info-box-content">
+                      <b-row>
+                        <b-col cols="12" xl="2">
+                          <h5>
+                            음식점 현황<br />
+                            <span>식사&amp;배달 비중</span>
+                          </h5>
+                        </b-col>
+                        <b-col cols="12" xl="10">
+                          <b-row no-gutters>
+                            <b-col cols="4">
+                              <div class="store-status-info-box">
+                                <h6>
+                                  <b-badge variant="info">점포수</b-badge>
+                                </h6>
+                                <div class="mb-4">
+                                  <p>
+                                    <span class="store-status-info-label">{{
+                                      salesRequestDto.mediumCategoryCode
+                                        | kbCategoryTransformer
+                                    }}</span>
+                                    <strong
+                                      class="store-status-info-value text-primary"
+                                    >
                                       {{
-                                        maxRevenueWeekday | weekDayTransformer
-                                      }}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="doughnut-chart-legend">
-                                <div class="legend-label-list">
-                                  <p
-                                    v-for="(label, index) in Object.keys(
-                                      salesResponseDto.weekDayRevenueRatio,
-                                    )"
-                                    :key="index"
-                                  >
-                                    <span
-                                      class="legend-label-point"
-                                      :style="{
-                                        'background-color':
-                                          weekDayRevenueChartData.datasets[0]
-                                            .backgroundColor[index],
-                                      }"
-                                    ></span>
-                                    <span class="legend-label-text">
-                                      {{ label | weekDayTransformer }}</span
-                                    >
-                                  </p>
-                                </div>
-                                <div class="legend-value-list">
-                                  <p
-                                    v-for="(data, index) in Object.values(
-                                      salesResponseDto.weekDayRevenueRatio,
-                                    )"
-                                    :key="index"
-                                  >
-                                    <span class="legend-value">
-                                      {{ data }}%</span
-                                    >
+                                        salesResponseDto.mediumCategoryStoreRatio.toFixed(
+                                          0,
+                                        )
+                                      }}%
+                                    </strong>
                                   </p>
                                 </div>
                               </div>
+                            </b-col>
+                            <b-col cols="4">
+                              <div class="store-status-info-box">
+                                <h6>
+                                  <b-badge variant="info">폐업률</b-badge>
+                                </h6>
+                                <div class="mb-4">
+                                  <p>
+                                    <span class="store-status-info-label"
+                                      >상권평균</span
+                                    >
+                                    <strong
+                                      class="store-status-info-value text-primary"
+                                    >
+                                      {{
+                                        salesResponseDto.closedStoreRate.toFixed(
+                                          0,
+                                        )
+                                      }}%
+                                    </strong>
+                                  </p>
+                                  <p>
+                                    <span class="store-status-info-label">{{
+                                      salesRequestDto.mediumCategoryCode
+                                        | kbCategoryTransformer
+                                    }}</span>
+                                    <strong
+                                      class="store-status-info-value text-primary"
+                                    >
+                                      {{
+                                        salesResponseDto.mediumCategoryClosedStoreRate.toFixed(
+                                          0,
+                                        )
+                                      }}%
+                                    </strong>
+                                  </p>
+                                </div>
+                              </div>
+                            </b-col>
+                            <b-col cols="4">
+                              <div class="store-status-info-box">
+                                <h6>
+                                  <b-badge variant="info"
+                                    >평균 영업 기간
+                                  </b-badge>
+                                </h6>
+                                <div class="mb-4">
+                                  <p>
+                                    <span class="store-status-info-label"
+                                      >상권평균</span
+                                    >
+                                    <strong
+                                      class="store-status-info-value text-primary"
+                                    >
+                                      {{ salesResponseDto.survivalYears }}년
+                                    </strong>
+                                  </p>
+                                  <p>
+                                    <span class="store-status-info-label">
+                                      {{
+                                        salesRequestDto.mediumCategoryCode
+                                          | kbCategoryTransformer
+                                      }}</span
+                                    >
+                                    <strong
+                                      class="store-status-info-value text-primary"
+                                    >
+                                      {{
+                                        salesResponseDto.mediumCategorySurvivalYears
+                                      }}년
+                                    </strong>
+                                  </p>
+                                </div>
+                              </div>
+                            </b-col>
+                          </b-row>
+                        </b-col>
+                      </b-row>
+                    </div>
+                    <div></div>
+                  </div>
+                </b-col>
+              </b-row>
+              <b-row v-if="salesResponseDto">
+                <b-col
+                  cols="12"
+                  v-if="salesResponseDto.mediumCategoryRevenueRatio"
+                >
+                  <div class="data-info-box">
+                    <header class="data-info-box-header">
+                      <h4>
+                        매출 분석
+                        <span> (업종별 매출 기준)</span>
+                      </h4>
+                    </header>
+                    <div class="data-info-box-content">
+                      <b-row>
+                        <b-col
+                          cols="12"
+                          xl="4"
+                          v-if="salesResponseDto.mediumCategoryRevenueRatio"
+                        >
+                          <div>
+                            <h5>
+                              업종별 매출비중
+                            </h5>
+                            <div class="mt-4">
+                              <BarChart
+                                :chartData="kbCategoryRevenueChartData"
+                                :labels="
+                                  Object.keys(
+                                    salesResponseDto.mediumCategoryRevenueRatio,
+                                  )
+                                "
+                                :datasetsData="
+                                  Object.values(
+                                    salesResponseDto.mediumCategoryRevenueRatio,
+                                  )
+                                "
+                              />
                             </div>
-                          </b-col>
-                          <b-col cols="12" md="6" xl="12">
-                            <div class="doughnut-chart-container my-2">
-                              <div class="doughnut-chart-wrapper">
-                                <DoughnutChart
-                                  :chartData="hourRevenueChartData"
-                                  :labels="
-                                    Object.keys(
-                                      salesResponseDto.hourRevenueRatio,
-                                    )
-                                  "
-                                  :datasetsData="
-                                    Object.values(
-                                      salesResponseDto.hourRevenueRatio,
-                                    )
-                                  "
-                                />
-                                <div class="doughnut-chart-text">
-                                  <div>
-                                    <p>
-                                      {{ maxRevenueHour | hourTransformer }}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="doughnut-chart-legend">
-                                <div class="legend-label-list">
-                                  <p
-                                    v-for="(label, index) in Object.keys(
-                                      salesResponseDto.hourRevenueRatio,
-                                    )"
-                                    :key="index"
+                          </div>
+                        </b-col>
+                        <b-col
+                          cols="12"
+                          xl="8"
+                          v-if="
+                            salesResponseDto.mediumCategoryGenderRevenueRatio
+                          "
+                        >
+                          <div>
+                            <h5>
+                              성별 매출비중
+                            </h5>
+                            <b-row no-gutters class="mt-4">
+                              <b-col cols="2">
+                                <p class="consumption-pattern-labels">
+                                  <span class="consumption-pattern-label">
+                                    남성
+                                  </span>
+
+                                  <strong
+                                    class="consumption-pattern-value value-restaurant"
+                                    >{{
+                                      salesResponseDto
+                                        .mediumCategoryGenderRevenueRatio['1']
+                                    }}%</strong
                                   >
-                                    <span
-                                      class="legend-label-point"
-                                      :style="{
-                                        'background-color':
-                                          hourRevenueChartData.datasets[0]
-                                            .backgroundColor[index],
-                                      }"
-                                    ></span>
-                                    <span class="legend-label-text">
-                                      {{ label | hourTransformer }}</span
-                                    >
-                                  </p>
+                                </p>
+                              </b-col>
+                              <b-col cols="8">
+                                <div class="consumption-pattern-bar-charts">
+                                  <div
+                                    class="consumption-pattern-bar bar-restaurant"
+                                    :style="
+                                      `width: ${salesResponseDto.mediumCategoryGenderRevenueRatio['1']}%`
+                                    "
+                                  ></div>
+                                  <div
+                                    class="consumption-pattern-bar bar-delivery"
+                                    :style="
+                                      `width: ${salesResponseDto.mediumCategoryGenderRevenueRatio['2']}%`
+                                    "
+                                  ></div>
                                 </div>
-                                <div class="legend-value-list">
-                                  <p
-                                    v-for="(data, index) in Object.values(
-                                      salesResponseDto.hourRevenueRatio,
-                                    )"
-                                    :key="index"
+                              </b-col>
+                              <b-col cols="2">
+                                <p class="consumption-pattern-labels">
+                                  <span class="consumption-pattern-label">
+                                    여성
+                                  </span>
+                                  <strong
+                                    class="consumption-pattern-value value-delivery"
+                                    >{{
+                                      salesResponseDto
+                                        .mediumCategoryGenderRevenueRatio['2']
+                                    }}%</strong
                                   >
-                                    <span class="legend-value">
-                                      {{ data }}%</span
-                                    >
-                                  </p>
-                                </div>
-                              </div>
+                                </p>
+                              </b-col>
+                            </b-row>
+                          </div>
+                          <div class="data-info-box mt-4">
+                            <header class="data-info-box-header">
+                              <h5>
+                                요일별 &amp; 시간대별 매출비중
+                              </h5>
+                            </header>
+                            <div class="data-info-box-content">
+                              <b-col
+                                cols="12"
+                                v-if="salesResponseDto.weekDayRevenueRatio"
+                              >
+                                <b-row align-v="center">
+                                  <b-col cols="12" md="6">
+                                    <div class="doughnut-chart-container my-4">
+                                      <div class="doughnut-chart-wrapper">
+                                        <DoughnutChart
+                                          :chartData="weekDayRevenueChartData"
+                                          :labels="
+                                            Object.keys(
+                                              salesResponseDto.weekDayRevenueRatio,
+                                            )
+                                          "
+                                          :datasetsData="
+                                            Object.values(
+                                              salesResponseDto.weekDayRevenueRatio,
+                                            )
+                                          "
+                                        />
+                                        <div class="doughnut-chart-text">
+                                          <div>
+                                            <p>
+                                              {{
+                                                maxRevenueWeekday
+                                                  | weekDayTransformer
+                                              }}
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="doughnut-chart-legend">
+                                        <div class="legend-label-list">
+                                          <p
+                                            v-for="(label,
+                                            index) in Object.keys(
+                                              salesResponseDto.weekDayRevenueRatio,
+                                            )"
+                                            :key="index"
+                                          >
+                                            <span
+                                              class="legend-label-point"
+                                              :style="{
+                                                'background-color':
+                                                  weekDayRevenueChartData
+                                                    .datasets[0]
+                                                    .backgroundColor[index],
+                                              }"
+                                            ></span>
+                                            <span class="legend-label-text">
+                                              {{
+                                                label | weekDayTransformer
+                                              }}</span
+                                            >
+                                          </p>
+                                        </div>
+                                        <div class="legend-value-list">
+                                          <p
+                                            v-for="(data,
+                                            index) in Object.values(
+                                              salesResponseDto.weekDayRevenueRatio,
+                                            )"
+                                            :key="index"
+                                          >
+                                            <span class="legend-value">
+                                              {{ data }}%</span
+                                            >
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </b-col>
+                                  <b-col cols="12" md="6">
+                                    <div class="doughnut-chart-container my-4">
+                                      <div class="doughnut-chart-wrapper">
+                                        <DoughnutChart
+                                          :chartData="hourRevenueChartData"
+                                          :labels="
+                                            Object.keys(
+                                              salesResponseDto.hourRevenueRatio,
+                                            )
+                                          "
+                                          :datasetsData="
+                                            Object.values(
+                                              salesResponseDto.hourRevenueRatio,
+                                            )
+                                          "
+                                        />
+                                        <div class="doughnut-chart-text">
+                                          <div>
+                                            <p>
+                                              {{
+                                                maxRevenueHour | hourTransformer
+                                              }}
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="doughnut-chart-legend">
+                                        <div class="legend-label-list">
+                                          <p
+                                            v-for="(label,
+                                            index) in Object.keys(
+                                              salesResponseDto.hourRevenueRatio,
+                                            )"
+                                            :key="index"
+                                          >
+                                            <span
+                                              class="legend-label-point"
+                                              :style="{
+                                                'background-color':
+                                                  hourRevenueChartData
+                                                    .datasets[0]
+                                                    .backgroundColor[index],
+                                              }"
+                                            ></span>
+                                            <span class="legend-label-text">
+                                              {{
+                                                label | hourTransformer
+                                              }}</span
+                                            >
+                                          </p>
+                                        </div>
+                                        <div class="legend-value-list">
+                                          <p
+                                            v-for="(data,
+                                            index) in Object.values(
+                                              salesResponseDto.hourRevenueRatio,
+                                            )"
+                                            :key="index"
+                                          >
+                                            <span class="legend-value">
+                                              {{ data }}%</span
+                                            >
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </b-col>
+                                </b-row>
+                              </b-col>
                             </div>
-                          </b-col>
-                        </b-row>
-                      </b-col>
-                    </b-row>
-                  </div>
-                  <div class="data-info-box-content">
-                    <p>
-                      해당 행정동에서
-                      <strong class="text-primary">
-                        {{
-                          salesRequestDto.mediumCategoryCode
-                            | kbCategoryTransformer
-                        }}(선택 업종)</strong
-                      >의 매출은
-                      <strong class="text-primary">6순위</strong>입니다.
-                      <br />
-                      <strong class="text-primary">
-                        {{
-                          salesRequestDto.mediumCategoryCode
-                            | kbCategoryTransformer
-                        }}(선택 업종)</strong
-                      >의 경우
-                      <strong class="text-primary"
-                        >{{ salesResponseDto.mainAge }}대
-                        {{
-                          parseInt(mainGender) | genderNumberTransformer
-                        }}(업종 연령 소비 반영)</strong
-                      >의 매출이 가장 높으며, <br />
-                      <strong class="text-primary">{{
-                        salesResponseDto.revenuePerOrder
-                      }}</strong>
-                      메뉴의 판매가 높습니다. <br />
-                      <strong class="text-primary">{{
-                        maxRevenueWeekday | weekDayTransformer
-                      }}</strong>
-                      매출이 우세하며,
-                      <strong class="text-primary">{{
-                        maxRevenueHour | hourTransformer
-                      }}</strong
-                      >에 주력할 수 있는 메뉴를 도입해야 합니다.
-                    </p>
-                  </div>
-                </div>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col cols="12">
-                <div class="data-info-box">
-                  <header class="data-info-box-header">
-                    <h4>
-                      논현1동 추천메뉴
-                    </h4>
-                  </header>
-                  <div class="data-info-box-content">
-                    <b-row>
-                      <b-col
-                        cols="4"
-                        v-for="(code, index) in Object.values(
-                          salesResponseDto.recommendedMenu,
-                        )"
-                        :key="index"
-                      >
-                        <b-img-lazy
-                          :src="
-                            `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/${code}.jpg`
-                          "
-                        ></b-img-lazy>
-                      </b-col>
-                    </b-row>
-                  </div>
-                </div>
-              </b-col>
-              <b-col cols="12">
-                <div class="data-info-box">
-                  <header class="data-info-box-header">
-                    <h4>
-                      반경 3km이내의 추천 메뉴
-                    </h4>
-                  </header>
-                  <div class="data-info-box-content">
-                    <b-row>
-                      <b-col
-                        cols="4"
-                        v-for="(menu, index) in recommendMenuHdong"
-                        :key="index"
-                      >
-                        <b-img-lazy
-                          :src="
-                            `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/pickcook_${menu}.png`
-                          "
-                        ></b-img-lazy>
-                        <div class="text-center">
-                          <p>{{ index + 1 }}위 {{ menu }}</p>
-                        </div>
-                      </b-col>
-                    </b-row>
-                    <div class="row-box  mt-4">
+                          </div>
+                        </b-col>
+                      </b-row>
+                    </div>
+                    <div
+                      class="data-info-box-content"
+                      v-if="salesRequestDto.mediumCategoryCode"
+                    >
                       <p>
-                        해당 행정동에서는 외식업 전체적으로
-                        <strong class="text-primary"
-                          >{{
-                            salesResponseDto.mainHourHdong | hourTransformer
-                          }},
-                          {{
-                            salesResponseDto.mainGenderHdong
-                              | genderNumberTransformer
-                          }}, {{ salesResponseDto.mainAgeHdong }}</strong
-                        >의 매출이 높습니다. <br />
-                        이와 유사한 지역에서는
+                        해당 행정동에서
                         <strong class="text-primary">
                           {{
-                            Object.values(
-                              salesResponseDto.recommendMenuHdong,
-                            ).join(',')
-                          }}
-                        </strong>
-                        메뉴의 판매량이 높습니다.
+                            salesRequestDto.mediumCategoryCode
+                              | kbCategoryTransformer
+                          }}</strong
+                        >의 매출은
+                        <strong class="text-primary"
+                          >{{ mediumCategoryRank }}순위</strong
+                        >입니다.
+                        <br />
+                        <strong class="text-primary">
+                          {{
+                            salesRequestDto.mediumCategoryCode
+                              | kbCategoryTransformer
+                          }}</strong
+                        >의 경우
+                        <strong class="text-primary"
+                          >{{ salesResponseDto.mainAge }}대 /
+                          {{
+                            parseInt(mainGender) | genderNumberTransformer
+                          }}</strong
+                        >의 매출이 가장 높으며,
+                        <strong class="text-primary">{{
+                          salesResponseDto.revenuePerOrder
+                        }}</strong>
+                        메뉴의 판매가 높습니다. <br />
+                        <strong class="text-primary">{{
+                          maxRevenueWeekday | weekDayTransformer
+                        }}</strong>
+                        매출이 우세하며,
+                        <strong class="text-primary">{{
+                          maxRevenueHour | hourTransformer
+                        }}</strong
+                        >에 주력할 수 있는 메뉴를 도입해야 합니다.
                       </p>
                     </div>
                   </div>
-                </div>
-              </b-col>
-            </b-row>
+                </b-col>
+              </b-row>
+              <b-row v-if="salesResponseDto">
+                <b-col cols="12" v-if="salesResponseDto.recommendedMenu">
+                  <div class="data-info-box">
+                    <header class="data-info-box-header">
+                      <h4
+                        v-if="
+                          salesResponseDto.hdong &&
+                            salesResponseDto.hdong.hdongName
+                        "
+                      >
+                        {{ salesResponseDto.hdong.hdongName }} 추천메뉴
+                      </h4>
+                    </header>
+                    <div class="data-info-box-content">
+                      <b-row>
+                        <b-col
+                          cols="4"
+                          v-for="(code, index) in Object.values(
+                            salesResponseDto.recommendedMenu,
+                          )"
+                          :key="index"
+                        >
+                          <b-img-lazy
+                            :src="
+                              `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/${code}.jpg`
+                            "
+                          ></b-img-lazy>
+                        </b-col>
+                      </b-row>
+                    </div>
+                  </div>
+                </b-col>
+                <b-col cols="12" v-if="salesResponseDto.recommendMenuHdong">
+                  <div class="data-info-box">
+                    <header class="data-info-box-header">
+                      <h4>
+                        반경 3km이내의 추천 메뉴
+                      </h4>
+                    </header>
+                    <div class="data-info-box-content">
+                      <b-row>
+                        <b-col
+                          cols="4"
+                          v-for="(menu, index) in recommendMenuHdong"
+                          :key="index"
+                        >
+                          <b-img-lazy
+                            :src="
+                              `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/pickcook_${menu}.png`
+                            "
+                          ></b-img-lazy>
+                          <div class="text-center">
+                            <p>{{ index + 1 }}위 {{ menu }}</p>
+                          </div>
+                        </b-col>
+                      </b-row>
+                      <div class="row-box mt-4 pt-4">
+                        <p>
+                          해당 행정동에서는 외식업 전체적으로
+                          <strong class="text-primary"
+                            >{{
+                              salesResponseDto.mainHourHdong | hourTransformer
+                            }},
+                            {{
+                              salesResponseDto.mainGenderHdong
+                                | genderNumberTransformer
+                            }}, {{ salesResponseDto.mainAgeHdong }}</strong
+                          >의 매출이 높습니다. <br />
+                          이와 유사한 지역에서는
+                          <strong class="text-primary">
+                            {{
+                              Object.values(
+                                salesResponseDto.recommendMenuHdong,
+                              ).join(',')
+                            }}
+                          </strong>
+                          메뉴의 판매량이 높습니다.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </b-col>
+              </b-row>
+            </template>
           </div>
         </section>
       </b-tab>
@@ -756,82 +855,150 @@
             </h4>
           </div>
         </template>
-        <b-row>
-          <b-col cols="6" lg="4">
-            <div class="baemin-info-box">
-              <div>
-                <p class="baemin-info-value">
-                  <strong>{{ consultBaeminReport.averageScore }}</strong>
-                </p>
-                <p class="baemin-info-label">
-                  <span>평점</span>
-                </p>
+        <section class="section">
+          <template v-if="consultBaeminReport">
+            <header class="section-header">
+              <h3 class="title">
+                {{
+                  consultBaeminReport.mediumCategoryCode | kbCategoryTransformer
+                }}
+                업종 유사상권
+              </h3>
+            </header>
+            <div class="section-content">
+              <b-row>
+                <b-col cols="6" lg="4">
+                  <div class="baemin-info-box">
+                    <div>
+                      <p class="baemin-info-value">
+                        <strong>{{ consultBaeminReport.averageScore }}</strong>
+                      </p>
+                      <p class="baemin-info-label">
+                        <span>평점</span>
+                      </p>
+                    </div>
+                  </div>
+                </b-col>
+                <b-col cols="6" lg="4">
+                  <div class="baemin-info-box">
+                    <div>
+                      <p class="baemin-info-value">
+                        <strong>{{
+                          consultBaeminReport.averageOrderRate
+                        }}</strong>
+                      </p>
+                      <p class="baemin-info-label">
+                        <span>평균 주문수<br />(6개월 합산)</span>
+                      </p>
+                    </div>
+                  </div>
+                </b-col>
+                <b-col cols="6" lg="4">
+                  <div class="baemin-info-box">
+                    <div>
+                      <p class="baemin-info-value">
+                        <strong>{{
+                          consultBaeminReport.averageMonthlyOrderRate
+                        }}</strong>
+                      </p>
+                      <p class="baemin-info-label">
+                        <span>월 평균 주문수</span>
+                      </p>
+                    </div>
+                  </div>
+                </b-col>
+                <b-col cols="6" lg="4">
+                  <div class="baemin-info-box">
+                    <div>
+                      <p class="baemin-info-value">
+                        <strong>{{
+                          consultBaeminReport.minimumOrderPrice
+                        }}</strong>
+                      </p>
+                      <p class="baemin-info-label">
+                        <span>최소 주문금액</span>
+                      </p>
+                    </div>
+                  </div>
+                </b-col>
+                <b-col cols="6" lg="4">
+                  <div class="baemin-info-box">
+                    <div>
+                      <p class="baemin-info-value">
+                        <strong>{{
+                          consultBaeminReport.averageDeliveryTip
+                        }}</strong>
+                      </p>
+                      <p class="baemin-info-label">
+                        <span>배달팁</span>
+                      </p>
+                    </div>
+                  </div>
+                </b-col>
+                <b-col cols="6" lg="4">
+                  <div class="baemin-info-box">
+                    <div>
+                      <p class="baemin-info-value">
+                        <strong>{{
+                          consultBaeminReport.averageLikeRate
+                        }}</strong>
+                      </p>
+                      <p class="baemin-info-label">
+                        <span>찜 수</span>
+                      </p>
+                    </div>
+                  </div>
+                </b-col>
+              </b-row>
+              <div class="data-info-box">
+                <div class="data-info-box-content">
+                  <p>
+                    <strong class="text-primary">{{
+                      consultBaeminReport.mediumCategoryCode
+                        | kbCategoryTransformer
+                    }}</strong
+                    >(선택업종) 업종의 경우 {{ computedMainGagu }} 상권에서 평균
+                    <strong class="text-primary">{{
+                      consultBaeminReport.averageOrderRate | numeralTransformer
+                    }}</strong>
+                    건의 주문수를 보이며, 배달팁 적정 금액은
+                    <strong class="text-primary">{{
+                      consultBaeminReport.averageDeliveryTip
+                        | numeralTransformer
+                    }}</strong
+                    >원이며, 맛집 랭킹에 들어가기 위해서는 최소
+                    <strong class="text-primary">{{
+                      consultBaeminReport.averageLikeRate | numeralTransformer
+                    }}</strong
+                    >개 이상의 찜이 필요합니다.
+                  </p>
+                </div>
               </div>
             </div>
-          </b-col>
-          <b-col cols="6" lg="4">
-            <div class="baemin-info-box">
-              <div>
-                <p class="baemin-info-value">
-                  <strong>{{ consultBaeminReport.averageOrderRate }}</strong>
-                </p>
-                <p class="baemin-info-label">
-                  <span>평균 주문수<br />(6개월 합산)</span>
-                </p>
+          </template>
+          <template v-else>
+            <div class="bg-light text-center p-4">
+              <p>
+                배민 데이터 정보가 필요합니다
+              </p>
+              <div class="mt-2">
+                <b-button
+                  variant="primary"
+                  @click="
+                    $router.push({
+                      name: 'ConsultResponseV3Detail',
+                      params: {
+                        id: $route.params.id,
+                      },
+                    })
+                  "
+                >
+                  입력하기
+                </b-button>
               </div>
             </div>
-          </b-col>
-          <b-col cols="6" lg="4">
-            <div class="baemin-info-box">
-              <div>
-                <p class="baemin-info-value">
-                  <strong>{{
-                    consultBaeminReport.averageMonthlyOrderRate
-                  }}</strong>
-                </p>
-                <p class="baemin-info-label">
-                  <span>월 평균 주문수</span>
-                </p>
-              </div>
-            </div>
-          </b-col>
-          <b-col cols="6" lg="4">
-            <div class="baemin-info-box">
-              <div>
-                <p class="baemin-info-value">
-                  <strong>{{ consultBaeminReport.minimumOrderPrice }}</strong>
-                </p>
-                <p class="baemin-info-label">
-                  <span>최소 주문금액</span>
-                </p>
-              </div>
-            </div>
-          </b-col>
-          <b-col cols="6" lg="4">
-            <div class="baemin-info-box">
-              <div>
-                <p class="baemin-info-value">
-                  <strong>{{ consultBaeminReport.averageDeliveryTip }}</strong>
-                </p>
-                <p class="baemin-info-label">
-                  <span>배달팁</span>
-                </p>
-              </div>
-            </div>
-          </b-col>
-          <b-col cols="6" lg="4">
-            <div class="baemin-info-box">
-              <div>
-                <p class="baemin-info-value">
-                  <strong>{{ consultBaeminReport.averageLikeRate }}</strong>
-                </p>
-                <p class="baemin-info-label">
-                  <span>찜 수</span>
-                </p>
-              </div>
-            </div>
-          </b-col>
-        </b-row>
+          </template>
+        </section>
       </b-tab>
       <b-tab>
         <template #title>
@@ -880,6 +1047,7 @@
 import BaseComponent from '@/core/base.component';
 import {
   BaeminReportDto,
+  ConsultResponseV3Dto,
   DeliveryFounderConsultDto,
   SalesRequestDto,
   SalesResponseDto,
@@ -923,6 +1091,7 @@ export default class ConsultReportDetail extends BaseComponent {
   private storeTypes: STORE_TYPE[] = [...CONST_STORE_TYPE];
 
   // 업종별 매출 비율
+  private mediumCategoryRank = 0;
   private kbCategoryRevenueChartData = {
     datasets: [
       {
@@ -1156,6 +1325,22 @@ export default class ConsultReportDetail extends BaseComponent {
     );
   }
 
+  private consultResponseV3Dto = new ConsultResponseV3Dto();
+  getConsultData(id) {
+    ConsultResponseV3Service.findOne(id).subscribe(res => {
+      if (res) {
+        this.consultResponseV3Dto = res.data;
+        if (res.data.consultBaeminReport) {
+          const hdongCode = res.data.consultBaeminReport.hdongCode;
+          this.salesRequestDto.hdongCode = hdongCode.toString();
+          this.salesRequestDto.mediumCategoryCode =
+            res.data.consultBaeminReport.mediumCategoryCode;
+          this.getSalesData();
+        }
+      }
+    });
+  }
+
   getBaeminData() {
     ConsultResponseV3Service.findOne(this.$route.params.id).subscribe(res => {
       if (res) {
@@ -1165,13 +1350,8 @@ export default class ConsultReportDetail extends BaseComponent {
   }
 
   created() {
-    if (this.salesRequestDto) {
-      this.salesRequestDto.hdongCode = '1150060400';
-      this.salesRequestDto.mediumCategoryCode = KB_MEDIUM_CATEGORY.F16;
-      this.salesRequestDto.storeType = STORE_TYPE.DELIVERY;
-    }
-
-    this.getSalesData();
+    const id = this.$route.params.id;
+    this.getConsultData(id);
     this.setMap('279');
   }
 }
@@ -1263,15 +1443,14 @@ export default class ConsultReportDetail extends BaseComponent {
     }
   }
   .baemin-info-box {
-    border-top: 2px solid #0b538d;
-    border-bottom: 2px solid #0b538d;
+    background-color: #f5f5f5;
     padding: 4em 0;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    margin: 2em 0;
-    height: calc(100% - 4em);
+    margin: 1.5em 0;
+    height: calc(100% - 3em);
     .baemin-info-value {
       font-size: 3.6rem;
       strong {

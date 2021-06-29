@@ -2,7 +2,6 @@ import { BaseDto } from '@/core';
 import { KB_MEDIUM_CATEGORY } from '@/services/shared';
 
 export class BaeminReportCreateDto extends BaseDto<BaeminReportCreateDto> {
-  consultId: number;
   averageScore: number;
   averageDeliveryTip: number;
   averageLikeRate: number;

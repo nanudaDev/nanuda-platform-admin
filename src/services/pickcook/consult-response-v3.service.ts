@@ -145,7 +145,7 @@ class ConsultResponseV3Service extends BaseService {
     );
   }
 
-  patchBaeminReport(id: string, baeminReportPatchDto: BaeminReportPatchDto) {
+  patchBaeminReport(id, baeminReportPatchDto: BaeminReportPatchDto) {
     return super.patch<BaeminReportPatchDto>(
       `v3/admin/consult-baemin-report/${id}`,
       baeminReportPatchDto,

@@ -318,10 +318,7 @@
                   <b-form-group label="kb카테고리 선택">
                     <b-form-select
                       class="custom-select"
-                      v-model="
-                        consultResponseV3Dto.consultBaeminReport
-                          .mediumCategoryCode
-                      "
+                      v-model="baeminReportPatchDto.mediumCategoryCode"
                     >
                       <b-form-select-option
                         v-for="(value, name, index) in kbMediumCategory"
@@ -335,9 +332,7 @@
                 <b-col cols="6">
                   <label for="average_score">평점</label>
                   <b-form-input
-                    v-model="
-                      consultResponseV3Dto.consultBaeminReport.averageScore
-                    "
+                    v-model="baeminReportPatchDto.averageScore"
                     id="average_score"
                     number
                   ></b-form-input>
@@ -345,10 +340,7 @@
                 <b-col cols="6">
                   <b-form-group label="평균 주문수">
                     <b-form-input
-                      v-model="
-                        consultResponseV3Dto.consultBaeminReport
-                          .averageOrderRate
-                      "
+                      v-model="baeminReportPatchDto.averageOrderRate"
                       id="average_order_rate"
                       number
                     ></b-form-input>
@@ -357,10 +349,7 @@
                 <b-col cols="6">
                   <b-form-group label="월 평균 주문수">
                     <b-form-input
-                      v-model="
-                        consultResponseV3Dto.consultBaeminReport
-                          .averageMonthlyOrderRate
-                      "
+                      v-model="baeminReportPatchDto.averageMonthlyOrderRate"
                       id="average_monthly_order_rate"
                       number
                     ></b-form-input>
@@ -369,10 +358,7 @@
                 <b-col cols="6">
                   <b-form-group label="최소 주문금액">
                     <b-form-input
-                      v-model="
-                        consultResponseV3Dto.consultBaeminReport
-                          .minimumOrderPrice
-                      "
+                      v-model="baeminReportPatchDto.minimumOrderPrice"
                       number
                       id="minimum_order_price"
                     ></b-form-input>
@@ -381,10 +367,7 @@
                 <b-col cols="6">
                   <label for="average_delivery_tip">배달 팁</label>
                   <b-form-input
-                    v-model="
-                      consultResponseV3Dto.consultBaeminReport
-                        .averageDeliveryTip
-                    "
+                    v-model="baeminReportPatchDto.averageDeliveryTip"
                     id="average_delivery_tip"
                     number
                   ></b-form-input>
@@ -392,9 +375,7 @@
                 <b-col cols="6">
                   <label for="average_like_rate">찜 수</label>
                   <b-form-input
-                    v-model="
-                      consultResponseV3Dto.consultBaeminReport.averageLikeRate
-                    "
+                    v-model="baeminReportPatchDto.averageLikeRate"
                     id="average_like_rate"
                     number
                   ></b-form-input>
@@ -973,6 +954,7 @@ export default class ConsultResponseV3Detail extends BaseComponent {
         ) {
           this.salesRequestDto.hdongCode = this.consultResponseV3Dto.consultBaeminReport.hdongCode;
           this.salesRequestDto.mediumCategoryCode = this.consultResponseV3Dto.consultBaeminReport.mediumCategoryCode;
+          this.baeminReportPatchDto = this.consultResponseV3Dto.consultBaeminReport;
           this.getSalesData();
         }
 

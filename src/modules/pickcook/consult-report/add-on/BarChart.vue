@@ -29,6 +29,13 @@ export default class BarChart extends Vue<Bar> {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
+      xAxes: [
+        {
+          gridLines: {
+            display: false,
+          },
+        },
+      ],
       yAxes: [
         {
           ticks: {

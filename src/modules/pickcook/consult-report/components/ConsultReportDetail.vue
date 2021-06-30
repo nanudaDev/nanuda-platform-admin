@@ -1207,12 +1207,10 @@ export default class ConsultReportDetail extends BaseComponent {
   }
 
   setAddress(res) {
-    console.log('res', res);
     this.reportAddress = `${res.sido} ${res.sigungu} ${res.bname}`;
     const geocoder = new window.kakao.maps.services.Geocoder();
     const callback = (results, status) => {
       if (status === window.kakao.maps.services.Status.OK) {
-        console.log('+results[0].address.h_code', +results[0].address.h_code);
         this.salesRequestDto.hdongCode = +results[0].address.h_code;
       }
     };

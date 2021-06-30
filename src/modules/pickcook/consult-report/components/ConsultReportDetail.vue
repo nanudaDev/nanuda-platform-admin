@@ -132,7 +132,13 @@
                     salesResponseDto.hdong && salesResponseDto.hdong.hdongCode
                   "
                 >
-                  <div id="map" style="width:100%; height:100%"></div>
+                  <b-alert variant="info" show>
+                    <p class="text-center">행정동 중심지 반경 1km</p>
+                  </b-alert>
+                  <div
+                    id="map"
+                    style="width:100%; min-height:300px; height:calc(100% - 6em)"
+                  ></div>
                 </b-col>
               </b-row>
               <b-row v-if="salesResponseDto">
@@ -185,10 +191,10 @@
                   <div class="data-info-box">
                     <div class="data-info-box-content">
                       <b-row>
-                        <b-col cols="4">
+                        <b-col cols="3">
                           <h5>주 소비층</h5>
                         </b-col>
-                        <b-col cols="8">
+                        <b-col cols="9">
                           <p>
                             <strong class="text-primary"
                               >{{ computedMainGagu }}
@@ -801,6 +807,12 @@
                       </h4>
                     </header>
                     <div class="data-info-box-content">
+                      <div class="mb-4">
+                        <h5 class="text-primary">
+                          픽쿡에서는 상권의 입지, 인구, 매출, 소비패턴, 매출 등
+                          다양한 요인을 분석한 결과로 최적의 메뉴를 추천합니다
+                        </h5>
+                      </div>
                       <b-row>
                         <b-col
                           cols="4"
@@ -809,11 +821,19 @@
                           )"
                           :key="index"
                         >
-                          <b-img-lazy
-                            :src="
-                              `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/${code}.jpg`
-                            "
-                          ></b-img-lazy>
+                          <div class="recommended-menu-info-box">
+                            <div class="recommended-menu-img">
+                              <b-img-lazy
+                                :src="
+                                  `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/${code}.jpg`
+                                "
+                              ></b-img-lazy>
+                            </div>
+                            <div class="recommended-menu-info">
+                              <h5>{{ code }}</h5>
+                              <p>추천지수 60%</p>
+                            </div>
+                          </div>
                         </b-col>
                       </b-row>
                     </div>
@@ -885,9 +905,7 @@
           <template v-if="consultBaeminReport">
             <header class="section-header">
               <h3 class="title">
-                {{
-                  consultBaeminReport.mediumCategoryCode | kbCategoryTransformer
-                }}
+                {{ consultBaeminReport.baeminCategoryCode }}
                 업종 유사상권
               </h3>
             </header>
@@ -985,8 +1003,7 @@
                 <div class="data-info-box-content">
                   <p>
                     <strong class="text-primary">{{
-                      consultBaeminReport.mediumCategoryCode
-                        | kbCategoryTransformer
+                      consultBaeminReport.baeminCategoryCode
                     }}</strong>
                     업종의 경우
                     <strong class="text-primary">{{ computedMainGagu }}</strong>
@@ -1158,6 +1175,7 @@ export default class ConsultReportDetail extends BaseComponent {
     }
   }
 
+  // 주 연령대
   get computedMainAgeGroup() {
     if (this.salesResponseDto.mainAgeGroup === 2) {
       return '20~40대';
@@ -1166,6 +1184,7 @@ export default class ConsultReportDetail extends BaseComponent {
     }
   }
 
+  // 주 소비층 차트
   private mainGaguChartData = {
     datasets: [
       {
@@ -1182,6 +1201,7 @@ export default class ConsultReportDetail extends BaseComponent {
     ],
   };
 
+  // 주 연령대 차트
   private mainAgeGroupChartData = {
     datasets: [
       {
@@ -1249,7 +1269,7 @@ export default class ConsultReportDetail extends BaseComponent {
     ],
   };
 
-  // 상권매출현황 차트 데이터
+  // 상권매출현황 차트
   private revenueData = [];
 
   // 성별 매출비중
@@ -1388,7 +1408,7 @@ export default class ConsultReportDetail extends BaseComponent {
 
         const map = new window.kakao.maps.Map(mapContainer, mapOption);
 
-        const content = `<span class="badge badge-primary" style="font-size:21px;border-radius: 100px;opacity: 82%">Here</span>`;
+        const content = ``;
         const markerPosition = new window.kakao.maps.LatLng(
           result[0].y,
           result[0].x,
@@ -1404,10 +1424,10 @@ export default class ConsultReportDetail extends BaseComponent {
           map: map,
           center: new window.kakao.maps.LatLng(result[0].y, result[0].x),
           strokeWeight: 2,
-          strokeColor: '#FF00FF',
-          strokeOpacity: 0.8,
+          strokeColor: '#ffffff',
+          strokeOpacity: 0,
           strokeStyle: 'dashed',
-          fillColor: '#00EEEE',
+          fillColor: '#89aef1',
           fillOpacity: 0.5,
         });
         circle.setRadius(1000);
@@ -1442,7 +1462,38 @@ export default class ConsultReportDetail extends BaseComponent {
 }
 </script>
 <style lang="scss">
+body {
+  -webkit-print-color-adjust: exact !important;
+}
 #report {
+  * {
+    word-break: keep-all;
+  }
+  .recommended-menu-info-box {
+    text-align: center;
+    .recommended-menu-img {
+      position: relative;
+      padding-bottom: 56.25%;
+      border-radius: 1rem;
+      overflow: hidden;
+      img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    .recommended-menu-info {
+      h5 {
+        font-size: 3.2rem;
+      }
+      p {
+        font-size: 1.6rem;
+      }
+    }
+  }
   .consumption-pattern-labels {
     text-align: center;
     padding: 0 0.5em;
@@ -1629,7 +1680,7 @@ export default class ConsultReportDetail extends BaseComponent {
     align-items: flex-start;
     justify-content: flex-start;
     white-space: nowrap;
-    margin-left: 1em;
+    margin-left: 2em;
     .legend-label-list {
       .legend-label-point {
         display: inline-block;

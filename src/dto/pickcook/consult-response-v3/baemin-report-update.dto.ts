@@ -1,5 +1,5 @@
 import { BaseDto } from '@/core';
-import { KB_MEDIUM_CATEGORY } from '@/services/shared';
+import { BaeminCategoryCode, KB_MEDIUM_CATEGORY } from '@/services/shared';
 import { BaeminReportDto } from './baemin-report.dto';
 
 export class BaeminReportUpdateDto extends BaseDto<BaeminReportUpdateDto>
@@ -11,4 +11,5 @@ export class BaeminReportUpdateDto extends BaseDto<BaeminReportUpdateDto>
   minimumOrderPrice?: number;
   averageOrderRate?: number;
   mediumCategoryCode?: KB_MEDIUM_CATEGORY | string;
+  baeminCategoryCode?: BaeminCategoryCode | string;
 }

@@ -314,7 +314,7 @@
                     </b-form-group>
                   </b-col>
                 </template>
-                <b-col cols="12">
+                <b-col cols="6">
                   <b-form-group label="kb카테고리 선택">
                     <b-form-select
                       class="custom-select"
@@ -324,6 +324,21 @@
                         v-for="(value, name, index) in kbMediumCategory"
                         :key="index"
                         :value="name"
+                        >{{ value }}</b-form-select-option
+                      >
+                    </b-form-select>
+                  </b-form-group>
+                </b-col>
+                <b-col cols="6">
+                  <b-form-group label="배민 카테고리 선택">
+                    <b-form-select
+                      class="custom-select"
+                      v-model="baeminReportUpdateDto.baeminCategoryCode"
+                    >
+                      <b-form-select-option
+                        v-for="(value, name, index) in baeminCategories"
+                        :key="index"
+                        :value="value"
                         >{{ value }}</b-form-select-option
                       >
                     </b-form-select>
@@ -396,6 +411,7 @@
                       <b-form-group label="창업 지역">
                         <b-form-input
                           :value="codeHdongAddress"
+                          @click="showAddressModal()"
                           readonly
                         ></b-form-input>
                       </b-form-group>
@@ -417,7 +433,7 @@
                     </b-col>
                   </b-row>
                 </b-col>
-                <b-col cols="12">
+                <b-col cols="6">
                   <b-form-group label="kb카테고리 선택">
                     <b-form-select
                       class="custom-select"
@@ -427,6 +443,21 @@
                         v-for="(value, name, index) in kbMediumCategory"
                         :key="index"
                         :value="name"
+                        >{{ value }}</b-form-select-option
+                      >
+                    </b-form-select>
+                  </b-form-group>
+                </b-col>
+                <b-col cols="6">
+                  <b-form-group label="배민 카테고리 선택">
+                    <b-form-select
+                      class="custom-select"
+                      v-model="baeminReportCreateDto.baeminCategoryCode"
+                    >
+                      <b-form-select-option
+                        v-for="(value, name, index) in baeminCategories"
+                        :key="index"
+                        :value="value"
                         >{{ value }}</b-form-select-option
                       >
                     </b-form-select>
@@ -760,6 +791,8 @@ import {
   BRAND_CONSULT,
   CONST_KB_MEDIUM_CATEGORY,
   KB_MEDIUM_CATEGORY_KOREAN,
+  CONST_BAEMIN_CATEGORY_CODE,
+  BaeminCategoryCode,
 } from '@/services/shared';
 import { BaseUser } from '@/services/shared/auth';
 import { Component } from 'vue-property-decorator';
@@ -838,6 +871,9 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   private baeminReportCreateDto = new BaeminReportCreateDto();
   private baeminReportAddress = '';
   private baeminReportUpdateDto = new BaeminReportUpdateDto();
+
+  // 배민카테고리
+  private baeminCategories = BaeminCategoryCode;
 
   // hdong code
   private hdongCode;
@@ -1061,7 +1097,7 @@ export default class ConsultResponseV3Detail extends BaseComponent {
     const geocoder = new window.kakao.maps.services.Geocoder();
     const callback = (results, status) => {
       if (status === window.kakao.maps.services.Status.OK) {
-        console.log('h_code', results[0].address.h_code);
+        // console.log('h_code', results[0].address.h_code);
         this.hdongCode = +results[0].address.h_code;
         this.baeminReportCreateDto.hdongCode = +results[0].address.h_code;
         if (this.hdongCode) {
@@ -1080,8 +1116,7 @@ export default class ConsultResponseV3Detail extends BaseComponent {
         if (this.codeHdongDto) {
           this.codeHdongAddress = `${this.codeHdongDto.sidoName} ${this.codeHdongDto.guName} ${this.codeHdongDto.hdongName}`;
         }
-
-        console.log('codeHdongDto', this.codeHdongDto);
+        // console.log('codeHdongDto', this.codeHdongDto);
       }
     });
   }

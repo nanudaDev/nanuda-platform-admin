@@ -5,6 +5,8 @@ export const KbCategoryPipeTransformer = () =>
     switch (value) {
       case 'F01':
         return '주점';
+      case 'F02':
+        return '기타 외국식';
       case 'F12':
         return '중식';
       case 'F14':

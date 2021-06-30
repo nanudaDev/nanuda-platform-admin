@@ -794,7 +794,13 @@
                 </b-col>
               </b-row>
               <b-row v-if="salesResponseDto">
-                <b-col cols="12" v-if="salesResponseDto.recommendedMenu">
+                <b-col
+                  cols="12"
+                  v-if="
+                    salesResponseDto.recommendedMenu &&
+                      salesResponseDto.recommendedMenu.length > 0
+                  "
+                >
                   <div class="data-info-box">
                     <header class="data-info-box-header">
                       <h4
@@ -816,22 +822,35 @@
                       <b-row>
                         <b-col
                           cols="4"
-                          v-for="(code, index) in Object.values(
-                            salesResponseDto.recommendedMenu,
-                          )"
+                          v-for="(menu,
+                          index) in salesResponseDto.recommendedMenu"
                           :key="index"
                         >
                           <div class="recommended-menu-info-box">
                             <div class="recommended-menu-img">
                               <b-img-lazy
                                 :src="
-                                  `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/${code}.jpg`
+                                  `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/${menu.sSmallCategoryCode}.jpg`
                                 "
                               ></b-img-lazy>
                             </div>
                             <div class="recommended-menu-info">
-                              <h5>{{ code }}</h5>
-                              <p>추천지수 60%</p>
+                              <div>
+                                <b-badge variant="warning">{{
+                                  menu.pkMediumCategoryName
+                                }}</b-badge>
+                                <b-badge variant="primary">{{
+                                  menu.pkSmallCategoryName
+                                }}</b-badge>
+                              </div>
+                              <h5>{{ menu.pkMenuName }}</h5>
+                              <p>
+                                추천지수
+                                <strong class="text-primary">{{
+                                  menu.averageScore
+                                }}</strong
+                                >%
+                              </p>
                             </div>
                           </div>
                         </b-col>
@@ -1486,11 +1505,18 @@ body {
       }
     }
     .recommended-menu-info {
+      margin-top: 2em;
+      .badge {
+        + .badge {
+          margin-left: 0.5em;
+        }
+      }
       h5 {
-        font-size: 3.2rem;
+        font-size: 2rem !important;
+        margin: 0.25em 0;
       }
       p {
-        font-size: 1.6rem;
+        font-size: 1rem;
       }
     }
   }

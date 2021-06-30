@@ -269,10 +269,7 @@
                 <b-col
                   cols="12"
                   xl="7"
-                  v-if="
-                    salesResponseDto.offlineRevenueRatio &&
-                      salesResponseDto.deliveryRevenueRatio
-                  "
+                  v-if="salesResponseDto.offlineRevenueRatio"
                 >
                   <div class="data-info-box">
                     <div class="data-info-box-content">
@@ -316,9 +313,9 @@
                                     value-restaurant
                                   "
                                   >{{
-                                    salesResponseDto.offlineRevenueRatio.toFixed(
-                                      2,
-                                    )
+                                    Math.round(
+                                      salesResponseDto.offlineRevenueRatio * 10,
+                                    ) / 10
                                   }}%</strong
                                 >
                               </p>
@@ -349,12 +346,14 @@
                                     consumption-pattern-value
                                     value-delivery
                                   "
-                                  >{{
-                                    salesResponseDto.deliveryRevenueRatio.toFixed(
-                                      2,
-                                    )
-                                  }}%</strong
                                 >
+                                  {{
+                                    Math.round(
+                                      salesResponseDto.deliveryRevenueRatio *
+                                        10,
+                                    ) / 10
+                                  }}%
+                                </strong>
                               </p>
                             </b-col>
                           </b-row>
@@ -552,8 +551,12 @@
                                       value-restaurant
                                     "
                                     >{{
-                                      salesResponseDto
-                                        .mediumCategoryGenderRevenueRatio['1']
+                                      Math.round(
+                                        salesResponseDto
+                                          .mediumCategoryGenderRevenueRatio[
+                                          '1'
+                                        ] * 10,
+                                      ) / 10
                                     }}%</strong
                                   >
                                 </p>
@@ -588,8 +591,12 @@
                                       value-delivery
                                     "
                                     >{{
-                                      salesResponseDto
-                                        .mediumCategoryGenderRevenueRatio['2']
+                                      Math.round(
+                                        salesResponseDto
+                                          .mediumCategoryGenderRevenueRatio[
+                                          '2'
+                                        ] * 10,
+                                      ) / 10
                                     }}%</strong
                                   >
                                 </p>
@@ -1609,7 +1616,7 @@ body {
         font-size: 1rem;
       }
       p {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
         line-height: 1.2;
       }
     }

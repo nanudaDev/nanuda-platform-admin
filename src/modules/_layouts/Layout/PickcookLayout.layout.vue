@@ -61,6 +61,7 @@ export default class PickcookLayout extends BaseComponent {
     left: 0;
     width: 100%;
     background-color: #0b538d;
+    z-index: 10;
   }
   #app-main {
     margin-top: 80px;

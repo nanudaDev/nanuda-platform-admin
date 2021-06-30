@@ -11,3 +11,8 @@ export * from './string-inquiry-filter.pipe';
 export * from './string-show-filter.pipe';
 export * from './string-view-filter.pipe';
 export * from './string-truncate-filter.pipe';
+export * from './kb-category-filtler.pipe';
+export * from './numeral-filter.pipe';
+export * from './weekday-filter.pipe';
+export * from './hour-filter.pipe';
+export * from './gender-number-filter.pipe';

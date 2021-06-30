@@ -132,7 +132,7 @@ import AnalysisPopulation from './components/AnalysisPopulation.vue';
 import AnalysisMap from './components/AnalysisMap.vue';
 import { AnalysisTabListDto, CompanyDistrictDto } from '@/dto';
 import { ReverseQueryParamMapper } from '@/core';
-import { BaeminCategoryCode } from '@/services/shared';
+import { BAEMIN_CATEGORY_CODE } from '@/services/shared';
 import CompanyDistrictService from '@/services/company-district.service';
 import CodeBdongService from '@/services/analysis/code-bdong.service';
 

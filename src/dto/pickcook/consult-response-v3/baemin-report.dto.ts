@@ -1,5 +1,5 @@
 import { BaseDto } from '@/core';
-import { BaeminCategoryCode, KB_MEDIUM_CATEGORY } from '@/services/shared';
+import { BAEMIN_CATEGORY_CODE, KB_MEDIUM_CATEGORY } from '@/services/shared';
 import { ConsultResponseV3Dto } from './consult-response-v3.dto';
 
 export class BaeminReportDto extends BaseDto<BaeminReportDto> {
@@ -14,5 +14,5 @@ export class BaeminReportDto extends BaseDto<BaeminReportDto> {
   averageDeliveryTip: number;
   averageLikeRate: number;
   consult?: ConsultResponseV3Dto;
-  baeminCategoryCode: BaeminCategoryCode | string;
+  baeminCategoryCode: BAEMIN_CATEGORY_CODE | string;
 }

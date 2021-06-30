@@ -1,4 +1,4 @@
-export enum BaeminCategoryCode {
+export enum BAEMIN_CATEGORY_CODE {
   FAST_FOOD = '패스트푸드',
   VEGETARIAN = '채식',
   BENTO = '도시락',
@@ -14,4 +14,4 @@ export enum BaeminCategoryCode {
   KOREAN = '한식',
 }
 
-export const CONST_BAEMIN_CATEGORY_CODE = Object.values(BaeminCategoryCode);
+export const CONST_BAEMIN_CATEGORY_CODE = Object.values(BAEMIN_CATEGORY_CODE);

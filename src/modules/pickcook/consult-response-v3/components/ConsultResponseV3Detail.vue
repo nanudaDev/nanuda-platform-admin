@@ -792,7 +792,7 @@ import {
   CONST_KB_MEDIUM_CATEGORY,
   KB_MEDIUM_CATEGORY_KOREAN,
   CONST_BAEMIN_CATEGORY_CODE,
-  BaeminCategoryCode,
+  BAEMIN_CATEGORY_CODE,
 } from '@/services/shared';
 import { BaseUser } from '@/services/shared/auth';
 import { Component } from 'vue-property-decorator';
@@ -873,7 +873,7 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   private baeminReportUpdateDto = new BaeminReportUpdateDto();
 
   // 배민카테고리
-  private baeminCategories = BaeminCategoryCode;
+  private baeminCategories = BAEMIN_CATEGORY_CODE;
 
   // hdong code
   private hdongCode;

@@ -1379,6 +1379,8 @@ export default class ConsultReportDetail extends BaseComponent {
             tempArr.sort((a, b) => {
               return b.value - a.value;
             });
+            this.mediumCategoryRevenueLabel = [];
+            this.mediumCategoryRevenueValue = [];
             tempArr.map(e => {
               this.mediumCategoryRevenueLabel.push(e.categoryName);
             });

@@ -1,7 +1,7 @@
 <template>
-  <div id="report" v-if="consultResponseV3Dto">
-    <b-tabs fill>
-      <b-tab active>
+  <div id="report" v-if="consultResponseV3Dto" ref="report">
+    <b-tabs fill nav-wrapper-class="sticky-top">
+      <b-tab active @click="goTop()">
         <template #title>
           <div class="tab-header">
             <h4>
@@ -1067,7 +1067,7 @@
           </template>
         </section>
       </b-tab>
-      <b-tab>
+      <b-tab @click="goTop()">
         <template #title>
           <div class="tab-header">
             <h4>
@@ -1087,7 +1087,7 @@
           </b-img-lazy>
         </div>
       </b-tab>
-      <b-tab>
+      <b-tab @click="goTop()">
         <template #title>
           <div class="tab-header">
             <h4>
@@ -1108,6 +1108,7 @@
         </div>
       </b-tab>
     </b-tabs>
+
     <!-- 주소 검색 모달 -->
     <b-modal id="postcode" title="주소 검색" hide-footer>
       <vue-daum-postcode
@@ -1410,6 +1411,7 @@ export default class ConsultReportDetail extends BaseComponent {
         this.consultBaeminReport = res.data.consultBaeminReport;
       }
     });
+    this.goTop();
   }
 
   // 지도 가져오기
@@ -1472,6 +1474,14 @@ export default class ConsultReportDetail extends BaseComponent {
 
   showAddressModal() {
     this.$bvModal.show('postcode');
+  }
+
+  goTop() {
+    this.$nextTick(() => {
+      // this.$refs.report.scrollTop = 0;
+      const top = this.$refs.report.offsetTop;
+      window.scrollTo(0, top);
+    });
   }
 
   created() {
@@ -1641,6 +1651,9 @@ body {
   }
 }
 .tabs {
+  .sticky-top {
+    background-color: #f5f5f5;
+  }
   .nav-tabs {
     .nav-link {
       padding: 1.5em 1em;

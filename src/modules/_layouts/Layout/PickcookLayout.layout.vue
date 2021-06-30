@@ -1,7 +1,7 @@
 <template>
   <div id="pickcook-app" class="page-content">
     <section :id="this.$route.name">
-      <nav id="nav" class="navbar fixed-top navbar-expand-lg navbar-dark">
+      <nav id="nav" class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
           <router-link
             class="navbar-brand brand-text"
@@ -56,6 +56,10 @@ export default class PickcookLayout extends BaseComponent {
 <style lang="scss">
 #pickcook-app {
   #nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     background-color: #0b538d;
   }
   #app-main {

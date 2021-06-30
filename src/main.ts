@@ -13,6 +13,7 @@ import {
 
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
 import VueDaumPostcode from 'vue-daum-postcode';
+import VStickyElement from 'vue-sticky-element';
 
 import MainLayout from '../src/modules/_layouts/Layout/MainLayout.layout.vue';
 import NonMainLayout from '../src/modules/_layouts/Layout/NonMainLayout.layout.vue';
@@ -108,6 +109,7 @@ Vue.use(datePicker);
 Vue.use(VueDaumPostcode);
 
 Vue.use(utilityPlugin);
+Vue.use(VStickyElement);
 
 new Vue({
   router,

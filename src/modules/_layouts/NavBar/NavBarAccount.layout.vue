@@ -27,7 +27,7 @@
           <a class="dropdown-item" href="/analysis">
             <strong style="color:#17a2b8">NND ANALYSIS</strong>
           </a>
-          <a class="dropdown-item" href="/pickcook/consult-response">
+          <a class="dropdown-item" href="/pickcook/consult-response-v3">
             <strong style="color:#0b538d">PICKCOOK</strong>
           </a>
           <div class="dropdown-divider"></div>

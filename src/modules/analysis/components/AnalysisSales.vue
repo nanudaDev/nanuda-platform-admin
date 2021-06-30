@@ -449,7 +449,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import AnalysisTabService from '@/services/analysis/analysis-tab.service';
 import BaeminCategoryService from '@/services/analysis/baemin-category.service';
 import {
-  BaeminCategoryCode,
+  BAEMIN_CATEGORY_CODE,
   CONST_BAEMIN_CATEGORY_CODE,
 } from '@/services/shared';
 import DashboardPieChart from '../../dashboard/add-on/DashboardPieChart.vue';
@@ -468,7 +468,7 @@ import toast from '../../../../resources/assets/js/services/toast.js';
 export default class AnalysisSales extends BaseComponent {
   @Prop() bdongCode!: string;
   private analysisTabSearchDto = new AnalysisTabListDto();
-  private baeminCategories: BaeminCategoryCode[] = [
+  private baeminCategories: BAEMIN_CATEGORY_CODE[] = [
     ...CONST_BAEMIN_CATEGORY_CODE,
   ];
   private revenueCategories = [];
@@ -506,7 +506,7 @@ export default class AnalysisSales extends BaseComponent {
     this.dayCountData = null;
     this.dayRevenueData = null;
   }
-  async findRevenueAnalysis(categoryName?: BaeminCategoryCode) {
+  async findRevenueAnalysis(categoryName?: BAEMIN_CATEGORY_CODE) {
     if (!this.bdongCode) {
       return;
     }
@@ -516,7 +516,8 @@ export default class AnalysisSales extends BaseComponent {
 
     this.analysisTabSearchDto.baeminCategoryName = categoryName;
     if (!categoryName) {
-      this.analysisTabSearchDto.baeminCategoryName = BaeminCategoryCode.KOREAN;
+      this.analysisTabSearchDto.baeminCategoryName =
+        BAEMIN_CATEGORY_CODE.KOREAN;
     }
 
     await Promise.all([

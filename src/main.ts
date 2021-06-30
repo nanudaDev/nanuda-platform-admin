@@ -13,6 +13,7 @@ import {
 
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
 import VueDaumPostcode from 'vue-daum-postcode';
+import VStickyElement from 'vue-sticky-element';
 
 import MainLayout from '../src/modules/_layouts/Layout/MainLayout.layout.vue';
 import NonMainLayout from '../src/modules/_layouts/Layout/NonMainLayout.layout.vue';
@@ -43,8 +44,15 @@ import {
   CurrencyPipeTransformer,
   SpaceTypePipeTransformer,
   NumberPipeTransformer,
+  KbCategoryPipeTransformer,
+  NumeralPipeTransformer,
+  WeekDayPipeTransformer,
+  HourPipeTransformer,
+  GenderNumberPipeTransformer,
 } from '@/core';
 import '@/core/guards/auth-role.guard';
+
+import utilityPlugin from '@/plugins/custom/utility';
 
 let env = new Environment();
 if (process.env.NODE_ENV === EnvironmentType.development) {
@@ -85,6 +93,11 @@ StringShowPipeTransformer();
 StringTruncatePipeTransformer();
 StringViewPipeTransformer();
 SpaceTypePipeTransformer();
+KbCategoryPipeTransformer();
+NumeralPipeTransformer();
+WeekDayPipeTransformer();
+HourPipeTransformer();
+GenderNumberPipeTransformer();
 
 // bootstrap
 Vue.use(BootstrapVue);
@@ -95,9 +108,11 @@ Vue.use(datePicker);
 // daum kakao
 Vue.use(VueDaumPostcode);
 
+Vue.use(utilityPlugin);
+Vue.use(VStickyElement);
+
 new Vue({
   router,
   store,
-
   render: h => h(App),
 }).$mount('#app');

@@ -60,7 +60,7 @@ export default class ResultRevenueChart extends Vue {
       layout: {
         padding: {
           // Any unspecified dimensions are assumed to be 0
-          top: 35,
+          top: 100,
         },
       },
       tooltips: {
@@ -76,7 +76,7 @@ export default class ResultRevenueChart extends Vue {
         xAxes: [
           {
             ticks: {
-              padding: -410,
+              padding: -380,
               fontSize: 15,
             },
           },

@@ -3,7 +3,7 @@
 import BaseComponent from '@/core/base.component';
 import Vue from 'vue';
 import { Doughnut, mixins } from 'vue-chartjs';
-import { Component, Prop } from 'vue-property-decorator';
+import { Component, Prop, Watch } from 'vue-property-decorator';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
@@ -17,28 +17,36 @@ export default class DoughnutChart extends Vue {
   @Prop() private datasetsData: any;
   @Prop() private labels?: any;
 
+  @Watch('datasetsData')
+  public onRevenueData() {
+    this.chartData.datasets[0].data = [...this.datasetsData];
+    this.renderChart(this.chartData, this.options);
+  }
+
+  private options = {
+    plugins: {
+      datalabels: {
+        color: 'transparent',
+      },
+    },
+    tooltips: {
+      enabled: true,
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+    cutoutPercentage: 80,
+    legend: {
+      display: false,
+    },
+  };
+
   mounted(): void {
     if (this.labels.length > 0) {
       this.chartData.labels = this.labels;
     }
     this.chartData.datasets[0].data = this.datasetsData;
 
-    this.renderChart(this.chartData, {
-      plugins: {
-        datalabels: {
-          color: 'transparent',
-        },
-      },
-      tooltips: {
-        enabled: true,
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-      cutoutPercentage: 80,
-      legend: {
-        display: false,
-      },
-    });
+    this.renderChart(this.chartData, this.options);
   }
 }
 </script>

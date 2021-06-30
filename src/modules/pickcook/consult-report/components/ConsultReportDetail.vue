@@ -269,10 +269,7 @@
                 <b-col
                   cols="12"
                   xl="7"
-                  v-if="
-                    salesResponseDto.offlineRevenueRatio &&
-                      salesResponseDto.deliveryRevenueRatio
-                  "
+                  v-if="salesResponseDto.offlineRevenueRatio"
                 >
                   <div class="data-info-box">
                     <div class="data-info-box-content">
@@ -316,9 +313,9 @@
                                     value-restaurant
                                   "
                                   >{{
-                                    salesResponseDto.offlineRevenueRatio.toFixed(
-                                      2,
-                                    )
+                                    Math.round(
+                                      salesResponseDto.offlineRevenueRatio * 10,
+                                    ) / 10
                                   }}%</strong
                                 >
                               </p>
@@ -349,12 +346,14 @@
                                     consumption-pattern-value
                                     value-delivery
                                   "
-                                  >{{
-                                    salesResponseDto.deliveryRevenueRatio.toFixed(
-                                      2,
-                                    )
-                                  }}%</strong
                                 >
+                                  {{
+                                    Math.round(
+                                      salesResponseDto.deliveryRevenueRatio *
+                                        10,
+                                    ) / 10
+                                  }}%
+                                </strong>
                               </p>
                             </b-col>
                           </b-row>
@@ -516,16 +515,8 @@
                             <div class="mt-4">
                               <BarChart
                                 :chartData="kbCategoryRevenueChartData"
-                                :labels="
-                                  Object.keys(
-                                    salesResponseDto.mediumCategoryRevenueRatio,
-                                  )
-                                "
-                                :datasetsData="
-                                  Object.values(
-                                    salesResponseDto.mediumCategoryRevenueRatio,
-                                  )
-                                "
+                                :labels="mediumCategoryRevenueLabel"
+                                :datasetsData="mediumCategoryRevenueValue"
                               />
                             </div>
                           </div>
@@ -552,8 +543,12 @@
                                       value-restaurant
                                     "
                                     >{{
-                                      salesResponseDto
-                                        .mediumCategoryGenderRevenueRatio['1']
+                                      Math.round(
+                                        salesResponseDto
+                                          .mediumCategoryGenderRevenueRatio[
+                                          '1'
+                                        ] * 10,
+                                      ) / 10
                                     }}%</strong
                                   >
                                 </p>
@@ -588,8 +583,12 @@
                                       value-delivery
                                     "
                                     >{{
-                                      salesResponseDto
-                                        .mediumCategoryGenderRevenueRatio['2']
+                                      Math.round(
+                                        salesResponseDto
+                                          .mediumCategoryGenderRevenueRatio[
+                                          '2'
+                                        ] * 10,
+                                      ) / 10
                                     }}%</strong
                                   >
                                 </p>
@@ -1302,7 +1301,8 @@ export default class ConsultReportDetail extends BaseComponent {
   private map;
   private reportAddress = '';
   private consultResponseV3Dto = new ConsultResponseV3Dto();
-
+  private mediumCategoryRevenueLabel = [];
+  private mediumCategoryRevenueValue = [];
   getSalesData() {
     ConsultResponseV3Service.getSalesData(this.salesRequestDto).subscribe(
       res => {
@@ -1373,11 +1373,25 @@ export default class ConsultReportDetail extends BaseComponent {
 
             //kb 중분류 코드에서 한글로 변경
             const tempObj = {};
+            const tempArr = [];
             Object.keys(mediumCategoryRevenueRatio).map(e => {
               tempObj[KB_MEDIUM_CATEGORY_KOREAN[e]] =
                 mediumCategoryRevenueRatio[e];
             });
 
+            Object.keys(tempObj).map(e => {
+              tempArr.push({ categoryName: e, value: tempObj[e] });
+            });
+
+            tempArr.sort((a, b) => {
+              return b.value - a.value;
+            });
+            tempArr.map(e => {
+              this.mediumCategoryRevenueLabel.push(e.categoryName);
+            });
+            tempArr.map(e => {
+              this.mediumCategoryRevenueValue.push(e.value);
+            });
             this.$set(
               this.salesResponseDto,
               'mediumCategoryRevenueRatio',
@@ -1609,7 +1623,7 @@ body {
         font-size: 1rem;
       }
       p {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
         line-height: 1.2;
       }
     }

@@ -1040,7 +1040,8 @@ export default class ConsultResponseV3Detail extends BaseComponent {
 
   // send massage
   sendMessage() {
-    this.templateMsg.consult = `[픽쿡 상담안내]\n안녕하세요 창업자님!\n데이터로 창업의 시작과 매출을올려드리는 픽쿡입니다.\n픽쿡을 신청해 주셔서 감사합니다.\n오늘 "${this.availableTime}" 사이에 상담전화를 드리겠습니다.\n감사합니다.`;
+    this.consultResponseV3SendMessageDto.googleMeetUrl = '-';
+    this.templateMsg.consult = `[픽쿡 상담안내]\n안녕하세요 ${this.consultResponseV3Dto.name}창업자님!\n데이터로 창업의 시작과 매출을올려드리는 픽쿡입니다.\n픽쿡을 신청해 주셔서 감사합니다.\n오늘 "${this.availableTime}" 사이에 상담전화를 드리겠습니다.\n감사합니다.`;
     this.templateMsg.meeting = `[픽쿡 상권분석 일정안내]\n안녕하세요 ${this.consultResponseV3Dto.name}창업자님!^^\n오늘 ${this.availableTime}에 픽쿡 상권분석 미팅이 예정되어 있어서 문자드립니다!\n구글 미트로 화상미팅이 진행될 예정이며, 아래 첨부된 링크로 접속이 가능하며, 앱 다운로드가있을 수 있습니다. \n해당 시간에 링크에 입장 하시면 담당자분이 대기 예정입니다.\n감사합니다.`;
     this.consultResponseV3SendMessageDto.message =
       this.selectedTemplateType === 'consult'

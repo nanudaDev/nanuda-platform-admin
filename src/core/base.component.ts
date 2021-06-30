@@ -13,6 +13,7 @@ export default class BaseComponent extends Vue {
   public env = new Environment();
   public $refs: {
     fileInput: any;
+    report: HTMLFormElement;
   };
 
   // get nav bar height

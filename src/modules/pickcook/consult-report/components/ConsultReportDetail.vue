@@ -1090,7 +1090,6 @@ export default class ConsultReportDetail extends BaseComponent {
         const mapOption = {
           center: new window.kakao.maps.LatLng(result[0].y, result[0].x),
           level: 6,
-          maxLevel: 6,
           minLevel: 3,
         };
 

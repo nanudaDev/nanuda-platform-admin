@@ -516,16 +516,8 @@
                             <div class="mt-4">
                               <BarChart
                                 :chartData="kbCategoryRevenueChartData"
-                                :labels="
-                                  Object.keys(
-                                    salesResponseDto.mediumCategoryRevenueRatio,
-                                  )
-                                "
-                                :datasetsData="
-                                  Object.values(
-                                    salesResponseDto.mediumCategoryRevenueRatio,
-                                  )
-                                "
+                                :labels="mediumCategoryRevenueLabel"
+                                :datasetsData="mediumCategoryRevenueValue"
                               />
                             </div>
                           </div>
@@ -1302,7 +1294,8 @@ export default class ConsultReportDetail extends BaseComponent {
   private map;
   private reportAddress = '';
   private consultResponseV3Dto = new ConsultResponseV3Dto();
-
+  private mediumCategoryRevenueLabel = [];
+  private mediumCategoryRevenueValue = [];
   getSalesData() {
     ConsultResponseV3Service.getSalesData(this.salesRequestDto).subscribe(
       res => {
@@ -1373,11 +1366,25 @@ export default class ConsultReportDetail extends BaseComponent {
 
             //kb 중분류 코드에서 한글로 변경
             const tempObj = {};
+            const tempArr = [];
             Object.keys(mediumCategoryRevenueRatio).map(e => {
               tempObj[KB_MEDIUM_CATEGORY_KOREAN[e]] =
                 mediumCategoryRevenueRatio[e];
             });
 
+            Object.keys(tempObj).map(e => {
+              tempArr.push({ categoryName: e, value: tempObj[e] });
+            });
+
+            tempArr.sort((a, b) => {
+              return b.value - a.value;
+            });
+            tempArr.map(e => {
+              this.mediumCategoryRevenueLabel.push(e.categoryName);
+            });
+            tempArr.map(e => {
+              this.mediumCategoryRevenueValue.push(e.value);
+            });
             this.$set(
               this.salesResponseDto,
               'mediumCategoryRevenueRatio',

@@ -138,7 +138,7 @@
                     salesResponseDto.hdong && salesResponseDto.hdong.hdongCode
                   "
                 >
-                  <div id="map" style="width:100%; height:100%"></div>
+                  <!-- <div id="map" style="width:100%; height:100%"></div> -->
                 </b-col>
               </b-row>
               <b-row v-if="salesResponseDto">
@@ -885,6 +885,7 @@
                       <p class="baemin-info-value">
                         <strong>{{
                           consultBaeminReport.averageOrderRate
+                            | numeralTransformer
                         }}</strong>
                       </p>
                       <p class="baemin-info-label">
@@ -899,6 +900,7 @@
                       <p class="baemin-info-value">
                         <strong>{{
                           consultBaeminReport.averageMonthlyOrderRate
+                            | numeralTransformer
                         }}</strong>
                       </p>
                       <p class="baemin-info-label">
@@ -913,6 +915,7 @@
                       <p class="baemin-info-value">
                         <strong>{{
                           consultBaeminReport.minimumOrderPrice
+                            | numeralTransformer
                         }}</strong>
                       </p>
                       <p class="baemin-info-label">
@@ -927,6 +930,7 @@
                       <p class="baemin-info-value">
                         <strong>{{
                           consultBaeminReport.averageDeliveryTip
+                            | numeralTransformer
                         }}</strong>
                       </p>
                       <p class="baemin-info-label">
@@ -941,6 +945,7 @@
                       <p class="baemin-info-value">
                         <strong>{{
                           consultBaeminReport.averageLikeRate
+                            | numeralTransformer
                         }}</strong>
                       </p>
                       <p class="baemin-info-label">
@@ -956,8 +961,10 @@
                     <strong class="text-primary">{{
                       consultBaeminReport.mediumCategoryCode
                         | kbCategoryTransformer
-                    }}</strong
-                    >(선택업종) 업종의 경우 {{ computedMainGagu }} 상권에서 평균
+                    }}</strong>
+                    업종의 경우
+                    <strong class="text-primary">{{ computedMainGagu }}</strong>
+                    상권에서 평균
                     <strong class="text-primary">{{
                       consultBaeminReport.averageOrderRate | numeralTransformer
                     }}</strong>

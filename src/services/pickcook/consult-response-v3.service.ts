@@ -6,7 +6,7 @@ import {
   ConsultResponseV3SendMessageDto,
   SalesRequestDto,
   SalesResponseDto,
-  BaeminReportPatchDto,
+  BaeminReportUpdateDto,
 } from '@/dto';
 import { BaeminReportCreateDto } from '@/dto/pickcook/consult-response-v3/baemin-report-create.dto';
 import { ApiUrlType } from '../../../environments';
@@ -145,8 +145,8 @@ class ConsultResponseV3Service extends BaseService {
     );
   }
 
-  patchBaeminReport(id, baeminReportPatchDto: BaeminReportPatchDto) {
-    return super.patch<BaeminReportPatchDto>(
+  updateBaeminReport(id, baeminReportPatchDto: BaeminReportUpdateDto) {
+    return super.patch<BaeminReportUpdateDto>(
       `v3/admin/consult-baemin-report/${id}`,
       baeminReportPatchDto,
       ApiUrlType.PICKCOOK,

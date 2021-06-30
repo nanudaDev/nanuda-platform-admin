@@ -318,7 +318,7 @@
                   <b-form-group label="kb카테고리 선택">
                     <b-form-select
                       class="custom-select"
-                      v-model="baeminReportPatchDto.mediumCategoryCode"
+                      v-model="baeminReportUpdateDto.mediumCategoryCode"
                     >
                       <b-form-select-option
                         v-for="(value, name, index) in kbMediumCategory"
@@ -332,7 +332,7 @@
                 <b-col cols="6">
                   <label for="average_score">평점</label>
                   <b-form-input
-                    v-model="baeminReportPatchDto.averageScore"
+                    v-model="baeminReportUpdateDto.averageScore"
                     id="average_score"
                     number
                   ></b-form-input>
@@ -340,7 +340,7 @@
                 <b-col cols="6">
                   <b-form-group label="평균 주문수">
                     <b-form-input
-                      v-model="baeminReportPatchDto.averageOrderRate"
+                      v-model="baeminReportUpdateDto.averageOrderRate"
                       id="average_order_rate"
                       number
                     ></b-form-input>
@@ -349,7 +349,7 @@
                 <b-col cols="6">
                   <b-form-group label="월 평균 주문수">
                     <b-form-input
-                      v-model="baeminReportPatchDto.averageMonthlyOrderRate"
+                      v-model="baeminReportUpdateDto.averageMonthlyOrderRate"
                       id="average_monthly_order_rate"
                       number
                     ></b-form-input>
@@ -358,7 +358,7 @@
                 <b-col cols="6">
                   <b-form-group label="최소 주문금액">
                     <b-form-input
-                      v-model="baeminReportPatchDto.minimumOrderPrice"
+                      v-model="baeminReportUpdateDto.minimumOrderPrice"
                       number
                       id="minimum_order_price"
                     ></b-form-input>
@@ -367,7 +367,7 @@
                 <b-col cols="6">
                   <label for="average_delivery_tip">배달 팁</label>
                   <b-form-input
-                    v-model="baeminReportPatchDto.averageDeliveryTip"
+                    v-model="baeminReportUpdateDto.averageDeliveryTip"
                     id="average_delivery_tip"
                     number
                   ></b-form-input>
@@ -375,14 +375,14 @@
                 <b-col cols="6">
                   <label for="average_like_rate">찜 수</label>
                   <b-form-input
-                    v-model="baeminReportPatchDto.averageLikeRate"
+                    v-model="baeminReportUpdateDto.averageLikeRate"
                     id="average_like_rate"
                     number
                   ></b-form-input>
                 </b-col>
               </b-form-row>
               <div class="text-right mt-4">
-                <b-btn size="lg" variant="primary" @click="patchBaeminReport()"
+                <b-btn size="lg" variant="primary" @click="updateBaeminReport()"
                   >수정하기</b-btn
                 >
               </div>
@@ -748,7 +748,7 @@ import {
   SalesRequestDto,
   SalesResponseDto,
   BaeminReportCreateDto,
-  BaeminReportPatchDto,
+  BaeminReportUpdateDto,
   CodeHdongDto,
 } from '@/dto';
 import { PickcookCodeManagementDto } from '@/services/init/dto';
@@ -837,7 +837,7 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   private kbMediumCategory = KB_MEDIUM_CATEGORY_KOREAN;
   private baeminReportCreateDto = new BaeminReportCreateDto();
   private baeminReportAddress = '';
-  private baeminReportPatchDto = new BaeminReportPatchDto();
+  private baeminReportUpdateDto = new BaeminReportUpdateDto();
 
   // hdong code
   private hdongCode;
@@ -954,7 +954,7 @@ export default class ConsultResponseV3Detail extends BaseComponent {
         ) {
           this.salesRequestDto.hdongCode = this.consultResponseV3Dto.consultBaeminReport.hdongCode;
           this.salesRequestDto.mediumCategoryCode = this.consultResponseV3Dto.consultBaeminReport.mediumCategoryCode;
-          this.baeminReportPatchDto = this.consultResponseV3Dto.consultBaeminReport;
+          this.baeminReportUpdateDto = this.consultResponseV3Dto.consultBaeminReport;
           this.getSalesData();
         }
 
@@ -1031,6 +1031,7 @@ export default class ConsultResponseV3Detail extends BaseComponent {
       },
     );
   }
+
   createBaeminReport() {
     ConsultResponseV3Service.postBaeminReport(
       this.$route.params.id,
@@ -1042,10 +1043,11 @@ export default class ConsultResponseV3Detail extends BaseComponent {
       }
     });
   }
-  patchBaeminReport() {
-    ConsultResponseV3Service.patchBaeminReport(
+
+  updateBaeminReport() {
+    ConsultResponseV3Service.updateBaeminReport(
       this.consultResponseV3Dto.consultBaeminReport.id,
-      this.baeminReportPatchDto,
+      this.baeminReportUpdateDto,
     ).subscribe(res => {
       if (res) {
         toast.success('수정완료');

@@ -97,13 +97,21 @@ export const CONST_STORE_TYPE = Object.values(STORE_TYPE);
 
 export enum KB_MEDIUM_CATEGORY_KOREAN {
   F01 = '주점',
+  F02 = '기타외국식',
+  F03 = '떡/한과',
+  F04 = '분식',
+  F05 = '휴게소/구내식당',
+  F06 = '뷔페',
+  F07 = '양식',
+  F08 = '유흥주점',
+  F09 = '배달',
+  F10 = '일식',
+  F11 = '제과/제빵',
   F12 = '중식',
+  F13 = '출장 및 이동음식업',
   F14 = '커피/음료',
   F15 = '패스트푸드',
-  F10 = '일식',
   F16 = '한식',
-  F04 = '분식',
-  F07 = '양식',
 }
 
 export const CONST_KB_MEDIUM_CATEGORY_KOREAN = Object.values(

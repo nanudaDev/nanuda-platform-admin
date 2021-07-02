@@ -1073,6 +1073,8 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   }
 
   createBaeminReport() {
+    this.baeminReportCreateDto.averageScore =
+      Math.round(this.baeminReportCreateDto.averageScore * 100) / 100;
     ConsultResponseV3Service.postBaeminReport(
       this.$route.params.id,
       this.baeminReportCreateDto,
@@ -1085,6 +1087,8 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   }
 
   updateBaeminReport() {
+    this.baeminReportUpdateDto.averageScore =
+      Math.round(this.baeminReportUpdateDto.averageScore * 100) / 100;
     ConsultResponseV3Service.updateBaeminReport(
       this.consultResponseV3Dto.consultBaeminReport.id,
       this.baeminReportUpdateDto,

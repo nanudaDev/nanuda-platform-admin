@@ -302,44 +302,47 @@
             <!-- 배민 리포트 수정 폼 -->
             <template v-if="consultResponseV3Dto.consultBaeminReport">
               <b-form-row>
-                <template v-if="salesResponseDto.hdong">
+                <template>
                   <b-col cols="12">
                     <b-form-group label="창업 지역">
                       <b-form-input
-                        :value="
-                          `${salesResponseDto.hdong.sidoName} ${salesResponseDto.hdong.guName} ${salesResponseDto.hdong.hdongName}`
-                        "
+                        :value="codeHdongAddress"
+                        @click="showAddressModal()"
                         readonly
                       ></b-form-input>
                     </b-form-group>
                   </b-col>
                 </template>
                 <b-col cols="6">
-                  <b-form-group label="kb카테고리 선택">
+                  <b-form-group label="창업 업종">
                     <b-form-select
                       class="custom-select"
                       v-model="baeminReportUpdateDto.mediumCategoryCode"
                     >
                       <b-form-select-option
-                        v-for="(value, name, index) in kbMediumCategory"
+                        v-for="(category, index) in kbMediumCategories"
                         :key="index"
-                        :value="name"
-                        >{{ value }}</b-form-select-option
+                        :value="category"
+                        >{{
+                          category | kbCategoryTransformer
+                        }}</b-form-select-option
                       >
                     </b-form-select>
                   </b-form-group>
                 </b-col>
                 <b-col cols="6">
-                  <b-form-group label="배민 카테고리 선택">
+                  <b-form-group label="배민 카테고리">
                     <b-form-select
                       class="custom-select"
                       v-model="baeminReportUpdateDto.baeminCategoryCode"
                     >
                       <b-form-select-option
-                        v-for="(value, name, index) in baeminCategories"
+                        v-for="(value, index) in baeminCategories"
                         :key="index"
                         :value="value"
-                        >{{ value }}</b-form-select-option
+                        >{{
+                          value | baeminCategoryTransformer
+                        }}</b-form-select-option
                       >
                     </b-form-select>
                   </b-form-group>
@@ -434,31 +437,35 @@
                   </b-row>
                 </b-col>
                 <b-col cols="6">
-                  <b-form-group label="kb카테고리 선택">
+                  <b-form-group label="창업 업종">
                     <b-form-select
                       class="custom-select"
                       v-model="baeminReportCreateDto.mediumCategoryCode"
                     >
                       <b-form-select-option
-                        v-for="(value, name, index) in kbMediumCategory"
+                        v-for="(category, index) in kbMediumCategories"
                         :key="index"
-                        :value="name"
-                        >{{ value }}</b-form-select-option
+                        :value="category"
+                        >{{
+                          category | kbCategoryTransformer
+                        }}</b-form-select-option
                       >
                     </b-form-select>
                   </b-form-group>
                 </b-col>
                 <b-col cols="6">
-                  <b-form-group label="배민 카테고리 선택">
+                  <b-form-group label="배민 카테고리">
                     <b-form-select
                       class="custom-select"
                       v-model="baeminReportCreateDto.baeminCategoryCode"
                     >
                       <b-form-select-option
-                        v-for="(value, name, index) in baeminCategories"
+                        v-for="(value, index) in baeminCategories"
                         :key="index"
                         :value="value"
-                        >{{ value }}</b-form-select-option
+                        >{{
+                          value | baeminCategoryTransformer
+                        }}</b-form-select-option
                       >
                     </b-form-select>
                   </b-form-group>
@@ -793,6 +800,7 @@ import {
   KB_MEDIUM_CATEGORY_KOREAN,
   CONST_BAEMIN_CATEGORY_CODE,
   BAEMIN_CATEGORY_CODE,
+  KB_MEDIUM_CATEGORY,
 } from '@/services/shared';
 import { BaseUser } from '@/services/shared/auth';
 import { Component } from 'vue-property-decorator';
@@ -867,13 +875,16 @@ export default class ConsultResponseV3Detail extends BaseComponent {
 
   private salesRequestDto = new SalesRequestDto();
   private salesResponseDto = new SalesResponseDto();
-  private kbMediumCategory = KB_MEDIUM_CATEGORY_KOREAN;
-  private baeminReportCreateDto = new BaeminReportCreateDto();
-  private baeminReportAddress = '';
-  private baeminReportUpdateDto = new BaeminReportUpdateDto();
+  private kbMediumCategories: KB_MEDIUM_CATEGORY[] = [
+    ...CONST_KB_MEDIUM_CATEGORY,
+  ];
 
   // 배민카테고리
-  private baeminCategories = BAEMIN_CATEGORY_CODE;
+  private baeminReportCreateDto = new BaeminReportCreateDto();
+  private baeminReportUpdateDto = new BaeminReportUpdateDto();
+  private baeminCategories: BAEMIN_CATEGORY_CODE[] = [
+    ...CONST_BAEMIN_CATEGORY_CODE,
+  ];
 
   // hdong code
   private hdongCode;
@@ -988,10 +999,10 @@ export default class ConsultResponseV3Detail extends BaseComponent {
           this.consultResponseV3Dto.consultBaeminReport &&
           this.consultResponseV3Dto.consultBaeminReport.hdongCode
         ) {
-          this.salesRequestDto.hdongCode = this.consultResponseV3Dto.consultBaeminReport.hdongCode;
-          this.salesRequestDto.mediumCategoryCode = this.consultResponseV3Dto.consultBaeminReport.mediumCategoryCode;
           this.baeminReportUpdateDto = this.consultResponseV3Dto.consultBaeminReport;
-          this.getSalesData();
+          this.getHdong(
+            this.consultResponseV3Dto.consultBaeminReport.hdongCode.toString(),
+          );
         }
 
         // this.getLocationInfoDetail();
@@ -1061,14 +1072,6 @@ export default class ConsultResponseV3Detail extends BaseComponent {
     });
   }
 
-  getSalesData() {
-    ConsultResponseV3Service.getSalesData(this.salesRequestDto).subscribe(
-      res => {
-        this.salesResponseDto = res.data;
-      },
-    );
-  }
-
   createBaeminReport() {
     ConsultResponseV3Service.postBaeminReport(
       this.$route.params.id,
@@ -1094,15 +1097,16 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   }
 
   setAddress(res) {
-    this.baeminReportAddress = res.address;
     const geocoder = new window.kakao.maps.services.Geocoder();
     const callback = (results, status) => {
       if (status === window.kakao.maps.services.Status.OK) {
         // console.log('h_code', results[0].address.h_code);
         this.hdongCode = +results[0].address.h_code;
         this.baeminReportCreateDto.hdongCode = +results[0].address.h_code;
+        this.baeminReportUpdateDto.hdongCode = +results[0].address.h_code;
+        console.log('results', results[0].address);
         if (this.hdongCode) {
-          this.getHdong(this.hdongCode);
+          this.codeHdongAddress = `${results[0].address.region_1depth_name} ${results[0].address.region_2depth_name} ${results[0].address.region_3depth_h_name}`;
         }
       }
     };
@@ -1117,7 +1121,6 @@ export default class ConsultResponseV3Detail extends BaseComponent {
         if (this.codeHdongDto) {
           this.codeHdongAddress = `${this.codeHdongDto.sidoName} ${this.codeHdongDto.guName} ${this.codeHdongDto.hdongName}`;
         }
-        // console.log('codeHdongDto', this.codeHdongDto);
       }
     });
   }
@@ -1125,6 +1128,7 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   showAddressModal() {
     this.$bvModal.show('postcode');
   }
+
   created() {
     const id = this.$route.params.id;
     this.findOne(id);

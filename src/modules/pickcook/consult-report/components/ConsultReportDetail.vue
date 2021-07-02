@@ -923,7 +923,10 @@
           <template v-if="consultBaeminReport">
             <header class="section-header">
               <h3 class="title">
-                {{ consultBaeminReport.baeminCategoryCode }}
+                {{
+                  consultBaeminReport.baeminCategoryCode
+                    | baeminCategoryTransformer
+                }}
                 업종 유사상권
               </h3>
             </header>
@@ -1022,6 +1025,7 @@
                   <p>
                     <strong class="text-primary">{{
                       consultBaeminReport.baeminCategoryCode
+                        | baeminCategoryTransformer
                     }}</strong>
                     업종의 경우
                     <strong class="text-primary">{{ computedMainGagu }}</strong>

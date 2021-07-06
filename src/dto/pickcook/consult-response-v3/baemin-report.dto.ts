@@ -14,5 +14,5 @@ export class BaeminReportDto extends BaseDto<BaeminReportDto> {
   averageDeliveryTip: number;
   averageLikeRate: number;
   consult?: ConsultResponseV3Dto;
-  baeminCategoryCode: BAEMIN_CATEGORY_CODE | string;
+  baeminCategoryCode: BAEMIN_CATEGORY_CODE;
 }

@@ -49,6 +49,7 @@ import {
   WeekDayPipeTransformer,
   HourPipeTransformer,
   GenderNumberPipeTransformer,
+  BaeminCategoryPipeTransformer,
 } from '@/core';
 import '@/core/guards/auth-role.guard';
 
@@ -98,6 +99,7 @@ NumeralPipeTransformer();
 WeekDayPipeTransformer();
 HourPipeTransformer();
 GenderNumberPipeTransformer();
+BaeminCategoryPipeTransformer();
 
 // bootstrap
 Vue.use(BootstrapVue);

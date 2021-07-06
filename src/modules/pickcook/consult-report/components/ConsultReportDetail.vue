@@ -814,8 +814,8 @@
                     <div class="data-info-box-content">
                       <div class="mb-4">
                         <h5 class="text-primary">
-                          픽쿡에서는 상권의 입지, 인구, 매출, 소비패턴, 매출 등
-                          다양한 요인을 분석한 결과로 최적의 메뉴를 추천합니다
+                          픽쿡에서는 상권의 입지, 인구, 소비패턴, 매출 등 다양한
+                          요인을 분석한 결과로 최적의 메뉴를 추천합니다
                         </h5>
                       </div>
                       <b-row>
@@ -923,13 +923,16 @@
           <template v-if="consultBaeminReport">
             <header class="section-header">
               <h3 class="title">
-                {{ consultBaeminReport.baeminCategoryCode }}
+                {{
+                  consultBaeminReport.baeminCategoryCode
+                    | baeminCategoryTransformer
+                }}
                 업종 유사상권
               </h3>
             </header>
             <div class="section-content">
               <b-row>
-                <b-col cols="6" lg="4">
+                <b-col cols="12" md="6" lg="4">
                   <div class="baemin-info-box">
                     <div>
                       <p class="baemin-info-value">
@@ -941,7 +944,7 @@
                     </div>
                   </div>
                 </b-col>
-                <b-col cols="6" lg="4">
+                <b-col cols="12" md="6" lg="4">
                   <div class="baemin-info-box">
                     <div>
                       <p class="baemin-info-value">
@@ -956,7 +959,7 @@
                     </div>
                   </div>
                 </b-col>
-                <b-col cols="6" lg="4">
+                <b-col cols="12" md="6" lg="4">
                   <div class="baemin-info-box">
                     <div>
                       <p class="baemin-info-value">
@@ -971,7 +974,7 @@
                     </div>
                   </div>
                 </b-col>
-                <b-col cols="6" lg="4">
+                <b-col cols="12" md="6" lg="4">
                   <div class="baemin-info-box">
                     <div>
                       <p class="baemin-info-value">
@@ -986,7 +989,7 @@
                     </div>
                   </div>
                 </b-col>
-                <b-col cols="6" lg="4">
+                <b-col cols="12" md="6" lg="4">
                   <div class="baemin-info-box">
                     <div>
                       <p class="baemin-info-value">
@@ -1001,7 +1004,7 @@
                     </div>
                   </div>
                 </b-col>
-                <b-col cols="6" lg="4">
+                <b-col cols="12" md="6" lg="4">
                   <div class="baemin-info-box">
                     <div>
                       <p class="baemin-info-value">
@@ -1022,6 +1025,7 @@
                   <p>
                     <strong class="text-primary">{{
                       consultBaeminReport.baeminCategoryCode
+                        | baeminCategoryTransformer
                     }}</strong>
                     업종의 경우
                     <strong class="text-primary">{{ computedMainGagu }}</strong>
@@ -1075,15 +1079,17 @@
             </h4>
           </div>
         </template>
-        <div class="row-box" v-for="n in 18" :key="n">
-          <b-img-lazy
-            :src="
-              `https://kr.object.ncloudstorage.com/common-storage-pickcook/sales/new_sales_data_${
-                n > 10 ? n : '0' + n
-              }.png`
-            "
-          >
-          </b-img-lazy>
+        <div class="sales-data-img-list">
+          <div class="row-box" v-for="n in 18" :key="n">
+            <b-img-lazy
+              :src="
+                `https://kr.object.ncloudstorage.com/common-storage-pickcook/sales/new_sales_data_${
+                  n > 9 ? n : '0' + n
+                }.png`
+              "
+            >
+            </b-img-lazy>
+          </div>
         </div>
       </b-tab>
       <b-tab @click="goTop()">
@@ -1095,15 +1101,17 @@
             </h4>
           </div>
         </template>
-        <div class="row-box" v-for="n in 14" :key="n">
-          <b-img-lazy
-            :src="
-              `https://kr.object.ncloudstorage.com/common-storage-pickcook/sales/cur_sales_data_${
-                n > 10 ? n : '0' + n
-              }.png`
-            "
-          >
-          </b-img-lazy>
+        <div class="sales-data-img-list">
+          <div class="row-box" v-for="n in 14" :key="n">
+            <b-img-lazy
+              :src="
+                `https://kr.object.ncloudstorage.com/common-storage-pickcook/sales/cur_sales_data_${
+                  n > 9 ? n : '0' + n
+                }.png`
+              "
+            >
+            </b-img-lazy>
+          </div>
         </div>
       </b-tab>
     </b-tabs>
@@ -1514,6 +1522,7 @@ body {
   * {
     word-break: keep-all;
   }
+
   .recommended-menu-info-box {
     text-align: center;
     .recommended-menu-img {
@@ -1668,7 +1677,7 @@ body {
 }
 .tabs {
   .sticky-top {
-    background-color: #f5f5f5;
+    background-color: #f1f1f1;
   }
   .nav-tabs {
     .nav-link {

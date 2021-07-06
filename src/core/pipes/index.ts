@@ -16,3 +16,4 @@ export * from './numeral-filter.pipe';
 export * from './weekday-filter.pipe';
 export * from './hour-filter.pipe';
 export * from './gender-number-filter.pipe';
+export * from './baemin-category-filter.pipe';

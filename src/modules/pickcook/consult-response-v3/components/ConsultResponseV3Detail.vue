@@ -302,44 +302,47 @@
             <!-- 배민 리포트 수정 폼 -->
             <template v-if="consultResponseV3Dto.consultBaeminReport">
               <b-form-row>
-                <template v-if="salesResponseDto.hdong">
+                <template>
                   <b-col cols="12">
                     <b-form-group label="창업 지역">
                       <b-form-input
-                        :value="
-                          `${salesResponseDto.hdong.sidoName} ${salesResponseDto.hdong.guName} ${salesResponseDto.hdong.hdongName}`
-                        "
+                        :value="codeHdongAddress"
+                        @click="showAddressModal()"
                         readonly
                       ></b-form-input>
                     </b-form-group>
                   </b-col>
                 </template>
                 <b-col cols="6">
-                  <b-form-group label="kb카테고리 선택">
+                  <b-form-group label="창업 업종">
                     <b-form-select
                       class="custom-select"
                       v-model="baeminReportUpdateDto.mediumCategoryCode"
                     >
                       <b-form-select-option
-                        v-for="(value, name, index) in kbMediumCategory"
+                        v-for="(category, index) in kbMediumCategories"
                         :key="index"
-                        :value="name"
-                        >{{ value }}</b-form-select-option
+                        :value="category"
+                        >{{
+                          category | kbCategoryTransformer
+                        }}</b-form-select-option
                       >
                     </b-form-select>
                   </b-form-group>
                 </b-col>
                 <b-col cols="6">
-                  <b-form-group label="배민 카테고리 선택">
+                  <b-form-group label="배민 카테고리">
                     <b-form-select
                       class="custom-select"
                       v-model="baeminReportUpdateDto.baeminCategoryCode"
                     >
                       <b-form-select-option
-                        v-for="(value, name, index) in baeminCategories"
+                        v-for="(value, index) in baeminCategories"
                         :key="index"
                         :value="value"
-                        >{{ value }}</b-form-select-option
+                        >{{
+                          value | baeminCategoryTransformer
+                        }}</b-form-select-option
                       >
                     </b-form-select>
                   </b-form-group>
@@ -434,31 +437,35 @@
                   </b-row>
                 </b-col>
                 <b-col cols="6">
-                  <b-form-group label="kb카테고리 선택">
+                  <b-form-group label="창업 업종">
                     <b-form-select
                       class="custom-select"
                       v-model="baeminReportCreateDto.mediumCategoryCode"
                     >
                       <b-form-select-option
-                        v-for="(value, name, index) in kbMediumCategory"
+                        v-for="(category, index) in kbMediumCategories"
                         :key="index"
-                        :value="name"
-                        >{{ value }}</b-form-select-option
+                        :value="category"
+                        >{{
+                          category | kbCategoryTransformer
+                        }}</b-form-select-option
                       >
                     </b-form-select>
                   </b-form-group>
                 </b-col>
                 <b-col cols="6">
-                  <b-form-group label="배민 카테고리 선택">
+                  <b-form-group label="배민 카테고리">
                     <b-form-select
                       class="custom-select"
                       v-model="baeminReportCreateDto.baeminCategoryCode"
                     >
                       <b-form-select-option
-                        v-for="(value, name, index) in baeminCategories"
+                        v-for="(value, index) in baeminCategories"
                         :key="index"
                         :value="value"
-                        >{{ value }}</b-form-select-option
+                        >{{
+                          value | baeminCategoryTransformer
+                        }}</b-form-select-option
                       >
                     </b-form-select>
                   </b-form-group>
@@ -539,10 +546,8 @@
     <b-modal
       v-if="consultResponseV3Dto"
       id="send_message"
-      ok-title="전송"
-      cancel-title="취소"
       :title="`${consultResponseV3Dto.name} 사용자에게 문자하기`"
-      @ok="sendMessage()"
+      hide-footer
     >
       <p class="mb-2">
         휴대폰 번호 :
@@ -556,42 +561,32 @@
         <b-form-group>
           <b-form-radio
             v-model="selectedTemplateType"
-            v-for="(type, index) in messageTemplateTypes"
+            v-for="(type, name, index) in messageTemplateTypes"
             :key="index"
-            :value="type.id"
-            >{{ type.name }}</b-form-radio
+            :value="type"
+            >{{ type }}</b-form-radio
           >
         </b-form-group>
         <b-form-group label="상담시간대">
           <b-form-input v-model="availableTime" placeholder=""></b-form-input>
         </b-form-group>
-        <!-- <template v-if="selectedTemplateType === 'consult'">
-          <b-form-textarea
-            id="message"
-            placeholder="메세지를 입력해주세요.."
-            rows="3"
-            max-rows="6"
-            v-model="templateMsg.consult"
-          >
-          </b-form-textarea>
-        </template> -->
-        <template v-if="selectedTemplateType === 'meeting'">
+        <template v-if="selectedTemplateType === '미팅용'">
           <b-form-group label="구글 미트 URL">
             <b-form-input
               v-model="consultResponseV3SendMessageDto.googleMeetUrl"
             ></b-form-input>
           </b-form-group>
-          <!-- <b-form-textarea
-            id="message"
-            placeholder="메세지를 입력해주세요.."
-            rows="3"
-            max-rows="6"
-            v-model="templateMsg.meeting"
-          >
-          </b-form-textarea> -->
         </template>
+        <b-form-textarea
+          v-html="messageTemplate"
+          v-model="messageTemplate"
+          rows="10"
+          max-rows="20"
+          style="height:240px"
+          readonly
+        >
+        </b-form-textarea>
       </div>
-
       <div
         class="mt-2 text-right"
         v-if="
@@ -602,6 +597,11 @@
         <b-button variant="outline-info" v-b-modal.messages_log
           >문자 전송 내역</b-button
         >
+      </div>
+      <div class="border-top pt-2 mt-4 text-right">
+        <b-button variant="primary" @click="sendMessage()">
+          전송
+        </b-button>
       </div>
     </b-modal>
     <!-- 메세지 전송 내역 모달 -->
@@ -617,7 +617,7 @@
               {{ messageLog.created | dateTransformer }}
             </small>
           </p>
-          <p v-html="messageLog.message" class="mt-2">
+          <p v-if="messageLog.message" class="mt-2">
             {{ messageLog.message }}
           </p>
         </div>
@@ -762,7 +762,7 @@
   </section>
 </template>
 <script lang="ts">
-import { Pagination } from '@/common';
+import { Pagination, MESSAGE_TEMPLATE_TYPE } from '@/common';
 import { getStatusColor } from '@/core';
 import BaseComponent from '@/core/base.component';
 import {
@@ -793,6 +793,7 @@ import {
   KB_MEDIUM_CATEGORY_KOREAN,
   CONST_BAEMIN_CATEGORY_CODE,
   BAEMIN_CATEGORY_CODE,
+  KB_MEDIUM_CATEGORY,
 } from '@/services/shared';
 import { BaseUser } from '@/services/shared/auth';
 import { Component } from 'vue-property-decorator';
@@ -809,19 +810,12 @@ import CodeHdongService from '@/services/pickcook/code-hdong.service';
 export default class ConsultResponseV3Detail extends BaseComponent {
   private consultResponseV3Dto = new ConsultResponseV3Dto();
   private consultResponseUpdateDto = new ConsultResponseV3UpdateDto();
+
   private consultResponseV3SendMessageDto = new ConsultResponseV3SendMessageDto();
   private adminSendMessageDto = new AdminSendMessageDto();
-  private messageTemplateTypes = [
-    { id: 'consult', name: '유선상담용' },
-    { id: 'meeting', name: '미팅용' },
-  ];
-
-  private selectedTemplateType = this.messageTemplateTypes[0].id;
+  private messageTemplateTypes = MESSAGE_TEMPLATE_TYPE;
   private availableTime = '';
-  private templateMsg = {
-    consult: '',
-    meeting: '',
-  };
+  private selectedTemplateType = MESSAGE_TEMPLATE_TYPE.CONSULT;
 
   private brandConsultStatus: PickcookCodeManagementDto[] = [];
   private codeManagementDto = new PickcookCodeManagementDto();
@@ -867,13 +861,16 @@ export default class ConsultResponseV3Detail extends BaseComponent {
 
   private salesRequestDto = new SalesRequestDto();
   private salesResponseDto = new SalesResponseDto();
-  private kbMediumCategory = KB_MEDIUM_CATEGORY_KOREAN;
-  private baeminReportCreateDto = new BaeminReportCreateDto();
-  private baeminReportAddress = '';
-  private baeminReportUpdateDto = new BaeminReportUpdateDto();
+  private kbMediumCategories: KB_MEDIUM_CATEGORY[] = [
+    ...CONST_KB_MEDIUM_CATEGORY,
+  ];
 
   // 배민카테고리
-  private baeminCategories = BAEMIN_CATEGORY_CODE;
+  private baeminReportCreateDto = new BaeminReportCreateDto();
+  private baeminReportUpdateDto = new BaeminReportUpdateDto();
+  private baeminCategories: BAEMIN_CATEGORY_CODE[] = [
+    ...CONST_BAEMIN_CATEGORY_CODE,
+  ];
 
   // hdong code
   private hdongCode;
@@ -988,10 +985,10 @@ export default class ConsultResponseV3Detail extends BaseComponent {
           this.consultResponseV3Dto.consultBaeminReport &&
           this.consultResponseV3Dto.consultBaeminReport.hdongCode
         ) {
-          this.salesRequestDto.hdongCode = this.consultResponseV3Dto.consultBaeminReport.hdongCode;
-          this.salesRequestDto.mediumCategoryCode = this.consultResponseV3Dto.consultBaeminReport.mediumCategoryCode;
           this.baeminReportUpdateDto = this.consultResponseV3Dto.consultBaeminReport;
-          this.getSalesData();
+          this.getHdong(
+            this.consultResponseV3Dto.consultBaeminReport.hdongCode.toString(),
+          );
         }
 
         // this.getLocationInfoDetail();
@@ -1038,15 +1035,36 @@ export default class ConsultResponseV3Detail extends BaseComponent {
     }
   }
 
+  get messageTemplate() {
+    if (this.selectedTemplateType === MESSAGE_TEMPLATE_TYPE.CONSULT) {
+      return `[픽쿡 상담안내]\n안녕하세요 ${this.consultResponseV3Dto.name} 창업자님!\n데이터로 창업의 시작과 매출을올려드리는 픽쿡입니다.\n픽쿡을 신청해 주셔서 감사합니다.\n오늘 "${this.availableTime}" 사이에 상담전화를 드리겠습니다.\n감사합니다.`;
+    } else {
+      return `[픽쿡 상권분석 일정안내]\n안녕하세요 ${
+        this.consultResponseV3Dto.name
+      } 창업자님!\n오늘 "${
+        this.availableTime
+      }"에 픽쿡 상권분석 미팅이 예정되어 있어서 문자드립니다!\n구글 미트로 화상미팅이 진행될 예정이며, 아래 첨부된 링크로 접속이 가능하며, 앱 다운로드가있을 수 있습니다. \n해당 시간에 링크에 입장 하시면 담당자분이 대기 예정입니다.\n감사합니다.\n\n구글 미트 주소: ${
+        this.consultResponseV3SendMessageDto.googleMeetUrl
+          ? this.consultResponseV3SendMessageDto.googleMeetUrl
+          : ''
+      }`;
+    }
+  }
+
   // send massage
   sendMessage() {
-    this.consultResponseV3SendMessageDto.googleMeetUrl = '-';
-    this.templateMsg.consult = `[픽쿡 상담안내]\n안녕하세요 ${this.consultResponseV3Dto.name}창업자님!\n데이터로 창업의 시작과 매출을올려드리는 픽쿡입니다.\n픽쿡을 신청해 주셔서 감사합니다.\n오늘 "${this.availableTime}" 사이에 상담전화를 드리겠습니다.\n감사합니다.`;
-    this.templateMsg.meeting = `[픽쿡 상권분석 일정안내]\n안녕하세요 ${this.consultResponseV3Dto.name}창업자님!^^\n오늘 ${this.availableTime}에 픽쿡 상권분석 미팅이 예정되어 있어서 문자드립니다!\n구글 미트로 화상미팅이 진행될 예정이며, 아래 첨부된 링크로 접속이 가능하며, 앱 다운로드가있을 수 있습니다. \n해당 시간에 링크에 입장 하시면 담당자분이 대기 예정입니다.\n감사합니다.`;
-    this.consultResponseV3SendMessageDto.message =
-      this.selectedTemplateType === 'consult'
-        ? this.templateMsg.consult
-        : this.templateMsg.meeting;
+    if (!this.availableTime) {
+      toast.error('상담시간대를 입력해주세요!');
+      return;
+    }
+    if (
+      this.selectedTemplateType === MESSAGE_TEMPLATE_TYPE.MEETING &&
+      !this.consultResponseV3SendMessageDto.googleMeetUrl
+    ) {
+      toast.error('구글 미트 주소를 입력해주세요!');
+      return;
+    }
+    this.consultResponseV3SendMessageDto.message = this.messageTemplate;
     ConsultResponseV3Service.sendMessage(
       this.consultResponseV3Dto.id,
       this.consultResponseV3SendMessageDto,
@@ -1055,21 +1073,16 @@ export default class ConsultResponseV3Detail extends BaseComponent {
         this.consultResponseV3SendMessageDto = new ConsultResponseV3SendMessageDto();
         toast.success('문자가 발송 되었습니다.');
         this.findOne(this.$route.params.id);
+        this.$bvModal.hide('send_message');
       } else {
         return;
       }
     });
   }
 
-  getSalesData() {
-    ConsultResponseV3Service.getSalesData(this.salesRequestDto).subscribe(
-      res => {
-        this.salesResponseDto = res.data;
-      },
-    );
-  }
-
   createBaeminReport() {
+    this.baeminReportCreateDto.averageScore =
+      Math.round(this.baeminReportCreateDto.averageScore * 100) / 100;
     ConsultResponseV3Service.postBaeminReport(
       this.$route.params.id,
       this.baeminReportCreateDto,
@@ -1082,6 +1095,8 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   }
 
   updateBaeminReport() {
+    this.baeminReportUpdateDto.averageScore =
+      Math.round(this.baeminReportUpdateDto.averageScore * 100) / 100;
     ConsultResponseV3Service.updateBaeminReport(
       this.consultResponseV3Dto.consultBaeminReport.id,
       this.baeminReportUpdateDto,
@@ -1094,15 +1109,16 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   }
 
   setAddress(res) {
-    this.baeminReportAddress = res.address;
     const geocoder = new window.kakao.maps.services.Geocoder();
     const callback = (results, status) => {
       if (status === window.kakao.maps.services.Status.OK) {
         // console.log('h_code', results[0].address.h_code);
         this.hdongCode = +results[0].address.h_code;
         this.baeminReportCreateDto.hdongCode = +results[0].address.h_code;
+        this.baeminReportUpdateDto.hdongCode = +results[0].address.h_code;
+        console.log('results', results[0].address);
         if (this.hdongCode) {
-          this.getHdong(this.hdongCode);
+          this.codeHdongAddress = `${results[0].address.region_1depth_name} ${results[0].address.region_2depth_name} ${results[0].address.region_3depth_h_name}`;
         }
       }
     };
@@ -1117,7 +1133,6 @@ export default class ConsultResponseV3Detail extends BaseComponent {
         if (this.codeHdongDto) {
           this.codeHdongAddress = `${this.codeHdongDto.sidoName} ${this.codeHdongDto.guName} ${this.codeHdongDto.hdongName}`;
         }
-        // console.log('codeHdongDto', this.codeHdongDto);
       }
     });
   }
@@ -1125,6 +1140,7 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   showAddressModal() {
     this.$bvModal.show('postcode');
   }
+
   created() {
     const id = this.$route.params.id;
     this.findOne(id);

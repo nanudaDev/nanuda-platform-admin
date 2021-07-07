@@ -10,6 +10,7 @@ export class BaeminReportUpdateDto extends BaseDto<BaeminReportUpdateDto>
   averageMonthlyOrderRate?: number;
   minimumOrderPrice?: number;
   averageOrderRate?: number;
+  hdongCode?: number | string;
   mediumCategoryCode?: KB_MEDIUM_CATEGORY | string;
-  baeminCategoryCode?: BAEMIN_CATEGORY_CODE | string;
+  baeminCategoryCode?: BAEMIN_CATEGORY_CODE;
 }

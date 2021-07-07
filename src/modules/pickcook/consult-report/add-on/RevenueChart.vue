@@ -27,7 +27,7 @@ export default class RevenueChart extends Vue {
           size: 20,
           weight: 'bold',
         },
-        color: '#004D8A',
+        color: ['#ffffff', '#004D8A', '#004D8A', '#004D8A', '#ffffff'],
         formatter: (number: any, context: any) => {
           // console.log('context', context);
           if (context.dataIndex == 0) {

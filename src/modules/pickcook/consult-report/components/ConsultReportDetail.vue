@@ -1,7 +1,7 @@
 <template>
   <div id="report" v-if="consultResponseV3Dto" ref="report">
     <b-tabs fill nav-wrapper-class="sticky-top">
-      <b-tab active @click="goTop()">
+      <b-tab @click="goTop()">
         <template #title>
           <div class="tab-header">
             <h4>
@@ -373,7 +373,7 @@
                             <b-col cols="4">
                               <div class="store-status-info-box">
                                 <h6>
-                                  <b-badge variant="info">점포수</b-badge>
+                                  <b-badge variant="info">점포비중</b-badge>
                                 </h6>
                                 <div class="mb-4">
                                   <p>
@@ -814,8 +814,8 @@
                     <div class="data-info-box-content">
                       <div class="mb-4">
                         <h5 class="text-primary">
-                          픽쿡에서는 상권의 입지, 인구, 소비패턴, 매출 등 다양한
-                          요인을 분석한 결과로 최적의 메뉴를 추천합니다
+                          픽쿡에서는 상권의 입지, 인구, 매출, 소비패턴 등 다양한
+                          요인을 종합하여 최적의 메뉴를 추천합니다.
                         </h5>
                       </div>
                       <b-row>
@@ -881,25 +881,28 @@
                       </b-row>
                       <div class="row-box mt-4 pt-4">
                         <p>
-                          해당 행정동에서는 외식업 전체적으로
-                          <strong class="text-primary"
-                            >{{
-                              salesResponseDto.mainHourHdong | hourTransformer
-                            }},
-                            {{
-                              salesResponseDto.mainGenderHdong
-                                | genderNumberTransformer
-                            }}, {{ salesResponseDto.mainAgeHdong }}</strong
-                          >의 매출이 높습니다. <br />
-                          이와 유사한 지역에서는
+                          해당 행정동에서는 전체적으로
+                          <strong class="text-primary">{{
+                            salesResponseDto.mainHourHdong | hourTransformer
+                          }}</strong
+                          >시간대
+                          <strong class="text-primary">{{
+                            salesResponseDto.mainGenderHdong
+                              | genderNumberTransformer
+                          }}</strong
+                          >의
+                          <strong class="text-primary">{{
+                            salesResponseDto.mainAgeHdong
+                          }}</strong
+                          >매출이 높습니다. <br />
+                          이와 반경 3KM내에서 해당 소비층은
                           <strong class="text-primary">
                             {{
                               Object.values(
                                 salesResponseDto.recommendMenuHdong,
                               ).join(',')
-                            }}
-                          </strong>
-                          메뉴의 판매량이 높습니다.
+                            }} </strong
+                          >를 주로 소비합니다.
                         </p>
                       </div>
                     </div>
@@ -922,12 +925,8 @@
         <section class="section">
           <template v-if="consultBaeminReport">
             <header class="section-header">
-              <h3 class="title">
-                {{
-                  consultBaeminReport.baeminCategoryCode
-                    | baeminCategoryTransformer
-                }}
-                업종 유사상권
+              <h3 class="title" v-if="salesResponseDto.hdong">
+                {{ salesResponseDto.hdong.hdongName }} 배달현황 분석
               </h3>
             </header>
             <div class="section-content">
@@ -1029,11 +1028,11 @@
                     }}</strong>
                     업종의 경우
                     <strong class="text-primary">{{ computedMainGagu }}</strong>
-                    상권에서 평균
+                    에서 주로 주문하며, 6개월 평균
                     <strong class="text-primary">{{
                       consultBaeminReport.averageOrderRate | numeralTransformer
                     }}</strong>
-                    건의 주문수를 보이며, 배달팁 적정 금액은
+                    건의 주문수를 보입니다. 상권 내 배달팁의 적정 금액은
                     <strong class="text-primary">{{
                       consultBaeminReport.averageDeliveryTip
                         | numeralTransformer
@@ -1114,6 +1113,19 @@
           </div>
         </div>
       </b-tab>
+      <b-tab active @click="goTop()">
+        <template #title>
+          <div class="tab-header">
+            <h4>
+              <b-icon icon="file-earmark"></b-icon>
+              <span class="ml-2">상품 금액 안내</span>
+            </h4>
+          </div>
+        </template>
+        <div>
+          <ProformaCalculator></ProformaCalculator>
+        </div>
+      </b-tab>
     </b-tabs>
 
     <!-- 주소 검색 모달 -->
@@ -1144,6 +1156,7 @@ import { Component } from 'vue-property-decorator';
 import RevenueChart from '../add-on/RevenueChart.vue';
 import DoughnutChart from '../add-on/DoughnutChart.vue';
 import BarChart from '../add-on/BarChart.vue';
+import ProformaCalculator from '../add-on/ProformaCalculator.vue';
 
 import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.service';
 
@@ -1153,6 +1166,7 @@ import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.se
     RevenueChart,
     DoughnutChart,
     BarChart,
+    ProformaCalculator,
   },
 })
 export default class ConsultReportDetail extends BaseComponent {

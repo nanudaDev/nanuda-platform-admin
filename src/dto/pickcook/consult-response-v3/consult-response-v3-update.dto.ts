@@ -7,4 +7,6 @@ export class ConsultResponseV3UpdateDto
   description?: string;
   consultStatus?: BRAND_CONSULT;
   adminId?: number;
+  meetingDate?: Date;
+  meetingTime?: string;
 }

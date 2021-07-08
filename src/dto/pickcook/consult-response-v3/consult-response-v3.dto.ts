@@ -32,4 +32,6 @@ export class ConsultResponseV3Dto extends BaseDto<ConsultResponseV3Dto> {
   consultCodeStatus?: PickcookCodeManagementDto;
   admin?: AdminDto;
   consultBaeminReport: BaeminReportDto;
+  meetingDate?: Date;
+  meetingTime?: string;
 }

@@ -114,6 +114,10 @@
           @click="getProductConsultCodes()"
           >신청 상태 수정</b-button
         > -->
+        <b-button v-if="!isShowCalendar" @click="isShowCalendar = true"
+          >캘린더</b-button
+        >
+        <b-button v-else @click="isShowCalendar = false">리스트</b-button>
         <download-excel
           class="btn btn-outline-success"
           :data="consultResponseV3List"
@@ -135,7 +139,10 @@
       </div>
     </div>
     <template v-if="!dataLoading">
-      <div class="bg-white table-responsive">
+      <div v-if="isShowCalendar">
+        <FullCalendar :options="calendarOptions" ref="fullCalendar" />
+      </div>
+      <div class="bg-white table-responsive" v-else>
         <table
           class="table table-hover table-sm text-center table-nowrap"
           v-if="consultResponseTotalCount"
@@ -182,9 +189,9 @@
               >
                 휴대폰 번호
               </th>
-              <!-- <th scope="col">
+              <th scope="col">
                 미팅날짜
-              </th> -->
+              </th>
               <th scope="col">
                 담당자
               </th>
@@ -226,6 +233,7 @@
                 </template>
               </td> -->
               <td>{{ consult.phone | phoneTransformer }}</td>
+              <td>{{ consult.meetingDate }}</td>
               <!-- <td>
                 <template v-if="consult.reservation">
                   <template v-if="consult.reservation.isCancelYn !== 'Y'">
@@ -322,6 +330,8 @@
 </template>
 <script lang="ts">
 import { Pagination } from '@/common';
+import FullCalendar, { CalendarOptions } from '@fullcalendar/vue';
+import dayGridPlugin from '@fullcalendar/daygrid';
 import {
   ClearOutQueryParamMapper,
   getStatusColor,
@@ -345,7 +355,7 @@ import {
   FNB_OWNER,
   CONST_FNB_OWNER,
 } from '@/services/shared';
-import { Component } from 'vue-property-decorator';
+import { Component, Watch } from 'vue-property-decorator';
 import CommonCodeService from '@/services/pickcook/common-code.service';
 import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.service';
 import axios from 'axios';
@@ -353,6 +363,9 @@ import toast from '../../../../../resources/assets/js/services/toast.js';
 
 @Component({
   name: 'ConsultResponseV3List',
+  components: {
+    FullCalendar, // make the <FullCalendar> tag available
+  },
 })
 export default class ConsultResponseV3List extends BaseComponent {
   private consultResponseV3List: ConsultResponseV3Dto[] = [];
@@ -377,7 +390,43 @@ export default class ConsultResponseV3List extends BaseComponent {
   private selectedProductConsultNos: number[] = [];
   private consultStatusUpdateDto = new ProductConsultStatusUpdateDto();
   private newDate = new Date();
-
+  private isShowCalendar = false;
+  private calendarOptions: CalendarOptions = {
+    plugins: [dayGridPlugin],
+    headerToolbar: {
+      left: 'prev,next',
+      center: 'title',
+      right: 'today',
+    },
+    buttonText: {
+      today: '오늘',
+      day: '일',
+      week: '주',
+      month: '월',
+    },
+    // initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
+    // editable: true,
+    height: 650,
+    selectable: true,
+    selectMirror: true,
+    dayMaxEvents: true,
+    showNonCurrentDates: false,
+    initialView: 'dayGridMonth',
+    locale: 'ko',
+    slotMinTime: '10:00:00',
+    slotMaxTime: '19:00:00',
+    slotDuration: '01:00:00',
+    events: [
+      {
+        title: 'event1',
+        start: '2021-07-22T12:30:00',
+      },
+      {
+        title: 'event2',
+        start: '2010-01-05',
+      },
+    ],
+  };
   // excel options
   private fields = {
     ID: 'id',
@@ -400,7 +449,20 @@ export default class ConsultResponseV3List extends BaseComponent {
       },
     ],
   ];
+  get calendarApi() {
+    return (this.$refs['fullCalendar'] as InstanceType<
+      typeof FullCalendar
+    >).getApi();
+  }
 
+  @Watch('isShowCalendar')
+  onIsShowCalendarTrue() {
+    if (this.isShowCalendar) {
+      this.$nextTick(() => {
+        console.log(this.calendarApi.getDate());
+      });
+    }
+  }
   // get status color
   getStatusColor(status: BRAND_CONSULT) {
     return getStatusColor(status);
@@ -446,7 +508,6 @@ export default class ConsultResponseV3List extends BaseComponent {
       }
     });
   }
-
   search() {
     this.findAll(true, true);
   }
@@ -481,7 +542,12 @@ export default class ConsultResponseV3List extends BaseComponent {
       },
     );
   }
-
+  handleDateClick() {
+    console.log(this.calendarApi.getDate());
+  }
+  // mounted() {
+  //   console.log(this.calendarApi.getDate());
+  // }
   created() {
     this.newLimit = PaginationCount.TWENTY;
     const query = ReverseQueryParamMapper(location.search);

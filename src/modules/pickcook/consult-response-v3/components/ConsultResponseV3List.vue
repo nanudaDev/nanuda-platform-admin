@@ -277,7 +277,7 @@
       </div>
       <b-pagination
         v-model="pagination.page"
-        v-if="consultResponseTotalCount"
+        v-if="consultResponseTotalCount && !isShowCalendar"
         pills
         :total-rows="consultResponseTotalCount"
         :per-page="pagination.limit"
@@ -343,6 +343,7 @@ import {
   ConsultResponseV3CreateDto,
   ConsultResponseV3Dto,
   ConsultResponseV3ListDto,
+  MeetingListRequestDto,
   ProductConsultStatusUpdateDto,
 } from '@/dto';
 import { PickcookCodeManagementDto } from '@/services/init/dto';
@@ -360,6 +361,7 @@ import CommonCodeService from '@/services/pickcook/common-code.service';
 import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.service';
 import axios from 'axios';
 import toast from '../../../../../resources/assets/js/services/toast.js';
+import { nextTick } from 'vue/types/umd';
 
 @Component({
   name: 'ConsultResponseV3List',
@@ -376,7 +378,6 @@ export default class ConsultResponseV3List extends BaseComponent {
   private newLimit = null;
   private paginationCount: PaginationCount[] = [...CONST_PAGINATION_COUNT];
   private searchPramsDto: any = {};
-
   private dataLoading = false;
   private fnbOwnerStatus: PickcookCodeManagementDto[] = [];
   private consultStatus: PickcookCodeManagementDto[] = [];
@@ -416,16 +417,28 @@ export default class ConsultResponseV3List extends BaseComponent {
     slotMinTime: '10:00:00',
     slotMaxTime: '19:00:00',
     slotDuration: '01:00:00',
-    events: [
-      {
-        title: 'event1',
-        start: '2021-07-22T12:30:00',
-      },
-      {
-        title: 'event2',
-        start: '2010-01-05',
-      },
-    ],
+
+    eventClick: this.pushToDetailPage,
+    datesSet(date) {
+      //처음 렌더될때, 캘린더 뷰가 변할때마다 해당년도와 달로 meeting 리스트를 가져와서 뿌림
+      const meetingListRequestDto = new MeetingListRequestDto();
+      const year = date.start.getFullYear();
+      const month = date.start.getMonth() + 1;
+      meetingListRequestDto.year = year;
+      meetingListRequestDto.month = month;
+      ConsultResponseV3Service.getMeetings(meetingListRequestDto).subscribe(
+        res => {
+          if (res) {
+            this.getEvents().forEach(e => {
+              e.remove();
+            });
+            res.data.forEach(e => {
+              this.addEvent(e);
+            });
+          }
+        },
+      );
+    },
   };
   // excel options
   private fields = {
@@ -437,6 +450,7 @@ export default class ConsultResponseV3List extends BaseComponent {
     // 미팅예약시간: 'reservation.reservationTime',
     // 미팅취소사유: 'reservation.deleteReason',
     // 취소기타사유: 'reservation.deleteReasonEtc',
+    미팅날짜: 'meetingDate',
     담당자: 'admin.name',
     신청상태: 'consultCodeStatus.comment',
     신청일: 'created',
@@ -449,23 +463,14 @@ export default class ConsultResponseV3List extends BaseComponent {
       },
     ],
   ];
-  get calendarApi() {
-    return (this.$refs['fullCalendar'] as InstanceType<
-      typeof FullCalendar
-    >).getApi();
-  }
 
-  @Watch('isShowCalendar')
-  onIsShowCalendarTrue() {
-    if (this.isShowCalendar) {
-      this.$nextTick(() => {
-        console.log(this.calendarApi.getDate());
-      });
-    }
-  }
   // get status color
   getStatusColor(status: BRAND_CONSULT) {
     return getStatusColor(status);
+  }
+
+  getMeetings(date) {
+    ConsultResponseV3Service.getMeetings(date);
   }
 
   // get common codes
@@ -515,7 +520,10 @@ export default class ConsultResponseV3List extends BaseComponent {
   paginateSearch() {
     this.findAll(true);
   }
-
+  pushToDetailPage(info) {
+    const id = info.event._def.title.split('_')[0];
+    this.$router.push(`/pickcook/consult-response-v3/${id}`);
+  }
   clearOut() {
     if (location.search) {
       ClearOutQueryParamMapper();
@@ -542,12 +550,7 @@ export default class ConsultResponseV3List extends BaseComponent {
       },
     );
   }
-  handleDateClick() {
-    console.log(this.calendarApi.getDate());
-  }
-  // mounted() {
-  //   console.log(this.calendarApi.getDate());
-  // }
+
   created() {
     this.newLimit = PaginationCount.TWENTY;
     const query = ReverseQueryParamMapper(location.search);

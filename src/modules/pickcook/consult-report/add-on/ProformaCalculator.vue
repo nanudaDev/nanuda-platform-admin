@@ -1,174 +1,110 @@
 <template>
   <div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">분류</th>
-          <th scope="col">항목</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">레시피</th>
-          <td>레시피북 &amp; 배달 메뉴얼 {{ valueChecked }}</td>
-          <td>
-            <input
-              type="checkbox"
-              id="recipe"
-              :value="30000"
-              v-model="valueChecked"
-            />
-          </td>
-        </tr>
-        <tr>
-          <th scope="row" rowspan="2">메뉴교육</th>
-          <td>현장실습</td>
-          <td>
-            <input
-              type="radio"
-              name="menu"
-              id="menu_01"
-              :value="20000"
-              v-model="radioValueChecked"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td>방문교육</td>
-          <td>
-            <input
-              type="radio"
-              name="menu"
-              id="menu_02"
-              :value="50000"
-              v-model="radioValueChecked"
-            />
-          </td>
-        </tr>
-        <tr>
-          <th scope="row" rowspan="3">배달앱관리</th>
-          <td>배달 앱 등록(배민, 쿠팡, 요기요 등)</td>
-          <td>
-            <input
-              type="checkbox"
-              name="app"
-              id="app_01"
-              :value="10000"
-              v-model="valueChecked"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td>로고, 사진, 브랜드 제공</td>
-          <td>
-            <input
-              type="checkbox"
-              name="app"
-              id="app_02"
-              :value="40000"
-              v-model="valueChecked"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td>배달앱 컨설팅(리뷰이벤트, 깃발 등)</td>
-          <td>
-            <input
-              type="checkbox"
-              name="app"
-              id="app_03"
-              :value="30000"
-              v-model="valueChecked"
-            />
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">디자인물</th>
-          <td>스티커, 메모지, 자석전단지</td>
-          <td>
-            <input
-              type="checkbox"
-              name="design"
-              id="design_01"
-              :value="25000"
-              v-model="valueChecked"
-            />
-          </td>
-        </tr>
-        <tr>
-          <th scope="row" rowspan="4">부가서비스</th>
-          <td>포스피드 1 개월</td>
-          <td>
-            <input
-              type="checkbox"
-              name="service"
-              id="service_01"
-              :value="1000"
-              v-model="valueChecked"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td>상권분석 3 개월</td>
-          <td>
-            <input
-              type="checkbox"
-              name="service"
-              id="service_02"
-              :value="2000"
-              v-model="valueChecked"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td>매장 관리 서비스 1 개월</td>
-          <td>
-            <input
-              type="checkbox"
-              name="service"
-              id="service_03"
-              :value="3000"
-              v-model="valueChecked"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td>사후교육 2 회</td>
-          <td>
-            <input
-              type="checkbox"
-              name="service"
-              id="service_04"
-              :value="4000"
-              v-model="valueChecked"
-            />
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">합계</th>
-          <td>{{ totalValue }}</td>
-          <td>
+    <div class="table">
+      <div class="thead">
+        <div class="tr">
+          <div>분류</div>
+          <div>항목</div>
+          <div></div>
+        </div>
+      </div>
+      <div class="tbody">
+        <div
+          v-for="category in serviceCategories"
+          :key="category.name"
+          class="tr"
+        >
+          <div class="th">
+            {{ category.title }}
+          </div>
+          <div class="td">
+            <div>
+              <div v-for="item in category.items" :key="item.id" class="td">
+                <div>{{ item.name }}</div>
+                <div>
+                  <template v-if="category.type === 'radio'">
+                    <div>
+                      <input
+                        type="radio"
+                        :name="serviceCategories.name"
+                        :id="item.id"
+                        :value="item"
+                        v-model="radioValues"
+                      />
+                    </div>
+                  </template>
+                  <template v-else>
+                    <input
+                      type="checkbox"
+                      :name="serviceCategories.name"
+                      :id="item.id"
+                      :value="item"
+                      v-model="checkboxValues"
+                    />
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          v-for="(item, index) in extraService.items"
+          :key="item.id"
+          class="tr"
+        >
+          <div class="th">
+            <template v-if="index === 0">
+              {{ extraService.title }}
+            </template>
+          </div>
+          <div class="td">
+            <div>{{ item.name }} {{ item.qty }} {{ item.unit }}</div>
+            <div>
+              <input
+                type="hidden"
+                :name="extraService.name"
+                :id="item.id"
+                :value="item.price"
+              />
+              <input
+                type="text"
+                v-model="item.qty"
+                @change="changePrice(index)"
+                style="width:60px"
+              />
+              <b-button @click="increase(index)">+</b-button>
+              <b-button @click="decrease(index)">-</b-button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tfoot">
+        <div class="tr">
+          <div>합계</div>
+          <div>{{ totalPrice }}</div>
+          <div>
             <b-button
               v-for="(type, index) in discountTypes"
               :key="index"
               v-b-modal.discount_modal
+              @click="selectDiscountType(type)"
               >{{ type }}</b-button
             >
-            <b-button @click="resetDiscount()">초기화</b-button>
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">최종 합계</th>
-          <td>{{ finalTotalValue }}</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>매월 {{ monthlyFee }}</td>
-          <td></td>
-        </tr>
-      </tbody>
-    </table>
+            <b-button @click="resetDiscount()">할인초기화</b-button>
+          </div>
+        </div>
+        <div class="tr">
+          <div scope="row">최종 합계</div>
+          <div>{{ finalTotalValue }}</div>
+          <div></div>
+        </div>
+        <div class="tr">
+          <div></div>
+          <div>매월 {{ monthlyFee }}</div>
+          <div></div>
+        </div>
+      </div>
+    </div>
     <b-modal
       id="discount_modal"
       size="sm"
@@ -184,6 +120,7 @@
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
+import { ProformaCalculatorDto } from '@/dto';
 import { Component, Watch } from 'vue-property-decorator';
 
 enum DISCOUNT_TYPE {
@@ -196,28 +133,176 @@ const CONST_DISCOUNT_TYPE = Object.values(DISCOUNT_TYPE);
   name: 'ProformaCalculator',
 })
 export default class ProformaCalculator extends BaseComponent {
-  private valueChecked: number[] = [0];
-  private radioValueChecked = '';
   private discountValue = 0;
   private calculateDiscountValue = 0;
   private discountType = DISCOUNT_TYPE.WON;
   private discountTypes: DISCOUNT_TYPE[] = [...CONST_DISCOUNT_TYPE];
+  private valueQty: number[] = [];
 
-  get sumValue() {
-    if (this.radioValueChecked) {
-      return [...this.valueChecked, this.radioValueChecked];
-    } else {
-      return this.valueChecked;
-    }
+  private checkboxValues = [];
+  get checkboxPriceValues() {
+    return this.checkboxValues.map(e => e.price);
   }
 
-  get totalValue(): any {
-    return this.sumValue.reduce((a: number, b: number) => a + b);
+  private radioValues = new ProformaCalculatorDto();
+  get radioPriceValues() {
+    return this.radioValues.price;
+  }
+
+  private serviceCategories = [
+    {
+      title: '레시피',
+      name: 'recipe',
+      items: [
+        {
+          id: 'recipe01',
+          name: '레시피 & 북배달 매뉴얼 제공',
+          price: 1188000,
+          checked: false,
+        },
+      ],
+    },
+    {
+      title: '메뉴교육',
+      name: 'menu',
+      type: 'radio',
+      items: [
+        {
+          id: 'menu01',
+          name: '현장실습',
+          price: 300000,
+          checked: false,
+        },
+        {
+          id: 'menu02',
+          name: '방문교육(교통비 실비 별도)',
+          price: 300000,
+          checked: false,
+        },
+      ],
+    },
+    {
+      title: '배달앱관리',
+      name: 'deliveryApp',
+      items: [
+        {
+          id: 'deliveryApp01',
+          name: '배달 앱 등록(배민, 쿠팡, 요기요 등)',
+          price: 100000,
+          checked: false,
+        },
+        {
+          id: 'deliveryApp02',
+          name: '로고, 사진, 브랜드 제공',
+          price: 200000,
+          checked: false,
+        },
+        {
+          id: 'deliveryApp03',
+          name: '배달앱 컨설팅(리뷰이벤트, 깃발 등)',
+          price: 200000,
+          checked: false,
+        },
+      ],
+    },
+    {
+      title: '디자인물',
+      name: 'designApp',
+      items: [
+        {
+          id: 'designApp01',
+          name: '스티커, 메모지, 자석전단지',
+          price: 100000,
+          checked: false,
+        },
+      ],
+    },
+  ];
+
+  private extraServicePriceValues = [];
+  private extraService = {
+    title: '부가서비스',
+    name: 'extraService',
+    items: [
+      {
+        id: 'extraService01',
+        name: '포스피드',
+        unit: '개월',
+        price: 50000,
+        qty: 0,
+        totalPrice: 0,
+      },
+      {
+        id: 'extraService02',
+        name: '상권분석',
+        unit: '개월',
+        price: 50000,
+        qty: 0,
+        totalPrice: 0,
+      },
+      {
+        id: 'extraService03',
+        name: '매장 관리 서비스',
+        unit: '개월',
+        price: 50000,
+        qty: 0,
+        totalPrice: 0,
+      },
+      {
+        id: 'extraService04',
+        name: '사후교육',
+        unit: '회',
+        price: 50000,
+        qty: 0,
+        totalPrice: 0,
+      },
+    ],
+  };
+
+  get sumPrice() {
+    return [
+      ...this.checkboxPriceValues,
+      ...this.extraServicePriceValues,
+      this.radioPriceValues ? this.radioValues.price : null,
+    ];
+  }
+
+  get totalPrice(): any {
+    return this.sumPrice.reduce((a: number, b: number) => a + b, 0);
+  }
+
+  // 가격 변동
+  changePrice(index) {
+    const changePrice =
+      this.extraService.items[index].qty * this.extraService.items[index].price;
+    this.extraService.items[index].totalPrice = changePrice;
+    this.extraServicePriceValues = this.extraService.items.map(
+      e => e.totalPrice,
+    );
+  }
+
+  // 수량 증가
+  increase(index) {
+    +this.extraService.items[index].qty++;
+    this.changePrice(index);
+  }
+
+  // 수량 감소
+  decrease(index) {
+    if (this.extraService.items[index].qty < 1) return;
+    +this.extraService.items[index].qty--;
+    this.changePrice(index);
   }
 
   // 할인 가격 적용
   calculateDiscount() {
     this.calculateDiscountValue = this.discountValue;
+  }
+
+  // 할인 방법 선택
+  selectDiscountType(type) {
+    this.discountValue = 0;
+    this.discountType = type;
   }
 
   // 할인 가격 취소
@@ -234,11 +319,11 @@ export default class ProformaCalculator extends BaseComponent {
   // 최종 합계
   get finalTotalValue(): any {
     if (this.discountType === DISCOUNT_TYPE.WON) {
-      return this.totalValue - this.calculateDiscountValue;
+      return this.totalPrice - this.calculateDiscountValue;
     } else if (this.discountType === DISCOUNT_TYPE.PERCENT) {
-      return this.totalValue * (1 - this.calculateDiscountValue / 100);
+      return this.totalPrice * (1 - this.calculateDiscountValue / 100);
     } else {
-      return this.totalValue;
+      return this.totalPrice;
     }
   }
 
@@ -249,18 +334,28 @@ export default class ProformaCalculator extends BaseComponent {
 
   @Watch('finalTotalValue')
   setItem() {
-    localStorage.setItem('valueChecked', JSON.stringify(this.valueChecked));
-    localStorage.setItem('radioValueChecked', this.radioValueChecked);
+    localStorage.setItem('checkboxValues', JSON.stringify(this.checkboxValues));
+    localStorage.setItem('radioValues', JSON.stringify(this.radioValues));
+    localStorage.setItem(
+      'extraServiceValues',
+      JSON.stringify(this.extraService),
+    );
   }
 
   getItem() {
-    const getValueChecked = localStorage.getItem('valueChecked');
-    const getRadioValueChecked = localStorage.getItem('radioValueChecked');
+    const getValueChecked = localStorage.getItem('checkboxValues');
+    const getRadioValueChecked = localStorage.getItem('radioValues');
+    const extraServiceValues = localStorage.getItem('extraServiceValues');
     if (getValueChecked) {
-      this.valueChecked = [...JSON.parse(getValueChecked)];
+      this.checkboxValues = [...JSON.parse(getValueChecked)];
     }
+
     if (getRadioValueChecked) {
-      this.radioValueChecked = getRadioValueChecked;
+      this.radioValues = JSON.parse(getRadioValueChecked);
+    }
+
+    if (extraServiceValues) {
+      this.extraService = JSON.parse(extraServiceValues);
     }
   }
 
@@ -269,3 +364,26 @@ export default class ProformaCalculator extends BaseComponent {
   }
 }
 </script>
+<style lang="scss">
+.table {
+  .tr {
+    display: flex;
+    width: 100%;
+    > div {
+      flex: 1;
+      border: 1px solid #dcdcdc;
+    }
+  }
+  .tbody {
+    .tr {
+      .td {
+        flex: 2;
+        display: flex;
+        > div {
+          flex: 1;
+        }
+      }
+    }
+  }
+}
+</style>

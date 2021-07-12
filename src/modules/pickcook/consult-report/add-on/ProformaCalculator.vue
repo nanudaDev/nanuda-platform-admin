@@ -47,46 +47,47 @@
             </div>
           </div>
         </div>
-        <div
-          v-for="(item, index) in extraService.items"
-          :key="item.id"
-          class="tr"
-        >
+        <div v-if="extraService" class="tr">
           <div class="th">
-            <template v-if="index === 0">
-              {{ extraService.title }}
-            </template>
+            {{ extraService.title }}
           </div>
           <div class="td">
-            <div>{{ item.name }} {{ item.qty }} {{ item.unit }}</div>
             <div>
-              <input
-                type="hidden"
-                :name="extraService.name"
-                :id="item.id"
-                :value="item.price"
-              />
-              <input
-                type="text"
-                v-model="item.qty"
-                @change="changePrice(index)"
-                style="width:60px"
-              />
-              <b-button @click="increase(index)">+</b-button>
-              <b-button @click="decrease(index)">-</b-button>
+              <div
+                v-for="(item, index) in extraService.items"
+                :key="item.id"
+                class="td"
+              >
+                <div>{{ item.name }} {{ item.qty }} {{ item.unit }}</div>
+                <div>
+                  <input
+                    type="hidden"
+                    :name="extraService.name"
+                    :id="item.id"
+                    :value="item.price"
+                  />
+                  <input
+                    type="text"
+                    v-model="item.qty"
+                    @change="changePrice(index)"
+                    style="width:60px"
+                  />
+                  <b-button @click="increase(index)">+</b-button>
+                  <b-button @click="decrease(index)">-</b-button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div class="tfoot">
         <div class="tr">
-          <div>합계</div>
-          <div>{{ totalPrice }}</div>
-          <div>
+          <div class="th">합계</div>
+          <div class="td">{{ totalPrice | numeralTransformer }} 원</div>
+          <div class="td">
             <b-button
               v-for="(type, index) in discountTypes"
               :key="index"
-              v-b-modal.discount_modal
               @click="selectDiscountType(type)"
               >{{ type }}</b-button
             >
@@ -94,26 +95,41 @@
           </div>
         </div>
         <div class="tr">
-          <div scope="row">최종 합계</div>
-          <div>{{ finalTotalValue }}</div>
-          <div></div>
+          <div class="th"></div>
+          <div class="td">
+            매월 {{ Math.floor(totalPrice / 12) | numeralTransformer }} 원
+          </div>
+          <div class="td"></div>
         </div>
         <div class="tr">
-          <div></div>
-          <div>매월 {{ monthlyFee }}</div>
-          <div></div>
+          <div class="th">최종 합계</div>
+          <div class="td">{{ finalTotalValue | numeralTransformer }} 원</div>
+          <div class="td"></div>
+        </div>
+        <div class="tr">
+          <div class="th"></div>
+          <div class="td">매월 {{ monthlyFee | numeralTransformer }} 원</div>
+          <div class="td"></div>
         </div>
       </div>
     </div>
+    <div class="text-right">
+      <b-button variant="primary" @click="resetProforma()">초기화</b-button>
+    </div>
+
     <b-modal
-      id="discount_modal"
+      :id="`${this.categoryType}_discount_modal`"
       size="sm"
       title="할인"
       @ok="calculateDiscount()"
       @cancel="cancelDiscount()"
+      ok-title="적용"
+      cancel-title="취소"
     >
-      <b-form>
-        <b-form-input v-model="discountValue"></b-form-input>
+      <b-form @submit.stop.prevent="calculateDiscount()">
+        <b-input-group :append="discountType === '%' ? '%' : '원'">
+          <b-form-input v-model="discountValue"></b-form-input>
+        </b-input-group>
       </b-form>
     </b-modal>
   </div>
@@ -121,7 +137,7 @@
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
 import { ProformaCalculatorDto } from '@/dto';
-import { Component, Watch } from 'vue-property-decorator';
+import { Component, Prop, Watch } from 'vue-property-decorator';
 
 enum DISCOUNT_TYPE {
   WON = '￦',
@@ -133,6 +149,9 @@ const CONST_DISCOUNT_TYPE = Object.values(DISCOUNT_TYPE);
   name: 'ProformaCalculator',
 })
 export default class ProformaCalculator extends BaseComponent {
+  @Prop() categoryType: string;
+  @Prop() serviceCategories;
+
   private discountValue = 0;
   private calculateDiscountValue = 0;
   private discountType = DISCOUNT_TYPE.WON;
@@ -148,76 +167,6 @@ export default class ProformaCalculator extends BaseComponent {
   get radioPriceValues() {
     return this.radioValues.price;
   }
-
-  private serviceCategories = [
-    {
-      title: '레시피',
-      name: 'recipe',
-      items: [
-        {
-          id: 'recipe01',
-          name: '레시피 & 북배달 매뉴얼 제공',
-          price: 1188000,
-          checked: false,
-        },
-      ],
-    },
-    {
-      title: '메뉴교육',
-      name: 'menu',
-      type: 'radio',
-      items: [
-        {
-          id: 'menu01',
-          name: '현장실습',
-          price: 300000,
-          checked: false,
-        },
-        {
-          id: 'menu02',
-          name: '방문교육(교통비 실비 별도)',
-          price: 300000,
-          checked: false,
-        },
-      ],
-    },
-    {
-      title: '배달앱관리',
-      name: 'deliveryApp',
-      items: [
-        {
-          id: 'deliveryApp01',
-          name: '배달 앱 등록(배민, 쿠팡, 요기요 등)',
-          price: 100000,
-          checked: false,
-        },
-        {
-          id: 'deliveryApp02',
-          name: '로고, 사진, 브랜드 제공',
-          price: 200000,
-          checked: false,
-        },
-        {
-          id: 'deliveryApp03',
-          name: '배달앱 컨설팅(리뷰이벤트, 깃발 등)',
-          price: 200000,
-          checked: false,
-        },
-      ],
-    },
-    {
-      title: '디자인물',
-      name: 'designApp',
-      items: [
-        {
-          id: 'designApp01',
-          name: '스티커, 메모지, 자석전단지',
-          price: 100000,
-          checked: false,
-        },
-      ],
-    },
-  ];
 
   private extraServicePriceValues = [];
   private extraService = {
@@ -297,23 +246,35 @@ export default class ProformaCalculator extends BaseComponent {
   // 할인 가격 적용
   calculateDiscount() {
     this.calculateDiscountValue = this.discountValue;
+    this.$bvModal.hide(`${this.categoryType}_discount_modal`);
   }
 
   // 할인 방법 선택
   selectDiscountType(type) {
     this.discountValue = 0;
     this.discountType = type;
+    this.$bvModal.show(`${this.categoryType}_discount_modal`);
   }
 
   // 할인 가격 취소
   cancelDiscount() {
     this.discountValue = 0;
-    this.$bvModal.hide('discount_modal');
+    this.$bvModal.hide(`${this.categoryType}_discount_modal`);
   }
 
   // 할인 가격 초기화
   resetDiscount() {
     this.calculateDiscountValue = 0;
+  }
+
+  // 견적 초기화
+  resetProforma() {
+    this.radioValues = new ProformaCalculatorDto();
+    this.checkboxValues = [];
+    this.extraService.items.forEach((e, i) => {
+      e.qty = 0;
+      this.changePrice(i);
+    });
   }
 
   // 최종 합계
@@ -334,18 +295,30 @@ export default class ProformaCalculator extends BaseComponent {
 
   @Watch('finalTotalValue')
   setItem() {
-    localStorage.setItem('checkboxValues', JSON.stringify(this.checkboxValues));
-    localStorage.setItem('radioValues', JSON.stringify(this.radioValues));
     localStorage.setItem(
-      'extraServiceValues',
+      `${this.categoryType}_checkboxValues`,
+      JSON.stringify(this.checkboxValues),
+    );
+    localStorage.setItem(
+      `${this.categoryType}_radioValues`,
+      JSON.stringify(this.radioValues),
+    );
+    localStorage.setItem(
+      `${this.categoryType}_extraServiceValues`,
       JSON.stringify(this.extraService),
     );
   }
 
   getItem() {
-    const getValueChecked = localStorage.getItem('checkboxValues');
-    const getRadioValueChecked = localStorage.getItem('radioValues');
-    const extraServiceValues = localStorage.getItem('extraServiceValues');
+    const getValueChecked = localStorage.getItem(
+      `${this.categoryType}_checkboxValues`,
+    );
+    const getRadioValueChecked = localStorage.getItem(
+      `${this.categoryType}_radioValues`,
+    );
+    const extraServiceValues = localStorage.getItem(
+      `${this.categoryType}_extraServiceValues`,
+    );
     if (getValueChecked) {
       this.checkboxValues = [...JSON.parse(getValueChecked)];
     }
@@ -356,6 +329,9 @@ export default class ProformaCalculator extends BaseComponent {
 
     if (extraServiceValues) {
       this.extraService = JSON.parse(extraServiceValues);
+      this.extraService.items.forEach((e, i) => {
+        this.changePrice(i);
+      });
     }
   }
 
@@ -369,9 +345,22 @@ export default class ProformaCalculator extends BaseComponent {
   .tr {
     display: flex;
     width: 100%;
+    .th {
+      display: flex;
+      align-items: center;
+    }
     > div {
       flex: 1;
       border: 1px solid #dcdcdc;
+    }
+  }
+  .thead {
+    .tr {
+      background: #f5f5f5;
+      > div {
+        padding: 1em 0;
+        text-align: center;
+      }
     }
   }
   .tbody {
@@ -382,7 +371,17 @@ export default class ProformaCalculator extends BaseComponent {
         > div {
           flex: 1;
         }
+        .td {
+          + .td {
+            border-top: 1px solid #dcdcdc;
+          }
+        }
       }
+    }
+  }
+  .tfoot {
+    .td {
+      flex: 1;
     }
   }
 }

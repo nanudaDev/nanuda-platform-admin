@@ -1123,7 +1123,20 @@
           </div>
         </template>
         <div>
-          <ProformaCalculator></ProformaCalculator>
+          <b-tabs>
+            <b-tab active title="픽쿡 LITE">
+              <ProformaCalculator
+                categoryType="LITE"
+                :serviceCategories="pickcookLite"
+              ></ProformaCalculator>
+            </b-tab>
+            <b-tab title="픽쿡 PREMIUM">
+              <ProformaCalculator
+                categoryType="PREMIUM"
+                :serviceCategories="pickcookPremium"
+              ></ProformaCalculator>
+            </b-tab>
+          </b-tabs>
         </div>
       </b-tab>
     </b-tabs>
@@ -1170,6 +1183,148 @@ import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.se
   },
 })
 export default class ConsultReportDetail extends BaseComponent {
+  // 픽쿡 상품
+  private pickcookLite = [
+    {
+      title: '레시피',
+      name: 'recipe',
+      items: [
+        {
+          id: 'recipe01',
+          name: '레시피 & 북배달 매뉴얼 제공',
+          price: 1188000,
+        },
+      ],
+    },
+    {
+      title: '메뉴교육',
+      name: 'menu',
+      type: 'radio',
+      items: [
+        {
+          id: 'menu01',
+          name: '현장실습',
+          price: 300000,
+        },
+        {
+          id: 'menu02',
+          name: '방문교육(교통비 실비 별도)',
+          price: 300000,
+        },
+      ],
+    },
+    {
+      title: '배달앱관리',
+      name: 'deliveryApp',
+      items: [
+        {
+          id: 'deliveryApp01',
+          name: '배달 앱 등록(배민, 쿠팡, 요기요 등)',
+          price: 100000,
+        },
+        {
+          id: 'deliveryApp02',
+          name: '로고, 사진, 브랜드 제공',
+          price: 200000,
+        },
+        {
+          id: 'deliveryApp03',
+          name: '배달앱 컨설팅(리뷰이벤트, 깃발 등)',
+          price: 200000,
+        },
+      ],
+    },
+    {
+      title: '디자인물',
+      name: 'designApp',
+      items: [
+        {
+          id: 'designApp01',
+          name: '스티커, 메모지, 자석전단지',
+          price: 100000,
+        },
+      ],
+    },
+  ];
+
+  private pickcookPremium = [
+    {
+      title: '레시피',
+      name: 'recipe',
+      items: [
+        {
+          id: 'recipe01',
+          name: '레시피 & 북배달 매뉴얼 제공',
+          price: 1188000,
+        },
+      ],
+    },
+    {
+      title: '메뉴교육',
+      name: 'menu',
+      type: 'radio',
+      items: [
+        {
+          id: 'menu01',
+          name: '현장실습',
+          price: 300000,
+        },
+        {
+          id: 'menu02',
+          name: '방문교육(교통비 실비 별도)',
+          price: 300000,
+        },
+      ],
+    },
+    {
+      title: '배달앱관리',
+      name: 'deliveryApp',
+      items: [
+        {
+          id: 'deliveryApp01',
+          name: '배달 앱 등록(배민, 쿠팡, 요기요 등)',
+          price: 100000,
+        },
+        {
+          id: 'deliveryApp02',
+          name: '로고, 사진, 브랜드 제공',
+          price: 200000,
+        },
+        {
+          id: 'deliveryApp03',
+          name: '배달앱 컨설팅(리뷰이벤트, 깃발 등)',
+          price: 200000,
+        },
+      ],
+    },
+    {
+      title: '디자인물',
+      name: 'designApp',
+      items: [
+        {
+          id: 'designApp01',
+          name: '스티커, 메모지, 자석전단지',
+          price: 100000,
+        },
+        {
+          id: 'designApp02',
+          name: '간판',
+          price: 500000,
+        },
+        {
+          id: 'designApp03',
+          name: '외벽시트지',
+          price: 200000,
+        },
+        {
+          id: 'designApp04',
+          name: 'X배너',
+          price: 100000,
+        },
+      ],
+    },
+  ];
+
   // sales data
   private salesRequestDto = new SalesRequestDto();
   private salesResponseDto: any = new SalesResponseDto();
@@ -1325,6 +1480,7 @@ export default class ConsultReportDetail extends BaseComponent {
   private consultResponseV3Dto = new ConsultResponseV3Dto();
   private mediumCategoryRevenueLabel = [];
   private mediumCategoryRevenueValue = [];
+
   getSalesData() {
     ConsultResponseV3Service.getSalesData(this.salesRequestDto).subscribe(
       res => {

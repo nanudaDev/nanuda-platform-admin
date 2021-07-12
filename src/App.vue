@@ -196,7 +196,10 @@ img {
 }
 
 .text-primary {
-  color: #0b538d !important;
+  color: #1c4d86 !important;
+}
+.text-lightblue {
+  color: #007eeb !important;
 }
 
 // list

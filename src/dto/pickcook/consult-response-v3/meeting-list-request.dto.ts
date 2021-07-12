@@ -1,6 +1,8 @@
 import { BaseDto } from '@/core';
 
-export class MeetingListRequestDto extends BaseDto<MeetingListRequestDto> {
+export class ConsultMonthlyRequestDto extends BaseDto<
+  ConsultMonthlyRequestDto
+> {
   year: number;
   month: number;
 }

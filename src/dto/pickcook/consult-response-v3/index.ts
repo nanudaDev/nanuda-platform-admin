@@ -10,3 +10,4 @@ export * from './baemin-report.dto';
 export * from './baemin-report-update.dto';
 export * from './meeting-list.dto';
 export * from './meeting-list-request.dto';
+export * from './consult-between-dates-request.dto';

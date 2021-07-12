@@ -140,7 +140,45 @@
     </div>
     <template v-if="!dataLoading">
       <div v-if="isShowCalendar">
-        <FullCalendar :options="calendarOptions" ref="fullCalendar" />
+        <b-row>
+          <b-col cols="10">
+            <b-card>
+              <FullCalendar :options="calendarOptions" ref="fullCalendar" />
+            </b-card>
+          </b-col>
+          <b-col cols="2">
+            <b-card title="상담현황 요약">
+              <p>
+                기간 {{ consultBetweenDatesRequestDto.startDate }} ~
+                {{ correctedEndDate }}
+              </p>
+              <h5 class="m-2">
+                총 유입수 {{ consultResponseV3BetweenDates.length }}
+              </h5>
+              <ul>
+                <li>상담예정 {{}}</li>
+                <ul>
+                  <li>
+                    신규등록
+                  </li>
+                  <li>
+                    재통화요청
+                  </li>
+                  <li>연락실패</li>
+                </ul>
+              </ul>
+
+              <p>
+                미팅예정 {{}}건
+              </p>
+              <p>미팅완료 {{ monthlyMeetings.length }}건</p>
+              <p>노쇼 {{ monthlyMeetings.length }}건</p>
+              <p>2차미팅 {{ monthlyMeetings.length }}건</p>
+              <p>계약예정 {{ monthlyMeetings.length }}건</p>
+              <p>계약완료 {{ monthlyMeetings.length }}건</p>
+            </b-card>
+          </b-col>
+        </b-row>
       </div>
       <div class="bg-white table-responsive" v-else>
         <table
@@ -332,6 +370,7 @@
 import { Pagination } from '@/common';
 import FullCalendar, { CalendarOptions } from '@fullcalendar/vue';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
 import {
   ClearOutQueryParamMapper,
   getStatusColor,
@@ -343,8 +382,10 @@ import {
   ConsultResponseV3CreateDto,
   ConsultResponseV3Dto,
   ConsultResponseV3ListDto,
-  MeetingListRequestDto,
+  ConsultMonthlyRequestDto,
   ProductConsultStatusUpdateDto,
+  MeetingListDto,
+  ConsultBetweenDatesRequestDto,
 } from '@/dto';
 import { PickcookCodeManagementDto } from '@/services/init/dto';
 import {
@@ -356,12 +397,11 @@ import {
   FNB_OWNER,
   CONST_FNB_OWNER,
 } from '@/services/shared';
-import { Component, Watch } from 'vue-property-decorator';
+import { Component, Ref, Watch } from 'vue-property-decorator';
 import CommonCodeService from '@/services/pickcook/common-code.service';
 import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.service';
 import axios from 'axios';
 import toast from '../../../../../resources/assets/js/services/toast.js';
-import { nextTick } from 'vue/types/umd';
 
 @Component({
   name: 'ConsultResponseV3List',
@@ -371,6 +411,7 @@ import { nextTick } from 'vue/types/umd';
 })
 export default class ConsultResponseV3List extends BaseComponent {
   private consultResponseV3List: ConsultResponseV3Dto[] = [];
+  private consultResponseV3BetweenDates: ConsultResponseV3Dto[] = [];
   private consultResponseV3SearchDto = new ConsultResponseV3ListDto();
   private consultResponseV3CreateDto = new ConsultResponseV3CreateDto();
   private pagination = new Pagination();
@@ -391,9 +432,12 @@ export default class ConsultResponseV3List extends BaseComponent {
   private selectedProductConsultNos: number[] = [];
   private consultStatusUpdateDto = new ProductConsultStatusUpdateDto();
   private newDate = new Date();
+  private monthlyMeetings = new MeetingListDto();
+  private consultBetweenDatesRequestDto = new ConsultBetweenDatesRequestDto();
   private isShowCalendar = false;
+  private calendarApi = null;
   private calendarOptions: CalendarOptions = {
-    plugins: [dayGridPlugin],
+    plugins: [interactionPlugin, dayGridPlugin],
     headerToolbar: {
       left: 'prev,next',
       center: 'title',
@@ -409,8 +453,6 @@ export default class ConsultResponseV3List extends BaseComponent {
     // editable: true,
     height: 650,
     selectable: true,
-    selectMirror: true,
-    dayMaxEvents: true,
     showNonCurrentDates: false,
     initialView: 'dayGridMonth',
     locale: 'ko',
@@ -419,26 +461,8 @@ export default class ConsultResponseV3List extends BaseComponent {
     slotDuration: '01:00:00',
 
     eventClick: this.pushToDetailPage,
-    datesSet(date) {
-      //처음 렌더될때, 캘린더 뷰가 변할때마다 해당년도와 달로 meeting 리스트를 가져와서 뿌림
-      const meetingListRequestDto = new MeetingListRequestDto();
-      const year = date.start.getFullYear();
-      const month = date.start.getMonth() + 1;
-      meetingListRequestDto.year = year;
-      meetingListRequestDto.month = month;
-      ConsultResponseV3Service.getMeetings(meetingListRequestDto).subscribe(
-        res => {
-          if (res) {
-            this.getEvents().forEach(e => {
-              e.remove();
-            });
-            res.data.forEach(e => {
-              this.addEvent(e);
-            });
-          }
-        },
-      );
-    },
+    datesSet: this.onDatesSet,
+    select: this.onSelect,
   };
   // excel options
   private fields = {
@@ -464,13 +488,15 @@ export default class ConsultResponseV3List extends BaseComponent {
     ],
   ];
 
+  private correctedEndDate: string = null;
+  private BRAND_CONSULT = BRAND_CONSULT;
   // get status color
   getStatusColor(status: BRAND_CONSULT) {
     return getStatusColor(status);
   }
 
   getMeetings(date) {
-    ConsultResponseV3Service.getMeetings(date);
+    ConsultResponseV3Service.getMeetingsMonthly(date);
   }
 
   // get common codes
@@ -549,6 +575,47 @@ export default class ConsultResponseV3List extends BaseComponent {
         }
       },
     );
+  }
+
+  onDatesSet(date) {
+    //처음 렌더될때, 캘린더 뷰가 변할때마다 해당년도와 달로 meeting 리스트를 가져와서 뿌림
+    const consultMonthlyRequestDto = new ConsultMonthlyRequestDto();
+    const year = date.start.getFullYear();
+    const month = date.start.getMonth() + 1;
+    consultMonthlyRequestDto.year = year;
+    consultMonthlyRequestDto.month = month;
+    ConsultResponseV3Service.getMeetingsMonthly(
+      consultMonthlyRequestDto,
+    ).subscribe(res => {
+      this.calendarApi = (this.$refs['fullCalendar'] as any).getApi();
+      if (res) {
+        this.monthlyMeetings = res.data;
+        this.calendarApi.getEvents().forEach(e => {
+          e.remove();
+        });
+        res.data.forEach(e => {
+          this.calendarApi.addEvent(e);
+        });
+      }
+    });
+  }
+
+  onSelect(selectInfo) {
+    console.log('select', selectInfo);
+    this.consultBetweenDatesRequestDto.startDate = selectInfo.startStr;
+    this.consultBetweenDatesRequestDto.endDate = selectInfo.endStr;
+    const end = selectInfo.end;
+    console.log('end', end);
+    this.correctedEndDate = new Date(end - 100).toISOString().slice(0, 10);
+
+    ConsultResponseV3Service.getConsultsBetween(
+      this.consultBetweenDatesRequestDto,
+    ).subscribe(res => {
+      if (res) {
+        console.log('res', res);
+        this.consultResponseV3BetweenDates = res.data;
+      }
+    });
   }
 
   created() {

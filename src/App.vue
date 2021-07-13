@@ -196,10 +196,21 @@ img {
 }
 
 .text-primary {
-  color: #1c4d86 !important;
+  color: #004d8a !important;
+}
+.text-blue {
+  color: #007eeb !important;
 }
 .text-lightblue {
-  color: #007eeb !important;
+  color: #00b1ff !important;
+}
+.bg-lightblue {
+  background: #00b1ff !important;
+}
+
+.bg-blue {
+  background: #007eeb !important;
+  color: #fff !important;
 }
 
 // list

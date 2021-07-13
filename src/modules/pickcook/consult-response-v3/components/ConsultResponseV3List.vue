@@ -148,34 +148,155 @@
           </b-col>
           <b-col cols="2">
             <b-card title="상담현황 요약">
-              <p>
+              <b-card-text>
                 기간 {{ consultBetweenDatesRequestDto.startDate }} ~
                 {{ correctedEndDate }}
-              </p>
+              </b-card-text>
+              <h4 class="m-2">
+                <li>총 유입수 {{ consultResponseV3BetweenDates.length }}건</li>
+              </h4>
               <h5 class="m-2">
-                총 유입수 {{ consultResponseV3BetweenDates.length }}
+                <li>
+                  상담예정
+                  {{ newConsultCount + callLaterCount + cannotContactCount }}건
+                  ({{
+                    Math.round(
+                      ((newConsultCount + callLaterCount + cannotContactCount) /
+                        consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
               </h5>
+
               <ul>
-                <li>상담예정 {{}}</li>
-                <ul>
-                  <li>
-                    신규등록
-                  </li>
-                  <li>
-                    재통화요청
-                  </li>
-                  <li>연락실패</li>
-                </ul>
+                <li>
+                  신규등록 {{ newConsultCount }}건 ({{
+                    Math.round(
+                      (newConsultCount / consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
+                <li>
+                  재통화요청 {{ callLaterCount }}건 ({{
+                    Math.round(
+                      (callLaterCount / consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
+                <li>
+                  연락실패 {{ cannotContactCount }}건 ({{
+                    Math.round(
+                      (cannotContactCount /
+                        consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
+              </ul>
+              <h5 class="m-2">
+                <li>
+                  상담완료 {{ consultCompleteCount }}건 ({{
+                    Math.round(
+                      (consultCompleteCount /
+                        consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
+              </h5>
+              <h5 class="m-2">
+                <li>
+                  드랍 {{ consultDropCount }}건 ({{
+                    Math.round(
+                      (consultDropCount /
+                        consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
+              </h5>
+              <h4 class="m-2">
+                <li>
+                  미팅
+                  {{
+                    willMeetCount +
+                      meetingCompleteCount +
+                      noShowCount +
+                      meetingSecondCount
+                  }}건 ({{
+                    Math.round(
+                      ((willMeetCount +
+                        meetingCompleteCount +
+                        noShowCount +
+                        meetingSecondCount) /
+                        consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
+              </h4>
+              <ul>
+                <li>
+                  미팅예정 {{ willMeetCount }}건 ({{
+                    Math.round(
+                      (willMeetCount / consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
+                <li>
+                  미팅완료 {{ meetingCompleteCount }}건 ({{
+                    Math.round(
+                      (meetingCompleteCount /
+                        consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
+                <li>
+                  노쇼 {{ noShowCount }}건 ({{
+                    Math.round(
+                      (noShowCount / consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
+                <li>
+                  2차미팅 {{ meetingSecondCount }}건 ({{
+                    Math.round(
+                      (meetingSecondCount /
+                        consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
               </ul>
 
-              <p>
-                미팅예정 {{}}건
-              </p>
-              <p>미팅완료 {{ monthlyMeetings.length }}건</p>
-              <p>노쇼 {{ monthlyMeetings.length }}건</p>
-              <p>2차미팅 {{ monthlyMeetings.length }}건</p>
-              <p>계약예정 {{ monthlyMeetings.length }}건</p>
-              <p>계약완료 {{ monthlyMeetings.length }}건</p>
+              <h5 class="m-2">
+                <li>
+                  계약예정 {{ contractInProgCount }}건 ({{
+                    Math.round(
+                      (contractInProgCount /
+                        consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
+              </h5>
+              <h5 class="m-2">
+                <li>
+                  계약완료 {{ consultContractedCount }}건 ({{
+                    Math.round(
+                      (consultContractedCount /
+                        consultResponseV3BetweenDates.length) *
+                        10000,
+                    ) / 100 || 0
+                  }}%)
+                </li>
+              </h5>
             </b-card>
           </b-col>
         </b-row>
@@ -451,7 +572,7 @@ export default class ConsultResponseV3List extends BaseComponent {
     },
     // initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
     // editable: true,
-    height: 650,
+    height: 750,
     selectable: true,
     showNonCurrentDates: false,
     initialView: 'dayGridMonth',
@@ -490,6 +611,64 @@ export default class ConsultResponseV3List extends BaseComponent {
 
   private correctedEndDate: string = null;
   private BRAND_CONSULT = BRAND_CONSULT;
+
+  get newConsultCount() {
+    return this.consultResponseV3BetweenDates.filter(
+      e => e.consultStatus == BRAND_CONSULT.NEW_CONSULT,
+    ).length;
+  }
+  get callLaterCount() {
+    return this.consultResponseV3BetweenDates.filter(
+      e => e.consultStatus == BRAND_CONSULT.CONSULT_CALL_LATER,
+    ).length;
+  }
+
+  get cannotContactCount() {
+    return this.consultResponseV3BetweenDates.filter(
+      e => e.consultStatus == BRAND_CONSULT.CONSULT_CANNOT_CONTACT,
+    ).length;
+  }
+  get consultCompleteCount() {
+    return this.consultResponseV3BetweenDates.filter(
+      e => e.consultStatus == BRAND_CONSULT.CONSULT_COMPLETE,
+    ).length;
+  }
+  get consultDropCount() {
+    return this.consultResponseV3BetweenDates.filter(
+      e => e.consultStatus == BRAND_CONSULT.CONSULT_DROPPED,
+    ).length;
+  }
+  get willMeetCount() {
+    return this.consultResponseV3BetweenDates.filter(
+      e => e.consultStatus == BRAND_CONSULT.CONSULT_WILL_MEET,
+    ).length;
+  }
+  get meetingCompleteCount() {
+    return this.consultResponseV3BetweenDates.filter(
+      e => e.consultStatus == BRAND_CONSULT.CONSULT_MEETING_COMPLETE,
+    ).length;
+  }
+  get noShowCount() {
+    return this.consultResponseV3BetweenDates.filter(
+      e => e.consultStatus == BRAND_CONSULT.CONSULT_MEETING_NO_SHOW,
+    ).length;
+  }
+  get meetingSecondCount() {
+    return this.consultResponseV3BetweenDates.filter(
+      e => e.consultStatus == BRAND_CONSULT.CONSULT_MEETING_SECOND,
+    ).length;
+  }
+  get contractInProgCount() {
+    return this.consultResponseV3BetweenDates.filter(
+      e => e.consultStatus == BRAND_CONSULT.CONSULT_CONTRACT_IN_PROG,
+    ).length;
+  }
+  get consultContractedCount() {
+    return this.consultResponseV3BetweenDates.filter(
+      e => e.consultStatus == BRAND_CONSULT.CONSULT_CONTRACTED,
+    ).length;
+  }
+
   // get status color
   getStatusColor(status: BRAND_CONSULT) {
     return getStatusColor(status);
@@ -569,7 +748,6 @@ export default class ConsultResponseV3List extends BaseComponent {
     ConsultResponseV3Service.create(this.consultResponseV3CreateDto).subscribe(
       res => {
         if (res) {
-          console.log(this.consultResponseV3CreateDto);
           toast.success('추가완료');
           this.clearOut();
         }
@@ -601,18 +779,15 @@ export default class ConsultResponseV3List extends BaseComponent {
   }
 
   onSelect(selectInfo) {
-    console.log('select', selectInfo);
     this.consultBetweenDatesRequestDto.startDate = selectInfo.startStr;
     this.consultBetweenDatesRequestDto.endDate = selectInfo.endStr;
     const end = selectInfo.end;
-    console.log('end', end);
     this.correctedEndDate = new Date(end - 100).toISOString().slice(0, 10);
 
     ConsultResponseV3Service.getConsultsBetween(
       this.consultBetweenDatesRequestDto,
     ).subscribe(res => {
       if (res) {
-        console.log('res', res);
         this.consultResponseV3BetweenDates = res.data;
       }
     });

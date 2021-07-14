@@ -1,37 +1,37 @@
 <template>
   <main id="main-wrapper">
-    <div id="side-nav-bar">
-      <nav class="tabs">
+    <div id="side-nav">
+      <nav class="side-nav-tabs">
         <div
-          class="tab"
+          class="side-nav-tab"
           @click="onTabClick('chart')"
           style="background-image:url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_tab_chart.svg')"
         >
           <span>상권분석</span>
         </div>
         <div
-          class="tab"
+          class="side-nav-tab"
           @click="getBaeminData()"
           style="background-image:url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_tab_delivery.svg')"
         >
           <span>배달업종분석</span>
         </div>
         <div
-          class="tab"
+          class="side-nav-tab"
           @click="onTabClick('files01')"
           style="background-image:url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_tab_files.svg')"
         >
           <span>신규창업자</span>
         </div>
         <div
-          class="tab"
+          class="side-nav-tab"
           @click="onTabClick('files02')"
           style="background-image:url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_tab_files.svg')"
         >
           <span>기존창업자</span>
         </div>
         <div
-          class="tab"
+          class="side-nav-tab"
           @click="onTabClick('calculator')"
           style="background-image:url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_tab_calculator.svg')"
         >
@@ -169,6 +169,12 @@
                     id="map"
                     style="width:100%; min-height:300px; height:calc(100%)"
                   ></div>
+                  <div class="map-hdong-name">
+                    <b-icon icon="geo-alt"></b-icon>
+                    <span class="ml-2">{{
+                      salesResponseDto.hdong.hdongName
+                    }}</span>
+                  </div>
                 </div>
               </b-col>
               <b-col cols="12" xl="7" v-if="salesResponseDto.livingPopulation">
@@ -215,66 +221,69 @@
                       }}</strong
                       >입니다.
                     </p>
-                  </div>
-                  <b-row
-                    v-if="
-                      salesResponseDto.mainAgeGroup && salesResponseDto.mainGagu
-                    "
-                  >
-                    <b-col cols="12" md="6">
-                      <div class="doughnut-chart-container">
-                        <div class="doughnut-chart-wrapper">
-                          <DoughnutChart
-                            :chartData="mainGaguChartData"
-                            :labels="Object.keys(salesResponseDto.gaguRatio)"
-                            :datasetsData="
-                              Object.values(salesResponseDto.gaguRatio)
-                            "
-                          />
-                          <div class="doughnut-chart-text">
-                            <div>
-                              <span class="badge">{{ computedMainGagu }}</span>
-                              <p>
-                                {{
-                                  Math.round(
-                                    salesResponseDto.mainGaguRatio * 10,
-                                  ) / 10
-                                }}%
-                              </p>
+                    <b-row
+                      v-if="
+                        salesResponseDto.mainAgeGroup &&
+                          salesResponseDto.mainGagu
+                      "
+                    >
+                      <b-col cols="12" lg="6">
+                        <div class="doughnut-chart-container">
+                          <div class="doughnut-chart-wrapper">
+                            <DoughnutChart
+                              :chartData="mainGaguChartData"
+                              :labels="Object.keys(salesResponseDto.gaguRatio)"
+                              :datasetsData="
+                                Object.values(salesResponseDto.gaguRatio)
+                              "
+                            />
+                            <div class="doughnut-chart-text">
+                              <div>
+                                <span class="badge">{{
+                                  computedMainGagu
+                                }}</span>
+                                <p>
+                                  {{
+                                    Math.round(
+                                      salesResponseDto.mainGaguRatio * 10,
+                                    ) / 10
+                                  }}%
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </b-col>
-                    <b-col cols="12" md="6">
-                      <div class="doughnut-chart-container">
-                        <div class="doughnut-chart-wrapper">
-                          <DoughnutChart
-                            :chartData="mainAgeGroupChartData"
-                            :labels="Object.keys(salesResponseDto.ageRatio)"
-                            :datasetsData="
-                              Object.values(salesResponseDto.ageRatio)
-                            "
-                          />
+                      </b-col>
+                      <b-col cols="12" lg="6">
+                        <div class="doughnut-chart-container">
+                          <div class="doughnut-chart-wrapper">
+                            <DoughnutChart
+                              :chartData="mainAgeGroupChartData"
+                              :labels="Object.keys(salesResponseDto.ageRatio)"
+                              :datasetsData="
+                                Object.values(salesResponseDto.ageRatio)
+                              "
+                            />
 
-                          <div class="doughnut-chart-text">
-                            <div>
-                              <span class="badge">{{
-                                computedMainAgeGroup
-                              }}</span>
-                              <p>
-                                {{
-                                  Math.round(
-                                    salesResponseDto.mainAgeGroupRatio * 10,
-                                  ) / 10
-                                }}%
-                              </p>
+                            <div class="doughnut-chart-text">
+                              <div>
+                                <span class="badge">{{
+                                  computedMainAgeGroup
+                                }}</span>
+                                <p>
+                                  {{
+                                    Math.round(
+                                      salesResponseDto.mainAgeGroupRatio * 10,
+                                    ) / 10
+                                  }}%
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </b-col>
-                  </b-row>
+                      </b-col>
+                    </b-row>
+                  </div>
                 </div>
               </b-col>
               <b-col
@@ -290,7 +299,7 @@
                   </header>
                   <div class="report-card-content">
                     <p>
-                      {{ salesResponseDto.hdong.hdongName }} 상권은 <br />
+                      해당 행정동은 <br />
                       <template
                         v-if="salesResponseDto.deliveryRevenueRatio >= 20"
                       >
@@ -421,15 +430,16 @@
                   </div>
                 </div>
               </b-col>
-              <b-col cols="12" xl="8">
+              <b-col
+                cols="12"
+                xl="8"
+                v-if="salesResponseDto.weekDayRevenueRatio"
+              >
                 <div class="report-card h-half">
                   <header class="report-card-header">
                     <h4>요일별 매출비중</h4>
                   </header>
-                  <div
-                    class="report-card-content"
-                    v-if="salesResponseDto.weekDayRevenueRatio"
-                  >
+                  <div class="report-card-content">
                     <p>
                       해당 행정동은
                       <strong class="text-primary"
@@ -551,11 +561,12 @@
                   </div>
                 </div>
               </b-col>
-              <b-col cols="12" xl="4">
-                <div
-                  class="report-card"
-                  v-if="salesResponseDto.mediumCategoryGenderRevenueRatio"
-                >
+              <b-col
+                cols="12"
+                xl="4"
+                v-if="salesResponseDto.mediumCategoryGenderRevenueRatio"
+              >
+                <div class="report-card">
                   <div class="report-card-header">
                     <h4>성별 매출비중</h4>
                   </div>
@@ -623,7 +634,11 @@
                   </div>
                 </div>
               </b-col>
-              <b-col cols="12" xl="8">
+              <b-col
+                cols="12"
+                xl="8"
+                v-if="salesResponseDto.mediumCategoryStoreRatio"
+              >
                 <b-row style="height:100%">
                   <b-col cols="4" style="height:100%">
                     <div class="report-card store-status-card">
@@ -764,7 +779,7 @@
                   </b-col>
                 </b-row>
               </b-col>
-              <b-col cols="12">
+              <b-col cols="12" v-if="salesRequestDto.mediumCategoryCode">
                 <div class="report-card">
                   <div class="report-card-header">
                     <h4>종합의견</h4>
@@ -931,124 +946,141 @@
         <section class="section" v-show="activeTab === 'delivery'">
           <template v-if="consultBaeminReport">
             <header class="section-header">
-              <h3 class="title" v-if="salesResponseDto.hdong">
-                {{ salesResponseDto.hdong.hdongName }} 배달현황 분석
+              <h3 class="title">
+                배달현황 분석
               </h3>
+              <span class="desc">Delivery Analysis Report</span>
             </header>
             <div class="section-content">
-              <b-row>
-                <b-col cols="12" md="6" lg="4">
-                  <div class="baemin-info-box">
-                    <div>
-                      <p class="baemin-info-value">
-                        <strong>{{ consultBaeminReport.averageScore }}</strong>
-                      </p>
-                      <p class="baemin-info-label">
-                        <span>평점</span>
-                      </p>
-                    </div>
-                  </div>
-                </b-col>
-                <b-col cols="12" md="6" lg="4">
-                  <div class="baemin-info-box">
-                    <div>
-                      <p class="baemin-info-value">
-                        <strong>{{
-                          consultBaeminReport.averageOrderRate
-                            | numeralTransformer
-                        }}</strong>
-                      </p>
-                      <p class="baemin-info-label">
-                        <span>평균 주문수<br />(6개월 합산)</span>
-                      </p>
-                    </div>
-                  </div>
-                </b-col>
-                <b-col cols="12" md="6" lg="4">
-                  <div class="baemin-info-box">
-                    <div>
-                      <p class="baemin-info-value">
-                        <strong>{{
-                          consultBaeminReport.averageMonthlyOrderRate
-                            | numeralTransformer
-                        }}</strong>
-                      </p>
-                      <p class="baemin-info-label">
-                        <span>월 평균 주문수</span>
-                      </p>
-                    </div>
-                  </div>
-                </b-col>
-                <b-col cols="12" md="6" lg="4">
-                  <div class="baemin-info-box">
-                    <div>
-                      <p class="baemin-info-value">
-                        <strong>{{
-                          consultBaeminReport.minimumOrderPrice
-                            | numeralTransformer
-                        }}</strong>
-                      </p>
-                      <p class="baemin-info-label">
-                        <span>최소 주문금액</span>
-                      </p>
-                    </div>
-                  </div>
-                </b-col>
-                <b-col cols="12" md="6" lg="4">
-                  <div class="baemin-info-box">
-                    <div>
-                      <p class="baemin-info-value">
-                        <strong>{{
-                          consultBaeminReport.averageDeliveryTip
-                            | numeralTransformer
-                        }}</strong>
-                      </p>
-                      <p class="baemin-info-label">
-                        <span>배달팁</span>
-                      </p>
-                    </div>
-                  </div>
-                </b-col>
-                <b-col cols="12" md="6" lg="4">
-                  <div class="baemin-info-box">
-                    <div>
-                      <p class="baemin-info-value">
-                        <strong>{{
-                          consultBaeminReport.averageLikeRate
-                            | numeralTransformer
-                        }}</strong>
-                      </p>
-                      <p class="baemin-info-label">
-                        <span>찜 수</span>
-                      </p>
-                    </div>
-                  </div>
-                </b-col>
-              </b-row>
-              <div class="data-info-box">
-                <div class="data-info-box-content">
+              <div class="report-card">
+                <div class="report-card-header" v-if="salesResponseDto.hdong">
+                  <h4>{{ salesResponseDto.hdong.hdongName }} 배달현황</h4>
+                </div>
+                <div class="report-card-content">
                   <p>
-                    <strong class="text-primary">{{
-                      consultBaeminReport.baeminCategoryCode
-                        | baeminCategoryTransformer
-                    }}</strong>
-                    업종의 경우
-                    <strong class="text-primary">{{ computedMainGagu }}</strong>
-                    에서 주로 주문하며, 6개월 평균
-                    <strong class="text-primary">{{
-                      consultBaeminReport.averageOrderRate | numeralTransformer
-                    }}</strong>
-                    건의 주문수를 보입니다. 상권 내 배달팁의 적정 금액은
-                    <strong class="text-primary">{{
-                      consultBaeminReport.averageDeliveryTip
-                        | numeralTransformer
-                    }}</strong
-                    >원이며, 맛집 랭킹에 들어가기 위해서는 최소
-                    <strong class="text-primary">{{
-                      consultBaeminReport.averageLikeRate | numeralTransformer
-                    }}</strong
-                    >개 이상의 찜이 필요합니다.
+                    <template v-if="consultBaeminReport.baeminCategoryCode">
+                      <strong class="text-blue">{{
+                        consultBaeminReport.baeminCategoryCode
+                          | baeminCategoryTransformer
+                      }}</strong>
+                      업종의 경우
+                    </template>
+                    <strong class="text-blue">{{ computedMainGagu }}</strong>
+                    에서 주로 주문하며, 6개월
+                    <strong class="text-blue"
+                      >평균
+                      {{
+                        consultBaeminReport.averageOrderRate
+                          | numeralTransformer
+                      }}
+                      건의 주문수</strong
+                    >를 보입니다. 상권 내
+                    <strong class="text-blue"
+                      >배달팁의 적정 금액은
+                      {{
+                        consultBaeminReport.averageDeliveryTip
+                          | numeralTransformer
+                      }}원</strong
+                    >이며, 맛집 랭킹에 들어가기 위해서는
+                    <strong class="text-blue"
+                      >최소
+                      {{
+                        consultBaeminReport.averageLikeRate
+                          | numeralTransformer
+                      }}개 이상의 찜</strong
+                    >이 필요합니다.
                   </p>
+                  <b-row class="mt-4 pt-4">
+                    <b-col cols="12" lg="6" xl="4">
+                      <div class="baemin-info-box average-score">
+                        <div>
+                          <h5 class="baemin-info-label">
+                            평점
+                          </h5>
+                          <p class="baemin-info-value">
+                            <strong>{{
+                              consultBaeminReport.averageScore
+                            }}</strong>
+                          </p>
+                        </div>
+                      </div>
+                    </b-col>
+                    <b-col cols="12" lg="6" xl="4">
+                      <div class="baemin-info-box average-order-rate">
+                        <div>
+                          <h5 class="baemin-info-label">
+                            평균 주문수 <span>6개월 합산</span>
+                          </h5>
+                          <p class="baemin-info-value">
+                            <strong>{{
+                              consultBaeminReport.averageOrderRate
+                                | numeralTransformer
+                            }}</strong>
+                          </p>
+                        </div>
+                      </div>
+                    </b-col>
+                    <b-col cols="12" lg="6" xl="4">
+                      <div class="baemin-info-box average-monthly-order-rate">
+                        <div>
+                          <h5 class="baemin-info-label">
+                            월 평균 주문수
+                          </h5>
+                          <p class="baemin-info-value">
+                            <strong>{{
+                              consultBaeminReport.averageMonthlyOrderRate
+                                | numeralTransformer
+                            }}</strong>
+                          </p>
+                        </div>
+                      </div>
+                    </b-col>
+                    <b-col cols="12" lg="6" xl="4">
+                      <div class="baemin-info-box minimum-order-price">
+                        <div>
+                          <h5 class="baemin-info-label">
+                            최소 주문금액
+                          </h5>
+                          <p class="baemin-info-value">
+                            <strong>{{
+                              consultBaeminReport.minimumOrderPrice
+                                | numeralTransformer
+                            }}</strong>
+                          </p>
+                        </div>
+                      </div>
+                    </b-col>
+                    <b-col cols="12" lg="6" xl="4">
+                      <div class="baemin-info-box average-delivery-tip">
+                        <div>
+                          <h5 class="baemin-info-label">
+                            배달팁
+                          </h5>
+                          <p class="baemin-info-value">
+                            <strong>{{
+                              consultBaeminReport.averageDeliveryTip
+                                | numeralTransformer
+                            }}</strong>
+                          </p>
+                        </div>
+                      </div>
+                    </b-col>
+                    <b-col cols="12" lg="6" xl="4">
+                      <div class="baemin-info-box average-like-count">
+                        <div>
+                          <h5 class="baemin-info-label">
+                            찜 수
+                          </h5>
+                          <p class="baemin-info-value">
+                            <strong>{{
+                              consultBaeminReport.averageLikeRate
+                                | numeralTransformer
+                            }}</strong>
+                          </p>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
                 </div>
               </div>
             </div>
@@ -1103,20 +1135,26 @@
           </div>
         </section>
         <section class="section" v-show="activeTab === 'calculator'">
-          <b-tabs>
-            <b-tab active title="픽쿡 LITE">
-              <ProformaCalculator
-                categoryType="LITE"
-                :serviceCategories="pickcookLite"
-              ></ProformaCalculator>
-            </b-tab>
-            <b-tab title="픽쿡 PREMIUM">
-              <ProformaCalculator
-                categoryType="PREMIUM"
-                :serviceCategories="pickcookPremium"
-              ></ProformaCalculator>
-            </b-tab>
-          </b-tabs>
+          <header class="section-header">
+            <h3 class="title">상품 금액 안내</h3>
+            <span class="desc">Product Amount Notice</span>
+          </header>
+          <div class="section-content">
+            <b-tabs fill>
+              <b-tab active title="PICKCOOK LITE">
+                <ProformaCalculator
+                  categoryType="LITE"
+                  :serviceCategories="pickcookLite"
+                ></ProformaCalculator>
+              </b-tab>
+              <b-tab title="PICKCOOK PREMIUM">
+                <ProformaCalculator
+                  categoryType="PREMIUM"
+                  :serviceCategories="pickcookPremium"
+                ></ProformaCalculator>
+              </b-tab>
+            </b-tabs>
+          </div>
         </section>
       </div>
       <!-- 주소 검색 모달 -->
@@ -1604,7 +1642,7 @@ export default class ConsultReportDetail extends BaseComponent {
         const mapContainer = document.getElementById('map');
         const mapOption = {
           center: new window.kakao.maps.LatLng(result[0].y, result[0].x),
-          level: 6,
+          level: 5,
           minLevel: 3,
         };
 
@@ -1626,13 +1664,13 @@ export default class ConsultReportDetail extends BaseComponent {
           map: map,
           center: new window.kakao.maps.LatLng(result[0].y, result[0].x),
           strokeWeight: 2,
-          strokeColor: '#ffffff',
-          strokeOpacity: 0,
-          strokeStyle: 'dashed',
-          fillColor: '#89aef1',
-          fillOpacity: 0.5,
+          strokeColor: '#477DE6',
+          strokeOpacity: 1,
+          strokeStyle: 'solid',
+          fillColor: '#4CB0F8',
+          fillOpacity: 0.3,
         });
-        circle.setRadius(1000);
+        circle.setRadius(800);
         circle.setMap(map);
         customOverlay.setMap(map);
       }
@@ -1675,7 +1713,44 @@ export default class ConsultReportDetail extends BaseComponent {
 body {
   -webkit-print-color-adjust: exact !important;
 }
-#side-nav-bar {
+.map-hdong-name {
+  display: inline-block;
+  padding: 4px 8px;
+  position: absolute;
+  left: 32px;
+  top: 32px;
+  background: #007eeb;
+  border-radius: 60px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 2;
+}
+.tabs {
+  margin: 40px 0;
+  .nav-tabs {
+    background: #ccdaea;
+    border-radius: 80px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(195, 195, 195, 1);
+  }
+
+  .nav-tabs .nav-link {
+    border: 1px solid transparent;
+    border-radius: 80px;
+    font-size: 20px;
+    color: #6c8fb7;
+    font-weight: 700;
+    padding: 16px 0;
+  }
+  .nav-tabs .nav-item.show .nav-link,
+  .nav-tabs .nav-link.active {
+    background: #1c4d86;
+    color: #fff !important;
+    box-shadow: 1px 1px 2px #c9c9c9;
+  }
+}
+#side-nav {
   position: fixed;
   left: 0;
   top: 0;
@@ -1683,8 +1758,8 @@ body {
   background-color: #1c4d86;
   width: 100px;
   z-index: 10;
-  .tabs {
-    .tab {
+  .side-nav-tabs {
+    .side-nav-tab {
       height: 100px;
       background-repeat: no-repeat;
       background-position: center;
@@ -1733,6 +1808,13 @@ body {
         }
       }
     }
+
+    p {
+      font-size: 16px;
+      strong {
+        font-size: 20px;
+      }
+    }
   }
 
   .report-card {
@@ -1772,12 +1854,6 @@ body {
     }
 
     .report-card-content {
-      p {
-        font-size: 16px;
-        strong {
-          font-size: 20px;
-        }
-      }
       .badge {
         display: inline-block;
         background: #e4ebf2;
@@ -1792,6 +1868,60 @@ body {
       }
     }
   }
+  //
+  .baemin-info-box {
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    padding: 32px;
+    margin: 14px 0;
+    > div {
+      background-repeat: no-repeat;
+      background-position: right center;
+      background-size: auto 80px;
+    }
+
+    &.average-score > div {
+      background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_baemin_score.svg');
+    }
+
+    &.average-order-rate > div {
+      background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_baemin_order.svg');
+    }
+
+    &.average-monthly-order-rate > div {
+      background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_baemin_order.svg');
+    }
+
+    &.minimum-order-price > div {
+      background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_baemin_tip.svg');
+    }
+
+    &.average-delivery-tip > div {
+      background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_baemin_delivery.svg');
+    }
+
+    &.average-like-count > div {
+      background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_baemin_like.svg');
+    }
+
+    .baemin-info-label {
+      font-size: 20px;
+      color: #000;
+      font-weight: 500;
+      span {
+        font-size: 12px;
+      }
+    }
+    .baemin-info-value {
+      margin-top: 64px;
+      strong {
+        font-size: 44px;
+        font-weight: 700;
+        color: #007eeb;
+      }
+    }
+  }
+
   //
   .recommended-menu-card {
     [class*='col-'] {

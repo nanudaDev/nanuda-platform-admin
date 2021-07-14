@@ -219,13 +219,6 @@ img {
   color: #fff !important;
 }
 
-.btn-lg {
-  min-width: 200px;
-  height: 60px;
-  font-size: 24px;
-  font-weight: 700;
-}
-
 .btn-primary {
   border-color: #004d8a !important;
   background: #004d8a !important;

@@ -226,6 +226,7 @@
                         salesResponseDto.mainAgeGroup &&
                           salesResponseDto.mainGagu
                       "
+                      class="mt-4 pt-4"
                     >
                       <b-col cols="12" lg="6">
                         <div class="doughnut-chart-container">
@@ -251,6 +252,27 @@
                                 </p>
                               </div>
                             </div>
+                          </div>
+                        </div>
+                        <div class="mt-4">
+                          <div class="legend-label-list">
+                            <p
+                              v-for="(value,
+                              name,
+                              index) in salesResponseDto.gaguRatio"
+                              :key="index"
+                            >
+                              <span
+                                class="legend-label-point"
+                                :style="{
+                                  'background-color': `rgba(100,132,163, ${(index +
+                                    1) /
+                                    Object.values(salesResponseDto.gaguRatio)
+                                      .length}`,
+                                }"
+                              ></span>
+                              <span class="legend-label-text">{{ name }}</span>
+                            </p>
                           </div>
                         </div>
                       </b-col>
@@ -279,6 +301,27 @@
                                 </p>
                               </div>
                             </div>
+                          </div>
+                        </div>
+                        <div class="mt-4">
+                          <div class="legend-label-list">
+                            <p
+                              v-for="(value,
+                              name,
+                              index) in salesResponseDto.ageRatio"
+                              :key="index"
+                            >
+                              <span
+                                class="legend-label-point"
+                                :style="{
+                                  'background-color': `rgba(100,132,163, ${(index +
+                                    1) /
+                                    Object.values(salesResponseDto.ageRatio)
+                                      .length}`,
+                                }"
+                              ></span>
+                              <span class="legend-label-text">{{ name }}</span>
+                            </p>
                           </div>
                         </div>
                       </b-col>
@@ -515,9 +558,7 @@
                     </p>
                     <div class="consumption-pattern-bar-charts mt-4">
                       <div
-                        v-for="(ratio,
-                        name,
-                        index) in salesResponseDto.hourRevenueRatio"
+                        v-for="(ratio, name, index) in computedHourRevenueRatio"
                         :key="index"
                         class="consumption-pattern-bar"
                         :class="{
@@ -536,7 +577,7 @@
                         <p
                           v-for="(value,
                           name,
-                          index) in salesResponseDto.hourRevenueRatio"
+                          index) in computedHourRevenueRatio"
                           :key="index"
                         >
                           <span
@@ -1385,6 +1426,19 @@ export default class ConsultReportDetail extends BaseComponent {
     ],
   };
 
+  // 시갠대별
+  get computedHourRevenueRatio() {
+    const obj = this.salesResponseDto.hourRevenueRatio;
+    const arr = [];
+    let newObj = {};
+    for (const prop in obj) arr.push([prop, obj[prop]]);
+    const temp = arr[2];
+    arr.unshift(temp);
+    const entries = new Map(arr);
+    newObj = Object.fromEntries(entries);
+    return newObj;
+  }
+
   // 주 소비층
   get computedMainGagu() {
     if (this.salesResponseDto.mainGagu === 1) {
@@ -1771,6 +1825,13 @@ body {
   }
 }
 #report {
+  .btn-lg {
+    min-width: 200px;
+    height: 60px;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
   color: #707070;
   * {
     word-break: keep-all;
@@ -2209,11 +2270,11 @@ body {
 
     .doughnut-chart-wrapper {
       position: relative;
-      width: 240px;
-      height: 240px;
+      width: 260px;
+      height: 260px;
       margin-top: 1em;
       .chartjs-render-monitor {
-        height: 240px !important;
+        height: 260px !important;
       }
       .doughnut-chart-text {
         position: absolute;
@@ -2225,6 +2286,10 @@ body {
         align-items: center;
         justify-content: center;
         text-align: center;
+
+        .badge {
+          font-size: 12px;
+        }
 
         p {
           font-size: 32px;

@@ -395,7 +395,14 @@ export default class ProformaCalculator extends BaseComponent {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.btn-lg {
+  min-width: 200px;
+  height: 60px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
 .service-card {
   border-radius: 10px;
   box-shadow: 0 7px 9px rgba(195, 195, 195, 0.16);

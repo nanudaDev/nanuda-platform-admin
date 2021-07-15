@@ -65,7 +65,7 @@ export default class RevenueChart extends Vue {
     layout: {
       padding: {
         // Any unspecified dimensions are assumed to be 0
-        top: 100,
+        top: 0,
       },
     },
     tooltips: {
@@ -82,7 +82,8 @@ export default class RevenueChart extends Vue {
         {
           ticks: {
             padding: 0,
-            fontSize: 16,
+            fontSize: 18,
+            fontColor: 'black',
           },
           gridLines: {
             display: false,
@@ -95,6 +96,30 @@ export default class RevenueChart extends Vue {
             beginAtZero: true,
             display: true,
             stepSize: 20000000,
+            callback: number => {
+              const inputNumber: any = number < 0 ? false : number * 1;
+              const unitWords = ['원', '만원', '억', '조', '경'];
+              const splitUnit = 10000;
+              const splitCount = unitWords.length;
+              const resultArray = [];
+              let resultString = '';
+              for (let i = 0; i < splitCount; i++) {
+                let unitResult =
+                  (inputNumber % Math.pow(splitUnit, i + 1)) /
+                  Math.pow(splitUnit, i);
+                unitResult = Math.floor(unitResult);
+                if (i !== 0 && unitResult > 0) {
+                  resultArray[i] = unitResult;
+                }
+              }
+
+              for (let i = 0; i < resultArray.length; i++) {
+                if (!resultArray[i]) continue;
+                resultString = `${String(resultArray[i])}${unitWords[i]}`;
+              }
+
+              return resultString;
+            },
           },
           gridLines: {
             display: true,

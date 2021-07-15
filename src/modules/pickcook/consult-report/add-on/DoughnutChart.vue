@@ -16,10 +16,12 @@ export default class DoughnutChart extends Vue {
   @Prop() private readonly chartData: any;
   @Prop() private datasetsData: any;
   @Prop() private labels?: any;
+  @Prop() private backgroundColor?: string[];
 
   @Watch('datasetsData')
   public onRevenueData() {
     this.chartData.datasets[0].data = [...this.datasetsData];
+    this.chartData.datasets[0].backgroundColor = [...this.backgroundColor];
     this.renderChart(this.chartData, this.options);
   }
 
@@ -44,8 +46,8 @@ export default class DoughnutChart extends Vue {
     if (this.labels.length > 0) {
       this.chartData.labels = this.labels;
     }
-    this.chartData.datasets[0].data = this.datasetsData;
-
+    this.chartData.datasets[0].data = [...this.datasetsData];
+    this.chartData.datasets[0].backgroundColor = [...this.backgroundColor];
     this.renderChart(this.chartData, this.options);
   }
 }

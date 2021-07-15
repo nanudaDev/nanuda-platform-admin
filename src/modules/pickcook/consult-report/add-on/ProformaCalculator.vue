@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <div
+    id="proforma-calculaotr"
+    ref="proforma"
+    :style="{ 'padding-bottom': isToggleSticky ? '400px' : '200px' }"
+  >
     <div>
       <div>
         <div
@@ -8,7 +12,16 @@
           class="service-card"
         >
           <div class="service-card-title">
-            <h4>{{ category.title }}</h4>
+            <h4>
+              <span>
+                <b-img-lazy
+                  :src="
+                    `https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_service_${category.name}.svg`
+                  "
+                ></b-img-lazy>
+              </span>
+              <span>{{ category.title }}</span>
+            </h4>
           </div>
           <div class="service-card-items">
             <div
@@ -45,7 +58,16 @@
         </div>
         <div v-if="extraService" class="service-card">
           <div class="service-card-title">
-            <h4>{{ extraService.title }}</h4>
+            <h4>
+              <span>
+                <b-img-lazy
+                  :src="
+                    `https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_service_extra.svg`
+                  "
+                ></b-img-lazy>
+              </span>
+              <span>{{ extraService.title }}</span>
+            </h4>
           </div>
           <div class="service-card-items">
             <div
@@ -54,7 +76,16 @@
               class="service-card-item"
             >
               <div class="item-name">
-                {{ item.name }} {{ item.qty }} {{ item.unit }}
+                {{ item.name }}
+                <div class="qty-control-box">
+                  <b-form-input
+                    type="text"
+                    v-model="item.qty"
+                    @change="changePrice(index)"
+                  />
+                </div>
+                <!-- {{ item.qty }}  -->
+                {{ item.unit }}
               </div>
               <div class="item-value">
                 <input
@@ -63,89 +94,95 @@
                   :id="item.id"
                   :value="item.price"
                 />
-                <div class="qty-control-box">
-                  <b-form-input
-                    type="text"
-                    v-model="item.qty"
-                    @change="changePrice(index)"
-                  />
-                  <div class="btn-control-box">
-                    <span
-                      class="btn-control btn-control-minus"
-                      @click="decrease(index)"
-                      ><span>감소</span></span
-                    >
-                    <span
-                      class="btn-control btn-control-plus"
-                      @click="increase(index)"
-                      ><span>증가</span></span
-                    >
-                  </div>
+
+                <div class="btn-control-box">
+                  <span
+                    class="btn-control btn-control-minus"
+                    @click="decrease(index)"
+                    ><span>감소</span></span
+                  >
+                  <span
+                    class="btn-control btn-control-plus"
+                    @click="increase(index)"
+                    ><span>증가</span></span
+                  >
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="service-total-box">
-        <div class="row-box">
-          <div class="service-total-title">합계</div>
-          <div class="service-total-value">
-            <span class="monthly-fee"
-              ><b
-                >매월
-                {{ Math.floor(totalPrice / 12) | numeralTransformer }}원</b
-              >
-              <b>VAT 별도</b></span
-            ><span class="total-fee"
-              >{{ totalPrice | numeralTransformer }}원</span
-            >
-          </div>
+
+      <div class="service-total-box" id="sticky-total" ref="proformaSticky">
+        <div
+          @click="onToggleSticky()"
+          class="btn-toggle"
+          :class="{ 'is-active': isToggleSticky }"
+        >
+          <span class="icon">
+            <b-img-lazy
+              src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_arrow_down.svg"
+            ></b-img-lazy>
+          </span>
+          <span class="is-hidden">열기/닫기</span>
         </div>
-        <div class="row-box discount-value-box">
-          <div class="d-flex justify-content-between">
-            <div class="service-total-title">
-              할인 적용
-            </div>
+        <template v-if="isToggleSticky">
+          <div class="row-box">
+            <div class="service-total-title">합계</div>
             <div class="service-total-value">
-              <div class="btn-control-box">
-                <span
-                  v-for="(type, index) in discountTypes"
-                  :key="index"
-                  @click="selectDiscountType(type)"
-                  class="btn-control"
-                  >{{ type }}</span
+              <!-- <span class="monthly-fee"
+                ><b
+                  >매월
+                  {{ Math.floor(totalPrice / 12) | numeralTransformer }}원</b
                 >
-                <!-- <span @click="resetDiscount()" class="btn-control">미적용</span> -->
+                <b>VAT 별도</b></span
+              > -->
+              <span class="total-fee"
+                >{{ totalPrice | numeralTransformer }}원</span
+              >
+            </div>
+          </div>
+          <div class="row-box discount-value-box">
+            <div class="d-flex justify-content-between">
+              <div class="service-total-title">
+                할인 적용
+              </div>
+              <div class="service-total-value">
+                <div class="btn-control-box">
+                  <span
+                    v-for="(type, index) in discountTypes"
+                    :key="index"
+                    @click="selectDiscountType(type)"
+                    class="btn-control"
+                    >{{ type }}</span
+                  >
+                  <!-- <span @click="resetDiscount()" class="btn-control">미적용</span> -->
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between">
+              <div class="service-total-title">
+                할인금액
+              </div>
+              <div class="service-total-value">
+                <span class="total-fee"
+                  >{{ discountPrice | numeralTransformer }}원
+                </span>
               </div>
             </div>
           </div>
+        </template>
+        <div class="row-box final-total-value-box">
           <div class="d-flex justify-content-between">
-            <div class="service-total-title">
-              할인금액
-            </div>
-            <div class="service-total-value">
-              <span class="total-fee"
-                >{{ discountPrice | numeralTransformer }}원
+            <div class="service-total-title">최종 합계</div>
+            <div class="btn-control-box">
+              <span class="btn-control" @click="resetProforma()">
+                <b-icon icon="arrow-clockwise"></b-icon>
+                <span class="ml-2">초기화</span>
               </span>
             </div>
           </div>
-        </div>
-        <div class="row-box final-total-value-box">
-          <div class="service-total-title">최종 합계</div>
-          <div class="service-total-value">
-            <span class="monthly-fee">
-              <b>매월 {{ monthlyFee | numeralTransformer }}원</b>
-              <b>VAT 별도</b></span
-            >
-            <span class="total-fee"
-              >{{ finalTotalValue | numeralTransformer
-              }}<span class="unit">원</span>
-            </span>
-          </div>
-        </div>
-        <div class="row-box final-total-value-box" id="sticky-total">
-          <div class="service-total-title">최종 합계</div>
+
           <div class="service-total-value">
             <span class="monthly-fee">
               <b>매월 {{ monthlyFee | numeralTransformer }}원</b>
@@ -158,12 +195,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="text-right mt-4 pt-4">
-      <b-button variant="primary" size="lg" pill @click="resetProforma()"
-        >초기화</b-button
-      >
     </div>
 
     <b-modal
@@ -201,6 +232,8 @@ export default class ProformaCalculator extends BaseComponent {
   @Prop() categoryType: string;
   @Prop() serviceCategories;
 
+  private isToggleSticky = false;
+
   private discountValue = 0;
   private calculateDiscountValue = 0;
   private discountType = DISCOUNT_TYPE.WON;
@@ -220,7 +253,7 @@ export default class ProformaCalculator extends BaseComponent {
   private extraServicePriceValues = [];
   private extraService = {
     title: '부가서비스',
-    name: 'extraService',
+    name: 'extra',
     items: [
       {
         id: 'extraService01',
@@ -332,6 +365,15 @@ export default class ProformaCalculator extends BaseComponent {
     });
   }
 
+  onToggleSticky() {
+    this.isToggleSticky = !this.isToggleSticky;
+  }
+  get stickyHeight() {
+    const stickyHeight = this.$refs.proformaSticky.getBoundingClientRect()
+      .height;
+    return (this.$refs.proforma.style.paddingBottom = stickyHeight + 'px');
+  }
+
   // 최종 합계
   get finalTotalValue(): any {
     if (this.discountType === DISCOUNT_TYPE.WON) {
@@ -395,7 +437,9 @@ export default class ProformaCalculator extends BaseComponent {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+#proforma-calculaotr {
+}
 .btn-lg {
   min-width: 200px;
   height: 60px;
@@ -412,9 +456,15 @@ export default class ProformaCalculator extends BaseComponent {
   margin: 40px 0;
   display: flex;
   align-items: center;
+  min-height: 100px;
   .service-card-title {
+    text-align: center;
     width: 25vw;
-    padding: 0 60px;
+    padding: 16px 60px;
+    img {
+      width: 68px;
+      margin: 0 16px;
+    }
     h4 {
       font-size: 24px;
       color: #000000;
@@ -456,7 +506,7 @@ export default class ProformaCalculator extends BaseComponent {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 32px 0;
+    padding: 24px 0;
     &.discount-value-box {
       border-top: 1px solid #c9c9c9;
       .service-total-value {
@@ -473,7 +523,7 @@ export default class ProformaCalculator extends BaseComponent {
       }
       .service-total-value {
         .total-fee {
-          font-size: 32px;
+          font-size: 44px;
           font-weight: 700;
           color: #007eeb;
         }
@@ -489,12 +539,13 @@ export default class ProformaCalculator extends BaseComponent {
     margin-right: 100px;
   }
   .service-total-value {
-    display: flex;
-    align-items: center;
+    // display: flex;
+    // align-items: center;
     text-align: right;
     .monthly-fee {
+      display: block;
       font-size: 16px;
-      margin-right: 40px;
+      // margin-right: 40px;
       > b {
         position: relative;
         font-weight: normal;
@@ -525,10 +576,13 @@ export default class ProformaCalculator extends BaseComponent {
   display: flex;
   justify-content: center;
   .form-control {
-    width: 60px;
-    height: 42px;
-    box-shadow: 0 3px 6px rgba(195, 195, 195, 0.16);
-    margin-right: 8px;
+    width: 50px;
+    height: 36px;
+    border: 0;
+    background: #f5f5f5;
+    box-shadow: inset 0 3px 6px rgba(195, 195, 195, 0.16);
+    margin: 0 8px;
+    text-align: center;
   }
 }
 .btn-control-box {
@@ -618,13 +672,41 @@ export default class ProformaCalculator extends BaseComponent {
   left: 100px;
   right: 0;
   z-index: 5;
-  background: #fff;
+  background: rgba(240, 247, 252, 0.9);
   border: 0;
   padding: 40px 40px;
   box-shadow: 0 -5px 10px rgba(195, 195, 195, 0.16);
+  .btn-toggle {
+    display: block;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(240, 247, 252, 0.9);
+    position: absolute;
+    left: 50%;
+    margin-left: -40px;
+    top: -40px;
+    text-align: center;
+    &.is-active {
+      .icon {
+        transform: rotate(0);
+      }
+    }
+    .icon {
+      display: inline-block;
+      width: 20px;
+      margin-top: 15px;
+      transform: rotate(180deg);
+    }
+  }
 }
 
 // overwrite
+.custom-radio.b-custom-control-lg,
+.input-group-lg .custom-radio {
+  position: relative;
+  top: -4px;
+}
 .custom-radio.b-custom-control-lg .custom-control-label::before,
 .input-group-lg .custom-radio .custom-control-label::before {
   width: 32px;
@@ -652,6 +734,8 @@ export default class ProformaCalculator extends BaseComponent {
   width: 55px;
   height: 32px;
   vertical-align: top;
+  position: relative;
+  top: -4px;
 }
 .custom-switch.b-custom-control-lg .custom-control-label::before,
 .input-group-lg .custom-switch .custom-control-label::before {

@@ -187,6 +187,11 @@ img {
   min-height: 100px;
 }
 
+// hidden
+.is-hidden {
+  display: none !important;
+}
+
 // font color
 .red-text {
   color: red;
@@ -286,6 +291,22 @@ img {
   height: 100%;
   -o-object-fit: cover;
   object-fit: cover;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+.fadeIn-enter-active {
+  animation: fadeIn 0.3s ease;
+}
+.fadeIn-leave-active {
+  animation: fadeIn 0.3s ease reverse;
 }
 
 @media screen and (max-width: 540px) {

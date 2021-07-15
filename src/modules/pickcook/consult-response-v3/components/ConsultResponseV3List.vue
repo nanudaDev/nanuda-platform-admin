@@ -392,28 +392,8 @@
                 </template>
               </td> -->
               <td>{{ consult.phone | phoneTransformer }}</td>
-              <td>{{ consult.meetingDate }}</td>
-              <!-- <td>
-                <template v-if="consult.reservation">
-                  <template v-if="consult.reservation.isCancelYn !== 'Y'">
-                    {{
-                      consult.reservation.reservationDate | dateOnlyTransformer
-                    }}
-                    {{ consult.reservation.reservationTime }}
-                  </template>
-                  <template v-else>
-                    <p class="red-text" v-if="consult.reservation.deleteReason">
-                      <b-badge variant="danger">취소</b-badge>
-                      <template v-if="consult.reservation.deleteReasonEtc">
-                        {{ consult.reservation.deleteReasonEtc }}
-                      </template>
-                      <template v-else>
-                        {{ consult.reservation.deleteReason }}
-                      </template>
-                    </p>
-                  </template>
-                </template>
-              </td> -->
+              <td>{{ consult.meetingDate }} {{ consult.meetingTime }}</td>
+
               <td>
                 <template v-if="consult.admin">
                   {{ consult.admin.name }}

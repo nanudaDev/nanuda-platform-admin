@@ -103,7 +103,7 @@
                               </b-form-select>
                             </b-form-group>
                           </b-col>
-                          <b-col cols="6" xl="4">
+                          <!-- <b-col cols="6" xl="4">
                             <b-form-group label="창업 유형" label-align="left">
                               <b-form-select
                                 v-model="salesRequestDto.storeType"
@@ -117,11 +117,11 @@
                                 </b-form-select-option>
                               </b-form-select>
                             </b-form-group>
-                          </b-col>
+                          </b-col> -->
                         </b-form-row>
                       </b-col>
                       <b-col cols="12" xl="3">
-                        <div class="text-center my-2">
+                        <div class="text-center mt-4 mb-2">
                           <b-button
                             variant="primary"
                             size="lg"

@@ -2,7 +2,7 @@
   <div
     id="proforma-calculaotr"
     ref="proforma"
-    :style="{ 'padding-bottom': isToggleSticky ? '400px' : '200px' }"
+    :style="{ 'padding-bottom': isToggleSticky ? '300px' : '100px' }"
   >
     <div>
       <div>
@@ -29,7 +29,14 @@
               :key="item.id"
               class="service-card-item"
             >
-              <div class="item-name">{{ item.name }}</div>
+              <div
+                class="item-name"
+                :class="{
+                  'text-blue': checkboxValues.includes(item),
+                }"
+              >
+                {{ item.name }}
+              </div>
               <div class="item-value">
                 <template v-if="category.type === 'radio'">
                   <b-form-radio
@@ -239,7 +246,6 @@ export default class ProformaCalculator extends BaseComponent {
   private calculateDiscountValue = 0;
   private discountType = DISCOUNT_TYPE.WON;
   private discountTypes: DISCOUNT_TYPE[] = [...CONST_DISCOUNT_TYPE];
-  private valueQty: number[] = [];
 
   private checkboxValues = [];
   get checkboxPriceValues() {
@@ -505,8 +511,10 @@ export default class ProformaCalculator extends BaseComponent {
     justify-content: space-between;
     align-items: center;
     padding: 24px 0;
+    + .row-box {
+      border-top: 1px solid rgb(115 143 180 / 65%);
+    }
     &.discount-value-box {
-      border-top: 1px solid #c9c9c9;
       .service-total-value {
         .total-fee {
           font-weight: 700;
@@ -514,8 +522,7 @@ export default class ProformaCalculator extends BaseComponent {
       }
     }
     &.final-total-value-box {
-      border-top: 1px solid #8c8c8c;
-      border-bottom: 1px solid #8c8c8c;
+      border-top-width: 2px;
       .service-total-title {
         color: #007eeb;
       }
@@ -674,7 +681,7 @@ export default class ProformaCalculator extends BaseComponent {
   z-index: 5;
   background: rgba(240, 247, 252, 0.9);
   border: 0;
-  padding: 40px 40px;
+  padding: 0 40px;
   box-shadow: 0 -5px 10px rgba(195, 195, 195, 0.16);
   .btn-toggle {
     display: block;

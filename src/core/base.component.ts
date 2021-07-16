@@ -10,10 +10,16 @@ import CodeManagementService from '../services/code-management.service';
 
 @Component
 export default class BaseComponent extends Vue {
+  constructor() {
+    super();
+  }
+
   public env = new Environment();
   public $refs: {
     fileInput: any;
     report: HTMLFormElement;
+    proforma: HTMLFormElement;
+    proformaSticky: HTMLFormElement;
   };
 
   // get nav bar height

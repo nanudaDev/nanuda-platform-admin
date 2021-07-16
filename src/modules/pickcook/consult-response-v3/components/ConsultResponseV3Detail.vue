@@ -582,7 +582,7 @@
           v-model="messageTemplate"
           rows="10"
           max-rows="20"
-          style="height:240px"
+          style="height:300px"
           readonly
         >
         </b-form-textarea>
@@ -1038,7 +1038,9 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   get messageTemplate() {
     if (this.selectedTemplateType === MESSAGE_TEMPLATE_TYPE.CONSULT) {
       return `[픽쿡 상담안내]\n안녕하세요 ${this.consultResponseV3Dto.name} 창업자님!\n데이터로 창업의 시작과 매출을올려드리는 픽쿡입니다.\n픽쿡을 신청해 주셔서 감사합니다.\n오늘 "${this.availableTime}" 사이에 상담전화를 드리겠습니다.\n감사합니다.`;
-    } else {
+    } else if (
+      this.selectedTemplateType === MESSAGE_TEMPLATE_TYPE.ONLINE_MEETING
+    ) {
       return `[픽쿡 상권분석 일정안내]\n안녕하세요 ${
         this.consultResponseV3Dto.name
       } 창업자님!\n오늘 "${
@@ -1048,6 +1050,8 @@ export default class ConsultResponseV3Detail extends BaseComponent {
           ? this.consultResponseV3SendMessageDto.googleMeetUrl
           : ''
       }`;
+    } else {
+      return `[픽쿡 상권분석 일정안내]\n안녕하세요 ${this.consultResponseV3Dto.name} 창업자님!\n오늘 "${this.availableTime}"에 픽쿡 오프라인 미팅이 예정되어 있어서 문자드립니다!\n장소 : 서울시 서초구 강남대로 311\n\n건물에 도착하여 연락주시면 담당자분이 안내드릴 예정입니다.\n건물 내 유료주차 가능하시며, 최초 30분만 무료로 제공됩니다.\n\n감사합니다.`;
     }
   }
 
@@ -1058,7 +1062,7 @@ export default class ConsultResponseV3Detail extends BaseComponent {
       return;
     }
     if (
-      this.selectedTemplateType === MESSAGE_TEMPLATE_TYPE.MEETING &&
+      this.selectedTemplateType === MESSAGE_TEMPLATE_TYPE.ONLINE_MEETING &&
       !this.consultResponseV3SendMessageDto.googleMeetUrl
     ) {
       toast.error('구글 미트 주소를 입력해주세요!');

@@ -187,6 +187,11 @@ img {
   min-height: 100px;
 }
 
+// hidden
+.is-hidden {
+  display: none !important;
+}
+
 // font color
 .red-text {
   color: red;
@@ -196,7 +201,32 @@ img {
 }
 
 .text-primary {
-  color: #0b538d !important;
+  color: #004d8a !important;
+}
+.text-blue {
+  color: #007eeb !important;
+}
+.text-lightblue {
+  color: #00b1ff !important;
+}
+
+.bg-primary {
+  background: #004d8a !important;
+  color: #fff !important;
+}
+
+.bg-lightblue {
+  background: #00b1ff !important;
+}
+
+.bg-blue {
+  background: #007eeb !important;
+  color: #fff !important;
+}
+
+.btn-primary {
+  border-color: #004d8a !important;
+  background: #004d8a !important;
 }
 
 // list
@@ -261,6 +291,22 @@ img {
   height: 100%;
   -o-object-fit: cover;
   object-fit: cover;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+.fadeIn-enter-active {
+  animation: fadeIn 0.3s ease;
+}
+.fadeIn-leave-active {
+  animation: fadeIn 0.3s ease reverse;
 }
 
 @media screen and (max-width: 540px) {

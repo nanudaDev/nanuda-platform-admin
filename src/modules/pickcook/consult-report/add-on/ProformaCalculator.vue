@@ -260,7 +260,7 @@ export default class ProformaCalculator extends BaseComponent {
         id: 'extraService01',
         name: '포스피드',
         unit: '개월',
-        price: 50000,
+        price: 20000,
         qty: 0,
         totalPrice: 0,
       },
@@ -268,7 +268,7 @@ export default class ProformaCalculator extends BaseComponent {
         id: 'extraService02',
         name: '상권분석',
         unit: '개월',
-        price: 50000,
+        price: 100000,
         qty: 0,
         totalPrice: 0,
       },
@@ -276,7 +276,7 @@ export default class ProformaCalculator extends BaseComponent {
         id: 'extraService03',
         name: '매장 관리 서비스',
         unit: '개월',
-        price: 50000,
+        price: 200000,
         qty: 0,
         totalPrice: 0,
       },
@@ -284,7 +284,7 @@ export default class ProformaCalculator extends BaseComponent {
         id: 'extraService04',
         name: '사후교육',
         unit: '회',
-        price: 50000,
+        price: 300000,
         qty: 0,
         totalPrice: 0,
       },
@@ -359,6 +359,7 @@ export default class ProformaCalculator extends BaseComponent {
   // 견적 초기화
   resetProforma() {
     this.radioValues = new ProformaCalculatorDto();
+    this.calculateDiscountValue = 0;
     this.checkboxValues = [];
     this.extraService.items.forEach((e, i) => {
       e.qty = 0;
@@ -439,15 +440,6 @@ export default class ProformaCalculator extends BaseComponent {
 }
 </script>
 <style lang="scss">
-#proforma-calculaotr {
-}
-.btn-lg {
-  min-width: 200px;
-  height: 60px;
-  font-size: 24px;
-  font-weight: 700;
-}
-
 .service-card {
   border-radius: 10px;
   box-shadow: 0 7px 9px rgba(195, 195, 195, 0.16);
@@ -470,6 +462,11 @@ export default class ProformaCalculator extends BaseComponent {
       font-size: 24px;
       color: #000000;
       font-weight: 500;
+      span {
+        + span {
+          margin: 0 30px;
+        }
+      }
     }
   }
   .service-card-items {
@@ -602,6 +599,7 @@ export default class ProformaCalculator extends BaseComponent {
     align-items: center;
     justify-content: center;
     color: #707070;
+    cursor: pointer;
     + .btn-control {
       &:before {
         display: block;
@@ -708,6 +706,7 @@ export default class ProformaCalculator extends BaseComponent {
 .input-group-lg .custom-radio {
   position: relative;
   top: -4px;
+  cursor: pointer;
 }
 .custom-radio.b-custom-control-lg .custom-control-label::before,
 .input-group-lg .custom-radio .custom-control-label::before {
@@ -748,6 +747,7 @@ export default class ProformaCalculator extends BaseComponent {
   border: 0;
   border-radius: 100px;
   left: -44px;
+  cursor: pointer;
 }
 .custom-switch.b-custom-control-lg .custom-control-label::after,
 .input-group-lg .custom-switch .custom-control-label::after {
@@ -757,6 +757,7 @@ export default class ProformaCalculator extends BaseComponent {
   width: calc(32px - 4px);
   height: calc(32px - 4px);
   border-radius: 50%;
+  cursor: pointer;
 }
 
 .custom-switch.b-custom-control-lg
@@ -774,6 +775,7 @@ export default class ProformaCalculator extends BaseComponent {
 @media screen and (max-width: 1365px) {
   .service-card {
     .service-card-title {
+      padding: 16px 30px;
       h4 {
         text-align: center;
         span {
@@ -802,8 +804,8 @@ export default class ProformaCalculator extends BaseComponent {
     .service-card-items {
       width: auto;
       .service-card-item {
+        border-top: 1px solid #e0e0e0;
         + .service-card-item {
-          border-top: 1px solid #e0e0e0;
           .item-name {
             border-top: 0;
           }

@@ -24,10 +24,10 @@ export default class RevenueChart extends Vue {
         align: 'top',
         offset: '15',
         font: {
-          size: 20,
+          size: 24,
           weight: 'bold',
         },
-        color: ['#ffffff', '#004D8A', '#004D8A', '#004D8A', '#ffffff'],
+        color: ['transparent', '#007EEB', '#007EEB', '#007EEB', 'transparent'],
         formatter: (number: any, context: any) => {
           // console.log('context', context);
           if (context.dataIndex == 0) {
@@ -51,10 +51,10 @@ export default class RevenueChart extends Vue {
                 resultArray[i] = unitResult;
               }
             }
+
             for (let i = 0; i < resultArray.length; i++) {
               if (!resultArray[i]) continue;
-              resultString =
-                String(resultArray[i]) + unitWords[i] + resultString;
+              resultString = `${String(resultArray[i])}${unitWords[i]}`;
             }
 
             return resultString;
@@ -65,7 +65,7 @@ export default class RevenueChart extends Vue {
     layout: {
       padding: {
         // Any unspecified dimensions are assumed to be 0
-        top: 100,
+        top: 0,
       },
     },
     tooltips: {
@@ -81,20 +81,48 @@ export default class RevenueChart extends Vue {
       xAxes: [
         {
           ticks: {
-            padding: -380,
-            fontSize: 15,
+            padding: 0,
+            fontSize: 18,
+            fontColor: 'black',
+          },
+          gridLines: {
+            display: false,
           },
         },
       ],
       yAxes: [
         {
           ticks: {
-            fontColor: ['white', 'white', 'black', 'white', 'white', 'white'],
             beginAtZero: true,
-            display: false,
+            display: true,
+            stepSize: 20000000,
+            callback: number => {
+              const inputNumber: any = number < 0 ? false : number * 1;
+              const unitWords = ['원', '만원', '억', '조', '경'];
+              const splitUnit = 10000;
+              const splitCount = unitWords.length;
+              const resultArray = [];
+              let resultString = '';
+              for (let i = 0; i < splitCount; i++) {
+                let unitResult =
+                  (inputNumber % Math.pow(splitUnit, i + 1)) /
+                  Math.pow(splitUnit, i);
+                unitResult = Math.floor(unitResult);
+                if (i !== 0 && unitResult > 0) {
+                  resultArray[i] = unitResult;
+                }
+              }
+
+              for (let i = 0; i < resultArray.length; i++) {
+                if (!resultArray[i]) continue;
+                resultString = `${String(resultArray[i])}${unitWords[i]}`;
+              }
+
+              return resultString;
+            },
           },
           gridLines: {
-            display: false,
+            display: true,
           },
         },
       ],
@@ -111,13 +139,14 @@ export default class RevenueChart extends Vue {
     const ctx = canvas.getContext('2d');
 
     const gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
-    gradientStroke.addColorStop(0, '#80b6f4');
-    gradientStroke.addColorStop(1, '#f49080');
+    gradientStroke.addColorStop(0, '#327FE3');
+    gradientStroke.addColorStop(1, '#327FE3');
 
     const gradientFill = ctx.createLinearGradient(0, 0, 0, 500);
-    gradientFill.addColorStop(0, 'rgba(103,186,208,1)');
-    gradientFill.addColorStop(1, 'rgba(11,83,141,1)');
+    gradientFill.addColorStop(0, 'rgba(76,176,248,0.4)');
+    gradientFill.addColorStop(1, 'rgba(50,127,227,1)');
 
+    this.chartData.datasets[0].borderColor = gradientStroke;
     this.chartData.datasets[0].backgroundColor = gradientFill;
     // Overwriting base render method with actual data.
     this.chartData.datasets[0].data = [...this.revenueData];

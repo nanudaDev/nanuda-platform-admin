@@ -118,44 +118,6 @@
           </template>
           <template v-slot:body>
             <b-row>
-              <!-- <b-col lg="6" v-if="consultResponseV3Dto.proformaConsultResult">
-                <div class="mt-2">
-                  <div
-                    class="card border p-3 mt-2"
-                    v-if="
-                      consultResponseV3Dto.proformaConsultResult.fnbOwnerStatus
-                    "
-                  >
-                    <p>Q. 창업자 유형</p>
-                    <p class="mt-2 text-primary">
-                      A.
-                      {{
-                        consultResponseV3Dto.proformaConsultResult
-                          .fnbOwnerStatus | enumTransformer
-                      }}
-                    </p>
-                  </div>
-                </div>
-                <div
-                  v-if="consultResponseV3Dto.proformaConsultResult"
-                  class="mt-2"
-                >
-                  <div
-                    v-for="question in consultResponseV3Dto
-                      .proformaConsultResult.questions"
-                    :key="question.id"
-                    class="card border p-3 mt-2"
-                  >
-                    <p>Q. {{ question.question }}</p>
-                    <p class="mt-2 text-primary">
-                      A.
-                      <span v-for="given in question.givens" :key="given.id">
-                        {{ given.given }}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              </b-col> -->
               <b-col lg="12">
                 <div class="my-2">
                   <b-form-group label="신청상태">
@@ -178,80 +140,60 @@
                     ({{ consultResponseV3Dto.updated | dateTransformer }})
                   </p>
                 </div>
-                <!-- <div class="my-2">
-                  <b-form-group
-                    label="
-                      미팅 예약 코드
-                    "
-                    v-if="consultResponseV3Dto.reservationCode"
-                  >
-                    <b-form-input
-                      v-model="consultResponseV3Dto.reservationCode"
-                      disabled
-                    >
-                    </b-form-input>
-                  </b-form-group>
-                  <template v-if="consultResponseV3Dto.reservation">
-                    <template
-                      v-if="consultResponseV3Dto.reservation.isCancelYn !== 'Y'"
-                    >
-                      <b-form-row>
-                        <b-col cols="6">
-                          <b-form-group label="미팅 예약 날짜">
-                            <b-form-datepicker
-                              v-model="reservationUpdateDto.reservationDate"
-                              @input="getReservationTimes($event)"
-                            >
-                            </b-form-datepicker>
-                          </b-form-group>
-                        </b-col>
-                        <b-col cols="6">
-                          <b-form-group label="미팅 예약 시간">
-                            <b-form-select
-                              v-model="reservationUpdateDto.reservationTime"
-                            >
-                              <b-form-select-option
-                                :key="index"
-                                :value="time.value"
-                                v-for="(time, index) in reservationTimes"
-                                :disabled="!time.available"
-                              >
-                                {{ time.value }}
-                              </b-form-select-option>
-                            </b-form-select>
-                          </b-form-group>
-                        </b-col>
-                      </b-form-row>
-                      <div class="mt-2 text-right">
-                        <b-button variant="info" @click="updateReservation()">
-                          예약 변경
-                        </b-button>
-                        <b-button variant="danger" v-b-modal.cancel_reservation>
-                          예약 취소
-                        </b-button>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <p class="red-text">
-                        <b-badge variant="danger">취소</b-badge>
-                        <template
-                          v-if="consultResponseV3Dto.reservation.deleteReasonEtc"
-                        >
-                          {{ consultResponseV3Dto.reservation.deleteReasonEtc }}
-                        </template>
-                        <template v-else>
-                          {{ consultResponseV3Dto.reservation.deleteReason }}
-                        </template>
-                      </p>
-                    </template>
-                  </template>
-                  <template v-else>
+                <div class="my-2">
+                  <!-- 미팅 정보 수정하기 -->
+                  <template>
                     <b-form-row>
                       <b-col cols="6">
                         <b-form-group label="미팅 예약 날짜">
                           <b-form-datepicker
-                            v-model="reservationCreateDto.reservationDate"
-                            @input="getReservationTimes($event)"
+                            v-model="consultResponseUpdateDto.meetingDate"
+                            @input="
+                              consultResponseUpdateDto.meetingDate = $event
+                            "
+                          >
+                          </b-form-datepicker>
+                        </b-form-group>
+                      </b-col>
+                      <b-col cols="6">
+                        <b-form-group label="미팅 예약 시간">
+                          <b-form-select
+                            v-model="consultResponseUpdateDto.meetingTime"
+                          >
+                            <b-form-select-option
+                              :key="index"
+                              :value="time"
+                              v-for="(time, index) in meetingTimeArr"
+                            >
+                              {{ time }}
+                            </b-form-select-option>
+                          </b-form-select>
+                        </b-form-group>
+                      </b-col>
+                    </b-form-row>
+                    <div
+                      class="mt-2 text-right"
+                      v-if="consultResponseV3Dto.meetingDate"
+                    >
+                      <b-button
+                        variant="danger"
+                        v-b-modal.cancel_reservation
+                        @click="cancelMeeting()"
+                      >
+                        예약 취소
+                      </b-button>
+                    </div>
+                  </template>
+                  <!-- 미팅 정보 새로 만들기 -->
+                  <!-- <template v-else>
+                    <b-form-row>
+                      <b-col cols="6">
+                        <b-form-group label="미팅 예약 날짜">
+                          <b-form-datepicker
+                            v-model="consultResponseUpdateDto.meetingDate"
+                            @input="
+                              consultResponseUpdateDto.meetingDate = $event
+                            "
                           >
                           </b-form-datepicker>
                         </b-form-group>
@@ -273,13 +215,8 @@
                         </b-form-group>
                       </b-col>
                     </b-form-row>
-                    <div class="mt-2 text-right">
-                      <b-button variant="primary" @click="createReservation()">
-                        예약 추가
-                      </b-button>
-                    </div>
-                  </template>
-                </div> -->
+                  </template> -->
+                </div>
                 <div class="my-4">
                   <label for="productConsultEtc">비고 내용</label>
                   <b-form-textarea
@@ -582,7 +519,7 @@
           v-model="messageTemplate"
           rows="10"
           max-rows="20"
-          style="height:240px"
+          style="height:300px"
           readonly
         >
         </b-form-textarea>
@@ -690,68 +627,6 @@
         </b-col>
       </b-form-row>
     </b-modal> -->
-    <!-- 예약 변경 모달 -->
-    <!-- <b-modal
-      id="update_reservation"
-      title="미팅 예약 변경"
-      header-bg-variant="info"
-      header-text-variant="light"
-      hide-footer
-    >
-      <div class="text-center">
-        <div class="mt-2 text-right">
-          <b-button variant="primary" @click="updateReservation()"
-            >예약변경</b-button
-          >
-        </div>
-      </div>
-    </b-modal> -->
-    <!-- 예약 취소 모달 -->
-    <b-modal
-      id="cancel_reservation"
-      title="미팅 예약 취소"
-      header-bg-variant="danger"
-      header-text-variant="light"
-      hide-footer
-    >
-      <div class="text-center mb-2">
-        <p>
-          <b>정말로 취소하시겠습니까?</b>
-        </p>
-      </div>
-      <div class="mt-3">
-        <b-form-group
-          v-for="(reason, index) in reservationDeleteReasons"
-          :key="index"
-        >
-          <b-form-radio
-            v-model="reservationDeleteReasonDto.deleteReason"
-            :value="reason"
-            name="delete_reason"
-            @input="onSelectDeleteReason($event)"
-          >
-            {{ reason }}
-          </b-form-radio>
-        </b-form-group>
-        <b-form-group>
-          <b-form-input
-            v-model="reservationDeleteReasonDto.deleteReasonEtc"
-            :disabled="reservationDeleteReasonDto.deleteReason !== '기타'"
-            @input="onSelectOtherReason($event)"
-            class="mt-2"
-          >
-          </b-form-input>
-        </b-form-group>
-      </div>
-      <div class="mt-2 text-right">
-        <b-button
-          variant="danger"
-          @click="cancelReservation()"
-          :disabled="!deleteReasonText.length"
-          >예약취소</b-button
-        >
-      </div>
-    </b-modal>
     <!-- 주소 검색 모달 -->
     <b-modal id="postcode" title="주소 검색" hide-footer>
       <vue-daum-postcode
@@ -769,10 +644,6 @@ import {
   ConsultResponseV3Dto,
   ConsultResponseV3UpdateDto,
   AdminSendMessageDto,
-  ReservationCreateDto,
-  ReservationUpdateDto,
-  ReservationDeleteReasonDto,
-  ReservationCheckTimeDto,
   AdminDto,
   AdminListDto,
   ConsultResponseV3SendMessageDto,
@@ -786,8 +657,6 @@ import { PickcookCodeManagementDto } from '@/services/init/dto';
 import {
   BEST_FOOD_CATEGORY,
   CONST_BEST_FOOD_CATEGORY,
-  RESERVATION_DELETE_REASON,
-  CONST_RESERVATION_DELETE_REASON,
   BRAND_CONSULT,
   CONST_KB_MEDIUM_CATEGORY,
   KB_MEDIUM_CATEGORY_KOREAN,
@@ -826,14 +695,6 @@ export default class ConsultResponseV3Detail extends BaseComponent {
     ...CONST_BEST_FOOD_CATEGORY,
   ];
 
-  private reservationCreateDto = new ReservationCreateDto();
-  private reservationUpdateDto = new ReservationUpdateDto();
-  private reservationDeleteReasonDto = new ReservationDeleteReasonDto();
-  private reservationCheckTimeDto = new ReservationCheckTimeDto();
-  private reservationTimes: any[] = [];
-  private reservationDeleteReasons: RESERVATION_DELETE_REASON[] = [
-    ...CONST_RESERVATION_DELETE_REASON,
-  ];
   private selectDeleteReason = '';
   private otherDeleteReason = '';
   private deleteReasonText = '';
@@ -876,6 +737,24 @@ export default class ConsultResponseV3Detail extends BaseComponent {
   private hdongCode;
   private codeHdongAddress = '';
   private codeHdongDto = new CodeHdongDto();
+  private meetingTimeArr = [
+    '10:00',
+    '10:30',
+    '11:00',
+    '11:30',
+    '12:00',
+    '13:30',
+    '14:00',
+    '14:30',
+    '15:00',
+    '15:30',
+    '16:00',
+    '16:30',
+    '17:00',
+    '17:30',
+    '18:00',
+    '18:30',
+  ];
 
   // 상권분석 리포트 보기
   getConsultReport() {
@@ -994,7 +873,8 @@ export default class ConsultResponseV3Detail extends BaseComponent {
         // this.getLocationInfoDetail();
         this.consultResponseUpdateDto.consultStatus = this.consultResponseV3Dto.consultStatus;
         this.consultResponseUpdateDto.description = this.consultResponseV3Dto.description;
-
+        this.consultResponseUpdateDto.meetingDate = this.consultResponseV3Dto.meetingDate;
+        this.consultResponseUpdateDto.meetingTime = this.consultResponseV3Dto.meetingTime;
         // if (
         //   this.consultResponseV3Dto.reservation &&
         //   this.consultResponseV3Dto.reservation.isCancelYn !== 'Y'
@@ -1026,19 +906,13 @@ export default class ConsultResponseV3Detail extends BaseComponent {
       }
     });
   }
-  onSelectDeleteReason(value) {
-    if (value !== RESERVATION_DELETE_REASON.ETC) {
-      this.deleteReasonText = value;
-      this.reservationDeleteReasonDto.deleteReasonEtc = '';
-    } else {
-      this.deleteReasonText = '';
-    }
-  }
 
   get messageTemplate() {
     if (this.selectedTemplateType === MESSAGE_TEMPLATE_TYPE.CONSULT) {
       return `[픽쿡 상담안내]\n안녕하세요 ${this.consultResponseV3Dto.name} 창업자님!\n데이터로 창업의 시작과 매출을올려드리는 픽쿡입니다.\n픽쿡을 신청해 주셔서 감사합니다.\n오늘 "${this.availableTime}" 사이에 상담전화를 드리겠습니다.\n감사합니다.`;
-    } else {
+    } else if (
+      this.selectedTemplateType === MESSAGE_TEMPLATE_TYPE.ONLINE_MEETING
+    ) {
       return `[픽쿡 상권분석 일정안내]\n안녕하세요 ${
         this.consultResponseV3Dto.name
       } 창업자님!\n오늘 "${
@@ -1048,6 +922,8 @@ export default class ConsultResponseV3Detail extends BaseComponent {
           ? this.consultResponseV3SendMessageDto.googleMeetUrl
           : ''
       }`;
+    } else {
+      return `[픽쿡 상권분석 일정안내]\n안녕하세요 ${this.consultResponseV3Dto.name} 창업자님!\n오늘 "${this.availableTime}"에 픽쿡 오프라인 미팅이 예정되어 있어서 문자드립니다!\n장소 : 서울시 서초구 강남대로 311\n\n건물에 도착하여 연락주시면 담당자분이 안내드릴 예정입니다.\n건물 내 유료주차 가능하시며, 최초 30분만 무료로 제공됩니다.\n\n감사합니다.`;
     }
   }
 
@@ -1058,7 +934,7 @@ export default class ConsultResponseV3Detail extends BaseComponent {
       return;
     }
     if (
-      this.selectedTemplateType === MESSAGE_TEMPLATE_TYPE.MEETING &&
+      this.selectedTemplateType === MESSAGE_TEMPLATE_TYPE.ONLINE_MEETING &&
       !this.consultResponseV3SendMessageDto.googleMeetUrl
     ) {
       toast.error('구글 미트 주소를 입력해주세요!');
@@ -1137,10 +1013,15 @@ export default class ConsultResponseV3Detail extends BaseComponent {
     });
   }
 
+  cancelMeeting() {
+    this.consultResponseUpdateDto.meetingDate = null;
+    this.consultResponseUpdateDto.meetingTime = null;
+    this.updateConsultResponse();
+  }
+
   showAddressModal() {
     this.$bvModal.show('postcode');
   }
-
   created() {
     const id = this.$route.params.id;
     this.findOne(id);

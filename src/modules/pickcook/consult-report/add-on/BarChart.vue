@@ -49,12 +49,19 @@ export default class BarChart extends Vue<Bar> {
         align: 'top',
         anchor: 'end',
         color: 'rgb(11 83 141)',
-        formatter: function(value, context) {
+        font: {
+          size: 18,
+          weight: 'bold',
+        },
+        formatter: (value, context) => {
           const arr = context.dataset.data;
-          const sorted = arr.slice().sort(function(a, b) {
+          const sorted = arr.slice().sort((a, b) => {
             return b - a;
           });
           return value + '%';
+        },
+        display: context => {
+          return context.dataIndex < 3;
         },
       },
     },

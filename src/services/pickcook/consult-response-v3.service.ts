@@ -7,6 +7,9 @@ import {
   SalesRequestDto,
   SalesResponseDto,
   BaeminReportUpdateDto,
+  MeetingListDto,
+  ConsultMonthlyRequestDto,
+  ConsultBetweenDatesRequestDto,
 } from '@/dto';
 import { BaeminReportCreateDto } from '@/dto/pickcook/consult-response-v3/baemin-report-create.dto';
 import { ApiUrlType } from '../../../environments';
@@ -149,6 +152,31 @@ class ConsultResponseV3Service extends BaseService {
     return super.patch<BaeminReportUpdateDto>(
       `v3/admin/consult-baemin-report/${id}`,
       baeminReportPatchDto,
+      ApiUrlType.PICKCOOK,
+    );
+  }
+  getMeetingsMonthly(consultMonthlyRequestDto: ConsultMonthlyRequestDto) {
+    return super.get<any>(
+      'v3/admin/consult-response/get-meetings-monthly',
+      consultMonthlyRequestDto,
+      ApiUrlType.PICKCOOK,
+    );
+  }
+
+  getConsultsMonthly(consultMonthlyRequestDto: ConsultMonthlyRequestDto) {
+    return super.get<any>(
+      'v3/admin/consult-response/get-consults-monthly',
+      consultMonthlyRequestDto,
+      ApiUrlType.PICKCOOK,
+    );
+  }
+
+  getConsultsBetween(
+    consultBetweenDatesRequestDto: ConsultBetweenDatesRequestDto,
+  ) {
+    return super.get<any>(
+      'v3/admin/consult-response/get-consults-between',
+      consultBetweenDatesRequestDto,
       ApiUrlType.PICKCOOK,
     );
   }

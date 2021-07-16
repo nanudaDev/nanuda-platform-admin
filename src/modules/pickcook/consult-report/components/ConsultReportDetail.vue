@@ -1380,7 +1380,7 @@ export default class ConsultReportDetail extends BaseComponent {
       items: [
         {
           id: 'recipe01',
-          name: '레시피 & 북배달 매뉴얼 제공',
+          name: '레시피 및 조리영상 제공&물류연결',
           price: 1188000,
         },
       ],
@@ -1388,7 +1388,7 @@ export default class ConsultReportDetail extends BaseComponent {
     {
       title: '메뉴교육',
       name: 'menu',
-      type: 'radio',
+      // type: 'radio',
       items: [
         {
           id: 'menu01',
@@ -1397,7 +1397,7 @@ export default class ConsultReportDetail extends BaseComponent {
         },
         {
           id: 'menu02',
-          name: '방문교육(교통비 실비 별도)',
+          name: '방문교육 (교통비 실비 별도)',
           price: 300000,
         },
       ],
@@ -1408,17 +1408,17 @@ export default class ConsultReportDetail extends BaseComponent {
       items: [
         {
           id: 'deliveryApp01',
-          name: '배달 앱 등록(배민, 쿠팡, 요기요 등)',
+          name: '배달 앱 등록 (배민, 쿠팡, 요기요 등)',
           price: 100000,
         },
         {
           id: 'deliveryApp02',
           name: '로고, 사진, 브랜드 제공',
-          price: 200000,
+          price: 0,
         },
         {
           id: 'deliveryApp03',
-          name: '배달앱 컨설팅(리뷰이벤트, 깃발 등)',
+          name: '배달앱 컨설팅 (리뷰이벤트, 깃발 등)',
           price: 200000,
         },
       ],
@@ -1443,7 +1443,7 @@ export default class ConsultReportDetail extends BaseComponent {
       items: [
         {
           id: 'premium-recipe01',
-          name: '레시피 & 북배달 매뉴얼 제공',
+          name: '레시피 및 조리영상 제공&물류연결',
           price: 1188000,
         },
       ],
@@ -1451,7 +1451,7 @@ export default class ConsultReportDetail extends BaseComponent {
     {
       title: '메뉴교육',
       name: 'menu',
-      type: 'radio',
+      // type: 'radio',
       items: [
         {
           id: 'premium-menu01',
@@ -1460,7 +1460,7 @@ export default class ConsultReportDetail extends BaseComponent {
         },
         {
           id: 'premium-menu02',
-          name: '방문교육(교통비 실비 별도)',
+          name: '방문교육 (교통비 실비 별도)',
           price: 300000,
         },
       ],
@@ -1471,17 +1471,17 @@ export default class ConsultReportDetail extends BaseComponent {
       items: [
         {
           id: 'premium-deliveryApp01',
-          name: '배달 앱 등록(배민, 쿠팡, 요기요 등)',
+          name: '배달 앱 등록 (배민, 쿠팡, 요기요 등)',
           price: 100000,
         },
         {
           id: 'premium-deliveryApp02',
           name: '로고, 사진, 브랜드 제공',
-          price: 200000,
+          price: 0,
         },
         {
           id: 'premium-deliveryApp03',
-          name: '배달앱 컨설팅(리뷰이벤트, 깃발 등)',
+          name: '배달앱 컨설팅 (리뷰이벤트, 깃발 등)',
           price: 200000,
         },
       ],
@@ -1507,7 +1507,7 @@ export default class ConsultReportDetail extends BaseComponent {
         },
         {
           id: 'premium-designApp04',
-          name: 'X배너',
+          name: 'X 배너',
           price: 100000,
         },
       ],
@@ -1949,7 +1949,7 @@ body {
         border-radius: 80px;
         font-size: 20px;
         color: #8c8c8c;
-        font-weight: 700;
+        font-weight: 500;
         padding: 16px 0;
       }
     }
@@ -1959,6 +1959,7 @@ body {
     background: #1c4d86;
     color: #fff !important;
     box-shadow: 1px 1px 2px #c9c9c9;
+    font-weight: 700;
   }
 }
 #side-nav {

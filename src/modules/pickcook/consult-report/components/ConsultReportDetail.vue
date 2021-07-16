@@ -49,7 +49,7 @@
                     <b-row align-v="center">
                       <b-col cols="12" xl="9">
                         <b-form-row v-if="consultResponseV3Dto">
-                          <b-col cols="4">
+                          <b-col cols="6" xl="4">
                             <b-form-group label="창업자명" label-align="left">
                               <b-form-input
                                 v-model="consultResponseV3Dto.name"
@@ -57,7 +57,7 @@
                               ></b-form-input>
                             </b-form-group>
                           </b-col>
-                          <b-col cols="4">
+                          <b-col cols="6" xl="4">
                             <b-form-group label="연락처" label-align="left">
                               <b-form-input
                                 v-model="consultResponseV3Dto.phone"
@@ -66,7 +66,8 @@
                             </b-form-group>
                           </b-col>
                           <b-col
-                            cols="4"
+                            cols="6"
+                            xl="4"
                             v-if="consultResponseV3Dto.fnbOwnerCodeStatus"
                           >
                             <b-form-group label="창업자유형" label-align="left">
@@ -79,9 +80,7 @@
                               ></b-form-input>
                             </b-form-group>
                           </b-col>
-                        </b-form-row>
-                        <b-form-row>
-                          <b-col cols="4">
+                          <b-col cols="6" xl="4">
                             <b-form-group label="창업 지역" label-align="left">
                               <b-form-input
                                 v-model="reportAddress"
@@ -89,7 +88,7 @@
                               ></b-form-input>
                             </b-form-group>
                           </b-col>
-                          <b-col cols="4">
+                          <b-col cols="6" xl="4">
                             <b-form-group label="창업 업종" label-align="left">
                               <b-form-select
                                 v-model="salesRequestDto.mediumCategoryCode"
@@ -104,7 +103,7 @@
                               </b-form-select>
                             </b-form-group>
                           </b-col>
-                          <b-col cols="4">
+                          <!-- <b-col cols="6" xl="4">
                             <b-form-group label="창업 유형" label-align="left">
                               <b-form-select
                                 v-model="salesRequestDto.storeType"
@@ -118,11 +117,11 @@
                                 </b-form-select-option>
                               </b-form-select>
                             </b-form-group>
-                          </b-col>
+                          </b-col> -->
                         </b-form-row>
                       </b-col>
                       <b-col cols="12" xl="3">
-                        <div class="text-center">
+                        <div class="text-center my-2">
                           <b-button
                             variant="primary"
                             size="lg"
@@ -163,10 +162,7 @@
                   "
                 >
                   <div class="report-card no-body">
-                    <div
-                      id="map"
-                      style="width:100%; min-height:300px; height:calc(100%)"
-                    ></div>
+                    <div id="map"></div>
                     <div class="map-hdong-name">
                       <b-icon icon="geo-alt"></b-icon>
                       <span class="ml-2">{{
@@ -228,10 +224,10 @@
                           salesResponseDto.mainAgeGroup &&
                             salesResponseDto.mainGagu
                         "
-                        class="mt-4 pt-4"
+                        class="mt-4"
                       >
                         <b-col cols="12" lg="6">
-                          <div class="doughnut-chart-container">
+                          <div class="doughnut-chart-container my-2">
                             <div class="doughnut-chart-wrapper">
                               <DoughnutChart
                                 :chartData="mainGaguChartData"
@@ -281,7 +277,7 @@
                           </div>
                         </b-col>
                         <b-col cols="12" lg="6">
-                          <div class="doughnut-chart-container">
+                          <div class="doughnut-chart-container my-2">
                             <div class="doughnut-chart-wrapper">
                               <DoughnutChart
                                 :chartData="mainAgeGroupChartData"
@@ -645,13 +641,14 @@
                   cols="12"
                   xl="4"
                   v-if="salesResponseDto.mediumCategoryGenderRevenueRatio"
+                  class="gender-graph-wrapper"
                 >
                   <div class="report-card">
                     <div class="report-card-header">
                       <h4>성별 매출비중</h4>
                     </div>
                     <div class="report-card-content">
-                      <div class="gender-graph-wrapper">
+                      <div class="gender-graph-list">
                         <b-row no-gutters align-v="end" class="mt-4">
                           <b-col cols="12" xl="2">
                             <p class="text-left">
@@ -720,160 +717,165 @@
                   cols="12"
                   xl="8"
                   v-if="salesResponseDto.mediumCategoryStoreRatio"
+                  class="store-status-wrapper"
                 >
-                  <b-row style="height:100%">
-                    <b-col cols="4" style="height:100%">
-                      <div class="report-card store-status-card">
-                        <div class="report-card-header">
-                          <h4>
-                            음식점 현황
-                          </h4>
-                        </div>
-                        <div class="report-card-content" style="height:100%">
-                          <div class="store-status-box">
-                            <b-row
-                              no-gutters
-                              align-v="center"
-                              align-h="between"
-                            >
-                              <div class="store-status-title">
-                                <h5>점포 비중</h5>
-                              </div>
-                              <div class="store-status-icon">
-                                <b-img-lazy
-                                  src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_store_ratio.svg"
-                                ></b-img-lazy>
-                              </div>
-                            </b-row>
-                            <div class="store-status-info">
-                              <p>
-                                <span class="store-status-info-label">{{
-                                  salesRequestDto.mediumCategoryCode
-                                    | kbCategoryTransformer
-                                }}</span>
-                                <strong
-                                  class="store-status-info-value text-value text-blue d-block"
-                                  v-if="
-                                    salesResponseDto.mediumCategoryStoreRatio
-                                  "
-                                >
-                                  {{
-                                    salesResponseDto.mediumCategoryStoreRatio.toFixed(
-                                      0,
-                                    )
-                                  }}%
-                                </strong>
-                              </p>
-                            </div>
+                  <div class="store-status-list">
+                    <b-row>
+                      <b-col cols="12" xl="4">
+                        <div class="report-card store-status-card">
+                          <div class="report-card-header">
+                            <h4>
+                              음식점 현황
+                            </h4>
                           </div>
-                        </div>
-                      </div>
-                    </b-col>
-                    <b-col cols="4" style="height:100%">
-                      <div class="report-card">
-                        <div class="report-card-content" style="height:100%">
-                          <div class="store-status-box">
-                            <b-row
-                              no-gutters
-                              align-v="center"
-                              align-h="between"
-                            >
-                              <div class="store-status-title">
-                                <h5>폐업률</h5>
-                              </div>
-                              <div class="store-status-icon">
-                                <b-img-lazy
-                                  src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_store_closed_ratio.svg"
-                                ></b-img-lazy>
-                              </div>
-                            </b-row>
-                            <div class="store-status-info">
-                              <p>
-                                <span class="store-status-info-label">{{
-                                  salesRequestDto.mediumCategoryCode
-                                    | kbCategoryTransformer
-                                }}</span>
-                                <strong
-                                  class="store-status-info-value text-value text-blue d-block"
-                                  v-if="
-                                    salesResponseDto.mediumCategoryClosedStoreRate
-                                  "
-                                >
-                                  {{
-                                    salesResponseDto.mediumCategoryClosedStoreRate.toFixed(
-                                      0,
-                                    )
-                                  }}%
-                                </strong>
-                              </p>
-                              <p>
-                                <span class="store-status-info-label"
-                                  >상권평균</span
-                                >
-                                <strong
-                                  class="store-status-info-value text-value d-block"
-                                  v-if="salesResponseDto.closedStoreRate"
-                                >
-                                  {{
-                                    salesResponseDto.closedStoreRate.toFixed(0)
-                                  }}%
-                                </strong>
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </b-col>
-                    <b-col cols="4" style="height:100%">
-                      <div class="report-card">
-                        <div class="report-card-content" style="height:100%">
-                          <div class="store-status-box">
-                            <b-row
-                              no-gutters
-                              align-v="center"
-                              align-h="between"
-                            >
-                              <div class="store-status-title">
-                                <h5>평균영업기간</h5>
-                              </div>
-                              <div class="store-status-icon">
-                                <b-img-lazy
-                                  src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_store_opening_hours.svg"
-                                ></b-img-lazy>
-                              </div>
-                            </b-row>
-                            <div class="store-status-info">
-                              <p>
-                                <span class="store-status-info-label">
-                                  {{
+                          <div class="report-card-content">
+                            <div class="store-status-box">
+                              <b-row
+                                no-gutters
+                                align-v="center"
+                                align-h="between"
+                              >
+                                <div class="store-status-title">
+                                  <h5>점포 비중</h5>
+                                </div>
+                                <div class="store-status-icon">
+                                  <b-img-lazy
+                                    src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_store_ratio.svg"
+                                  ></b-img-lazy>
+                                </div>
+                              </b-row>
+                              <div class="store-status-info">
+                                <p>
+                                  <span class="store-status-info-label">{{
                                     salesRequestDto.mediumCategoryCode
                                       | kbCategoryTransformer
-                                  }}</span
-                                >
-                                <strong
-                                  class="store-status-info-value text-value text-blue d-block"
-                                >
-                                  {{
-                                    salesResponseDto.mediumCategorySurvivalYears
-                                  }}년
-                                </strong>
-                              </p>
-                              <p>
-                                <span class="store-status-info-label"
-                                  >상권평균</span
-                                >
-                                <strong
-                                  class="store-status-info-value text-value  d-block"
-                                >
-                                  {{ salesResponseDto.survivalYears }}년
-                                </strong>
-                              </p>
+                                  }}</span>
+                                  <strong
+                                    class="store-status-info-value text-value text-blue d-block"
+                                    v-if="
+                                      salesResponseDto.mediumCategoryStoreRatio
+                                    "
+                                  >
+                                    {{
+                                      salesResponseDto.mediumCategoryStoreRatio.toFixed(
+                                        0,
+                                      )
+                                    }}%
+                                  </strong>
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </b-col>
-                  </b-row>
+                      </b-col>
+                      <b-col cols="6" xl="4">
+                        <div class="report-card store-status-card">
+                          <div class="report-card-content">
+                            <div class="store-status-box">
+                              <b-row
+                                no-gutters
+                                align-v="center"
+                                align-h="between"
+                              >
+                                <div class="store-status-title">
+                                  <h5>폐업률</h5>
+                                </div>
+                                <div class="store-status-icon">
+                                  <b-img-lazy
+                                    src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_store_closed_ratio.svg"
+                                  ></b-img-lazy>
+                                </div>
+                              </b-row>
+                              <div class="store-status-info">
+                                <p>
+                                  <span class="store-status-info-label">{{
+                                    salesRequestDto.mediumCategoryCode
+                                      | kbCategoryTransformer
+                                  }}</span>
+                                  <strong
+                                    class="store-status-info-value text-value text-blue d-block"
+                                    v-if="
+                                      salesResponseDto.mediumCategoryClosedStoreRate
+                                    "
+                                  >
+                                    {{
+                                      salesResponseDto.mediumCategoryClosedStoreRate.toFixed(
+                                        0,
+                                      )
+                                    }}%
+                                  </strong>
+                                </p>
+                                <p>
+                                  <span class="store-status-info-label"
+                                    >상권평균</span
+                                  >
+                                  <strong
+                                    class="store-status-info-value text-value d-block"
+                                    v-if="salesResponseDto.closedStoreRate"
+                                  >
+                                    {{
+                                      salesResponseDto.closedStoreRate.toFixed(
+                                        0,
+                                      )
+                                    }}%
+                                  </strong>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </b-col>
+                      <b-col cols="6" xl="4">
+                        <div class="report-card store-status-card">
+                          <div class="report-card-content">
+                            <div class="store-status-box">
+                              <b-row
+                                no-gutters
+                                align-v="center"
+                                align-h="between"
+                              >
+                                <div class="store-status-title">
+                                  <h5>평균영업기간</h5>
+                                </div>
+                                <div class="store-status-icon">
+                                  <b-img-lazy
+                                    src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_store_opening_hours.svg"
+                                  ></b-img-lazy>
+                                </div>
+                              </b-row>
+                              <div class="store-status-info">
+                                <p>
+                                  <span class="store-status-info-label">
+                                    {{
+                                      salesRequestDto.mediumCategoryCode
+                                        | kbCategoryTransformer
+                                    }}</span
+                                  >
+                                  <strong
+                                    class="store-status-info-value text-value text-blue d-block"
+                                  >
+                                    {{
+                                      salesResponseDto.mediumCategorySurvivalYears
+                                    }}년
+                                  </strong>
+                                </p>
+                                <p>
+                                  <span class="store-status-info-label"
+                                    >상권평균</span
+                                  >
+                                  <strong
+                                    class="store-status-info-value text-value  d-block"
+                                  >
+                                    {{ salesResponseDto.survivalYears }}년
+                                  </strong>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </b-col>
+                    </b-row>
+                  </div>
                 </b-col>
                 <b-col
                   cols="12"
@@ -946,7 +948,7 @@
                         <b-row>
                           <b-col
                             cols="12"
-                            lg="6"
+                            :sm="index === 0 ? 12 : 6"
                             xl="4"
                             v-for="(menu,
                             index) in salesResponseDto.recommendedMenu"
@@ -1440,7 +1442,7 @@ export default class ConsultReportDetail extends BaseComponent {
       name: 'recipe',
       items: [
         {
-          id: 'recipe01',
+          id: 'premium-recipe01',
           name: '레시피 & 북배달 매뉴얼 제공',
           price: 1188000,
         },
@@ -1452,12 +1454,12 @@ export default class ConsultReportDetail extends BaseComponent {
       type: 'radio',
       items: [
         {
-          id: 'menu01',
+          id: 'premium-menu01',
           name: '현장실습',
           price: 300000,
         },
         {
-          id: 'menu02',
+          id: 'premium-menu02',
           name: '방문교육(교통비 실비 별도)',
           price: 300000,
         },
@@ -1468,17 +1470,17 @@ export default class ConsultReportDetail extends BaseComponent {
       name: 'delivery_app',
       items: [
         {
-          id: 'deliveryApp01',
+          id: 'premium-deliveryApp01',
           name: '배달 앱 등록(배민, 쿠팡, 요기요 등)',
           price: 100000,
         },
         {
-          id: 'deliveryApp02',
+          id: 'premium-deliveryApp02',
           name: '로고, 사진, 브랜드 제공',
           price: 200000,
         },
         {
-          id: 'deliveryApp03',
+          id: 'premium-deliveryApp03',
           name: '배달앱 컨설팅(리뷰이벤트, 깃발 등)',
           price: 200000,
         },
@@ -1489,22 +1491,22 @@ export default class ConsultReportDetail extends BaseComponent {
       name: 'design',
       items: [
         {
-          id: 'designApp01',
+          id: 'premium-designApp01',
           name: '스티커, 메모지, 자석전단지',
           price: 100000,
         },
         {
-          id: 'designApp02',
+          id: 'premium-designApp02',
           name: '간판',
           price: 500000,
         },
         {
-          id: 'designApp03',
+          id: 'premium-designApp03',
           name: '외벽시트지',
           price: 200000,
         },
         {
-          id: 'designApp04',
+          id: 'premium-designApp04',
           name: 'X배너',
           price: 100000,
         },
@@ -1933,19 +1935,24 @@ body {
 .tabs {
   margin: 40px 0;
   .nav-tabs {
-    background: #ccdaea;
+    background: #efefef;
     border-radius: 80px;
     overflow: hidden;
     box-shadow: inset 0 1px 2px rgba(195, 195, 195, 1);
   }
 
-  .nav-tabs .nav-link {
-    border: 1px solid transparent;
-    border-radius: 80px;
-    font-size: 20px;
-    color: #6c8fb7;
-    font-weight: 700;
-    padding: 16px 0;
+  .nav-tabs {
+    .nav-item {
+      width: 50%;
+      .nav-link {
+        border: 1px solid transparent;
+        border-radius: 80px;
+        font-size: 20px;
+        color: #8c8c8c;
+        font-weight: 700;
+        padding: 16px 0;
+      }
+    }
   }
   .nav-tabs .nav-item.show .nav-link,
   .nav-tabs .nav-link.active {
@@ -1962,12 +1969,17 @@ body {
   background-color: #1c4d86;
   width: 100px;
   z-index: 10;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   .logo {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 126px;
     margin-bottom: 32px;
+    img {
+      display: block;
+    }
   }
   .side-nav-tabs {
     .side-nav-tab {
@@ -2041,6 +2053,12 @@ body {
         font-size: 20px;
       }
     }
+  }
+
+  #map {
+    width: 100%;
+    min-height: 300px;
+    height: calc(100%);
   }
 
   .report-card {
@@ -2248,6 +2266,17 @@ body {
   }
 
   //
+  .store-status-list {
+    height: 100%;
+    > .row {
+      height: inherit;
+      > [class*='col-'] {
+        .report-card-content {
+          height: inherit;
+        }
+      }
+    }
+  }
   .store-status-card {
     position: relative;
     .report-card-header {
@@ -2393,7 +2422,7 @@ body {
   }
 
   // gender graph
-  .gender-graph-wrapper {
+  .gender-graph-list {
     max-width: 500px;
     margin: 0 auto;
   }
@@ -2487,8 +2516,10 @@ body {
       }
     }
   }
+}
 
-  @media screen and (max-width: 1680px) {
+@media screen and (max-width: 1680px) {
+  #report {
     padding: 32px 32px;
     .recommended-menu-box {
       border: 1px solid #dcdcdc;
@@ -2508,7 +2539,11 @@ body {
         }
       }
     }
-
+    .gender-graph-wrapper,
+    .store-status-wrapper {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
     .store-status-box {
       padding-top: 40px;
       .store-status-icon {
@@ -2540,15 +2575,18 @@ body {
       }
     }
   }
-  @media screen and (max-width: 1400px) {
-  }
+}
 
-  @media screen and (max-width: 1199px) {
+@media screen and (max-width: 1199px) {
+  #report {
     .pickcook-menu-list {
       flex-wrap: wrap;
       justify-content: flex-start;
       > div {
         width: 50%;
+        &:first-child {
+          width: 100%;
+        }
       }
       .pickcook-menu-box {
         .pickcook-menu-img {
@@ -2556,9 +2594,103 @@ body {
         }
       }
     }
+    .store-status-list {
+      > .row {
+        > [class*='col-'] {
+          + [class*='col-'] {
+            padding: 32px 16px 0;
+          }
+        }
+      }
+    }
+    .store-status-card {
+      .report-card-header {
+        position: static;
+      }
+      .store-status-box {
+        padding-top: 0;
+      }
+    }
   }
+}
 
-  @media screen and (max-width: 992px) {
+@media screen and (max-width: 991px) {
+  #side-nav {
+    width: auto;
+    bottom: auto;
+    right: 0;
+    padding: 0 16px;
+    overflow: hidden;
+    overflow-x: auto;
+    display: flex;
+    align-items: center;
+    .logo {
+      height: 80px;
+      margin: 0 24px 0 0;
+      img {
+        max-width: none;
+      }
+    }
+    .side-nav-tabs {
+      display: flex;
+      align-items: center;
+      .side-nav-tab {
+        height: 80px;
+        margin-right: 24px;
+      }
+    }
+  }
+  .tabs {
+    .nav-tabs {
+      .nav-item {
+        .nav-link {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+  #report {
+    margin: 100px 0 0;
+    padding: 16px 16px;
+
+    #map {
+      width: 100%;
+      min-height: 500px;
+      height: auto;
+    }
+
+    .section {
+      .section-header {
+        display: block;
+        h3 {
+          + .desc {
+            display: block;
+            margin: 8px 0 0 0;
+          }
+        }
+      }
+    }
+
+    .report-card {
+      &.h-half {
+        height: auto;
+      }
+      padding: 32px 24px;
+    }
+  }
+}
+
+@media screen and (max-width: 575px) {
+  .tabs {
+    .nav-tabs {
+      .nav-item {
+        .nav-link {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+  #report {
     .pickcook-menu-list {
       > div {
         width: 100%;

@@ -103,7 +103,7 @@
                               </b-form-select>
                             </b-form-group>
                           </b-col>
-                          <!-- <b-col cols="6" xl="4">
+                          <b-col cols="6" xl="4">
                             <b-form-group label="창업 유형" label-align="left">
                               <b-form-select
                                 v-model="salesRequestDto.storeType"
@@ -117,7 +117,7 @@
                                 </b-form-select-option>
                               </b-form-select>
                             </b-form-group>
-                          </b-col> -->
+                          </b-col>
                         </b-form-row>
                       </b-col>
                       <b-col cols="12" xl="3">
@@ -181,9 +181,6 @@
                       <h4>
                         인구 분석
                       </h4>
-                      <span>선택한 행정동 기준</span>
-                    </header>
-                    <div class="report-card-content">
                       <p>
                         <span
                           >거주인구
@@ -219,15 +216,16 @@
                         }}</strong
                         >입니다.
                       </p>
+                    </header>
+                    <div class="report-card-content">
                       <b-row
                         v-if="
                           salesResponseDto.mainAgeGroup &&
                             salesResponseDto.mainGagu
                         "
-                        class="mt-4"
                       >
                         <b-col cols="12" lg="6">
-                          <div class="doughnut-chart-container my-2">
+                          <div class="doughnut-chart-container mt-4">
                             <div class="doughnut-chart-wrapper">
                               <DoughnutChart
                                 :chartData="mainGaguChartData"
@@ -254,7 +252,7 @@
                                 </div>
                               </div>
                             </div>
-                            <div class="mt-4">
+                            <div class="mt-4 pt-2">
                               <div class="legend-label-list text-center">
                                 <p
                                   v-for="(value,
@@ -277,7 +275,7 @@
                           </div>
                         </b-col>
                         <b-col cols="12" lg="6">
-                          <div class="doughnut-chart-container my-2">
+                          <div class="doughnut-chart-container mt-4">
                             <div class="doughnut-chart-wrapper">
                               <DoughnutChart
                                 :chartData="mainAgeGroupChartData"
@@ -303,7 +301,7 @@
                                 </div>
                               </div>
                             </div>
-                            <div class="mt-4">
+                            <div class="mt-4 pt-2">
                               <div class="legend-label-list text-center">
                                 <p
                                   v-for="(value,
@@ -339,8 +337,6 @@
                       <h4>
                         소비 패턴
                       </h4>
-                    </header>
-                    <div class="report-card-content">
                       <p>
                         해당 행정동은 <br />
                         <template
@@ -353,10 +349,12 @@
                         <template v-else>
                           <strong class="text-blue"
                             >배달을 함께 병행하여 운영</strong
-                          >하면 좋습니다
+                          >하면 좋습니다.
                         </template>
                       </p>
-                      <b-row class="consumption-pattern-delivery mt-4 pt-4">
+                    </header>
+                    <div class="report-card-content">
+                      <b-row class="consumption-pattern-delivery mt-4">
                         <b-col cols="7">
                           <div class="consumption-pattern-delivery-icon">
                             <b-img-lazy
@@ -421,7 +419,7 @@
                                 color:
                                   salesResponseDto.offlineRevenueRatio >
                                   salesResponseDto.deliveryRevenueRatio
-                                    ? '#00b1ff'
+                                    ? '#007EEB'
                                     : '#707070',
                               }"
                               >{{
@@ -446,7 +444,7 @@
                                 color:
                                   salesResponseDto.deliveryRevenueRatio >
                                   salesResponseDto.offlineRevenueRatio
-                                    ? '#00b1ff'
+                                    ? '#007EEB'
                                     : '#707070',
                               }"
                             >
@@ -472,11 +470,6 @@
                       <h4>
                         업종별 매출비중
                       </h4>
-                    </header>
-                    <div
-                      class="report-card-content"
-                      v-if="salesRequestDto.mediumCategoryCode"
-                    >
                       <p>
                         해당 행정동에서
                         <strong class="text-blue">
@@ -489,6 +482,11 @@
                           >{{ mediumCategoryRank }}순위</strong
                         >입니다.
                       </p>
+                    </header>
+                    <div
+                      class="report-card-content"
+                      v-if="salesRequestDto.mediumCategoryCode"
+                    >
                       <div class="mt-4">
                         <BarChart
                           :chartData="kbCategoryRevenueChartData"
@@ -508,8 +506,6 @@
                   <div class="report-card h-half">
                     <header class="report-card-header">
                       <h4>요일별 매출비중</h4>
-                    </header>
-                    <div class="report-card-content">
                       <p>
                         해당 행정동은
                         <strong class="text-blue"
@@ -517,7 +513,8 @@
                           가장 높은 매출율</strong
                         >을 보입니다.
                       </p>
-
+                    </header>
+                    <div class="report-card-content">
                       <div class="horizontal-stacked-bar-charts mt-4">
                         <div
                           v-for="(ratio, index) in Object.values(
@@ -577,8 +574,6 @@
                   >
                     <header class="report-card-header">
                       <h4>시간대별 매출비중</h4>
-                    </header>
-                    <div class="report-card-content">
                       <p>
                         해당 행정동은
                         <strong class="text-blue"
@@ -586,6 +581,8 @@
                           매출율</strong
                         >을 보입니다.
                       </p>
+                    </header>
+                    <div class="report-card-content">
                       <div class="horizontal-stacked-bar-charts mt-4">
                         <div
                           v-for="(ratio,
@@ -938,54 +935,52 @@
                       >
                         {{ salesResponseDto.hdong.hdongName }} 추천메뉴
                       </h4>
-                    </header>
-                    <div class="report-card-content">
                       <p>
                         픽쿡에서는 상권의 입지, 인구, 매출, 소비패턴 등 다양한
                         요인을 종합하여 최적의 메뉴를 추천합니다.
                       </p>
-                      <div class="mt-4">
-                        <b-row>
-                          <b-col
-                            cols="12"
-                            :sm="index === 0 ? 12 : 6"
-                            xl="4"
-                            v-for="(menu,
-                            index) in salesResponseDto.recommendedMenu"
-                            :key="index"
-                          >
-                            <div class="recommended-menu-box my-2">
-                              <div class="recommended-menu-img">
-                                <b-img-lazy
-                                  :src="
-                                    `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/${menu.sSmallCategoryCode}.jpg`
-                                  "
-                                ></b-img-lazy>
-                              </div>
-                              <div class="recommended-menu-info">
-                                <p>
-                                  추천지수
-                                  <strong class="text-blue"
-                                    >{{ menu.averageScore }}%</strong
-                                  >
-                                </p>
-                                <h5>{{ menu.pkMenuName }}</h5>
-                                <div>
-                                  <span class="badge bg-blue" v-if="index === 0"
-                                    >최고적합률</span
-                                  >
-                                  <span class="badge">{{
-                                    menu.pkMediumCategoryName
-                                  }}</span>
-                                  <span class="badge">{{
-                                    menu.pkSmallCategoryName
-                                  }}</span>
-                                </div>
+                    </header>
+                    <div class="report-card-content">
+                      <b-row>
+                        <b-col
+                          cols="12"
+                          :sm="index === 0 ? 12 : 6"
+                          xl="4"
+                          v-for="(menu,
+                          index) in salesResponseDto.recommendedMenu"
+                          :key="index"
+                        >
+                          <div class="recommended-menu-box my-2">
+                            <div class="recommended-menu-img">
+                              <b-img-lazy
+                                :src="
+                                  `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/${menu.sSmallCategoryCode}.jpg`
+                                "
+                              ></b-img-lazy>
+                            </div>
+                            <div class="recommended-menu-info">
+                              <p>
+                                추천지수
+                                <strong class="text-blue"
+                                  >{{ menu.averageScore }}%</strong
+                                >
+                              </p>
+                              <h5>{{ menu.pkMenuName }}</h5>
+                              <div>
+                                <span class="badge bg-blue" v-if="index === 0"
+                                  >최고적합률</span
+                                >
+                                <span class="badge">{{
+                                  menu.pkMediumCategoryName
+                                }}</span>
+                                <span class="badge">{{
+                                  menu.pkSmallCategoryName
+                                }}</span>
                               </div>
                             </div>
-                          </b-col>
-                        </b-row>
-                      </div>
+                          </div>
+                        </b-col>
+                      </b-row>
                     </div>
                   </div>
                 </b-col>
@@ -993,8 +988,6 @@
                   <div class="report-card">
                     <header class="report-card-header">
                       <h4>반경 3km이내의 추천 메뉴</h4>
-                    </header>
-                    <div class="report-card-content">
                       <p>
                         해당 행정동에서는 전체적으로
                         <strong class="text-blue">{{
@@ -1019,6 +1012,8 @@
                           }} </strong
                         >를 주로 소비합니다.
                       </p>
+                    </header>
+                    <div class="report-card-content">
                       <div class="pickcook-menu-list">
                         <div
                           v-for="(menu, index) in recommendMenuHdong"
@@ -1230,33 +1225,53 @@
         </transition>
         <transition name="fadeIn">
           <section class="section" v-show="activeTab === 'files01'">
-            <div class="sales-data-img-list">
-              <div class="row-box" v-for="n in 18" :key="n">
-                <b-img-lazy
-                  :src="
-                    `https://kr.object.ncloudstorage.com/common-storage-pickcook/sales/new_sales_data_${
-                      n > 9 ? n : '0' + n
-                    }.png`
-                  "
-                >
-                </b-img-lazy>
-              </div>
+            <header class="section-header">
+              <h3 class="title">신규창업자 픽쿡 소개자료</h3>
+              <span class="desc">PICKCOOK Introduction (New-founder)</span>
+            </header>
+            <div class="section-content">
+              <b-row>
+                <b-col cols="12">
+                  <div class="sales-data-img-list">
+                    <div class="row-box" v-for="n in 18" :key="n">
+                      <b-img-lazy
+                        :src="
+                          `https://kr.object.ncloudstorage.com/common-storage-pickcook/sales/new_sales_data_${
+                            n > 9 ? n : '0' + n
+                          }.png`
+                        "
+                      >
+                      </b-img-lazy>
+                    </div>
+                  </div>
+                </b-col>
+              </b-row>
             </div>
           </section>
         </transition>
         <transition name="fadeIn">
           <section class="section" v-show="activeTab === 'files02'">
-            <div class="sales-data-img-list">
-              <div class="row-box" v-for="n in 14" :key="n">
-                <b-img-lazy
-                  :src="
-                    `https://kr.object.ncloudstorage.com/common-storage-pickcook/sales/cur_sales_data_${
-                      n > 9 ? n : '0' + n
-                    }.png`
-                  "
-                >
-                </b-img-lazy>
-              </div>
+            <header class="section-header">
+              <h3 class="title">기창업자 픽쿡 소개자료</h3>
+              <span class="desc">PICKCOOK Introduction (Existing-founder)</span>
+            </header>
+            <div class="section-content">
+              <b-row>
+                <b-col cols="12">
+                  <div class="sales-data-img-list">
+                    <div class="row-box" v-for="n in 14" :key="n">
+                      <b-img-lazy
+                        :src="
+                          `https://kr.object.ncloudstorage.com/common-storage-pickcook/sales/cur_sales_data_${
+                            n > 9 ? n : '0' + n
+                          }.png`
+                        "
+                      >
+                      </b-img-lazy>
+                    </div>
+                  </div>
+                </b-col>
+              </b-row>
             </div>
           </section>
         </transition>
@@ -1370,6 +1385,7 @@ export default class ConsultReportDetail extends BaseComponent {
     this.isLoading = true;
     this.activeTab = tabId;
     if (tabId === 'delivery') this.getBaeminData();
+    this.goTop();
   }
 
   // 픽쿡 상품
@@ -1831,7 +1847,6 @@ export default class ConsultReportDetail extends BaseComponent {
         this.consultBaeminReport = res.data.consultBaeminReport;
       }
     });
-    this.goTop();
   }
 
   // 지도 가져오기
@@ -1918,27 +1933,21 @@ export default class ConsultReportDetail extends BaseComponent {
 body {
   -webkit-print-color-adjust: exact !important;
 }
-.map-hdong-name {
-  display: inline-block;
-  padding: 6px 12px;
-  position: absolute;
-  left: 32px;
-  top: 32px;
-  background: #007eeb;
-  border-radius: 60px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  z-index: 2;
-  box-shadow: 0 7px 9px rgba(195, 195, 195, 0.16);
+
+.sales-data-img-list {
+  img {
+    width: 100%;
+  }
 }
+
 .tabs {
   margin: 40px 0;
   .nav-tabs {
     background: #efefef;
     border-radius: 80px;
     overflow: hidden;
-    box-shadow: inset 0 1px 2px rgba(195, 195, 195, 1);
+    box-shadow: inset 0 1px 4px rgba(195, 195, 195, 1);
+    padding: 6px;
   }
 
   .nav-tabs {
@@ -1956,7 +1965,7 @@ body {
   }
   .nav-tabs .nav-item.show .nav-link,
   .nav-tabs .nav-link.active {
-    background: #1c4d86;
+    background: #004d8a;
     color: #fff !important;
     box-shadow: 1px 1px 2px #c9c9c9;
     font-weight: 700;
@@ -1967,7 +1976,7 @@ body {
   left: 0;
   top: 0;
   bottom: 0;
-  background-color: #1c4d86;
+  background-color: #004d8a;
   width: 100px;
   z-index: 10;
   overflow-y: auto;
@@ -2061,6 +2070,20 @@ body {
     min-height: 300px;
     height: calc(100%);
   }
+  .map-hdong-name {
+    display: inline-block;
+    padding: 6px 12px;
+    position: absolute;
+    left: 32px;
+    top: 32px;
+    background: #007eeb;
+    border-radius: 60px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 7px 9px rgba(195, 195, 195, 0.16);
+  }
 
   .report-card {
     border-radius: 10px;
@@ -2069,6 +2092,9 @@ body {
     overflow: hidden;
     height: 100%;
     padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     &.no-body {
       padding: 0;
     }
@@ -2079,22 +2105,23 @@ body {
       height: calc(50% - 16px);
     }
     .report-card-header {
-      display: flex;
-      align-items: flex-end;
       h4 {
         font-size: 24px;
         color: #000000;
         font-weight: 700;
         line-height: 1;
-      }
-      span {
-        display: inline-block;
-        font-size: 12px;
-        color: #707070;
-        margin-left: 8px;
+        span {
+          display: inline-block;
+          font-size: 12px;
+          color: #707070;
+          margin-left: 8px;
+        }
+        + p {
+          margin-top: 24px;
+        }
       }
       + .report-card-content {
-        margin-top: 24px;
+        margin-top: 32px;
       }
     }
 
@@ -2105,6 +2132,8 @@ body {
         border-radius: 20px;
         font-size: 16px;
         padding: 8px 16px;
+        color: #000;
+        font-weight: 400;
       }
       .text-value {
         font-size: 32px;
@@ -2232,7 +2261,6 @@ body {
       }
       .badge {
         background-color: #c9d7e4;
-        color: #004d8a;
         + .badge {
           margin-left: 0.5em;
           margin-bottom: 0.25em;
@@ -2478,13 +2506,13 @@ body {
   .doughnut-chart-container {
     .doughnut-chart-wrapper {
       position: relative;
-      width: 260px;
-      height: 260px;
+      width: 300px;
+      height: 300px;
       margin-top: 1em;
       margin-left: auto;
       margin-right: auto;
       .chartjs-render-monitor {
-        height: 260px !important;
+        height: 300px !important;
       }
       .doughnut-chart-text {
         position: absolute;
@@ -2500,6 +2528,8 @@ body {
         p {
           font-size: 32px;
           color: #007eeb;
+          margin-top: 16px;
+          line-height: 1;
         }
       }
     }
@@ -2522,6 +2552,7 @@ body {
 @media screen and (max-width: 1680px) {
   #report {
     padding: 32px 32px;
+
     .recommended-menu-box {
       border: 1px solid #dcdcdc;
       border-radius: 1rem;
@@ -2569,7 +2600,25 @@ body {
         }
       }
     }
-
+    .consumption-pattern-delivery {
+      .consumption-pattern-delivery-text {
+        h5 {
+          font-size: 20px;
+        }
+        p {
+          font-size: 46px;
+        }
+      }
+    }
+    .doughnut-chart-container {
+      .doughnut-chart-wrapper {
+        width: 260px;
+        height: 260px;
+        .chartjs-render-monitor {
+          height: 260px !important;
+        }
+      }
+    }
     .pickcook-menu-list {
       .pickcook-menu-box {
         display: block;
@@ -2580,6 +2629,11 @@ body {
 
 @media screen and (max-width: 1199px) {
   #report {
+    #map {
+      width: 100%;
+      min-height: 500px;
+      height: auto;
+    }
     .pickcook-menu-list {
       flex-wrap: wrap;
       justify-content: flex-start;
@@ -2653,12 +2707,6 @@ body {
   #report {
     margin: 100px 0 0;
     padding: 16px 16px;
-
-    #map {
-      width: 100%;
-      min-height: 500px;
-      height: auto;
-    }
 
     .section {
       .section-header {

@@ -50,7 +50,7 @@ export default class BarChart extends Vue<Bar> {
         anchor: 'end',
         color: 'rgb(11 83 141)',
         font: {
-          size: 24,
+          size: 18,
           weight: 'bold',
         },
         formatter: (value, context) => {

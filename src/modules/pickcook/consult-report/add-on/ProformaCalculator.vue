@@ -81,6 +81,7 @@
                   <b-form-input
                     type="text"
                     v-model="item.qty"
+                    :class="{ 'text-blue': item.qty > 0 }"
                     @change="changePrice(index)"
                   />
                 </div>
@@ -458,7 +459,7 @@ export default class ProformaCalculator extends BaseComponent {
   align-items: center;
   min-height: 100px;
   .service-card-title {
-    text-align: center;
+    text-align: left;
     width: 25vw;
     padding: 16px 60px;
     img {
@@ -583,6 +584,7 @@ export default class ProformaCalculator extends BaseComponent {
     box-shadow: inset 0 3px 6px rgba(195, 195, 195, 0.16);
     margin: 0 8px;
     text-align: center;
+    font-weight: 700;
   }
 }
 .btn-control-box {
@@ -767,5 +769,92 @@ export default class ProformaCalculator extends BaseComponent {
   background: #4cb0f8;
   box-shadow: 1px 1px 2px rgb(201 201 201);
   transform: translateX(22px);
+}
+
+@media screen and (max-width: 1365px) {
+  .service-card {
+    .service-card-title {
+      h4 {
+        text-align: center;
+        span {
+          display: block;
+          margin: 8px 0;
+          img {
+            width: 60px;
+          }
+        }
+      }
+    }
+  }
+}
+@media screen and (max-width: 991px) {
+  .service-card {
+    display: block;
+    .service-card-title {
+      width: auto;
+      h4 {
+        font-size: 20px;
+        span {
+          display: inline-block;
+        }
+      }
+    }
+    .service-card-items {
+      width: auto;
+      .service-card-item {
+        + .service-card-item {
+          border-top: 1px solid #e0e0e0;
+          .item-name {
+            border-top: 0;
+          }
+        }
+        .item-name {
+          width: calc(100% - 40%);
+          font-size: 16px;
+          padding: 18px 18px;
+        }
+        .item-value {
+          width: 40%;
+          padding: 18px 18px;
+        }
+      }
+    }
+  }
+  #sticky-total {
+    left: 0;
+  }
+  .service-total-box {
+    .row-box {
+      > div {
+        display: block !important;
+      }
+      &.final-total-value-box {
+        .service-total-value {
+          .total-fee {
+            font-size: 36px;
+          }
+        }
+      }
+    }
+
+    .service-total-title {
+      margin-right: 0;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+    .service-total-value {
+      .total-fee {
+        font-size: 18px;
+      }
+      .monthly-fee {
+        font-size: 12px;
+      }
+    }
+  }
+  .btn-control-box {
+    > .btn-control {
+      min-width: 44px;
+    }
+  }
 }
 </style>

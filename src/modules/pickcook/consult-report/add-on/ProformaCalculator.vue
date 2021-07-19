@@ -459,7 +459,7 @@ export default class ProformaCalculator extends BaseComponent {
   .service-card-title {
     text-align: left;
     width: 25vw;
-    padding: 16px 60px;
+    padding: 16px 16px 16px 60px;
     img {
       width: 68px;
       margin: 0 16px;
@@ -470,7 +470,7 @@ export default class ProformaCalculator extends BaseComponent {
       font-weight: 500;
       span {
         + span {
-          margin: 0 30px;
+          margin: 0 24px;
         }
       }
     }
@@ -550,6 +550,7 @@ export default class ProformaCalculator extends BaseComponent {
     .monthly-fee {
       display: block;
       font-size: 16px;
+      white-space: nowrap;
       // margin-right: 40px;
       > b {
         position: relative;
@@ -789,7 +790,7 @@ export default class ProformaCalculator extends BaseComponent {
           display: block;
           margin: 8px 0;
           img {
-            width: 60px;
+            width: 40px;
           }
         }
       }
@@ -803,9 +804,6 @@ export default class ProformaCalculator extends BaseComponent {
       width: auto;
       h4 {
         font-size: 20px;
-        span {
-          display: inline-block;
-        }
       }
     }
     .service-card-items {

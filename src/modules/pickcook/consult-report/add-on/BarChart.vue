@@ -65,6 +65,11 @@ export default class BarChart extends Vue<Bar> {
         },
       },
     },
+    layout: {
+      padding: {
+        top: 40,
+      },
+    },
   };
   mounted() {
     if (this.labels.length > 0) {

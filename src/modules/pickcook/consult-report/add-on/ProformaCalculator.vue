@@ -181,7 +181,7 @@
           </div>
         </template>
         <div class="row-box final-total-value-box">
-          <div class="d-flex justify-content-between">
+          <div class="d-flex justify-content-between align-items-center">
             <div class="service-total-title">최종 합계</div>
             <div class="btn-control-box">
               <span class="btn-control" @click="resetProforma()">
@@ -593,7 +593,7 @@ export default class ProformaCalculator extends BaseComponent {
   }
 }
 .btn-control-box {
-  display: flex;
+  display: inline-flex;
   border: 1px solid #e0e0e0;
   border-radius: 3px;
   background-color: #fff;
@@ -861,6 +861,32 @@ export default class ProformaCalculator extends BaseComponent {
   .btn-control-box {
     > .btn-control {
       min-width: 44px;
+    }
+  }
+}
+
+@media screen and (max-width: 575px) {
+  #sticky-total {
+    padding: 0 16px;
+  }
+  .service-total-box {
+    .row-box {
+      &.final-total-value-box {
+        > .d-flex {
+          display: flex !important;
+          margin-bottom: 16px;
+          .service-total-title {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+  .btn-control-box {
+    > .btn-control {
+      padding: 4px 8px;
+      height: 30px;
+      font-size: 12px;
     }
   }
 }

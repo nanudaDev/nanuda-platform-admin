@@ -49,7 +49,7 @@
                     <b-row align-v="center">
                       <b-col cols="12" xl="9">
                         <b-form-row v-if="consultResponseV3Dto">
-                          <b-col cols="6" xl="4">
+                          <b-col cols="12" sm="6" xl="4">
                             <b-form-group label="창업자명" label-align="left">
                               <b-form-input
                                 v-model="consultResponseV3Dto.name"
@@ -57,7 +57,7 @@
                               ></b-form-input>
                             </b-form-group>
                           </b-col>
-                          <b-col cols="6" xl="4">
+                          <b-col cols="12" sm="6" xl="4">
                             <b-form-group label="연락처" label-align="left">
                               <b-form-input
                                 v-model="consultResponseV3Dto.phone"
@@ -66,7 +66,8 @@
                             </b-form-group>
                           </b-col>
                           <b-col
-                            cols="6"
+                            cols="12"
+                            sm="6"
                             xl="4"
                             v-if="consultResponseV3Dto.fnbOwnerCodeStatus"
                           >
@@ -80,7 +81,7 @@
                               ></b-form-input>
                             </b-form-group>
                           </b-col>
-                          <b-col cols="6" xl="4">
+                          <b-col cols="12" sm="6" xl="4">
                             <b-form-group label="창업 지역" label-align="left">
                               <b-form-input
                                 v-model="reportAddress"
@@ -88,7 +89,7 @@
                               ></b-form-input>
                             </b-form-group>
                           </b-col>
-                          <b-col cols="6" xl="4">
+                          <b-col cols="12" sm="6" xl="4">
                             <b-form-group label="창업 업종" label-align="left">
                               <b-form-select
                                 v-model="salesRequestDto.mediumCategoryCode"
@@ -103,7 +104,7 @@
                               </b-form-select>
                             </b-form-group>
                           </b-col>
-                          <!-- <b-col cols="6" xl="4">
+                          <!-- <b-col cols="12" sm="6" xl="4">
                             <b-form-group label="창업 유형" label-align="left">
                               <b-form-select
                                 v-model="salesRequestDto.storeType"
@@ -2250,7 +2251,7 @@ body {
         width: 82px;
         height: 86px;
         background-repeat: no-repeat;
-        background-position: center center;
+        background-position: right top;
         background-size: contain;
         position: absolute;
         right: 80px;
@@ -2258,10 +2259,8 @@ body {
       }
       .badge {
         background-color: #c9d7e4;
-        + .badge {
-          margin-left: 0.5em;
-          margin-bottom: 0.25em;
-        }
+        margin-right: 0.5em;
+        margin-bottom: 0.25em;
       }
       h5 {
         font-size: 32px;
@@ -2760,6 +2759,14 @@ body {
     }
 
     .section {
+      .section-header {
+        h3 {
+          font-size: 32px;
+          + .desc {
+            font-size: 12px;
+          }
+        }
+      }
       p {
         font-size: 14px;
         strong {
@@ -2785,11 +2792,17 @@ body {
     }
     .recommended-menu-box {
       .recommended-menu-info {
+        padding: 16px;
         h5 {
           font-size: 28px;
         }
         p {
           font-size: 14px;
+        }
+
+        &:after {
+          right: 16px;
+          background-size: 50% 50%;
         }
       }
     }

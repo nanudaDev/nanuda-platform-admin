@@ -278,7 +278,16 @@
                         meetingCompleteCount +
                         noShowCount +
                         meetingSecondCount
-                    }}건
+                    }}건 {{ willMeetCount }}건 ({{
+                      Math.round(
+                        (willMeetCount +
+                          meetingCompleteCount +
+                          noShowCount +
+                          meetingSecondCount /
+                            consultResponseV3BetweenDates.length) *
+                          10000,
+                      ) / 100 || 0
+                    }}%)
                   </div>
                 </b-list-group-item>
                 <b-list-group-item

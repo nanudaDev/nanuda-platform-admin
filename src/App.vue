@@ -211,6 +211,10 @@ img {
   color: #00b1ff !important;
 }
 
+.text-cyan {
+  color: #4ed0e4 !important;
+}
+
 .bg-primary {
   background: #004d8a !important;
   color: #fff !important;

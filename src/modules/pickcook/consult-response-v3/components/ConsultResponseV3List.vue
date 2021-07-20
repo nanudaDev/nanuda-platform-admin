@@ -278,7 +278,7 @@
                         meetingCompleteCount +
                         noShowCount +
                         meetingSecondCount
-                    }}건 {{ willMeetCount }}건 ({{
+                    }}건 ({{
                       Math.round(
                         (willMeetCount +
                           meetingCompleteCount +

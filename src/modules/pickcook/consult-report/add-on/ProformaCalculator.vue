@@ -181,7 +181,7 @@
           </div>
         </template>
         <div class="row-box final-total-value-box">
-          <div class="d-flex justify-content-between">
+          <div class="d-flex justify-content-between align-items-center">
             <div class="service-total-title">최종 합계</div>
             <div class="btn-control-box">
               <span class="btn-control" @click="resetProforma()">
@@ -412,18 +412,37 @@ export default class ProformaCalculator extends BaseComponent {
       `${this.categoryType}_extraServiceValues`,
       JSON.stringify(this.extraService),
     );
+    sessionStorage.setItem(
+      `${this.categoryType}_discountType`,
+      JSON.stringify(this.discountType),
+    );
+    sessionStorage.setItem(
+      `${this.categoryType}_discountValue`,
+      JSON.stringify(this.calculateDiscountValue),
+    );
   }
 
   getItem() {
     const getValueChecked = sessionStorage.getItem(
       `${this.categoryType}_checkboxValues`,
     );
+
     const getRadioValueChecked = sessionStorage.getItem(
       `${this.categoryType}_radioValues`,
     );
+
     const extraServiceValues = sessionStorage.getItem(
       `${this.categoryType}_extraServiceValues`,
     );
+
+    const discountType = sessionStorage.getItem(
+      `${this.categoryType}_discountType`,
+    );
+
+    const discountValue = sessionStorage.getItem(
+      `${this.categoryType}_discountValue`,
+    );
+
     if (getValueChecked) {
       this.checkboxValues = [...JSON.parse(getValueChecked)];
     }
@@ -437,6 +456,11 @@ export default class ProformaCalculator extends BaseComponent {
       this.extraService.items.forEach((e, i) => {
         this.changePrice(i);
       });
+    }
+
+    if (discountType && discountValue) {
+      this.discountType = JSON.parse(discountType);
+      this.calculateDiscountValue = JSON.parse(discountValue);
     }
   }
 
@@ -459,7 +483,7 @@ export default class ProformaCalculator extends BaseComponent {
   .service-card-title {
     text-align: left;
     width: 25vw;
-    padding: 16px 60px;
+    padding: 16px 16px 16px 60px;
     img {
       width: 68px;
       margin: 0 16px;
@@ -470,7 +494,7 @@ export default class ProformaCalculator extends BaseComponent {
       font-weight: 500;
       span {
         + span {
-          margin: 0 30px;
+          margin: 0 24px;
         }
       }
     }
@@ -550,6 +574,7 @@ export default class ProformaCalculator extends BaseComponent {
     .monthly-fee {
       display: block;
       font-size: 16px;
+      white-space: nowrap;
       // margin-right: 40px;
       > b {
         position: relative;
@@ -592,7 +617,7 @@ export default class ProformaCalculator extends BaseComponent {
   }
 }
 .btn-control-box {
-  display: flex;
+  display: inline-flex;
   border: 1px solid #e0e0e0;
   border-radius: 3px;
   background-color: #fff;
@@ -789,7 +814,7 @@ export default class ProformaCalculator extends BaseComponent {
           display: block;
           margin: 8px 0;
           img {
-            width: 60px;
+            width: 40px;
           }
         }
       }
@@ -805,6 +830,12 @@ export default class ProformaCalculator extends BaseComponent {
         font-size: 20px;
         span {
           display: inline-block;
+          img {
+            margin: 0 8px;
+          }
+          + span {
+            margin: 0 8px;
+          }
         }
       }
     }
@@ -863,6 +894,33 @@ export default class ProformaCalculator extends BaseComponent {
   .btn-control-box {
     > .btn-control {
       min-width: 44px;
+    }
+  }
+}
+
+@media screen and (max-width: 575px) {
+  #sticky-total {
+    padding: 0 16px;
+  }
+  .service-total-box {
+    .row-box {
+      &.final-total-value-box {
+        display: block;
+        > .d-flex {
+          display: flex !important;
+          margin-bottom: 16px;
+          .service-total-title {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+  .btn-control-box {
+    > .btn-control {
+      padding: 4px 8px;
+      height: 30px;
+      font-size: 12px;
     }
   }
 }

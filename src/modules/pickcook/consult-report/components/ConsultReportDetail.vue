@@ -49,7 +49,7 @@
                     <b-row align-v="center">
                       <b-col cols="12" xl="9">
                         <b-form-row v-if="consultResponseV3Dto">
-                          <b-col cols="6" xl="4">
+                          <b-col cols="12" sm="6" xl="4">
                             <b-form-group label="창업자명" label-align="left">
                               <b-form-input
                                 v-model="consultResponseV3Dto.name"
@@ -57,7 +57,7 @@
                               ></b-form-input>
                             </b-form-group>
                           </b-col>
-                          <b-col cols="6" xl="4">
+                          <b-col cols="12" sm="6" xl="4">
                             <b-form-group label="연락처" label-align="left">
                               <b-form-input
                                 v-model="consultResponseV3Dto.phone"
@@ -66,7 +66,8 @@
                             </b-form-group>
                           </b-col>
                           <b-col
-                            cols="6"
+                            cols="12"
+                            sm="6"
                             xl="4"
                             v-if="consultResponseV3Dto.fnbOwnerCodeStatus"
                           >
@@ -80,7 +81,7 @@
                               ></b-form-input>
                             </b-form-group>
                           </b-col>
-                          <b-col cols="6" xl="4">
+                          <b-col cols="12" sm="6" xl="4">
                             <b-form-group label="창업 지역" label-align="left">
                               <b-form-input
                                 v-model="reportAddress"
@@ -88,7 +89,7 @@
                               ></b-form-input>
                             </b-form-group>
                           </b-col>
-                          <b-col cols="6" xl="4">
+                          <b-col cols="12" sm="6" xl="4">
                             <b-form-group label="창업 업종" label-align="left">
                               <b-form-select
                                 v-model="salesRequestDto.mediumCategoryCode"
@@ -103,7 +104,7 @@
                               </b-form-select>
                             </b-form-group>
                           </b-col>
-                          <!-- <b-col cols="6" xl="4">
+                          <!-- <b-col cols="12" sm="6" xl="4">
                             <b-form-group label="창업 유형" label-align="left">
                               <b-form-select
                                 v-model="salesRequestDto.storeType"
@@ -476,10 +477,7 @@
                           {{
                             salesRequestDto.mediumCategoryCode
                               | kbCategoryTransformer
-                          }}</strong
-                        >의 매출은
-                        <strong class="text-blue"
-                          >{{ mediumCategoryRank }}순위</strong
+                          }}의 매출은 {{ mediumCategoryRank }}순위</strong
                         >입니다.
                       </p>
                     </header>
@@ -487,14 +485,12 @@
                       class="report-card-content"
                       v-if="salesRequestDto.mediumCategoryCode"
                     >
-                      <div class="mt-4">
-                        <BarChart
-                          :chartData="kbCategoryRevenueChartData"
-                          :labels="mediumCategoryRevenueLabel"
-                          :datasetsData="mediumCategoryRevenueValue"
-                          style="height:470px;"
-                        />
-                      </div>
+                      <BarChart
+                        :chartData="kbCategoryRevenueChartData"
+                        :labels="mediumCategoryRevenueLabel"
+                        :datasetsData="mediumCategoryRevenueValue"
+                        style="height:470px;"
+                      />
                     </div>
                   </div>
                 </b-col>
@@ -515,7 +511,7 @@
                       </p>
                     </header>
                     <div class="report-card-content">
-                      <div class="horizontal-stacked-bar-charts mt-4">
+                      <div class="horizontal-stacked-bar-charts">
                         <div
                           v-for="(ratio, index) in Object.values(
                             salesResponseDto.weekDayRevenueRatio,
@@ -583,7 +579,7 @@
                       </p>
                     </header>
                     <div class="report-card-content">
-                      <div class="horizontal-stacked-bar-charts mt-4">
+                      <div class="horizontal-stacked-bar-charts">
                         <div
                           v-for="(ratio,
                           name,
@@ -646,8 +642,8 @@
                     </div>
                     <div class="report-card-content">
                       <div class="gender-graph-list">
-                        <b-row no-gutters align-v="end" class="mt-4">
-                          <b-col cols="12" xl="2">
+                        <b-row no-gutters align-v="end">
+                          <b-col cols="6" xl="2">
                             <p class="text-left">
                               <span class="badge">
                                 여성
@@ -656,6 +652,7 @@
                                 class="
                                      text-value d-block
                                     "
+                                :class="{ 'text-cyan': mainGender === '2' }"
                                 >{{
                                   Math.round(
                                     salesResponseDto
@@ -686,15 +683,16 @@
                               </div>
                             </div>
                           </b-col>
-                          <b-col cols="12" xl="2">
+                          <b-col cols="6" xl="2">
                             <p class="text-right">
                               <span class="badge">
                                 남성
                               </span>
                               <strong
                                 class="
-                                     text-value text-blue d-block
+                                     text-value d-block
                                     "
+                                :class="{ 'text-blue': mainGender === '1' }"
                                 >{{
                                   Math.round(
                                     salesResponseDto
@@ -765,7 +763,7 @@
                           </div>
                         </div>
                       </b-col>
-                      <b-col cols="6" xl="4">
+                      <b-col cols="12" sm="6" xl="4">
                         <div class="report-card store-status-card">
                           <div class="report-card-content">
                             <div class="store-status-box">
@@ -822,7 +820,7 @@
                           </div>
                         </div>
                       </b-col>
-                      <b-col cols="6" xl="4">
+                      <b-col cols="12" sm="6" xl="4">
                         <div class="report-card store-status-card">
                           <div class="report-card-content">
                             <div class="store-status-box">
@@ -2253,7 +2251,7 @@ body {
         width: 82px;
         height: 86px;
         background-repeat: no-repeat;
-        background-position: center center;
+        background-position: right top;
         background-size: contain;
         position: absolute;
         right: 80px;
@@ -2261,10 +2259,8 @@ body {
       }
       .badge {
         background-color: #c9d7e4;
-        + .badge {
-          margin-left: 0.5em;
-          margin-bottom: 0.25em;
-        }
+        margin-right: 0.5em;
+        margin-bottom: 0.25em;
       }
       h5 {
         font-size: 32px;
@@ -2402,9 +2398,7 @@ body {
     > p {
       white-space: nowrap;
       display: inline-block;
-      + p {
-        margin-left: 16px;
-      }
+      margin-right: 16px;
     }
     .legend-label-point {
       display: inline-block;
@@ -2603,10 +2597,10 @@ body {
     .consumption-pattern-delivery {
       .consumption-pattern-delivery-text {
         h5 {
-          font-size: 20px;
+          font-size: 18px;
         }
         p {
-          font-size: 46px;
+          font-size: 38px;
         }
       }
     }
@@ -2664,6 +2658,24 @@ body {
       }
       .store-status-box {
         padding-top: 0;
+      }
+    }
+    .gender-graph-list {
+      .gender-graph-chart {
+        margin-bottom: 16px;
+      }
+      .row {
+        > [class*='col-'] {
+          &:nth-child(1) {
+            order: 2;
+          }
+          &:nth-child(2) {
+            order: 1;
+          }
+          &:nth-child(3) {
+            order: 3;
+          }
+        }
       }
     }
   }
@@ -2743,6 +2755,72 @@ body {
     .pickcook-menu-list {
       > div {
         width: 100%;
+      }
+    }
+
+    .section {
+      .section-header {
+        h3 {
+          font-size: 32px;
+          + .desc {
+            font-size: 12px;
+          }
+        }
+      }
+      p {
+        font-size: 14px;
+        strong {
+          font-size: 18px;
+        }
+      }
+    }
+
+    .report-card {
+      .report-card-header {
+        h4 {
+          font-size: 20px;
+        }
+      }
+      .report-card-content {
+        .badge {
+          font-size: 12px;
+        }
+        .text-value {
+          font-size: 24px;
+        }
+      }
+    }
+    .recommended-menu-box {
+      .recommended-menu-info {
+        padding: 16px;
+        h5 {
+          font-size: 28px;
+        }
+        p {
+          font-size: 14px;
+        }
+
+        &:after {
+          right: 16px;
+          background-size: 50% 50%;
+        }
+      }
+    }
+
+    .store-status-box {
+      .store-status-title {
+        h5 {
+          font-size: 16px;
+        }
+      }
+    }
+
+    .legend-label-list {
+      .legend-label-text {
+        font-size: 12px;
+      }
+      .legend-label-value {
+        font-size: 16px;
       }
     }
   }

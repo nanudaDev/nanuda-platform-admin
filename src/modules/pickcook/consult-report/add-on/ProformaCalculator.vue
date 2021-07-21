@@ -412,18 +412,37 @@ export default class ProformaCalculator extends BaseComponent {
       `${this.categoryType}_extraServiceValues`,
       JSON.stringify(this.extraService),
     );
+    sessionStorage.setItem(
+      `${this.categoryType}_discountType`,
+      JSON.stringify(this.discountType),
+    );
+    sessionStorage.setItem(
+      `${this.categoryType}_discountValue`,
+      JSON.stringify(this.calculateDiscountValue),
+    );
   }
 
   getItem() {
     const getValueChecked = sessionStorage.getItem(
       `${this.categoryType}_checkboxValues`,
     );
+
     const getRadioValueChecked = sessionStorage.getItem(
       `${this.categoryType}_radioValues`,
     );
+
     const extraServiceValues = sessionStorage.getItem(
       `${this.categoryType}_extraServiceValues`,
     );
+
+    const discountType = sessionStorage.getItem(
+      `${this.categoryType}_discountType`,
+    );
+
+    const discountValue = sessionStorage.getItem(
+      `${this.categoryType}_discountValue`,
+    );
+
     if (getValueChecked) {
       this.checkboxValues = [...JSON.parse(getValueChecked)];
     }
@@ -437,6 +456,11 @@ export default class ProformaCalculator extends BaseComponent {
       this.extraService.items.forEach((e, i) => {
         this.changePrice(i);
       });
+    }
+
+    if (discountType && discountValue) {
+      this.discountType = JSON.parse(discountType);
+      this.calculateDiscountValue = JSON.parse(discountValue);
     }
   }
 
@@ -804,6 +828,15 @@ export default class ProformaCalculator extends BaseComponent {
       width: auto;
       h4 {
         font-size: 20px;
+        span {
+          display: inline-block;
+          img {
+            margin: 0 8px;
+          }
+          + span {
+            margin: 0 8px;
+          }
+        }
       }
     }
     .service-card-items {
@@ -872,6 +905,7 @@ export default class ProformaCalculator extends BaseComponent {
   .service-total-box {
     .row-box {
       &.final-total-value-box {
+        display: block;
         > .d-flex {
           display: flex !important;
           margin-bottom: 16px;

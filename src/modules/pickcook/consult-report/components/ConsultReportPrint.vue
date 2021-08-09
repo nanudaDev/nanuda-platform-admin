@@ -1,42 +1,173 @@
 <template>
   <div id="report">
-    <div class="page d-print">
-      <header>
-        <h1>상권분석 리포트</h1>
-        <address contenteditable>
-          <p>RIA</p>
-          <p>101 E. Chapman Ave<br />Orange, CA 92866</p>
-          <p>010 4153 7907</p>
-        </address>
-      </header>
+    <div class="page cover">
+      <div class="page-inner">
+        <div>
+          <header>
+            <h1>
+              <span>PICKCOOK</span>
+              상권분석 리포트
+            </h1>
+            <address contenteditable>
+              <p>RIA</p>
+              <p>101 E. Chapman Ave<br />Orange, CA 92866</p>
+              <p>010 4153 7907</p>
+            </address>
+          </header>
+        </div>
+      </div>
     </div>
     <div class="page">
-      <header>
-        <h1>상권개요</h1>
-      </header>
-      <article>
-        <b-col
-          cols="12"
-          xl="7"
-          v-if="salesResponseDto && revenueData.length > 0"
-        >
-        </b-col>
-      </article>
+      <div class="page-inner">
+        <div>
+          <header>
+            <h1>상권개요</h1>
+          </header>
+          <article>
+            <table class="table">
+              <colgroup>
+                <col width="25%" />
+                <col width="*" />
+                <col width="25%" />
+                <col width="*%" />
+              </colgroup>
+              <tbody>
+                <tr>
+                  <th scope="row">음식점수(개)</th>
+                  <td>10</td>
+                  <th scope="row">주거인구(명)</th>
+                  <td>10</td>
+                </tr>
+                <tr>
+                  <th scope="row">총세대수(세대)</th>
+                  <td>10</td>
+                  <th scope="row">직장인구(명)</th>
+                  <td>10</td>
+                </tr>
+                <tr>
+                  <th scope="row">평균 영업기간(년)</th>
+                  <td>10</td>
+                  <th scope="row">유동인구(명)</th>
+                  <td>10</td>
+                </tr>
+                <tr>
+                  <th scope="row">주요 연령대</th>
+                  <td>10</td>
+                  <th scope="row"></th>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+        </div>
+        <footer>
+          <p>PICKCOOK ANALYSIS ⓒ2021</p>
+        </footer>
+      </div>
     </div>
     <div class="page">
-      <header>
-        <h1>매출분석</h1>
-      </header>
-      <article>
-        <b-row>
-          <b-col cols="12" xl="8">
-            <RevenueChart
-              :chartData="revenueChartData"
-              :revenueData="revenueData"
-            />
-          </b-col>
-        </b-row>
-      </article>
+      <div class="page-inner">
+        <div>
+          <header>
+            <h1>매출분석</h1>
+          </header>
+          <article>
+            <section>
+              <b-row>
+                <b-col cols="8">
+                  <div
+                    class="chart-container"
+                    v-if="salesResponseDto && revenueData.length > 0"
+                  >
+                    <RevenueChart
+                      :chartData="revenueChartData"
+                      :revenueData="revenueData"
+                      style="height:250px"
+                    />
+                  </div>
+                </b-col>
+                <b-col cols="4">
+                  <div
+                    class="chart-container"
+                    v-if="
+                      salesResponseDto &&
+                        salesResponseDto.gaguRatio &&
+                        mainGaguChartData
+                    "
+                  >
+                    <DoughnutChart
+                      :chartData="mainGaguChartData"
+                      :labels="Object.keys(salesResponseDto.gaguRatio)"
+                      :datasetsData="Object.values(salesResponseDto.gaguRatio)"
+                      :backgroundColor="computedMainGaguLabelColor"
+                      style="height:250px"
+                    />
+                  </div>
+                </b-col>
+              </b-row>
+            </section>
+            <section>
+              <p>
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
+                테스트 테스트 테스트 테스트 테스트 <br />
+              </p>
+            </section>
+          </article>
+        </div>
+        <footer>
+          <p>PICKCOOK ANALYSIS ⓒ2021</p>
+        </footer>
+      </div>
     </div>
   </div>
 </template>
@@ -46,11 +177,13 @@ import { Component } from 'vue-property-decorator';
 import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.service';
 import { ConsultResponseV3Dto, SalesRequestDto, SalesResponseDto } from '@/dto';
 import RevenueChart from '../add-on/RevenueChart.vue';
+import DoughnutChart from '../add-on/DoughnutChart.vue';
 
 @Component({
   name: 'ConsultReportPrint',
   components: {
     RevenueChart,
+    DoughnutChart,
   },
 })
 export default class ConsultReportPrint extends BaseComponent {
@@ -78,6 +211,42 @@ export default class ConsultReportPrint extends BaseComponent {
       },
     ],
   };
+
+  // 주 소비층 차트
+  private mainGaguChartData = {
+    datasets: [
+      {
+        backgroundColor: [],
+      },
+    ],
+  };
+
+  get computedMainGaguBackgroundColor() {
+    const arr = [];
+    Object.values(this.salesResponseDto.gaguRatio).map((e, index) => {
+      arr.push(
+        `rgba(100,132,163, ${(index + 1) /
+          Object.values(this.salesResponseDto.gaguRatio).length})`,
+      );
+    });
+    return arr;
+  }
+
+  get computedMainGaguLabelColor() {
+    const rankColorArr = ['#00B1FF', '#79FEDD', '#4FD0E4'];
+    let colorData = [];
+    let rankData = [];
+    colorData = [...this.computedMainGaguBackgroundColor];
+    if (this.salesResponseDto.mainGagu === 1) {
+      rankData = [1, 2];
+    } else {
+      rankData = [3, 4];
+    }
+    colorData.map((e, index) => {
+      colorData[rankData[index] - 1] = rankColorArr[index];
+    });
+    return colorData;
+  }
 
   getConsultData(id) {
     ConsultResponseV3Service.findOne(id).subscribe(res => {
@@ -124,9 +293,19 @@ export default class ConsultReportPrint extends BaseComponent {
 <style lang="scss">
 /* reset */
 
+.chart-container {
+  max-width: 100%;
+  canvas {
+    min-height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    height: auto !important;
+    width: auto !important;
+  }
+}
 * {
   border: 0;
-  box-sizing: content-box;
+  box-sizing: border-box;
   color: inherit;
   font-family: inherit;
   font-size: inherit;
@@ -141,28 +320,16 @@ export default class ConsultReportPrint extends BaseComponent {
 }
 
 /* content editable */
-
-*[contenteditable] {
-  border-radius: 0.25em;
-  min-width: 1em;
-  outline: 0;
+[contenteditable='true'] {
+  cursor: text;
 }
 
-*[contenteditable] {
-  cursor: pointer;
+[contenteditable='true']:hover {
+  outline: 2px solid #c4dcf0;
 }
 
-*[contenteditable]:hover,
-*[contenteditable]:focus,
-td:hover *[contenteditable],
-td:focus *[contenteditable],
-img.hover {
-  background: #def;
-  box-shadow: 0 0 1em 0.5em #def;
-}
-
-span[contenteditable] {
-  display: inline-block;
+[contenteditable='true']:focus {
+  outline: 2px solid #5e9ed7;
 }
 
 /* heading */
@@ -208,24 +375,33 @@ td {
 /* page */
 
 html {
-  font: 16px/1 'Open Sans', sans-serif;
+  font: 16px/1, sans-serif;
   overflow: auto;
   padding: 0.5in;
   background: #999;
   cursor: default;
 }
-
 body {
   background: none;
+  min-width: 0 !important;
+}
+.container {
+  min-width: 0 !important;
 }
 
+section {
+  + section {
+    margin-top: 1em;
+  }
+}
+
+/* page */
 .page {
   box-sizing: border-box;
-  height: 11in;
   margin: 0 auto;
   overflow: hidden;
-  padding: 0.5in;
   width: 8.5in;
+  height: 11.7in;
   background: #fff;
   border-radius: 1px;
   box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
@@ -233,13 +409,44 @@ body {
   + .page {
     margin-top: 1in;
   }
+
+  .page-inner {
+    position: relative;
+    // display: flex;
+    // flex-direction: column;
+    //  justify-content: space-between;
+    height: 10.7in;
+    margin: 0.5in;
+    overflow: hidden;
+  }
+
+  &.cover {
+    background-color: #004d8a;
+
+    header {
+      margin-top: 3in;
+      h1 {
+        font-size: 24pt;
+        background: transparent;
+        span {
+          display: block;
+        }
+      }
+    }
+    .page-inner {
+      border: 2px solid #fff;
+    }
+    address {
+      position: absolute;
+      right: 0.25in;
+      bottom: 0.25in;
+      font-size: 14pt;
+    }
+  }
 }
 
 /* header */
 
-header {
-  margin: 0 0 3em;
-}
 header:after {
   clear: both;
   content: '';
@@ -259,182 +466,28 @@ header address {
   font-style: normal;
   line-height: 1.25;
   margin: 0 1em 1em 0;
+  color: #fff;
 }
-header address p {
-  margin: 0 0 0.25em;
-}
-header span,
-header img {
-  display: block;
-  float: right;
-}
-header span {
-  margin: 0 0 1em 1em;
-  max-height: 25%;
-  max-width: 60%;
-  position: relative;
-}
-header img {
-  max-height: 100%;
-  max-width: 100%;
-}
-header input {
-  cursor: pointer;
-  -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=0)';
-  height: 100%;
-  left: 0;
-  opacity: 0;
+footer {
+  text-align: center;
+  font-size: 8pt;
   position: absolute;
-  top: 0;
+  left: 0;
+  bottom: 0;
   width: 100%;
 }
 
 /* article */
 
-article,
-article address,
-table.meta,
-table.inventory {
-  margin: 0 0 3em;
-}
 article:after {
   clear: both;
   content: '';
   display: table;
 }
-article h1 {
-  clip: rect(0 0 0 0);
-  position: absolute;
-}
-
 article address {
   float: left;
   font-size: 125%;
   font-weight: bold;
-}
-
-/* table meta & balance */
-
-table.meta,
-table.balance {
-  float: right;
-  width: 36%;
-}
-table.meta:after,
-table.balance:after {
-  clear: both;
-  content: '';
-  display: table;
-}
-
-/* table meta */
-
-table.meta th {
-  width: 40%;
-}
-table.meta td {
-  width: 60%;
-}
-
-/* table items */
-
-table.inventory {
-  clear: both;
-  width: 100%;
-}
-table.inventory th {
-  font-weight: bold;
-  text-align: center;
-}
-
-table.inventory td:nth-child(1) {
-  width: 26%;
-}
-table.inventory td:nth-child(2) {
-  width: 38%;
-}
-table.inventory td:nth-child(3) {
-  text-align: right;
-  width: 12%;
-}
-table.inventory td:nth-child(4) {
-  text-align: right;
-  width: 12%;
-}
-table.inventory td:nth-child(5) {
-  text-align: right;
-  width: 12%;
-}
-
-/* table balance */
-
-table.balance th,
-table.balance td {
-  width: 50%;
-}
-table.balance td {
-  text-align: right;
-}
-
-/* aside */
-
-aside h1 {
-  border: none;
-  border-width: 0 0 1px;
-  margin: 0 0 1em;
-}
-aside h1 {
-  border-color: #999;
-  border-bottom-style: solid;
-}
-
-/* javascript */
-
-.add,
-.cut {
-  border-width: 1px;
-  display: block;
-  font-size: 0.8rem;
-  padding: 0.25em 0.5em;
-  float: left;
-  text-align: center;
-  width: 0.6em;
-}
-
-.add,
-.cut {
-  background: #9af;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  background-image: -moz-linear-gradient(#00adee 5%, #0078a5 100%);
-  background-image: -webkit-linear-gradient(#00adee 5%, #0078a5 100%);
-  border-radius: 0.5em;
-  border-color: #0076a3;
-  color: #fff;
-  cursor: pointer;
-  font-weight: bold;
-  text-shadow: 0 -1px 2px rgba(0, 0, 0, 0.333);
-}
-
-.add {
-  margin: -2.5em 0 0;
-}
-
-.add:hover {
-  background: #00adee;
-}
-
-.cut {
-  opacity: 0;
-  position: absolute;
-  top: 0;
-  left: -1.5em;
-}
-.cut {
-  -webkit-transition: opacity 100ms ease-in;
-}
-
-tr:hover .cut {
-  opacity: 1;
 }
 
 @media print {
@@ -455,11 +508,14 @@ tr:hover .cut {
   .page {
     box-shadow: none;
     width: auto;
-    height: auto;
+    height: 11.7in;
+    min-height: 1058px;
     margin: 0;
-    page-break-after: always;
     + .page {
       margin-top: 0;
+    }
+    .page-inner {
+      height: 10.7in;
     }
   }
 

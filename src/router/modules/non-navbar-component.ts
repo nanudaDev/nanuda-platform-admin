@@ -144,6 +144,21 @@ const nonNavBarRouter: RouteConfig[] = [
       title: '상권분석 리포트',
     },
   },
+  {
+    path: '/pickcook/consult-response-v3/:id([0-9]+)/report/print',
+    name: 'ConsultReportPrint',
+    component: () =>
+      import(
+        '../../modules/pickcook/consult-report/components/ConsultReportPrint.vue'
+      ),
+    meta: {
+      authRequired: true,
+      layout: 'EmptyLayout',
+      roles: [...CONST_ADMIN_USER],
+      detailPage: true,
+      title: '상권분석 리포트',
+    },
+  },
 ];
 
 export default nonNavBarRouter;

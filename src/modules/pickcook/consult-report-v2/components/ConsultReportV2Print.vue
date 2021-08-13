@@ -23,17 +23,18 @@
         <span class="ml-2">프린트</span>
       </b-btn>
     </div>
-    <div class="page cover">
+    <!-- <div class="page cover">
       <div class="page-inner">
         <div>
           <header>
             <h1>
-              <span
-                ><img
+              <p class="mb-2">
+                <img
                   src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/logo_symbol_w.png"
                   alt="픽쿡"
                   class=""
-              /></span>
+                />
+              </p>
               <span>PICKCOOK</span>
               상권분석 리포트
             </h1>
@@ -41,25 +42,36 @@
               <span class="sub-title-en">ANALYSIS REPORT</span>
             </p>
           </header>
-          <address contenteditable>
-            <p>RIA</p>
-            <p>101 E. Chapman Ave<br />Orange, CA 92866</p>
-            <p>010 4153 7907</p>
+          <address>
+            <p>이름<span contenteditable>김보라</span></p>
+            <p>지역<span contenteditable>서울시 노원구 공릉1동</span></p>
+            <p>선택 업종<span contenteditable>한식</span></p>
+            <p>서비스 이용횟수<span contenteditable>2</span>회</p>
           </address>
         </div>
+        <footer>
+          <div class="mb-5">
+            <p class="date">2021년 08월 12일</p>
+          </div>
+          <p>
+            PICKCOOK은 주기적인 업데이트 과정을 거친 실 데이터를 기반으로 한
+            분석 결과물입니다. <br />(분석 시기별로 내용이 변경되오니 이점
+            유의하시길 바랍니다.)
+          </p>
+        </footer>
       </div>
     </div>
     <div class="page">
       <div class="page-inner">
         <div>
           <header>
-            <h1>01 상권개요</h1>
+            <h1>01 상권 분석 개요</h1>
           </header>
           <article>
-            <section>
-              <div id="map" style="height:300px"></div>
-            </section>
-            <section>
+            <div class="row-box">
+              <div id="map" style="height:400px"></div>
+            </div>
+            <div class="row-box">
               <table class="table">
                 <colgroup>
                   <col width="25%" />
@@ -69,39 +81,118 @@
                 </colgroup>
                 <tbody>
                   <tr>
+                    <th scpoe="row">선택지역</th>
+                    <td colspan="3">서울시 노원구 공릉1동</td>
+                  </tr>
+                  <tr>
+                    <th scpoe="row">선택업종</th>
+                    <td colspan="3">한식</td>
+                  </tr>
+                  <tr>
                     <th scope="row">음식점수(개)</th>
-                    <td>10</td>
+                    <td>1,350</td>
                     <th scope="row">주거인구(명)</th>
-                    <td>10</td>
+                    <td>34,990</td>
                   </tr>
                   <tr>
                     <th scope="row">총세대수(세대)</th>
-                    <td>10</td>
+                    <td>24,500</td>
                     <th scope="row">직장인구(명)</th>
-                    <td>10</td>
+                    <td>8,000</td>
                   </tr>
                   <tr>
                     <th scope="row">평균 영업기간(년)</th>
-                    <td>10</td>
+                    <td>4</td>
                     <th scope="row">유동인구(명)</th>
-                    <td>10</td>
+                    <td>10,500</td>
                   </tr>
                   <tr>
                     <th scope="row">주요 연령대</th>
-                    <td>10</td>
+                    <td>20~30대</td>
                     <th scope="row"></th>
                     <td></td>
                   </tr>
                 </tbody>
               </table>
+            </div>
+            <div class="row-box">
+              <b-alert variant="secondary" show>
+                <h5 class="text-primary">
+                  <b-icon icon="info-circle-fill"></b-icon>
+                  <span class="ml-2">통계 기준 안내</span>
+                </h5>
+                <div class="mt-2">
+                  <p>
+                    한식음식점 3년생존율은 61.5%로 서울시 3년생존율 45.7% 보다
+                    높고 전년동기 45.1% 보다 높습니다. 해당지역에 한식음식점
+                    창업 시 향후 경쟁관계에 큰 변화가 없다면 2년 정도의
+                    영업기간을 기대할 수 있을 것으로 예상됩니다. 기대 영
+                    업기간이 길수록 좋은 상권입니다. 선택상권의 주거인구밀도는
+                    1ha(1만㎡)당 130명 규모로 전년대비 증가하였습니다. 면적은
+                    59,866 평방제곱미터(㎡), 직장인구밀도는 78명, 3개월간
+                    상존인구밀도는 약34,990명 수준입니다.<br />
+                    선택상권 행정동 1층 임대료는 3.3㎡당 139,700원으로 전년 동기
+                    137,188원에 비해 높습니다. 임대료의 급격한 상승이나
+                    개폐업율변 화가 큰곳인지 상세분석을 참조하세요.선택상권
+                    한식음식점은 전년대비 동일한 경향을 보이고 있으며, 개업률
+                    4.1%, 폐업률4.1%이며 개업률, 폐업률이 정체상태입니다.
+                    한식음식점 의 3개월간매출은 13,188,130원 수준이며, 서울시
+                    평균에 비해 낮은 편이며 전년 동기 12,979,820원보다 높은
+                    수준입니 다.
+                  </p>
+                </div>
+              </b-alert>
+            </div>
+          </article>
+        </div>
+        <footer>
+          <p>PICKCOOK ANALYSIS ⓒ2021</p>
+        </footer>
+      </div>
+    </div> -->
+    <div class="page">
+      <div class="page-inner">
+        <div>
+          <header>
+            <h1>02 인구분석</h1>
+          </header>
+          <article>
+            <section>
+              <div id="chart"></div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">상권유형</th>
+                    <th scope="col">주거인구(명)</th>
+                    <th scope="col">직장인구(명)</th>
+                    <th scope="col">유동인구(명)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>주상복합</td>
+                    <td>3,000</td>
+                    <td>4,000</td>
+                    <td>5,000</td>
+                  </tr>
+                </tbody>
+              </table>
             </section>
             <section>
-              <apexchart
-                width="500"
-                type="donut"
-                :options="chartOptions"
-                :series="series"
-              ></apexchart>
+              <div class="card">
+                <ApexPieChart
+                  :series="donutSeries"
+                  :options="donutOptions"
+                ></ApexPieChart>
+              </div>
+            </section>
+            <section>
+              <div class="card">
+                <ApexLineChart
+                  :series="lineSeries"
+                  :options="lineOptions"
+                ></ApexLineChart>
+              </div>
             </section>
           </article>
         </div>
@@ -113,105 +204,23 @@
     <div class="page">
       <div class="page-inner">
         <div>
-          <header>
-            <h1>02 매출분석</h1>
-          </header>
-          <article>
-            <section>
-              <b-row>
-                <b-col cols="8">
-                  <div
-                    class="chart-container"
-                    v-if="salesResponseDto && revenueData.length > 0"
-                  >
-                    <RevenueChart
-                      :chartData="revenueChartData"
-                      :revenueData="revenueData"
-                      style="height:250px"
-                    />
-                  </div>
-                </b-col>
-                <b-col cols="4">
-                  <div
-                    class="chart-container"
-                    v-if="
-                      salesResponseDto &&
-                        salesResponseDto.gaguRatio &&
-                        mainGaguChartData
-                    "
-                  >
-                    <DoughnutChart
-                      :chartData="mainGaguChartData"
-                      :labels="Object.keys(salesResponseDto.gaguRatio)"
-                      :datasetsData="Object.values(salesResponseDto.gaguRatio)"
-                      :backgroundColor="computedMainGaguLabelColor"
-                      style="height:250px"
-                    />
-                  </div>
-                </b-col>
-              </b-row>
-            </section>
-            <section>
-              <p>
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-                테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트 테스트
-                테스트 테스트 테스트 테스트 테스트 <br />
-              </p>
-            </section>
-          </article>
+          <section>
+            <div class="card">
+              <ApexMixedChart
+                :series="mixedSeries"
+                :options="mixedOptions"
+              ></ApexMixedChart>
+            </div>
+          </section>
+          <section>
+            <div class="card">
+              <ApexPieChart
+                :series="donutSeries"
+                :options="donutOptions"
+              ></ApexPieChart>
+            </div>
+          </section>
         </div>
-        <footer>
-          <p>PICKCOOK ANALYSIS ⓒ2021</p>
-        </footer>
       </div>
     </div>
   </div>
@@ -221,40 +230,157 @@ import BaseComponent from '@/core/base.component';
 import { Component } from 'vue-property-decorator';
 import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.service';
 import { ConsultResponseV3Dto, SalesRequestDto, SalesResponseDto } from '@/dto';
-import RevenueChart from '../add-on/RevenueChart.vue';
-import DoughnutChart from '../add-on/DoughnutChart.vue';
-import VueApexCharts from 'vue-apexcharts';
+import ApexLineChart from '../add-on/LineChart.vue';
+import ApexMixedChart from '../add-on/MixedChart.vue';
+import ApexPieChart from '../add-on/PieChart.vue';
 
 @Component({
-  name: 'ConsultReportPrint',
+  name: 'ConsultReportV2Print',
   components: {
-    RevenueChart,
-    DoughnutChart,
-    VueApexCharts,
+    ApexLineChart,
+    ApexMixedChart,
+    ApexPieChart,
   },
 })
-export default class ConsultReportPrint extends BaseComponent {
+export default class ConsultReportV2Print extends BaseComponent {
   declare $refs: any;
 
-  generateReport() {
-    window.print();
-  }
-
-  private chartOptions = {
-    chart: {
-      id: 'vuechart-example',
+  private plotlyLayout = {
+    margin: {
+      l: 50,
+      r: 50,
+      b: 50,
+      t: 50,
+      pad: 4,
     },
-    // xaxis: {
-    //   categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
-    // },
+    showtitle: false,
+    showlegend: true,
+    legend: {
+      orientation: 'h',
+    },
   };
-  private series = [44, 55, 13, 33];
+
+  private plotlyData = [
+    {
+      x: [0, 1, 2, 3, 4],
+      y: [1, 5, 3, 7, 5],
+      mode: 'lines+markers',
+      type: 'scatter',
+    },
+    {
+      x: [1, 2, 3, 4, 5],
+      y: [4, 0, 4, 6, 8],
+      mode: 'lines+markers',
+      type: 'scatter',
+    },
+  ];
+
+  private plotlyOptions = {
+    editable: false,
+    displayModeBar: false,
+    showEditInChartStudio: false,
+    staticPlot: true,
+    responsive: true,
+  };
+
+  private mixedSeries = [
+    {
+      name: '여성',
+      type: 'column',
+      data: [20, 30, 60, 70, 40, 10],
+    },
+    {
+      name: '남성',
+      type: 'column',
+      data: [15, 20, 40, 60, 70, 30],
+    },
+    {
+      name: '전체',
+      type: 'line',
+      data: [20, 29, 60, 80, 35, 20],
+    },
+  ];
+
+  private mixedOptions = {
+    xaxis: {
+      categories: ['10대', '20대', '30대', '40대', '50대', '60대 이상'],
+    },
+    yaxis: {},
+    fill: {
+      colors: ['#f26360', '#0080c6', '#f9a74a'],
+    },
+    stroke: {
+      colors: ['#f26360', '#0080c6', '#f9a74a'],
+      width: [0, 0, 4],
+    },
+    markers: {
+      size: 6,
+      colors: '#f9a74a',
+      strokeColors: '#fff',
+      strokeWidth: 3,
+    },
+
+    legend: {
+      markers: {
+        fillColors: ['#f26360', '#0080c6', '#f9a74a'],
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      enabledOnSeries: [0, 1],
+      background: false,
+      style: {
+        colors: ['#fff'],
+      },
+      formatter: function(val, opts) {
+        return val;
+      },
+    },
+    plotOptions: {
+      bar: {
+        dataLabels: {
+          position: 'bottom',
+        },
+      },
+    },
+  };
+
+  private lineSeries = [
+    {
+      name: '여성',
+      data: [20, 30, 60, 70, 40, 10],
+    },
+    {
+      name: '남성',
+      data: [15, 20, 40, 60, 70, 30],
+    },
+    {
+      name: '전체',
+      data: [20, 29, 60, 80, 35, 20],
+    },
+  ];
+
+  private lineOptions = {
+    xaxis: {
+      categories: ['10대', '20대', '30대', '40대', '50대', '60대 이상'],
+    },
+  };
+
+  private donutSeries = [44, 55, 41, 17, 15];
+  private donutOptions = {
+    labels: ['Apple', 'Mango', 'Orange', 'Watermelon'],
+    plotOptions: {
+      pie: {
+        customScale: 0.8,
+      },
+    },
+  };
 
   private salesRequestDto = new SalesRequestDto();
   private salesResponseDto: any = new SalesResponseDto();
   private consultResponseV3Dto = new ConsultResponseV3Dto();
   private map;
-  private reportAddress = '성남시 수정구 신흥2동';
+  private reportAddress = '서울시 노원구 공릉1동';
 
   // 상권매출현황 차트
   private revenueData = [];
@@ -357,6 +483,7 @@ export default class ConsultReportPrint extends BaseComponent {
     const callback = function(result, status) {
       if (status === window.kakao.maps.services.Status.OK) {
         const mapContainer = document.getElementById('map');
+        if (!mapContainer) return;
         const mapOption = {
           center: new window.kakao.maps.LatLng(result[0].y, result[0].x),
           level: 5,
@@ -387,7 +514,7 @@ export default class ConsultReportPrint extends BaseComponent {
           fillColor: '#4CB0F8',
           fillOpacity: 0.3,
         });
-        circle.setRadius(800);
+        circle.setRadius(700);
         circle.setMap(map);
         customOverlay.setMap(map);
       }
@@ -410,6 +537,10 @@ export default class ConsultReportPrint extends BaseComponent {
     };
     geocoder.addressSearch(res.address, callback);
     this.$bvModal.hide('postcode');
+  }
+
+  generateReport() {
+    window.print();
   }
 
   created() {
@@ -469,45 +600,29 @@ header {
   margin-bottom: 1em;
   h1 {
     font-weight: bold;
-    font-size: 18pt;
+    font-size: 16pt;
   }
 }
 
 /* table */
-
 table {
   font-size: 75%;
   table-layout: fixed;
   width: 100%;
-}
-table {
-  border-collapse: separate;
-  border-spacing: 2px;
-}
-th,
-td {
-  border-width: 1px;
-  padding: 0.5em;
-  position: relative;
-  text-align: left;
-}
-th,
-td {
-  border-radius: 0.25em;
-  border-style: solid;
-}
-th {
-  background: #eee;
-  border-color: #bbb;
-}
-td {
-  border-color: #ddd;
+  border-collapse: collapse;
+  th,
+  td {
+    border: 1px solid #ddd;
+  }
+
+  th {
+    background: #eee;
+  }
 }
 
 /* page */
 
 html {
-  font: 16px/1, sans-serif;
   overflow: auto;
   padding: 0.5in;
   background: #999;
@@ -530,24 +645,29 @@ body {
   background: #fff;
   box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
   padding: 0.5in;
+  .row-box {
+    + .row-box {
+      margin-top: 1.5em;
+    }
+  }
+  p {
+    font-size: 10pt;
+    line-height: 1.6;
+  }
   + .page {
     margin-top: 1in;
   }
 
   .page-inner {
     position: relative;
-    // display: flex;
-    // flex-direction: column;
-    //  justify-content: space-between;
     height: 10.68in;
-    overflow: hidden;
   }
 
   &.cover {
     background-color: #004d8a;
 
     header {
-      margin-top: 3in;
+      margin-top: 2.5in;
       color: #fff;
       text-align: center;
       h1 {
@@ -555,6 +675,7 @@ body {
         background: transparent;
         letter-spacing: 0.5em;
         padding-left: 0.5em;
+        line-height: 1.6;
         span {
           display: block;
         }
@@ -570,16 +691,41 @@ body {
         padding-left: 2em;
       }
     }
+    address {
+      margin-top: 1in;
+      color: #fff;
+      text-align: center;
+      p {
+        font-size: 18pt;
+        line-height: 2;
+        span {
+          position: relative;
+          display: inline-block;
+          padding-left: 0.5em;
+          margin-left: 0.5em;
+          &:before {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            margin-top: -0.25em;
+            display: inline-block;
+            content: '';
+            width: 2px;
+            height: 0.5em;
+            background: rgba(255, 255, 255, 0.5);
+          }
+        }
+      }
+    }
+    footer {
+      color: #fff;
+      bottom: 0.25in;
+      .date {
+        font-size: 16pt;
+      }
+    }
     .page-inner {
       border: 2px solid #fff;
-    }
-    address {
-      position: absolute;
-      right: 0.25in;
-      bottom: 0.25in;
-      font-size: 18pt;
-      color: #fff;
-      text-align: right;
     }
   }
 }
@@ -590,7 +736,7 @@ footer {
   font-size: 8pt;
   position: absolute;
   left: 0;
-  bottom: 0;
+  bottom: -0.25in;
   width: 100%;
 }
 
@@ -616,9 +762,6 @@ section {
 @media print {
   * {
     -webkit-print-color-adjust: exact;
-  }
-  html {
-    font: 16px/1 'Open Sans', sans-serif;
   }
   html,
   body {

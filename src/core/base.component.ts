@@ -15,7 +15,7 @@ export default class BaseComponent extends Vue {
   }
 
   public env = new Environment();
-  public $refs: {
+  public $refs!: {
     fileInput: any;
     report: HTMLFormElement;
     proforma: HTMLFormElement;

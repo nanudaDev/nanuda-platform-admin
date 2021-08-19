@@ -23,7 +23,7 @@
         <span class="ml-2">프린트</span>
       </b-btn>
     </div>
-    <!-- <div class="page cover">
+    <div class="page cover">
       <div class="page-inner">
         <div>
           <header>
@@ -50,7 +50,7 @@
           </address>
         </div>
         <footer>
-          <div class="mb-5">
+          <div class="mb-3">
             <p class="date">2021년 08월 12일</p>
           </div>
           <p>
@@ -68,88 +68,97 @@
             <h1>01 상권 분석 개요</h1>
           </header>
           <article>
-            <div class="row-box">
-              <div id="map" style="height:400px"></div>
-            </div>
-            <div class="row-box">
-              <table class="table">
-                <colgroup>
-                  <col width="25%" />
-                  <col width="*" />
-                  <col width="25%" />
-                  <col width="*%" />
-                </colgroup>
-                <tbody>
-                  <tr>
-                    <th scpoe="row">선택지역</th>
-                    <td colspan="3">서울시 노원구 공릉1동</td>
-                  </tr>
-                  <tr>
-                    <th scpoe="row">선택업종</th>
-                    <td colspan="3">한식</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">음식점수(개)</th>
-                    <td>1,350</td>
-                    <th scope="row">주거인구(명)</th>
-                    <td>34,990</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">총세대수(세대)</th>
-                    <td>24,500</td>
-                    <th scope="row">직장인구(명)</th>
-                    <td>8,000</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">평균 영업기간(년)</th>
-                    <td>4</td>
-                    <th scope="row">유동인구(명)</th>
-                    <td>10,500</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">주요 연령대</th>
-                    <td>20~30대</td>
-                    <th scope="row"></th>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="row-box">
-              <b-alert variant="secondary" show>
-                <h5 class="text-primary">
-                  <b-icon icon="info-circle-fill"></b-icon>
-                  <span class="ml-2">통계 기준 안내</span>
-                </h5>
-                <div class="mt-2">
-                  <p>
-                    한식음식점 3년생존율은 61.5%로 서울시 3년생존율 45.7% 보다
-                    높고 전년동기 45.1% 보다 높습니다. 해당지역에 한식음식점
-                    창업 시 향후 경쟁관계에 큰 변화가 없다면 2년 정도의
-                    영업기간을 기대할 수 있을 것으로 예상됩니다. 기대 영
-                    업기간이 길수록 좋은 상권입니다. 선택상권의 주거인구밀도는
-                    1ha(1만㎡)당 130명 규모로 전년대비 증가하였습니다. 면적은
-                    59,866 평방제곱미터(㎡), 직장인구밀도는 78명, 3개월간
-                    상존인구밀도는 약34,990명 수준입니다.<br />
-                    선택상권 행정동 1층 임대료는 3.3㎡당 139,700원으로 전년 동기
-                    137,188원에 비해 높습니다. 임대료의 급격한 상승이나
-                    개폐업율변 화가 큰곳인지 상세분석을 참조하세요.선택상권
-                    한식음식점은 전년대비 동일한 경향을 보이고 있으며, 개업률
-                    4.1%, 폐업률4.1%이며 개업률, 폐업률이 정체상태입니다.
-                    한식음식점 의 3개월간매출은 13,188,130원 수준이며, 서울시
-                    평균에 비해 낮은 편이며 전년 동기 12,979,820원보다 높은
-                    수준입니 다.
-                  </p>
+            <b-row>
+              <b-col cols="6">
+                <div class="row-box">
+                  <div id="map" style="height:400px"></div>
                 </div>
-              </b-alert>
-            </div>
+              </b-col>
+              <b-col cols="6">
+                <div class="row-box">
+                  <table class="table">
+                    <colgroup>
+                      <col width="25%" />
+                      <col width="*" />
+                      <col width="25%" />
+                      <col width="*%" />
+                    </colgroup>
+                    <tbody>
+                      <tr>
+                        <th scpoe="row">선택지역</th>
+                        <td colspan="3">서울시 노원구 공릉1동</td>
+                      </tr>
+                      <tr>
+                        <th scpoe="row">선택업종</th>
+                        <td colspan="3">한식</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">음식점수(개)</th>
+                        <td>1,350</td>
+                        <th scope="row">주거인구(명)</th>
+                        <td>34,990</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">총세대수(세대)</th>
+                        <td>24,500</td>
+                        <th scope="row">직장인구(명)</th>
+                        <td>8,000</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">평균 영업기간(년)</th>
+                        <td>4</td>
+                        <th scope="row">유동인구(명)</th>
+                        <td>10,500</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">주요 연령대</th>
+                        <td>20~30대</td>
+                        <th scope="row"></th>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </b-col>
+              <b-col cols="12">
+                <div class="row-box mt-4">
+                  <b-alert variant="secondary" show>
+                    <h5 class="text-primary">
+                      <b-icon icon="info-circle-fill"></b-icon>
+                      <span class="ml-2">통계 기준 안내</span>
+                    </h5>
+                    <div class="mt-2">
+                      <p>
+                        한식음식점 3년생존율은 61.5%로 서울시 3년생존율 45.7%
+                        보다 높고 전년동기 45.1% 보다 높습니다. 해당지역에
+                        한식음식점 창업 시 향후 경쟁관계에 큰 변화가 없다면 2년
+                        정도의 영업기간을 기대할 수 있을 것으로 예상됩니다. 기대
+                        영 업기간이 길수록 좋은 상권입니다. 선택상권의
+                        주거인구밀도는 1ha(1만㎡)당 130명 규모로 전년대비
+                        증가하였습니다. 면적은 59,866 평방제곱미터(㎡),
+                        직장인구밀도는 78명, 3개월간 상존인구밀도는 약34,990명
+                        수준입니다.<br />
+                        선택상권 행정동 1층 임대료는 3.3㎡당 139,700원으로 전년
+                        동기 137,188원에 비해 높습니다. 임대료의 급격한 상승이나
+                        개폐업율변 화가 큰곳인지 상세분석을 참조하세요.선택상권
+                        한식음식점은 전년대비 동일한 경향을 보이고 있으며,
+                        개업률 4.1%, 폐업률4.1%이며 개업률, 폐업률이
+                        정체상태입니다. 한식음식점 의 3개월간매출은 13,188,130원
+                        수준이며, 서울시 평균에 비해 낮은 편이며 전년 동기
+                        12,979,820원보다 높은 수준입니 다.
+                      </p>
+                    </div>
+                  </b-alert>
+                </div>
+              </b-col>
+            </b-row>
           </article>
         </div>
         <footer>
           <p>PICKCOOK ANALYSIS ⓒ2021</p>
         </footer>
       </div>
-    </div> -->
+    </div>
     <div class="page">
       <div class="page-inner">
         <div>
@@ -179,20 +188,24 @@
               </table>
             </section>
             <section>
-              <div class="card">
-                <ApexPieChart
-                  :series="donutSeries"
-                  :options="donutOptions"
-                ></ApexPieChart>
-              </div>
-            </section>
-            <section>
-              <div class="card">
-                <ApexLineChart
-                  :series="lineSeries"
-                  :options="lineOptions"
-                ></ApexLineChart>
-              </div>
+              <b-row>
+                <b-col cols="6">
+                  <div class="card">
+                    <ApexPieChart
+                      :series="donutSeries"
+                      :options="donutOptions"
+                    ></ApexPieChart>
+                  </div>
+                </b-col>
+                <b-col cols="6">
+                  <div class="card">
+                    <ApexLineChart
+                      :series="lineSeries"
+                      :options="lineOptions"
+                    ></ApexLineChart>
+                  </div>
+                </b-col>
+              </b-row>
             </section>
           </article>
         </div>
@@ -640,8 +653,8 @@ body {
 .page {
   margin: 0 auto;
   overflow: hidden;
-  width: 8.3in;
-  height: 11.7in;
+  width: 11.7in;
+  height: 8.3in;
   background: #fff;
   box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
   padding: 0.5in;
@@ -660,14 +673,14 @@ body {
 
   .page-inner {
     position: relative;
-    height: 10.68in;
+    height: 7.28in;
   }
 
   &.cover {
     background-color: #004d8a;
 
     header {
-      margin-top: 2.5in;
+      margin-top: 1.25in;
       color: #fff;
       text-align: center;
       h1 {
@@ -692,12 +705,12 @@ body {
       }
     }
     address {
-      margin-top: 1in;
+      margin-top: 0.25in;
       color: #fff;
       text-align: center;
       p {
-        font-size: 18pt;
-        line-height: 2;
+        font-size: 16pt;
+        line-height: 1.8;
         span {
           position: relative;
           display: inline-block;
@@ -727,6 +740,11 @@ body {
     .page-inner {
       border: 2px solid #fff;
     }
+  }
+
+  .card {
+    height: 100%;
+    justify-content: center;
   }
 }
 
@@ -780,12 +798,12 @@ section {
       margin-top: 0;
     }
     .page-inner {
-      height: 10.68in;
+      height: 7.28in;
     }
   }
 
   @page {
-    size: a4 !important;
+    size: a4 landscape !important;
     margin: 0 !important;
     padding: 0 !important;
   }

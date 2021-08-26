@@ -7,6 +7,7 @@ import {
   NOTICE_BOARD,
   AMENITY,
   FNB_OWNER,
+  COMPANY,
 } from '@/services/shared';
 export const EnumPipeTransformer = () =>
   Vue.filter('enumTransformer', (value: string): string => {
@@ -87,5 +88,10 @@ export const EnumPipeTransformer = () =>
     }
     if (value === FNB_OWNER.NEW_FNB_OWNER) {
       return '신규창업자';
+    }
+
+    // 업체 유형
+    if (value === COMPANY.CORP_COMPANY) {
+      return '기업형';
     }
   });

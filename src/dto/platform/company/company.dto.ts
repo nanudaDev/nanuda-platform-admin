@@ -1,5 +1,5 @@
 import { BaseDto } from '@/core';
-import { APPROVAL_STATUS } from '@/services/shared';
+import { APPROVAL_STATUS, COMPANY } from '@/services/shared';
 import { CodeManagementDto } from '@/services/init/dto';
 import { CompanyUserDto } from '../company-user';
 import { CompanyDistrictDto } from '../company-district';
@@ -22,6 +22,7 @@ export class CompanyDto extends BaseDto<CompanyDto> {
   fax?: string;
   phone: string;
   managerNo?: number;
+  companyType?: COMPANY;
   companyStatus: APPROVAL_STATUS;
   companyUsers?: CompanyUserDto[];
   codeManagement?: CodeManagementDto[];

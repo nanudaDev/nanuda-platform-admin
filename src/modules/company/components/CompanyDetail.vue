@@ -45,6 +45,12 @@
                 </li>
                 <li v-if="companyDto.nameKr">
                   업체명 :
+                  <b-badge
+                    variant="purple"
+                    class="mr-1"
+                    v-if="companyDto.companyType === 'CORP_COMPANY'"
+                    >기업형</b-badge
+                  >
                   <b>{{ companyDto.nameKr }}</b>
                   <span v-if="companyDto.nameEng"
                     >({{ companyDto.nameEng }})</span
@@ -310,13 +316,35 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="col-12 col-md-6 mt-2">
+        <div class="col-12  mt-2">
+          <label>업체 로고</label>
+          <b-form-file
+            placeholder="파일 선택"
+            ref="fileInput"
+            @input="upload($event)"
+          ></b-form-file>
+        </div>
+        <div class="col-12 mt-2">
           <label>업체명</label>
-          <input
-            type="text"
-            v-model="companyUpdateDto.nameKr"
-            class="form-control"
-          />
+          <b-row align-v="center">
+            <b-col cols="12" md="9">
+              <input
+                type="text"
+                v-model="companyUpdateDto.nameKr"
+                class="form-control"
+              />
+            </b-col>
+            <b-col cols="12" md="3">
+              <b-form-checkbox
+                id="company-type-corp"
+                v-model="companyUpdateDto.companyType"
+                name="company-type"
+                value="CORP_COMPANY"
+                unchecked-value="OTHER_COMPANY"
+                >기업형</b-form-checkbox
+              >
+            </b-col>
+          </b-row>
         </div>
         <div class="col-12 col-md-6 mt-2">
           <label>업체명(영문)</label>
@@ -374,14 +402,6 @@
             class="form-control"
           />
         </div>
-        <div class="col-12 col-md-12 mt-2">
-          <label>주소</label>
-          <input
-            type="text"
-            v-model="companyUpdateDto.address"
-            class="form-control"
-          />
-        </div>
         <div class="col-12 col-md-6 mt-2">
           <label>웹사이트</label>
           <input
@@ -390,15 +410,15 @@
             class="form-control"
           />
         </div>
-        <div class="col-12 col-md-6 mt-2">
-          <label>업체 로고</label>
-          <b-form-file
-            placeholder="파일 선택"
-            ref="fileInput"
-            @input="upload($event)"
-          ></b-form-file>
+        <div class="col-12 col-md-12 mt-2">
+          <label>주소</label>
+          <input
+            type="text"
+            v-model="companyUpdateDto.address"
+            class="form-control"
+          />
         </div>
-        <div class="col-12 col-md-6 mt-2">
+        <div class="col-12 mt-2">
           <label>업체 상태</label>
           <select
             class="custom-select"
@@ -442,7 +462,12 @@ import CompanyDetailCompanyUserList from './CompanyDetailCompanyUserList.vue';
 
 import AdminService from '@/services/admin.service';
 import CompanyService from '@/services/company.service';
-import { APPROVAL_STATUS, CONST_APPROVAL_STATUS } from '@/services/shared';
+import {
+  APPROVAL_STATUS,
+  COMPANY,
+  CONST_APPROVAL_STATUS,
+  CONST_COMPANY,
+} from '@/services/shared';
 import toast from '../../../../resources/assets/js/services/toast.js';
 import { FileAttachmentDto } from '@/services/shared/file-upload';
 import FileUploadService from '@/services/shared/file-upload/file-upload.service';
@@ -476,6 +501,7 @@ export default class CompanyDetail extends BaseComponent {
   private newLogo: FileAttachmentDto[] = [];
   private logoChanged = false;
   private deleteCompanyName = null;
+  private companyTypes: COMPANY[] = [...CONST_COMPANY];
 
   // get status color
   getStatusColor(status: APPROVAL_STATUS) {

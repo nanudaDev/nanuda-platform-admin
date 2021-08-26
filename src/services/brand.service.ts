@@ -31,6 +31,14 @@ class BrandService extends BaseService {
     return super.delete<BrandDto>(`admin/brand/${brandNo}`);
   }
 
+  deleteBrandEveryDistrict(brandNo) {
+    return super.delete<BrandDto>(`admin/brand/every-district/${brandNo}`);
+  }
+
+  addBrandEveryDistrict(brandNo) {
+    return super.post<BrandDto>(`admin/brand/every-district/${brandNo}`);
+  }
+
   findNanudaBrand() {
     return super.get<BrandDto[]>('admin/brand/recommended');
   }

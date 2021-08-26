@@ -3,7 +3,7 @@
     <SectionTitle title="업체 관리" divider></SectionTitle>
     <div class="search-box my-4" v-on:keyup.enter="search()">
       <b-form-row>
-        <b-col cols="6" md="4" lg="3">
+        <b-col cols="12" md="6" lg="3">
           <b-form-group label="업체명">
             <b-form-input
               list="company_list"
@@ -19,27 +19,27 @@
             </datalist>
           </b-form-group>
         </b-col>
-        <b-col cols="6" md="4" lg="3">
+        <b-col cols="12" md="6" lg="3">
           <b-form-group label="대표자명">
             <b-form-input v-model="companySearchDto.ceoKr"></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="6" md="4" lg="3">
+        <b-col cols="12" md="6" lg="3">
           <b-form-group label="전화번호">
             <b-form-input v-model="companySearchDto.phone"></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="6" md="4" lg="3">
+        <b-col cols="12" md="6" lg="3">
           <b-form-group label="이메일">
             <b-form-input v-model="companySearchDto.email"></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="6" md="4" lg="3">
+        <b-col cols="12" md="6" lg="3">
           <b-form-group label="팩스">
             <b-form-input v-model="companySearchDto.fax"></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="6" md="4" lg="3">
+        <b-col cols="12" md="6" lg="3">
           <b-form-group label="승인 상태">
             <b-form-select
               class="custom-select"
@@ -160,7 +160,15 @@
                   />
                 </template>
               </td>
-              <td class="text-nowrap">{{ company.nameKr }}</td>
+              <td class="text-nowrap">
+                <b-badge
+                  variant="purple"
+                  class="mr-1"
+                  v-if="company.companyType === 'CORP_COMPANY'"
+                  >기업형</b-badge
+                >
+                {{ company.nameKr }}
+              </td>
               <td class="text-nowrap">{{ company.ceoKr }}</td>
               <td class="text-nowrap">
                 {{ company.phone | phoneTransformer }}
@@ -203,7 +211,7 @@
     <b-modal
       id="add_company"
       title="업체 추가"
-      size="lg"
+      size="md"
       hide-footer
       no-close-on-backdrop
     >
@@ -217,18 +225,40 @@
       </div>
       <b-form ref="form" @submit.stop.prevent="createCompany()">
         <b-form-row>
-          <b-col cols="6" lg="3" class="mt-3">
+          <b-col cols="12" class="mt-3">
+            <label>업체 로고</label>
+            <b-form-file
+              placeholder="파일 선택"
+              ref="fileInput"
+              @input="upload($event)"
+            ></b-form-file>
+          </b-col>
+          <b-col cols="12" class="mt-3">
             <label>
               업체명
               <span class="red-text">*</span>
             </label>
-            <input
-              type="text"
-              v-model="companyCreateDto.nameKr"
-              class="form-control"
-            />
+            <b-row align-v="center">
+              <b-col cols="12" md="9">
+                <input
+                  type="text"
+                  v-model="companyCreateDto.nameKr"
+                  class="form-control"
+                />
+              </b-col>
+              <b-col cols="12" md="3">
+                <b-form-checkbox
+                  id="company-type-corp"
+                  v-model="companyCreateDto.companyType"
+                  name="company-type"
+                  value="CORP_COMPANY"
+                  unchecked-value="OTHER_COMPANY"
+                  >기업형</b-form-checkbox
+                >
+              </b-col>
+            </b-row>
           </b-col>
-          <b-col cols="6" lg="3" class="mt-3">
+          <b-col cols="12" md="6" class="mt-3">
             <label>업체명(영문)</label>
             <input
               type="text"
@@ -236,47 +266,7 @@
               class="form-control"
             />
           </b-col>
-          <b-col cols="6" lg="3" class="mt-3">
-            <label>
-              전화번호
-              <span class="red-text">*</span>
-            </label>
-            <input
-              type="text"
-              v-model="companyCreateDto.phone"
-              class="form-control"
-            />
-          </b-col>
-          <b-col cols="6" lg="3" class="mt-3">
-            <label>
-              이메일
-              <span class="red-text">*</span>
-            </label>
-            <input
-              type="text"
-              v-model="companyCreateDto.email"
-              class="form-control"
-            />
-          </b-col>
-          <b-col cols="6" lg="3" class="mt-3">
-            <label>FAX</label>
-            <input
-              type="text"
-              v-model="companyCreateDto.fax"
-              class="form-control"
-            />
-          </b-col>
-          <b-col cols="6" lg="3" class="mt-3">
-            <label>
-              사업자번호
-            </label>
-            <input
-              type="text"
-              v-model="companyCreateDto.businessNo"
-              class="form-control"
-            />
-          </b-col>
-          <b-col cols="6" lg="3" class="mt-3">
+          <b-col cols="12" md="6" class="mt-3">
             <label>
               대표자명
               <span class="red-text">*</span>
@@ -287,7 +277,7 @@
               class="form-control"
             />
           </b-col>
-          <b-col cols="6" lg="3" class="mt-3">
+          <b-col cols="12" md="6" class="mt-3">
             <label>대표자명(영문)</label>
             <input
               type="text"
@@ -295,7 +285,56 @@
               class="form-control"
             />
           </b-col>
-          <b-col lg="6" class="mt-3">
+          <b-col cols="12" md="6" class="mt-3">
+            <label>
+              사업자번호
+            </label>
+            <input
+              type="text"
+              v-model="companyCreateDto.businessNo"
+              class="form-control"
+            />
+          </b-col>
+
+          <b-col cols="12" md="6" class="mt-3">
+            <label>
+              이메일
+              <span class="red-text">*</span>
+            </label>
+            <input
+              type="text"
+              v-model="companyCreateDto.email"
+              class="form-control"
+            />
+          </b-col>
+          <b-col cols="12" md="6" class="mt-3">
+            <label>
+              전화번호
+              <span class="red-text">*</span>
+            </label>
+            <input
+              type="text"
+              v-model="companyCreateDto.phone"
+              class="form-control"
+            />
+          </b-col>
+          <b-col cols="12" md="6" class="mt-3">
+            <label>FAX</label>
+            <input
+              type="text"
+              v-model="companyCreateDto.fax"
+              class="form-control"
+            />
+          </b-col>
+          <b-col cols="12" md="6" class="mt-3">
+            <label>웹사이트</label>
+            <input
+              type="text"
+              v-model="companyCreateDto.website"
+              class="form-control"
+            />
+          </b-col>
+          <b-col cols="12" class="mt-3">
             <label>
               주소
             </label>
@@ -307,7 +346,7 @@
               v-b-modal.postcode
             />
           </b-col>
-          <b-col lg="6" class="mt-3">
+          <b-col cols="12" class="mt-3">
             <label>
               상세 주소
             </label>
@@ -316,22 +355,7 @@
               :disabled="!addressData.address"
             />
           </b-col>
-          <b-col cols="6" lg="6" class="mt-3">
-            <label>웹사이트</label>
-            <input
-              type="text"
-              v-model="companyCreateDto.website"
-              class="form-control"
-            />
-          </b-col>
-          <b-col lg="6" class="mt-3">
-            <label>업체 로고</label>
-            <b-form-file
-              placeholder="파일 선택"
-              ref="fileInput"
-              @input="upload($event)"
-            ></b-form-file>
-          </b-col>
+
           <!-- <b-col lg="3" class="mt-3">
             <label>
               승인 상태
@@ -493,17 +517,23 @@ export default class CompanyList extends BaseComponent {
     if (this.companyLogo.length > 0) {
       this.companyCreateDto.logo = this.companyLogo;
     }
-    this.companyCreateDto.address = `${this.addressData.address} ${this.addressData.addressDetail}`;
+
+    this.companyCreateDto.address = `${
+      this.addressData.address ? this.addressData.address : ''
+    } ${this.addressData.addressDetail ? this.addressData.addressDetail : ''}`;
+
     // default status
     this.companyCreateDto.companyStatus = APPROVAL_STATUS.APPROVAL;
 
-    CompanyService.createCompany(this.companyCreateDto).subscribe(res => {
-      if (res) {
-        toast.success('추가완료');
-        this.clearOut();
-        this.$bvModal.hide('add_company');
-      }
-    });
+    console.log(this.companyCreateDto.address);
+
+    // CompanyService.createCompany(this.companyCreateDto).subscribe(res => {
+    //   if (res) {
+    //     toast.success('추가완료');
+    //     this.clearOut();
+    //     this.$bvModal.hide('add_company');
+    //   }
+    // });
   }
 
   setAddress(res) {

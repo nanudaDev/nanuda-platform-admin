@@ -524,16 +524,13 @@ export default class CompanyList extends BaseComponent {
 
     // default status
     this.companyCreateDto.companyStatus = APPROVAL_STATUS.APPROVAL;
-
-    console.log(this.companyCreateDto.address);
-
-    // CompanyService.createCompany(this.companyCreateDto).subscribe(res => {
-    //   if (res) {
-    //     toast.success('추가완료');
-    //     this.clearOut();
-    //     this.$bvModal.hide('add_company');
-    //   }
-    // });
+    CompanyService.createCompany(this.companyCreateDto).subscribe(res => {
+      if (res) {
+        toast.success('추가완료');
+        this.clearOut();
+        this.$bvModal.hide('add_company');
+      }
+    });
   }
 
   setAddress(res) {

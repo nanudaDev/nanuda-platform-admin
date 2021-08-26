@@ -240,7 +240,7 @@
         </BaseCard>
       </b-col> -->
     </b-row>
-    <div class="text-right mt-2">
+    <div class="text-right mt-2" v-if="brandDto.showYn === 'Y'">
       <b-button variant="danger" v-b-modal.delete_every_district>
         모든 지점에서 삭제
       </b-button>

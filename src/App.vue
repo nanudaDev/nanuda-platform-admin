@@ -26,6 +26,7 @@ body {
   // height: 100%;
   background-color: #f1f1f1;
   // padding: 10px 0 40px;
+  font-family: 'YoonGothic', sans-serif;
 }
 
 h1,
@@ -193,6 +194,11 @@ img {
   min-height: 100px;
 }
 
+// hidden
+.is-hidden {
+  display: none !important;
+}
+
 // font color
 .red-text {
   color: red;
@@ -202,7 +208,36 @@ img {
 }
 
 .text-primary {
-  color: #0b538d !important;
+  color: #004d8a !important;
+}
+.text-blue {
+  color: #007eeb !important;
+}
+.text-lightblue {
+  color: #00b1ff !important;
+}
+
+.text-cyan {
+  color: #4ed0e4 !important;
+}
+
+.bg-primary {
+  background: #004d8a !important;
+  color: #fff !important;
+}
+
+.bg-lightblue {
+  background: #00b1ff !important;
+}
+
+.bg-blue {
+  background: #007eeb !important;
+  color: #fff !important;
+}
+
+.btn-primary {
+  border-color: #004d8a !important;
+  background: #004d8a !important;
 }
 
 // list
@@ -267,6 +302,125 @@ img {
   height: 100%;
   -o-object-fit: cover;
   object-fit: cover;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/GothamBook.woff2')
+      format('woff2'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/GothamBook.woff')
+      format('woff'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/GothamBook.ttf')
+      format('truetype');
+}
+
+@font-face {
+  font-family: 'Gotham';
+  font-style: normal;
+  font-weight: 600;
+  src: url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/GothamMedium.woff2')
+      format('woff2'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/GothamMedium.woff')
+      format('woff'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/GothamMedium.ttf')
+      format('truetype');
+}
+
+@font-face {
+  font-family: 'Gotham';
+  font-style: normal;
+  font-weight: 800;
+  src: url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/GothamBold.woff2')
+      format('woff2'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/GothamBold.woff')
+      format('woff'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/GothamBold.ttf')
+      format('truetype');
+}
+
+@font-face {
+  font-family: 'YoonGothic';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro745.woff2')
+      format('woff2'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro745.woff')
+      format('woff'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro745.ttf')
+      format('truetype');
+}
+
+@font-face {
+  font-family: 'YoonGothic';
+  font-style: normal;
+  font-weight: 500;
+  src: url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro755.woff2')
+      format('woff2'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro755.woff')
+      format('woff'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro755.ttf')
+      format('truetype');
+}
+
+@font-face {
+  font-family: 'YoonGothic';
+  font-style: normal;
+  font-weight: 600;
+  src: url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro765.woff2')
+      format('woff2'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro765.woff')
+      format('woff'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro765.ttf')
+      format('truetype');
+}
+
+@font-face {
+  font-family: 'YoonGothic';
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro775.woff2')
+      format('woff2'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro775.woff')
+      format('woff'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro775.ttf')
+      format('truetype');
+}
+
+@font-face {
+  font-family: 'YoonGothic';
+  font-style: normal;
+  font-weight: 800;
+  src: url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro785.woff2')
+      format('woff2'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro785.woff')
+      format('woff'),
+    url('https://kr.object.ncloudstorage.com/common-nanuda/fonts/YoonGothicPro785.ttf')
+      format('truetype');
+}
+
+.yoongothic {
+  font-family: 'YoonGothic', sans-serif;
+}
+.gotham {
+  font-family: 'Gotham', sans-serif;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+.fadeIn-enter-active {
+  animation: fadeIn 0.3s ease;
+}
+.fadeIn-leave-active {
+  animation: fadeIn 0.3s ease reverse;
 }
 
 @media screen and (max-width: 540px) {

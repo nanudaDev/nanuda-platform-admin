@@ -19,6 +19,7 @@ import MainLayout from '../src/modules/_layouts/Layout/MainLayout.layout.vue';
 import NonMainLayout from '../src/modules/_layouts/Layout/NonMainLayout.layout.vue';
 import AnalysisLayout from '../src/modules/_layouts/Layout/AnalysisLayout.layout.vue';
 import PickcookLayout from '../src/modules/_layouts/Layout/PickcookLayout.layout.vue';
+import EmptyLayout from '../src/modules/_layouts/Layout/EmptyLayout.layout.vue';
 import SectionTitle from '../src/modules/_components/SectionTitle.vue';
 import BaseCard from '../src/modules/_components/BaseCard.vue';
 import JsonExcel from 'vue-json-excel';
@@ -49,6 +50,7 @@ import {
   WeekDayPipeTransformer,
   HourPipeTransformer,
   GenderNumberPipeTransformer,
+  BaeminCategoryPipeTransformer,
 } from '@/core';
 import '@/core/guards/auth-role.guard';
 
@@ -74,6 +76,7 @@ Vue.component('NonMainLayout', NonMainLayout);
 Vue.component('MainLayout', MainLayout);
 Vue.component('AnalysisLayout', AnalysisLayout);
 Vue.component('PickcookLayout', PickcookLayout);
+Vue.component('EmptyLayout', EmptyLayout);
 Vue.component('SectionTitle', SectionTitle);
 Vue.component('BaseCard', BaseCard);
 Vue.component('downloadExcel', JsonExcel);
@@ -98,6 +101,7 @@ NumeralPipeTransformer();
 WeekDayPipeTransformer();
 HourPipeTransformer();
 GenderNumberPipeTransformer();
+BaeminCategoryPipeTransformer();
 
 // bootstrap
 Vue.use(BootstrapVue);

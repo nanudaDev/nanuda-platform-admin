@@ -12,6 +12,12 @@
         <BaseCard title="브랜드 정보">
           <template v-slot:head>
             <div>
+              <b-button variant="danger" v-b-modal.delete_every_district>
+                모든 지점에서 삭제
+              </b-button>
+              <b-button variant="success" @click="addBrandToEveryDistrict()">
+                모든 지점에 추가
+              </b-button>
               <b-button variant="danger" v-b-modal.delete_brand
                 >삭제하기</b-button
               >
@@ -772,6 +778,24 @@
         </div>
       </div>
     </b-modal>
+    <b-modal
+      id="delete_every_district"
+      title="모든 지점에서 브랜드 삭제"
+      header-bg-variant="danger"
+      header-text-variant="light"
+      hide-footer
+    >
+      <div class="text-center">
+        <p>
+          <b>정말로 삭제하시겠습니까? 삭제하면 복구할 수 없습니다.</b>
+        </p>
+        <div class="mt-2 text-right">
+          <b-button variant="danger" @click="deleteBrandFromEveryDistrict()"
+            >삭제</b-button
+          >
+        </div>
+      </div>
+    </b-modal>
     <MenuCreate :brandNo="brandDto.no" />
     <MenuUpdate />
   </section>
@@ -1086,6 +1110,23 @@ export default class BrandDetail extends BaseComponent {
       if (res) {
         toast.success('삭제완료');
         this.$router.push('/brand');
+      }
+    });
+  }
+  deleteBrandFromEveryDistrict() {
+    BrandService.deleteBrandEveryDistrict(this.$route.params.id).subscribe(
+      res => {
+        if (res) {
+          toast.success('삭제완료');
+          this.$bvModal.hide('delete_every_district');
+        }
+      },
+    );
+  }
+  addBrandToEveryDistrict() {
+    BrandService.addBrandEveryDistrict(this.$route.params.id).subscribe(res => {
+      if (res) {
+        toast.success('추가완료');
       }
     });
   }

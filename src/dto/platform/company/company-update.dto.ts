@@ -1,5 +1,5 @@
 import { BaseDto } from '@/core';
-import { APPROVAL_STATUS } from '@/services/shared';
+import { APPROVAL_STATUS, COMPANY } from '@/services/shared';
 import { FileAttachmentDto } from '@/services/shared/file-upload';
 import { CompanyDto } from '.';
 
@@ -16,6 +16,7 @@ export class CompanyUpdateDto extends BaseDto<CompanyUpdateDto>
   address?: string;
   population?: string;
   businessNo?: string;
+  companyType?: COMPANY;
   companyStatus?: APPROVAL_STATUS;
   managerNo?: number;
   logo?: FileAttachmentDto[];

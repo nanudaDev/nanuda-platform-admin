@@ -54,6 +54,12 @@ p {
   font-size: 11px;
 }
 
+.badge-purple {
+  background-color: #8c58a7;
+  border-color: #8c58a7;
+  color: #fff;
+}
+
 .div-center {
   margin: 0;
 }

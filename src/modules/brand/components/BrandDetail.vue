@@ -12,20 +12,14 @@
         <BaseCard title="브랜드 정보">
           <template v-slot:head>
             <div>
-              <b-button variant="danger" v-b-modal.delete_every_district>
-                모든 지점에서 삭제
-              </b-button>
-              <b-button variant="success" @click="addBrandToEveryDistrict()">
-                모든 지점에 추가
-              </b-button>
-              <b-button variant="danger" v-b-modal.delete_brand
-                >삭제하기</b-button
-              >
               <b-button
                 variant="primary"
                 v-b-modal.update_brand
                 @click="showUpdateModal()"
                 >수정하기</b-button
+              >
+              <b-button variant="danger" v-b-modal.delete_brand
+                >삭제하기</b-button
               >
             </div>
           </template>
@@ -246,6 +240,14 @@
         </BaseCard>
       </b-col> -->
     </b-row>
+    <div class="text-right mt-2">
+      <b-button variant="danger" v-b-modal.delete_every_district>
+        모든 지점에서 삭제
+      </b-button>
+      <b-button variant="primary" @click="addBrandToEveryDistrict()">
+        모든 지점에 추가
+      </b-button>
+    </div>
     <!-- 브랜드 수정 모달 -->
     <b-modal
       id="update_brand"

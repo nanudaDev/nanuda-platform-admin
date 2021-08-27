@@ -248,6 +248,34 @@
         모든 지점에 추가
       </b-button>
     </div>
+    <div>
+      <p>해당 브랜드 선택한 타입</p>
+      <b-row>
+        <b-col cols="2" v-for="space in deliverySpaces" :key="space.no">
+          <b-card
+            :title="
+              `${space.companyDistrict.company.nameKr} ${space.companyDistrict.nameKr} ${space.typeName}`
+            "
+            :img-src="
+              space.images.length > 0
+                ? space.images[0].endpoint
+                : require('@/assets/images/general/common/img_placeholder.jpg')
+            "
+            @click="$router.push(`/company/delivery-space/${space.no}`)"
+          >
+          </b-card>
+        </b-col>
+      </b-row>
+      <b-pagination
+        v-model="typePagination.page"
+        v-if="deliverySpacesTotalCount"
+        pills
+        :total-rows="deliverySpacesTotalCount"
+        :per-page="typePagination.limit"
+        @input="findRelatedSpaceTypes"
+        class="mt-4 justify-content-center"
+      ></b-pagination>
+    </div>
     <!-- 브랜드 수정 모달 -->
     <b-modal
       id="update_brand"
@@ -812,6 +840,7 @@ import {
   FoodCategoryDto,
   MenuDto,
   MenuListDto,
+  DeliverySpaceDto,
 } from '@/dto';
 import BrandService from '../../../services/brand.service';
 import PaymentListService from '../../../services/payment-list.service';
@@ -829,6 +858,13 @@ import MenuUpdate from '../../menu/components/MenuUpdate.vue';
 import { CONST_SPACE_TYPE, SPACE, SPACE_TYPE } from '@/services/shared';
 import { CodeManagementDto } from '@/services/init/dto';
 import BrandKioskMapperService from '../../../services/brand-kiosk-mapper.service';
+import brandService from '../../../services/brand.service';
+import { Watch } from 'vue-property-decorator';
+import {
+  addHashToLocation,
+  ReverseQueryParamMapper,
+  RouterQueryParamMapper,
+} from '@/core/utils';
 // import BrandRevenusGraph from './BrandRevenusGraph.vue';
 
 @Component({
@@ -862,6 +898,7 @@ export default class BrandDetail extends BaseComponent {
   private menuListDto = new MenuListDto();
   private menuTotalCount = null;
   private pagination = new Pagination();
+  private typePagination = new Pagination();
   private dataLoading = false;
   private storeCountValues: CodeManagementDto[] = [];
   private costValues: CodeManagementDto[] = [];
@@ -869,6 +906,13 @@ export default class BrandDetail extends BaseComponent {
   private brandRevenueInfo = new BrandKioskMapperDto();
   private revenues: BrandKioskMapperDto[] = [];
   private totalRevenue = null;
+  private deliverySpaces: DeliverySpaceDto[] = [];
+  private deliverySpacesTotalCount = null;
+
+  // @Watch('typePagination', { deep: true })
+  // typePaginationChanged() {
+  //   this.findRelatedSpaceTypes(this.$route.params.id, this.typePagination);
+  // }
 
   // find for detail
   findOne(id) {
@@ -902,6 +946,18 @@ export default class BrandDetail extends BaseComponent {
         }
       });
     });
+  }
+
+  findRelatedSpaceTypes() {
+    addHashToLocation(this.typePagination);
+    brandService
+      .findRelatedSpaceTypes(this.$route.params.id, this.typePagination)
+      .subscribe(res => {
+        if (res) {
+          this.deliverySpaces = res.data.items;
+          this.deliverySpacesTotalCount = res.data.totalCount;
+        }
+      });
   }
 
   // show update modal
@@ -1134,8 +1190,19 @@ export default class BrandDetail extends BaseComponent {
   }
 
   created() {
+    const query = ReverseQueryParamMapper(location.search);
+    if (query) {
+      this.typePagination.limit = +query.limit;
+      this.typePagination.page = +query.page;
+    } else {
+      this.typePagination.page = 1;
+      this.typePagination.limit = 6;
+    }
+    this.findRelatedSpaceTypes();
+
     const id = this.$route.params.id;
     this.pagination.page = 1;
+
     this.getCommonCodes('costValues', 'BRAND');
     this.getCommonCodes('storeCountValues', 'STORE_COUNT');
     this.getCommonCodes('difficultyValues', 'DIFFICULTY');

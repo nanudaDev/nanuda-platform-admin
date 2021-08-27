@@ -153,6 +153,8 @@ export default class MenuCreate extends BaseComponent {
   }
 
   clearOutCreateDto() {
+    this.attachments = [];
+    this.$refs['fileInput'].reset();
     this.menuCreateDto = new MenuCreateDto();
   }
 

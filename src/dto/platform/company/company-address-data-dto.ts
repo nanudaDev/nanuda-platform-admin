@@ -1,4 +1,4 @@
 export class CompanyAddrssDataDto {
-  address: string;
-  addressDetail: string;
+  address?: string;
+  addressDetail?: string;
 }

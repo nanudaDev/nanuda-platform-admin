@@ -249,8 +249,8 @@
       </b-button>
     </div>
     <div>
-      <p>해당 브랜드 선택한 타입</p>
-      <b-row>
+      <h4 class="my-4">해당 브랜드 선택한 타입</h4>
+      <b-row v-if="deliverySpaces">
         <b-col cols="2" v-for="space in deliverySpaces" :key="space.no">
           <b-card
             :title="
@@ -266,9 +266,10 @@
           </b-card>
         </b-col>
       </b-row>
+      <b-row v-else> <b-col>해당 브랜드를 선택한 타입이 없습니다</b-col></b-row>
       <b-pagination
         v-model="typePagination.page"
-        v-if="deliverySpacesTotalCount"
+        v-if="deliverySpacesTotalCount > 6"
         pills
         :total-rows="deliverySpacesTotalCount"
         :per-page="typePagination.limit"
@@ -1177,6 +1178,7 @@ export default class BrandDetail extends BaseComponent {
         if (res) {
           toast.success('삭제완료');
           this.$bvModal.hide('delete_every_district');
+          this.findRelatedSpaceTypes();
         }
       },
     );
@@ -1185,6 +1187,7 @@ export default class BrandDetail extends BaseComponent {
     BrandService.addBrandEveryDistrict(this.$route.params.id).subscribe(res => {
       if (res) {
         toast.success('추가완료');
+        this.findRelatedSpaceTypes();
       }
     });
   }

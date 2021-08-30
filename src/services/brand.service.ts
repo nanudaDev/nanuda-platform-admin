@@ -1,5 +1,10 @@
 import { BaseService } from '@/core';
-import { BrandDto, BrandListDto, BrandUpdateDto } from '@/dto';
+import {
+  BrandDto,
+  BrandListDto,
+  BrandUpdateDto,
+  DeliverySpaceDto,
+} from '@/dto';
 import { Pagination } from '@/common';
 
 class BrandService extends BaseService {
@@ -41,6 +46,13 @@ class BrandService extends BaseService {
 
   findNanudaBrand() {
     return super.get<BrandDto[]>('admin/brand/recommended');
+  }
+  findRelatedSpaceTypes(brandNo, pagination?: Pagination) {
+    return super.paginate<DeliverySpaceDto>(
+      `admin/brand/${brandNo}/types`,
+      null,
+      pagination,
+    );
   }
 }
 

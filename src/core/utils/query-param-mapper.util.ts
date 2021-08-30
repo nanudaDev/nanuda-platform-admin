@@ -37,3 +37,14 @@ export const ClearOutQueryParamMapper = () => {
     //
   });
 };
+
+//페이지네이션 객체를 url에 있는 query와 업데이트 시킴
+export function addHashToLocation(pagination) {
+  let queries = '';
+  for (const [key, value] of Object.entries(pagination)) {
+    const query = key.concat('=', value as string);
+    queries = queries + '&' + query;
+  }
+  queries = queries.substring(1, queries.length);
+  history.replaceState({}, null, window.location.pathname + '?' + queries);
+}

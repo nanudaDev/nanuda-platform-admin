@@ -240,11 +240,6 @@ export default class PopupDetail extends BaseComponent {
 
   private editorToolbar = EditorConfig;
 
-  @Watch('popupUpdateDto.linkType')
-  resetLink() {
-    this.popupUpdateDto.link = '';
-  }
-
   getLinkUrl(linkUrl: string) {
     if (linkUrl) {
       return linkUrl.includes('//') ? linkUrl : `//${linkUrl}`;

@@ -247,11 +247,6 @@ export default class BannerDetail extends BaseComponent {
   private mobileImageChanged = false;
   private newBannerMobileImage: FileAttachmentDto[] = [];
 
-  @Watch('bannerUpdateDto.linkType')
-  resetLink() {
-    this.bannerUpdateDto.url = '';
-  }
-
   getLinkUrl(linkUrl: string) {
     if (linkUrl) {
       return linkUrl.includes('//') ? linkUrl : `//${linkUrl}`;

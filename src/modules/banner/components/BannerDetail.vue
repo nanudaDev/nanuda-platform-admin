@@ -253,7 +253,9 @@ export default class BannerDetail extends BaseComponent {
   }
 
   getLinkUrl(linkUrl: string) {
-    return linkUrl.includes('//') ? linkUrl : `//${linkUrl}`;
+    if (linkUrl) {
+      return linkUrl.includes('//') ? linkUrl : `//${linkUrl}`;
+    }
   }
 
   getTypeCodes() {

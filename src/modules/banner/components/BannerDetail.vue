@@ -253,13 +253,7 @@ export default class BannerDetail extends BaseComponent {
   }
 
   getLinkUrl(linkUrl: string) {
-    if (linkUrl) {
-      if (this.bannerUpdateDto.linkType === LINK_TYPE.EXTERNAL) {
-        return linkUrl.includes('//') ? linkUrl : `//${linkUrl}`;
-      } else {
-        return `${this.env.homepageSiteUrl}${linkUrl}`;
-      }
-    }
+    return linkUrl.includes('//') ? linkUrl : `//${linkUrl}`;
   }
 
   getTypeCodes() {

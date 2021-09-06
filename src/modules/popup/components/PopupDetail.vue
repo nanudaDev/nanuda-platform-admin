@@ -164,14 +164,10 @@
               <span class="red-text">*</span>
             </label>
             <b-row no-gutters align-v="center" style="flex-wrap:nowrap">
-              <b-input-group
-                :prepend="popupUpdateDto.linkType === 'EXTERNAL' ? null : '/'"
-              >
+              <b-input-group>
                 <b-form-input
                   v-model="popupUpdateDto.link"
-                  :placeholder="
-                    popupUpdateDto.linkType === 'EXTERNAL' ? 'https://' : null
-                  "
+                  placeholder="https://"
                 ></b-form-input>
               </b-input-group>
               <a
@@ -251,11 +247,7 @@ export default class PopupDetail extends BaseComponent {
 
   getLinkUrl(linkUrl: string) {
     if (linkUrl) {
-      if (this.popupUpdateDto.linkType === LINK_TYPE.EXTERNAL) {
-        return linkUrl.includes('//') ? linkUrl : `//${linkUrl}`;
-      } else {
-        return `${this.env.homepageSiteUrl}${linkUrl}`;
-      }
+      return linkUrl.includes('//') ? linkUrl : `//${linkUrl}`;
     }
   }
 

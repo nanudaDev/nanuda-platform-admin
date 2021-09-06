@@ -662,6 +662,44 @@ const componentsRouter: RouteConfig[] = [
     ],
   },
   {
+    path: '/popup',
+    name: '팝업',
+    component: () => import('../../modules/popup/Popup.vue'),
+    children: [
+      {
+        path: '/popup',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/popup/components/PopupList.vue'
+          ),
+        name: 'PopupList',
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          title: '팝업 관리',
+        },
+      },
+      {
+        path: '/popup/:id([0-9]+)',
+        name: 'PopupDetail',
+        component: () =>
+          import(
+            /* webpackChunkName: "lazyLoaded" */
+            '../../modules/popup/components/PopupDetail.vue'
+          ),
+        meta: {
+          authRequired: true,
+          layout: 'MainLayout',
+          roles: [...CONST_ADMIN_USER],
+          detailPage: true,
+          title: '팝업 상세',
+        },
+      },
+    ],
+  },
+  {
     path: '/company-district-promotion',
     name: '프로모션',
     component: () =>

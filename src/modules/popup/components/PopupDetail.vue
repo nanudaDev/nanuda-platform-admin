@@ -84,6 +84,7 @@
           <b-col cols="12" lg="12" class="mb-3">
             <label>
               팝업 타입
+              <span class="red-text">*</span>
             </label>
             <b-form-select
               id="update_popup_type"
@@ -124,7 +125,9 @@
           </template>
           <b-col cols="12" md="6" class="mb-3">
             <div>
-              <label for="ended">시작 날짜</label>
+              <label for="ended"
+                >시작 날짜 <span class="red-text">*</span></label
+              >
               <b-form-datepicker
                 id="started"
                 v-model="popupUpdateDto.started"
@@ -133,7 +136,9 @@
           </b-col>
           <b-col cols="12" md="6" class="mb-3">
             <div>
-              <label for="ended">종료 날짜</label>
+              <label for="ended"
+                >종료 날짜 <span class="red-text">*</span></label
+              >
               <b-form-datepicker
                 id="ended"
                 v-model="popupUpdateDto.ended"
@@ -144,7 +149,6 @@
           <b-col cols="3" class="mb-3">
             <label>
               링크 타입
-              <span class="red-text">*</span>
             </label>
             <b-form-select
               id="update_link_type"
@@ -161,7 +165,6 @@
           <b-col cols="9" class="mb-3">
             <label>
               URL
-              <span class="red-text">*</span>
             </label>
             <b-row no-gutters align-v="center" style="flex-wrap:nowrap">
               <b-input-group>
@@ -173,7 +176,7 @@
               <a
                 :href="getLinkUrl(popupUpdateDto.link)"
                 target="_blank"
-                class="btn btn-lg  btn-info text-nowrap ml-2"
+                class="btn btn-lg  btn-info text-nowrap text-white ml-2"
                 >링크 확인</a
               >
             </b-row>

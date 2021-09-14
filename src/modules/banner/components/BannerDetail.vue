@@ -137,7 +137,9 @@
           </b-col>
           <b-col cols="12" md="6" class="mb-3">
             <div>
-              <label for="ended">시작 날짜</label>
+              <label for="ended"
+                >시작 날짜 <span class="red-text">*</span></label
+              >
               <b-form-datepicker
                 id="started"
                 v-model="bannerUpdateDto.started"
@@ -146,7 +148,9 @@
           </b-col>
           <b-col cols="12" md="6" class="mb-3">
             <div>
-              <label for="ended">종료 날짜</label>
+              <label for="ended"
+                >종료 날짜 <span class="red-text">*</span></label
+              >
               <b-form-datepicker
                 id="ended"
                 v-model="bannerUpdateDto.ended"
@@ -157,7 +161,6 @@
           <b-col cols="3" class="mb-3">
             <label>
               링크 타입
-              <span class="red-text">*</span>
             </label>
             <b-form-select
               id="update_link_type"
@@ -174,7 +177,6 @@
           <b-col cols="9" class="mb-3">
             <label>
               URL
-              <span class="red-text">*</span>
             </label>
             <b-row no-gutters align-v="center" style="flex-wrap:nowrap">
               <b-form-input

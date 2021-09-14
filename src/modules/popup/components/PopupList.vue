@@ -115,7 +115,9 @@
             >
               <td>{{ popup.no }}</td>
               <td>
-                {{ popup.popupType }}
+                <template v-if="popup.codeManagement">
+                  {{ popup.codeManagement.value }}
+                </template>
               </td>
               <td>
                 <b-img-lazy
@@ -173,148 +175,175 @@
     <b-modal
       id="add_popup"
       title="팝업 추가"
-      ok-title="추가"
-      cancel-title="취소"
+      header-bg-variant="primary"
+      header-text-variant="light"
+      hide-footer
       size="lg"
-      @hide="clearOutPopupCreateDto()"
-      @cancel="clearOutPopupCreateDto()"
-      @ok="createPopup()"
+      @close="clearOutPopupCreateDto()"
     >
-      <b-form-row>
-        <b-col lg="12" class="text-right mb-3">
-          <b-row no-gutters align-h="end">
-            <b-form-group
-              label="노출 활성화"
-              label-size="sm"
-              label-text-align="right"
-              label-cols="8"
-            >
-              <b-form-checkbox
-                switch
-                size="lg"
-                v-model="popupCreateDto.showYn"
-                :value="ynSelect[1]"
-                :unchecked-value="ynSelect[0]"
-              ></b-form-checkbox>
-            </b-form-group>
-          </b-row>
-        </b-col>
-      </b-form-row>
-
-      <b-form-row>
-        <b-col
-          cols="12"
-          class="mb-3"
-          v-if="popupCreateDto.popupType !== 'NOTIFICATION'"
-        >
-          <div v-if="popupImage && popupImage.length > 0" class="mb-4">
-            <div v-for="image in popupImage" :key="image.endpoint">
-              <b-img-lazy
-                :src="image.endpoint"
-                class="rounded mx-auto d-block article-image"
-                style="max-height:80px"
-              />
-            </div>
-          </div>
-          <label>
-            팝업 이미지
-            <span class="red-text">*</span>
-          </label>
-          <b-form-file
-            placeholder="파일 선택"
-            ref="fileInput"
-            @input="upload($event)"
-            required
-          ></b-form-file>
-        </b-col>
-        <b-col cols="3" class="mb-3">
-          <label>
-            팝업 타입
-            <span class="red-text">*</span>
-          </label>
-          <b-form-select
-            id="create_popup_type"
-            v-model="popupCreateDto.popupType"
-          >
-            <b-form-select-option
-              v-for="type in popupTypeSelect"
-              :key="type.code"
-              :value="type.key"
-              >{{ type.value }}</b-form-select-option
-            >
-          </b-form-select>
-        </b-col>
-        <b-col cols="9" class="mb-3">
-          <label>
-            타이틀
-            <span class="red-text">*</span>
-          </label>
-          <b-form-input v-model="popupCreateDto.title" required></b-form-input>
-        </b-col>
-        <template v-if="popupCreateDto.popupType === 'NOTIFICATION'">
-          <b-col cols="12" class="mb-3">
+      <b-form @submit.stop.prevent="createPopup()">
+        <b-form-row>
+          <b-col lg="12" class="text-right mb-3">
+            <b-row no-gutters align-h="end">
+              <b-form-group
+                label="노출 활성화"
+                label-size="sm"
+                label-text-align="right"
+                label-cols="8"
+              >
+                <b-form-checkbox
+                  switch
+                  size="lg"
+                  v-model="popupCreateDto.showYn"
+                  :value="ynSelect[1]"
+                  :unchecked-value="ynSelect[0]"
+                ></b-form-checkbox>
+              </b-form-group>
+            </b-row>
+          </b-col>
+        </b-form-row>
+        <b-form-row>
+          <b-col cols="3" class="mb-3">
             <label>
-              서브 타이틀
+              팝업 타입
+              <span class="red-text">*</span>
+            </label>
+            <b-form-select
+              id="create_popup_type"
+              v-model="popupCreateDto.popupType"
+              required
+            >
+              <b-form-select-option
+                v-for="type in popupTypeSelect"
+                :key="type.code"
+                :value="type.key"
+                >{{ type.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-col>
+          <b-col cols="9" class="mb-3">
+            <label>
+              타이틀
               <span class="red-text">*</span>
             </label>
             <b-form-input
-              v-model="popupCreateDto.subTitle"
+              v-model="popupCreateDto.title"
               required
             ></b-form-input>
           </b-col>
-          <b-col cols="12" class="mb-3">
+          <b-col
+            cols="12"
+            class="mb-3"
+            v-if="
+              popupCreateDto.popupType !== 'NOTIFICATION' &&
+                popupCreateDto.popupType === 'IMAGE'
+            "
+          >
+            <div v-if="popupImage && popupImage.length > 0" class="mb-4">
+              <div v-for="image in popupImage" :key="image.endpoint">
+                <b-img-lazy
+                  :src="image.endpoint"
+                  class="rounded mx-auto d-block article-image"
+                  style="max-height:80px"
+                />
+              </div>
+            </div>
             <label>
-              내용
+              팝업 이미지
               <span class="red-text">*</span>
             </label>
-            <b-form-textarea
-              v-model="popupCreateDto.content"
-              style="height:200px;"
+            <b-form-file
+              placeholder="파일 선택"
+              ref="fileInput"
+              @input="upload($event)"
               required
-            ></b-form-textarea>
+            ></b-form-file>
           </b-col>
-        </template>
-        <b-col cols="12" md="6" class="mb-3">
-          <div>
-            <label for="ended">시작 날짜</label>
-            <b-form-datepicker
-              id="started"
-              v-model="popupCreateDto.started"
-            ></b-form-datepicker>
-          </div>
-        </b-col>
-        <b-col cols="12" md="6" class="mb-3">
-          <div>
-            <label for="ended">종료 날짜</label>
-            <b-form-datepicker
-              id="ended"
-              v-model="popupCreateDto.ended"
-              :disabled="popupCreateDto.started ? false : true"
-            ></b-form-datepicker>
-          </div>
-        </b-col>
-
-        <b-col cols="9" class="mb-3">
-          <label>
-            URL
-          </label>
-          <b-form-input v-model="popupCreateDto.link"></b-form-input>
-        </b-col>
-        <b-col cols="3" class="mb-3">
-          <label>링크 타입</label>
-          <b-form-select
-            id="create_link_type"
-            v-model="popupCreateDto.linkType"
-          >
-            <b-form-select-option
-              v-for="type in linkTypeSelect"
-              :key="type.code"
-              :value="type.key"
-              >{{ type.value }}</b-form-select-option
+          <template v-if="popupCreateDto.popupType === 'NOTIFICATION'">
+            <b-col cols="12" class="mb-3">
+              <label>
+                서브 타이틀
+              </label>
+              <b-form-input v-model="popupCreateDto.subTitle"></b-form-input>
+            </b-col>
+            <b-col cols="12" class="mb-3">
+              <label>
+                내용
+                <span class="red-text">*</span>
+              </label>
+              <b-form-textarea
+                v-model="popupCreateDto.content"
+                style="height:200px;"
+                required
+              ></b-form-textarea>
+            </b-col>
+          </template>
+          <b-col cols="12" md="6" class="mb-3">
+            <div>
+              <label for="ended"
+                >시작 날짜 <span class="red-text">*</span></label
+              >
+              <b-form-datepicker
+                id="started"
+                required
+                v-model="popupCreateDto.started"
+              ></b-form-datepicker>
+            </div>
+          </b-col>
+          <b-col cols="12" md="6" class="mb-3">
+            <div>
+              <label for="ended"
+                >종료 날짜 <span class="red-text">*</span></label
+              >
+              <b-form-datepicker
+                id="ended"
+                required
+                v-model="popupCreateDto.ended"
+                :disabled="popupCreateDto.started ? false : true"
+              ></b-form-datepicker>
+            </div>
+          </b-col>
+          <b-col cols="3" class="mb-3">
+            <label>링크 타입</label>
+            <b-form-select
+              id="create_link_type"
+              v-model="popupCreateDto.linkType"
             >
-          </b-form-select>
-        </b-col>
-      </b-form-row>
+              <b-form-select-option
+                v-for="type in linkTypeSelect"
+                :key="type.code"
+                :value="type.key"
+                >{{ type.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-col>
+          <b-col cols="9" class="mb-3">
+            <label>
+              URL
+            </label>
+            <b-row no-gutters align-v="center" style="flex-wrap:nowrap">
+              <b-input-group>
+                <b-form-input
+                  v-model="popupCreateDto.link"
+                  placeholder="https://"
+                ></b-form-input>
+              </b-input-group>
+              <a
+                :href="getLinkUrl(popupCreateDto.link)"
+                target="_blank"
+                class="btn btn-lg  btn-info text-nowrap text-white ml-2"
+                >링크 확인</a
+              >
+            </b-row>
+          </b-col>
+        </b-form-row>
+        <div class="text-right pt-3 mt-4 border-top">
+          <b-button variant="secondary" @click="clearOutPopupCreateDto()"
+            >취소</b-button
+          >
+          <b-button type="submit" variant="primary">추가</b-button>
+        </div>
+      </b-form>
     </b-modal>
   </section>
 </template>
@@ -350,6 +379,12 @@ export default class PopupList extends BaseComponent {
   private popupTypeSelect: CodeManagementDto[] = [];
   private linkTypeSelect: CodeManagementDto[] = [];
   private popupImage: FileAttachmentDto[] = [];
+
+  getLinkUrl(linkUrl: string) {
+    if (linkUrl) {
+      return linkUrl.includes('//') ? linkUrl : `//${linkUrl}`;
+    }
+  }
 
   getTypeCodes() {
     CodeManagementService.findAnyCode('POPUP').subscribe(res => {
@@ -410,6 +445,7 @@ export default class PopupList extends BaseComponent {
       if (res) {
         toast.success('추가완료');
         this.clearOut();
+        this.$bvModal.hide('add_popup');
       }
     });
   }
@@ -433,6 +469,7 @@ export default class PopupList extends BaseComponent {
   clearOutPopupCreateDto() {
     this.popupImage = [];
     this.popupCreateDto = new PopupDto();
+    this.$bvModal.hide('add_popup');
   }
 
   created() {

@@ -205,145 +205,163 @@
     <b-modal
       id="add_banner"
       title="배너 추가"
-      ok-title="추가"
-      cancel-title="취소"
+      header-bg-variant="primary"
+      header-text-variant="light"
+      hide-footer
       size="lg"
-      @hide="clearOutBannerCreateDto()"
-      @cancel="clearOutBannerCreateDto()"
-      @ok="createBanner()"
+      @close="clearOutBannerCreateDto()"
     >
-      <b-form-row>
-        <b-col lg="12" class="text-right mb-3">
-          <b-row no-gutters align-h="end">
-            <b-form-group
-              label="노출 활성화"
-              label-size="sm"
-              label-text-align="right"
-              label-cols="8"
-            >
-              <b-form-checkbox
-                switch
-                size="lg"
-                v-model="bannerCreateDto.showYn"
-                :value="ynSelect[1]"
-                :unchecked-value="ynSelect[0]"
-              ></b-form-checkbox>
-            </b-form-group>
-          </b-row>
-        </b-col>
-      </b-form-row>
-
-      <b-form-row>
-        <b-col cols="12" md="6" class="mb-3">
-          <div v-if="bannerImage && bannerImage.length > 0" class="mb-4">
-            <div v-for="image in bannerImage" :key="image.endpoint">
-              <b-img-lazy
-                :src="image.endpoint"
-                class="rounded mx-auto d-block article-image"
-                style="max-height:80px"
-              />
+      <b-form @submit.stop.prevent="createBanner()">
+        <b-form-row>
+          <b-col lg="12" class="text-right mb-3">
+            <b-row no-gutters align-h="end">
+              <b-form-group
+                label="노출 활성화"
+                label-size="sm"
+                label-text-align="right"
+                label-cols="8"
+              >
+                <b-form-checkbox
+                  switch
+                  size="lg"
+                  v-model="bannerCreateDto.showYn"
+                  :value="ynSelect[1]"
+                  :unchecked-value="ynSelect[0]"
+                ></b-form-checkbox>
+              </b-form-group>
+            </b-row>
+          </b-col>
+        </b-form-row>
+        <b-form-row>
+          <b-col cols="12" md="6" class="mb-3">
+            <div v-if="bannerImage && bannerImage.length > 0" class="mb-4">
+              <div v-for="image in bannerImage" :key="image.endpoint">
+                <b-img-lazy
+                  :src="image.endpoint"
+                  class="rounded mx-auto d-block article-image"
+                  style="max-height:80px"
+                />
+              </div>
             </div>
-          </div>
-          <label>
-            배너 이미지
-            <span class="red-text">*</span>
-          </label>
-          <b-form-file
-            placeholder="파일 선택"
-            ref="fileInput"
-            @input="upload($event)"
-            required
-          ></b-form-file>
-        </b-col>
-        <b-col cols="12" md="6" class="mb-3">
-          <div
-            v-if="bannerMobileImage && bannerMobileImage.length > 0"
-            class="mb-4"
-          >
-            <div v-for="image in bannerMobileImage" :key="image.endpoint">
-              <b-img-lazy
-                :src="image.endpoint"
-                class="rounded mx-auto d-block article-image"
-                style="max-height:80px"
-              />
+            <label>
+              배너 이미지
+              <span class="red-text">*</span>
+            </label>
+            <b-form-file
+              placeholder="파일 선택"
+              ref="fileInput"
+              @input="upload($event)"
+              required
+            ></b-form-file>
+          </b-col>
+          <b-col cols="12" md="6" class="mb-3">
+            <div
+              v-if="bannerMobileImage && bannerMobileImage.length > 0"
+              class="mb-4"
+            >
+              <div v-for="image in bannerMobileImage" :key="image.endpoint">
+                <b-img-lazy
+                  :src="image.endpoint"
+                  class="rounded mx-auto d-block article-image"
+                  style="max-height:80px"
+                />
+              </div>
             </div>
-          </div>
-          <label>
-            배너 이미지 (모바일)
-            <span class="red-text">*</span>
-          </label>
-          <b-form-file
-            placeholder="파일 선택"
-            ref="fileInputMobile"
-            @input="uploadMobile($event)"
-            required
-          ></b-form-file>
-        </b-col>
-        <b-col cols="3" class="mb-3">
-          <label>
-            배너 타입
-            <span class="red-text">*</span>
-          </label>
-          <b-form-select
-            id="create_banner_type"
-            v-model="bannerCreateDto.bannerType"
-          >
-            <b-form-select-option
-              v-for="type in bannerTypeSelect"
-              :key="type.code"
-              :value="type.key"
-              >{{ type.value }}</b-form-select-option
+            <label>
+              배너 이미지 (모바일)
+              <span class="red-text">*</span>
+            </label>
+            <b-form-file
+              placeholder="파일 선택"
+              ref="fileInputMobile"
+              @input="uploadMobile($event)"
+              required
+            ></b-form-file>
+          </b-col>
+          <b-col cols="3" class="mb-3">
+            <label>
+              배너 타입
+              <span class="red-text">*</span>
+            </label>
+            <b-form-select
+              id="create_banner_type"
+              v-model="bannerCreateDto.bannerType"
+              required
             >
-          </b-form-select>
-        </b-col>
-        <b-col cols="9" class="mb-3">
-          <label>
-            타이틀
-            <span class="red-text">*</span>
-          </label>
-          <b-form-input v-model="bannerCreateDto.title" required></b-form-input>
-        </b-col>
-        <b-col cols="12" md="6" class="mb-3">
-          <div>
-            <label for="ended">시작 날짜</label>
-            <b-form-datepicker
-              id="started"
-              v-model="bannerCreateDto.started"
-            ></b-form-datepicker>
-          </div>
-        </b-col>
-        <b-col cols="12" md="6" class="mb-3">
-          <div>
-            <label for="ended">종료 날짜</label>
-            <b-form-datepicker
-              id="ended"
-              v-model="bannerCreateDto.ended"
-              :disabled="bannerCreateDto.started ? false : true"
-            ></b-form-datepicker>
-          </div>
-        </b-col>
-
-        <b-col cols="9" class="mb-3">
-          <label>
-            URL
-          </label>
-          <b-form-input v-model="bannerCreateDto.url"></b-form-input>
-        </b-col>
-        <b-col cols="3" class="mb-3">
-          <label>링크 타입</label>
-          <b-form-select
-            id="create_link_type"
-            v-model="bannerCreateDto.linkType"
-          >
-            <b-form-select-option
-              v-for="type in linkTypeSelect"
-              :key="type.code"
-              :value="type.key"
-              >{{ type.value }}</b-form-select-option
+              <b-form-select-option
+                v-for="type in bannerTypeSelect"
+                :key="type.code"
+                :value="type.key"
+                >{{ type.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-col>
+          <b-col cols="9" class="mb-3">
+            <label>
+              타이틀
+              <span class="red-text">*</span>
+            </label>
+            <b-form-input
+              v-model="bannerCreateDto.title"
+              required
+            ></b-form-input>
+          </b-col>
+          <b-col cols="12" md="6" class="mb-3">
+            <div>
+              <label for="ended"
+                >시작 날짜 <span class="red-text">*</span></label
+              >
+              <b-form-datepicker
+                id="started"
+                v-model="bannerCreateDto.started"
+                required
+              ></b-form-datepicker>
+            </div>
+          </b-col>
+          <b-col cols="12" md="6" class="mb-3">
+            <div>
+              <label for="ended"
+                >종료 날짜 <span class="red-text">*</span></label
+              >
+              <b-form-datepicker
+                id="ended"
+                v-model="bannerCreateDto.ended"
+                :disabled="bannerCreateDto.started ? false : true"
+                required
+              ></b-form-datepicker>
+            </div>
+          </b-col>
+          <b-col cols="9" class="mb-3">
+            <label>
+              URL
+            </label>
+            <b-form-input
+              v-model="bannerCreateDto.url"
+              placeholder="https://"
+            ></b-form-input>
+          </b-col>
+          <b-col cols="3" class="mb-3">
+            <label>링크 타입</label>
+            <b-form-select
+              id="create_link_type"
+              v-model="bannerCreateDto.linkType"
             >
-          </b-form-select>
-        </b-col>
-      </b-form-row>
+              <b-form-select-option
+                v-for="type in linkTypeSelect"
+                :key="type.code"
+                :value="type.key"
+                >{{ type.value }}</b-form-select-option
+              >
+            </b-form-select>
+          </b-col>
+        </b-form-row>
+        <div class="text-right pt-3 mt-4 border-top">
+          <b-button variant="secondary" @click="clearOutBannerCreateDto()"
+            >취소</b-button
+          >
+          <b-button type="submit" variant="primary">추가</b-button>
+        </div>
+      </b-form>
     </b-modal>
   </section>
 </template>
@@ -448,6 +466,7 @@ export default class BannerList extends BaseComponent {
       if (res) {
         toast.success('추가완료');
         this.clearOut();
+        this.$bvModal.hide('add_banner');
       }
     });
   }
@@ -488,6 +507,7 @@ export default class BannerList extends BaseComponent {
     this.bannerImage = [];
     this.bannerMobileImage = [];
     this.bannerCreateDto = new BannerDto();
+    this.$bvModal.hide('add_banner');
   }
 
   created() {

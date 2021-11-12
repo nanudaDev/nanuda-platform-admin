@@ -338,6 +338,25 @@ export default class BannerDetail extends BaseComponent {
       delete this.bannerUpdateDto.mobileImage;
     }
 
+    const startedDate = new Date(this.bannerUpdateDto.started);
+    const endedDate = new Date(this.bannerUpdateDto.ended);
+    this.bannerUpdateDto.started = new Date(
+      startedDate.getFullYear(),
+      startedDate.getMonth(),
+      startedDate.getDate(),
+      0,
+      0,
+      0,
+    );
+    this.bannerUpdateDto.ended = new Date(
+      endedDate.getFullYear(),
+      endedDate.getMonth(),
+      endedDate.getDate(),
+      11,
+      59,
+      59,
+    );
+
     BannerService.update(this.$route.params.id, this.bannerUpdateDto).subscribe(
       res => {
         if (res) {

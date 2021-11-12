@@ -263,6 +263,8 @@ export default class PopupDetail extends BaseComponent {
       if (res) {
         this.popupDto = res.data;
         this.popupUpdateDto = this.popupDto;
+        this.popupUpdateDto.started = new Date(this.popupDto.started);
+        this.popupUpdateDto.ended = new Date(this.popupDto.ended);
       }
     });
   }
@@ -302,6 +304,24 @@ export default class PopupDetail extends BaseComponent {
     } else {
       delete this.popupUpdateDto.images;
     }
+    const startedDate = new Date(this.popupUpdateDto.started);
+    const endedDate = new Date(this.popupUpdateDto.ended);
+    this.popupUpdateDto.started = new Date(
+      startedDate.getFullYear(),
+      startedDate.getMonth(),
+      startedDate.getDate(),
+      0,
+      0,
+      0,
+    );
+    this.popupUpdateDto.ended = new Date(
+      endedDate.getFullYear(),
+      endedDate.getMonth(),
+      endedDate.getDate(),
+      11,
+      59,
+      59,
+    );
 
     PopupService.update(this.$route.params.id, this.popupUpdateDto).subscribe(
       res => {

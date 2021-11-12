@@ -202,6 +202,7 @@
             </b-row>
           </b-col>
         </b-form-row>
+
         <b-form-row>
           <b-col cols="3" class="mb-3">
             <label>
@@ -286,7 +287,7 @@
               <b-form-datepicker
                 id="started"
                 required
-                v-model="popupCreateDto.started"
+                v-model="startedDate"
               ></b-form-datepicker>
             </div>
           </b-col>
@@ -298,8 +299,8 @@
               <b-form-datepicker
                 id="ended"
                 required
-                v-model="popupCreateDto.ended"
-                :disabled="popupCreateDto.started ? false : true"
+                v-model="endedDate"
+                :disabled="startedDate ? false : true"
               ></b-form-datepicker>
             </div>
           </b-col>
@@ -379,6 +380,8 @@ export default class PopupList extends BaseComponent {
   private popupTypeSelect: CodeManagementDto[] = [];
   private linkTypeSelect: CodeManagementDto[] = [];
   private popupImage: FileAttachmentDto[] = [];
+  private startedDate: Date = null;
+  private endedDate: Date = null;
 
   getLinkUrl(linkUrl: string) {
     if (linkUrl) {
@@ -440,6 +443,9 @@ export default class PopupList extends BaseComponent {
         return;
       }
     }
+
+    this.popupCreateDto.started = new Date(`${this.startedDate} 00:00:00`);
+    this.popupCreateDto.ended = new Date(`${this.endedDate} 23:59:59`);
 
     PopupService.create(this.popupCreateDto).subscribe(res => {
       if (res) {

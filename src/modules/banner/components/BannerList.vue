@@ -313,7 +313,7 @@
               >
               <b-form-datepicker
                 id="started"
-                v-model="bannerCreateDto.started"
+                v-model="startedDate"
                 required
               ></b-form-datepicker>
             </div>
@@ -325,8 +325,8 @@
               >
               <b-form-datepicker
                 id="ended"
-                v-model="bannerCreateDto.ended"
-                :disabled="bannerCreateDto.started ? false : true"
+                v-model="endedDate"
+                :disabled="startedDate ? false : true"
                 required
               ></b-form-datepicker>
             </div>
@@ -403,6 +403,8 @@ export default class BannerList extends BaseComponent {
   private linkTypeSelect: CodeManagementDto[] = [];
   private bannerImage: FileAttachmentDto[] = [];
   private bannerMobileImage: FileAttachmentDto[] = [];
+  private startedDate: Date = null;
+  private endedDate: Date = null;
 
   getTypeCodes() {
     CodeManagementService.findAnyCode('BANNER_TYPE').subscribe(res => {
@@ -461,6 +463,9 @@ export default class BannerList extends BaseComponent {
     } else {
       delete this.bannerCreateDto.mobileImage;
     }
+
+    this.bannerCreateDto.started = new Date(`${this.startedDate} 00:00:00`);
+    this.bannerCreateDto.ended = new Date(`${this.endedDate} 23:59:59`);
 
     BannerService.create(this.bannerCreateDto).subscribe(res => {
       if (res) {

@@ -248,14 +248,14 @@ import ApexMixedChart from '../add-on/MixedChart.vue';
 import ApexPieChart from '../add-on/PieChart.vue';
 
 @Component({
-  name: 'ConsultReportV2Print',
+  name: 'ConsultReportPrint',
   components: {
     ApexLineChart,
     ApexMixedChart,
     ApexPieChart,
   },
 })
-export default class ConsultReportV2Print extends BaseComponent {
+export default class ConsultReportPrint extends BaseComponent {
   declare $refs: any;
 
   private plotlyLayout = {

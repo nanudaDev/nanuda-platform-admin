@@ -14,6 +14,7 @@ import {
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
 import VueDaumPostcode from 'vue-daum-postcode';
 import VStickyElement from 'vue-sticky-element';
+import VueApexCharts from 'vue-apexcharts';
 
 import MainLayout from '../src/modules/_layouts/Layout/MainLayout.layout.vue';
 import NonMainLayout from '../src/modules/_layouts/Layout/NonMainLayout.layout.vue';
@@ -80,6 +81,7 @@ Vue.component('EmptyLayout', EmptyLayout);
 Vue.component('SectionTitle', SectionTitle);
 Vue.component('BaseCard', BaseCard);
 Vue.component('downloadExcel', JsonExcel);
+Vue.component('apexchart', VueApexCharts);
 
 // filters
 BizNoPipeTransformer();
@@ -114,6 +116,7 @@ Vue.use(VueDaumPostcode);
 
 Vue.use(utilityPlugin);
 Vue.use(VStickyElement);
+Vue.use(VueApexCharts);
 
 new Vue({
   router,

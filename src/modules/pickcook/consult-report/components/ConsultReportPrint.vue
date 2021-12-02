@@ -1,5 +1,5 @@
 <template>
-  <div id="report">
+  <div id="print">
     <div class="text-center mb-4 d-print-none">
       <b-btn
         variant="dark"
@@ -28,11 +28,12 @@
         <div>
           <header>
             <h1>
-              <p class="mb-2">
+              <p class="mb-4">
                 <img
-                  src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/logo_symbol_w.png"
+                  src="https://kr.object.ncloudstorage.com/common-storage-pickcook/main/logo_symbol.svg"
                   alt="픽쿡"
                   class=""
+                  height="40px"
                 />
               </p>
               <span>PICKCOOK</span>
@@ -43,15 +44,23 @@
             </p>
           </header>
           <address>
-            <p>이름<span contenteditable>김보라</span></p>
-            <p>지역<span contenteditable>서울시 노원구 공릉1동</span></p>
-            <p>선택 업종<span contenteditable>한식</span></p>
-            <p>서비스 이용횟수<span contenteditable>2</span>회</p>
+            <p v-if="consultResponseV3Dto">
+              이름<span contenteditable>{{ consultResponseV3Dto.name }}</span>
+            </p>
+            <p v-if="reportAddress">
+              지역<span contenteditable>{{ reportAddress }}</span>
+            </p>
+            <p v-if="salesRequestDto">
+              선택 업종<span contenteditable>{{
+                salesRequestDto.mediumCategoryCode | kbCategoryTransformer
+              }}</span>
+            </p>
+            <!-- <p>서비스 이용횟수<span contenteditable>2</span>회</p> -->
           </address>
         </div>
         <footer>
           <div class="mb-3">
-            <p class="date">2021년 08월 12일</p>
+            <p class="date">{{ year }}년 {{ month }}월 {{ day }}일</p>
           </div>
           <p>
             PICKCOOK은 주기적인 업데이트 과정을 거친 실 데이터를 기반으로 한
@@ -64,357 +73,1474 @@
     <div class="page">
       <div class="page-inner">
         <div>
-          <header>
+          <!-- <header>
             <h1>01 상권 분석 개요</h1>
-          </header>
+          </header> -->
           <article>
-            <b-row>
-              <b-col cols="6">
-                <div class="row-box">
-                  <div id="map" style="height:400px"></div>
+            <div class="row-box">
+              <div class="report-card">
+                <div class="report-card-header">
+                  <h4>창업자 정보</h4>
+                </div>
+                <div class="report-card-content">
+                  <b-row
+                    align-v="center"
+                    class="row-box"
+                    v-if="consultResponseV3Dto"
+                  >
+                    <b-col cols="4">
+                      <b-form-group label="창업자명" label-align="left">
+                        <b-form-input
+                          v-model="consultResponseV3Dto.name"
+                        ></b-form-input>
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="4">
+                      <b-form-group label="연락처" label-align="left">
+                        <b-form-input
+                          v-model="consultResponseV3Dto.phone"
+                        ></b-form-input>
+                      </b-form-group>
+                    </b-col>
+                    <b-col
+                      cols="4"
+                      v-if="consultResponseV3Dto.fnbOwnerCodeStatus"
+                    >
+                      <b-form-group label="창업자유형" label-align="left">
+                        <b-form-input
+                          v-model="
+                            consultResponseV3Dto.fnbOwnerCodeStatus.comment
+                          "
+                        ></b-form-input>
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="4">
+                      <b-form-group label="창업 지역" label-align="left">
+                        <b-form-input
+                          v-model="reportAddress"
+                          @click="showAddressModal()"
+                        ></b-form-input>
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="4">
+                      <b-form-group label="창업 업종" label-align="left">
+                        <b-form-select
+                          v-model="salesRequestDto.mediumCategoryCode"
+                        >
+                          <b-form-select-option
+                            v-for="category in kbMediumCategories"
+                            :key="category"
+                            :value="category"
+                          >
+                            {{ category | kbCategoryTransformer }}
+                          </b-form-select-option>
+                        </b-form-select>
+                      </b-form-group>
+                    </b-col>
+                  </b-row>
+                </div>
+              </div>
+            </div>
+            <b-row class="row-box">
+              <b-col cols="7" v-if="salesResponseDto && revenueData.length > 0">
+                <div class="report-card">
+                  <div class="report-card-header">
+                    <h4>상권매출 현황</h4>
+                  </div>
+                  <div class="report-card-content">
+                    <RevenueChart
+                      :chartData="revenueChartData"
+                      :revenueData="revenueData"
+                    />
+                  </div>
                 </div>
               </b-col>
-              <b-col cols="6">
-                <div class="row-box">
-                  <table class="table">
-                    <colgroup>
-                      <col width="25%" />
-                      <col width="*" />
-                      <col width="25%" />
-                      <col width="*%" />
-                    </colgroup>
-                    <tbody>
-                      <tr>
-                        <th scpoe="row">선택지역</th>
-                        <td colspan="3">서울시 노원구 공릉1동</td>
-                      </tr>
-                      <tr>
-                        <th scpoe="row">선택업종</th>
-                        <td colspan="3">한식</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">음식점수(개)</th>
-                        <td>1,350</td>
-                        <th scope="row">주거인구(명)</th>
-                        <td>34,990</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">총세대수(세대)</th>
-                        <td>24,500</td>
-                        <th scope="row">직장인구(명)</th>
-                        <td>8,000</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">평균 영업기간(년)</th>
-                        <td>4</td>
-                        <th scope="row">유동인구(명)</th>
-                        <td>10,500</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">주요 연령대</th>
-                        <td>20~30대</td>
-                        <th scope="row"></th>
-                        <td></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </b-col>
-              <b-col cols="12">
-                <div class="row-box mt-4">
-                  <b-alert variant="secondary" show>
-                    <h5 class="text-primary">
-                      <b-icon icon="info-circle-fill"></b-icon>
-                      <span class="ml-2">통계 기준 안내</span>
-                    </h5>
-                    <div class="mt-2">
-                      <p>
-                        한식음식점 3년생존율은 61.5%로 서울시 3년생존율 45.7%
-                        보다 높고 전년동기 45.1% 보다 높습니다. 해당지역에
-                        한식음식점 창업 시 향후 경쟁관계에 큰 변화가 없다면 2년
-                        정도의 영업기간을 기대할 수 있을 것으로 예상됩니다. 기대
-                        영 업기간이 길수록 좋은 상권입니다. 선택상권의
-                        주거인구밀도는 1ha(1만㎡)당 130명 규모로 전년대비
-                        증가하였습니다. 면적은 59,866 평방제곱미터(㎡),
-                        직장인구밀도는 78명, 3개월간 상존인구밀도는 약34,990명
-                        수준입니다.<br />
-                        선택상권 행정동 1층 임대료는 3.3㎡당 139,700원으로 전년
-                        동기 137,188원에 비해 높습니다. 임대료의 급격한 상승이나
-                        개폐업율변 화가 큰곳인지 상세분석을 참조하세요.선택상권
-                        한식음식점은 전년대비 동일한 경향을 보이고 있으며,
-                        개업률 4.1%, 폐업률4.1%이며 개업률, 폐업률이
-                        정체상태입니다. 한식음식점 의 3개월간매출은 13,188,130원
-                        수준이며, 서울시 평균에 비해 낮은 편이며 전년 동기
-                        12,979,820원보다 높은 수준입니 다.
-                      </p>
-                    </div>
-                  </b-alert>
+              <b-col
+                cols="5"
+                v-if="
+                  salesResponseDto.hdong && salesResponseDto.hdong.hdongCode
+                "
+              >
+                <div class="report-card no-body">
+                  <div id="map"></div>
+                  <div class="map-hdong-name">
+                    <b-icon icon="geo-alt"></b-icon>
+                    <span class="ml-2">{{
+                      salesResponseDto.hdong.hdongName
+                    }}</span>
+                  </div>
                 </div>
               </b-col>
             </b-row>
           </article>
         </div>
         <footer>
-          <p>PICKCOOK ANALYSIS ⓒ2021</p>
+          <p>PICKCOOK ANALYSIS ⓒ{{ year }}</p>
         </footer>
       </div>
     </div>
     <div class="page">
       <div class="page-inner">
         <div>
-          <header>
+          <!-- <header>
             <h1>02 인구분석</h1>
-          </header>
+          </header> -->
           <article>
-            <section>
-              <div id="chart"></div>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">상권유형</th>
-                    <th scope="col">주거인구(명)</th>
-                    <th scope="col">직장인구(명)</th>
-                    <th scope="col">유동인구(명)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>주상복합</td>
-                    <td>3,000</td>
-                    <td>4,000</td>
-                    <td>5,000</td>
-                  </tr>
-                </tbody>
-              </table>
-            </section>
-            <section>
-              <b-row>
-                <b-col cols="6">
-                  <div class="card">
-                    <ApexPieChart
-                      :series="donutSeries"
-                      :options="donutOptions"
-                    ></ApexPieChart>
+            <b-row class="row-box">
+              <b-col cols="12" v-if="salesResponseDto.livingPopulation">
+                <div class="report-card">
+                  <header class="report-card-header">
+                    <h4>
+                      인구 분석
+                    </h4>
+                    <p>
+                      <span
+                        >거주인구
+                        {{
+                          salesResponseDto.livingPopulation
+                            | numeralTransformer
+                        }}명</span
+                      >
+                      /
+                      <span>
+                        세대수
+                        {{
+                          salesResponseDto.sedeCount | numeralTransformer
+                        }}세대
+                      </span>
+                      /
+                      <span>
+                        직장인구
+                        {{
+                          salesResponseDto.employeeCount | numeralTransformer
+                        }}명
+                      </span>
+                      상주 중입니다.
+                    </p>
+                    <p>
+                      주소비층은
+                      <strong class="text-blue">{{ computedMainGagu }} </strong>
+                      이며,
+                      <strong class="text-blue">{{
+                        computedMainAgeGroup
+                      }}</strong
+                      >입니다.
+                    </p>
+                  </header>
+                  <div class="report-card-content">
+                    <b-row
+                      v-if="
+                        salesResponseDto.mainAgeGroup &&
+                          salesResponseDto.mainGagu
+                      "
+                    >
+                      <b-col cols="6">
+                        <div class="doughnut-chart-container">
+                          <div class="doughnut-chart-wrapper">
+                            <DoughnutChart
+                              :chartData="mainGaguChartData"
+                              :labels="Object.keys(salesResponseDto.gaguRatio)"
+                              :datasetsData="
+                                Object.values(salesResponseDto.gaguRatio)
+                              "
+                              :backgroundColor="computedMainGaguLabelColor"
+                            />
+                            <div class="doughnut-chart-text">
+                              <div>
+                                <span class="badge">{{
+                                  computedMainGagu
+                                }}</span>
+                                <p>
+                                  {{
+                                    Math.round(
+                                      salesResponseDto.mainGaguRatio * 10,
+                                    ) / 10
+                                  }}%
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="doughnut-chart-legend">
+                            <div class="legend-label-list">
+                              <p
+                                v-for="(value,
+                                name,
+                                index) in salesResponseDto.gaguRatio"
+                                :key="index"
+                              >
+                                <span
+                                  class="legend-label-point"
+                                  :style="{
+                                    'background-color': `${computedMainGaguLabelColor[index]}`,
+                                  }"
+                                ></span>
+                                <span class="legend-label-text">{{
+                                  name
+                                }}</span>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </b-col>
+                      <b-col cols="6">
+                        <div class="doughnut-chart-container">
+                          <div class="doughnut-chart-wrapper">
+                            <DoughnutChart
+                              :chartData="mainAgeGroupChartData"
+                              :labels="Object.keys(computedAgeRatio)"
+                              :datasetsData="Object.values(computedAgeRatio)"
+                              :backgroundColor="computedMainAgeGroupLabelColor"
+                            />
+
+                            <div class="doughnut-chart-text">
+                              <div>
+                                <span class="badge">{{
+                                  computedMainAgeGroup
+                                }}</span>
+                                <p>
+                                  {{
+                                    Math.round(
+                                      salesResponseDto.mainAgeGroupRatio * 10,
+                                    ) / 10
+                                  }}%
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="doughnut-chart-legend">
+                            <div class="legend-label-list">
+                              <p
+                                v-for="(value, name, index) in computedAgeRatio"
+                                :key="index"
+                              >
+                                <span
+                                  class="legend-label-point"
+                                  :style="{
+                                    'background-color': `${computedMainAgeGroupLabelColor[index]}`,
+                                  }"
+                                ></span>
+                                <span class="legend-label-text">{{
+                                  name
+                                }}</span>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </b-col>
+                    </b-row>
                   </div>
-                </b-col>
-                <b-col cols="6">
-                  <div class="card">
-                    <ApexLineChart
-                      :series="lineSeries"
-                      :options="lineOptions"
-                    ></ApexLineChart>
+                </div>
+              </b-col>
+            </b-row>
+            <b-row class="row-box">
+              <b-col cols="12" v-if="salesResponseDto.offlineRevenueRatio">
+                <div class="report-card">
+                  <header class="report-card-header">
+                    <h4>
+                      소비 패턴
+                    </h4>
+                    <p>
+                      해당 행정동은 <br />
+                      <template
+                        v-if="salesResponseDto.deliveryRevenueRatio >= 20"
+                      >
+                        <strong class="text-blue">배달을 필수적으로 병행</strong
+                        >하여 운영 해야 합니다.
+                      </template>
+                      <template v-else>
+                        <strong class="text-blue"
+                          >배달을 함께 병행하여 운영</strong
+                        >하면 좋습니다.
+                      </template>
+                    </p>
+                  </header>
+                  <div class="report-card-content">
+                    <b-row>
+                      <b-col cols="6">
+                        <b-row class="consumption-pattern-delivery">
+                          <b-col cols="7">
+                            <div class="consumption-pattern-delivery-icon">
+                              <b-img-lazy
+                                src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_delivery.svg"
+                              ></b-img-lazy>
+                            </div>
+                          </b-col>
+                          <b-col cols="5">
+                            <div class="consumption-pattern-delivery-text">
+                              <div>
+                                <h5>배달 적합도</h5>
+                                <p>
+                                  {{
+                                    salesResponseDto.deliveryRevenueRatio >= 20
+                                      ? '추천'
+                                      : '보통'
+                                  }}
+                                </p>
+                              </div>
+                            </div>
+                          </b-col>
+                        </b-row>
+                      </b-col>
+                      <b-col cols="6">
+                        <div class="horizontal-stacked-bar-charts">
+                          <div
+                            class="horizontal-stacked-bar bar-restaurant"
+                            :style="{
+                              width: `${salesResponseDto.offlineRevenueRatio}%`,
+                              'background-color':
+                                salesResponseDto.offlineRevenueRatio >
+                                salesResponseDto.deliveryRevenueRatio
+                                  ? '#00b1ff'
+                                  : '#E4EBF2',
+                            }"
+                          ></div>
+                          <div
+                            class="horizontal-stacked-bar bar-delivery"
+                            :style="{
+                              width: `${salesResponseDto.deliveryRevenueRatio}%`,
+                              'background-color':
+                                salesResponseDto.deliveryRevenueRatio >
+                                salesResponseDto.offlineRevenueRatio
+                                  ? '#00b1ff'
+                                  : '#E4EBF2',
+                            }"
+                          ></div>
+                        </div>
+                        <b-row no-gutters class="mt-4">
+                          <b-col cols="6">
+                            <p
+                              class="consumption-pattern-labels label-restaurant"
+                            >
+                              <span class="consumption-pattern-label">
+                                매장 식사 비중
+                              </span>
+
+                              <strong
+                                class="
+                                    consumption-pattern-value
+                                    value-restaurant
+                                  "
+                                :style="{
+                                  color:
+                                    salesResponseDto.offlineRevenueRatio >
+                                    salesResponseDto.deliveryRevenueRatio
+                                      ? '#007EEB'
+                                      : '#707070',
+                                }"
+                                >{{
+                                  Math.round(
+                                    salesResponseDto.offlineRevenueRatio * 10,
+                                  ) / 10
+                                }}%</strong
+                              >
+                            </p>
+                          </b-col>
+                          <b-col cols="6">
+                            <p
+                              class="consumption-pattern-labels label-delivery"
+                            >
+                              <span class="consumption-pattern-label">
+                                배달 식사 비중
+                              </span>
+                              <strong
+                                class="
+                                    consumption-pattern-value
+                                    value-delivery
+                                  "
+                                :style="{
+                                  color:
+                                    salesResponseDto.deliveryRevenueRatio >
+                                    salesResponseDto.offlineRevenueRatio
+                                      ? '#007EEB'
+                                      : '#707070',
+                                }"
+                              >
+                                {{
+                                  Math.round(
+                                    salesResponseDto.deliveryRevenueRatio * 10,
+                                  ) / 10
+                                }}%
+                              </strong>
+                            </p>
+                          </b-col>
+                        </b-row>
+                      </b-col>
+                    </b-row>
                   </div>
-                </b-col>
-              </b-row>
-            </section>
+                </div>
+              </b-col>
+            </b-row>
           </article>
         </div>
         <footer>
-          <p>PICKCOOK ANALYSIS ⓒ2021</p>
+          <p>PICKCOOK ANALYSIS ⓒ{{ year }}</p>
         </footer>
       </div>
     </div>
     <div class="page">
       <div class="page-inner">
         <div>
-          <section>
-            <div class="card">
-              <ApexMixedChart
-                :series="mixedSeries"
-                :options="mixedOptions"
-              ></ApexMixedChart>
-            </div>
-          </section>
-          <section>
-            <div class="card">
-              <ApexPieChart
-                :series="donutSeries"
-                :options="donutOptions"
-              ></ApexPieChart>
-            </div>
-          </section>
+          <!-- <header>
+            <h1>매출 비중</h1>
+          </header> -->
+          <article>
+            <b-row class="row-box">
+              <b-col
+                cols="4"
+                v-if="salesResponseDto.mediumCategoryRevenueRatio"
+              >
+                <div class="report-card">
+                  <header class="report-card-header">
+                    <h4>
+                      업종별 매출비중
+                    </h4>
+                    <p>
+                      해당 행정동에서
+                      <strong class="text-blue">
+                        {{
+                          salesRequestDto.mediumCategoryCode
+                            | kbCategoryTransformer
+                        }}의 매출은 {{ mediumCategoryRank }}순위</strong
+                      >입니다.
+                    </p>
+                  </header>
+                  <div
+                    class="report-card-content"
+                    v-if="salesRequestDto.mediumCategoryCode"
+                  >
+                    <BarChart
+                      :chartData="kbCategoryRevenueChartData"
+                      :labels="mediumCategoryRevenueLabel"
+                      :datasetsData="mediumCategoryRevenueValue"
+                      style="height:300px;"
+                    />
+                  </div>
+                </div>
+              </b-col>
+              <b-col cols="8" v-if="salesResponseDto.weekDayRevenueRatio">
+                <div class="report-card h-half">
+                  <header class="report-card-header">
+                    <h4>요일별 매출비중</h4>
+                    <p>
+                      해당 행정동은
+                      <strong class="text-blue"
+                        >{{ maxRevenueWeekday | weekDayTransformer }}요일에 가장
+                        높은 매출율</strong
+                      >을 보입니다.
+                    </p>
+                  </header>
+                  <div class="report-card-content">
+                    <div class="horizontal-stacked-bar-charts">
+                      <div
+                        v-for="(ratio, index) in Object.values(
+                          salesResponseDto.weekDayRevenueRatio,
+                        )"
+                        :key="index"
+                        class="horizontal-stacked-bar"
+                        :class="{
+                          'bg-lightblue':
+                            parseInt(maxRevenueWeekday) === index + 1,
+                        }"
+                        :style="
+                          `width: ${ratio}%; background: rgba(100,132,163, ${(index +
+                            1) /
+                            Object.values(salesResponseDto.weekDayRevenueRatio)
+                              .length};`
+                        "
+                      ></div>
+                    </div>
+                    <div class="mt-4">
+                      <div class="legend-label-list">
+                        <p
+                          v-for="(value,
+                          name,
+                          index) in salesResponseDto.weekDayRevenueRatio"
+                          :key="index"
+                        >
+                          <span
+                            class="legend-label-point"
+                            :style="{
+                              'background-color': `rgba(100,132,163, ${(index +
+                                1) /
+                                Object.values(
+                                  salesResponseDto.weekDayRevenueRatio,
+                                ).length}`,
+                            }"
+                            :class="{
+                              'bg-lightblue':
+                                parseInt(maxRevenueWeekday) === index + 1,
+                            }"
+                          ></span>
+                          <span class="legend-label-text">{{
+                            name | weekDayTransformer
+                          }}</span>
+                          <span class="legend-label-value">{{ value }} %</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="report-card h-half"
+                  v-if="salesResponseDto.hourRevenueRatio"
+                >
+                  <header class="report-card-header">
+                    <h4>시간대별 매출비중</h4>
+                    <p>
+                      해당 행정동은
+                      <strong class="text-blue"
+                        >{{ maxRevenueHour | hourTransformer }}에 가장 높은
+                        매출율</strong
+                      >을 보입니다.
+                    </p>
+                  </header>
+                  <div class="report-card-content">
+                    <div class="horizontal-stacked-bar-charts">
+                      <div
+                        v-for="(ratio, name, index) in computedHourRevenueRatio"
+                        :key="index"
+                        class="horizontal-stacked-bar"
+                        :class="{
+                          'bg-lightblue': maxRevenueHour === name,
+                        }"
+                        :style="
+                          `width: ${ratio}%; background: rgba(100,132,163, ${(index +
+                            1) /
+                            Object.values(salesResponseDto.hourRevenueRatio)
+                              .length};`
+                        "
+                      ></div>
+                    </div>
+                    <div class="mt-4">
+                      <div class="legend-label-list">
+                        <p
+                          v-for="(value,
+                          name,
+                          index) in computedHourRevenueRatio"
+                          :key="index"
+                        >
+                          <span
+                            class="legend-label-point"
+                            :style="{
+                              'background-color': `rgba(100,132,163, ${(index +
+                                1) /
+                                Object.values(salesResponseDto.hourRevenueRatio)
+                                  .length}`,
+                            }"
+                            :class="{
+                              'bg-lightblue': maxRevenueHour === name,
+                            }"
+                          ></span>
+                          <span class="legend-label-text">{{
+                            name | hourTransformer
+                          }}</span>
+                          <span class="legend-label-value">{{ value }} %</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </b-col>
+            </b-row>
+            <b-row class="row-box">
+              <b-col
+                cols="4"
+                v-if="salesResponseDto.mediumCategoryGenderRevenueRatio"
+                class="gender-graph-wrapper"
+              >
+                <div class="report-card">
+                  <div class="report-card-header">
+                    <h4>성별 매출비중</h4>
+                  </div>
+                  <div class="report-card-content">
+                    <div class="gender-graph-list">
+                      <b-row no-gutters align-v="end">
+                        <b-col cols="12">
+                          <div class="gender-graph-chart">
+                            <div class="gender-graph gender-female">
+                              <div
+                                class="graph-value"
+                                :style="
+                                  `height: ${salesResponseDto.mediumCategoryGenderRevenueRatio['2']}%`
+                                "
+                              ></div>
+                            </div>
+                            <div class="gender-graph gender-male">
+                              <div
+                                class="graph-value"
+                                :style="
+                                  `height: ${salesResponseDto.mediumCategoryGenderRevenueRatio['1']}%`
+                                "
+                              ></div>
+                            </div>
+                          </div>
+                        </b-col>
+                        <b-col cols="6">
+                          <p class="text-left">
+                            <span class="badge">
+                              여성
+                            </span>
+                            <strong
+                              class="
+                                     text-value d-block
+                                    "
+                              :class="{ 'text-cyan': mainGender === '2' }"
+                              >{{
+                                Math.round(
+                                  salesResponseDto
+                                    .mediumCategoryGenderRevenueRatio['2'] * 10,
+                                ) / 10
+                              }}%</strong
+                            >
+                          </p>
+                        </b-col>
+                        <b-col cols="6">
+                          <p class="text-right">
+                            <span class="badge">
+                              남성
+                            </span>
+                            <strong
+                              class="
+                                     text-value d-block
+                                    "
+                              :class="{ 'text-blue': mainGender === '1' }"
+                              >{{
+                                Math.round(
+                                  salesResponseDto
+                                    .mediumCategoryGenderRevenueRatio['1'] * 10,
+                                ) / 10
+                              }}%</strong
+                            >
+                          </p>
+                        </b-col>
+                      </b-row>
+                    </div>
+                  </div>
+                </div>
+              </b-col>
+              <b-col
+                cols="8"
+                v-if="salesResponseDto.mediumCategoryStoreRatio"
+                class="store-status-wrapper"
+              >
+                <div class="store-status-list">
+                  <div class="report-card store-status-card">
+                    <div class="report-card-header">
+                      <h4>음식점 현황</h4>
+                    </div>
+                    <div class="report-card-content">
+                      <b-row>
+                        <b-col cols="4">
+                          <div class="store-status-box">
+                            <div class="store-status-title">
+                              <h5>점포 비중</h5>
+                            </div>
+                            <div class="store-status-icon">
+                              <b-img-lazy
+                                src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_store_ratio.svg"
+                              ></b-img-lazy>
+                            </div>
+
+                            <div class="store-status-info">
+                              <p>
+                                <span class="store-status-info-label">{{
+                                  salesRequestDto.mediumCategoryCode
+                                    | kbCategoryTransformer
+                                }}</span>
+                                <strong
+                                  class="store-status-info-value text-value text-blue d-block"
+                                  v-if="
+                                    salesResponseDto.mediumCategoryStoreRatio
+                                  "
+                                >
+                                  {{
+                                    salesResponseDto.mediumCategoryStoreRatio.toFixed(
+                                      0,
+                                    )
+                                  }}%
+                                </strong>
+                              </p>
+                            </div>
+                          </div>
+                        </b-col>
+                        <b-col cols="4">
+                          <div class="store-status-box">
+                            <div class="store-status-title">
+                              <h5>폐업률</h5>
+                            </div>
+                            <div class="store-status-icon">
+                              <b-img-lazy
+                                src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_store_closed_ratio.svg"
+                              ></b-img-lazy>
+                            </div>
+
+                            <div class="store-status-info">
+                              <p>
+                                <span class="store-status-info-label">{{
+                                  salesRequestDto.mediumCategoryCode
+                                    | kbCategoryTransformer
+                                }}</span>
+                                <strong
+                                  class="store-status-info-value text-value text-blue d-block"
+                                  v-if="
+                                    salesResponseDto.mediumCategoryClosedStoreRate
+                                  "
+                                >
+                                  {{
+                                    salesResponseDto.mediumCategoryClosedStoreRate.toFixed(
+                                      0,
+                                    )
+                                  }}%
+                                </strong>
+                              </p>
+                              <p>
+                                <span class="store-status-info-label"
+                                  >상권평균</span
+                                >
+                                <strong
+                                  class="store-status-info-value text-value d-block"
+                                  v-if="salesResponseDto.closedStoreRate"
+                                >
+                                  {{
+                                    salesResponseDto.closedStoreRate.toFixed(0)
+                                  }}%
+                                </strong>
+                              </p>
+                            </div>
+                          </div>
+                        </b-col>
+                        <b-col cols="4">
+                          <div class="store-status-box">
+                            <div class="store-status-title">
+                              <h5>평균영업기간</h5>
+                            </div>
+                            <div class="store-status-icon">
+                              <b-img-lazy
+                                src="https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_store_opening_hours.svg"
+                              ></b-img-lazy>
+                            </div>
+
+                            <div class="store-status-info">
+                              <p>
+                                <span class="store-status-info-label">
+                                  {{
+                                    salesRequestDto.mediumCategoryCode
+                                      | kbCategoryTransformer
+                                  }}</span
+                                >
+                                <strong
+                                  class="store-status-info-value text-value text-blue d-block"
+                                >
+                                  {{
+                                    salesResponseDto.mediumCategorySurvivalYears
+                                  }}년
+                                </strong>
+                              </p>
+                              <p>
+                                <span class="store-status-info-label"
+                                  >상권평균</span
+                                >
+                                <strong
+                                  class="store-status-info-value text-value  d-block"
+                                >
+                                  {{ salesResponseDto.survivalYears }}년
+                                </strong>
+                              </p>
+                            </div>
+                          </div>
+                        </b-col>
+                      </b-row>
+                    </div>
+                  </div>
+                </div>
+              </b-col>
+            </b-row>
+          </article>
         </div>
+        <footer>
+          <p>PICKCOOK ANALYSIS ⓒ{{ year }}</p>
+        </footer>
       </div>
     </div>
+    <div class="page">
+      <div class="page-inner">
+        <div>
+          <!-- <header>
+            <h1>매출 비중</h1>
+          </header> -->
+          <article>
+            <b-row class="row-box">
+              <b-col
+                cols="12"
+                v-if="
+                  salesRequestDto.mediumCategoryCode &&
+                    salesResponseDto.mainAge &&
+                    salesResponseDto.revenuePerOrder
+                "
+              >
+                <div class="report-card">
+                  <div class="report-card-header">
+                    <h4>상권분석 요약</h4>
+                  </div>
+                  <div class="report-card-content">
+                    <div class="bg-light p-3 rounded">
+                      <p>
+                        <strong class="text-blue">
+                          {{
+                            salesRequestDto.mediumCategoryCode
+                              | kbCategoryTransformer
+                          }}</strong
+                        >의 경우
+                        <strong class="text-blue"
+                          >{{ salesResponseDto.mainAge }}대 /
+                          {{
+                            parseInt(mainGender) | genderNumberTransformer
+                          }}</strong
+                        >의 매출이 가장 높으며,
+                        <strong class="text-blue">{{
+                          salesResponseDto.revenuePerOrder
+                        }}</strong>
+                        메뉴의 판매가 높습니다. <br />
+                        <strong class="text-blue"
+                          >{{
+                            maxRevenueWeekday | weekDayTransformer
+                          }}요일</strong
+                        >
+                        매출이 우세하며,
+                        <strong class="text-blue">{{
+                          maxRevenueHour | hourTransformer
+                        }}</strong
+                        >에 주력할 수 있는 메뉴를 도입해야 합니다.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </b-col>
+            </b-row>
+            <b-row class="row-box">
+              <b-col
+                cols="12"
+                v-if="
+                  salesResponseDto.recommendedMenu &&
+                    salesResponseDto.recommendedMenu.length > 0
+                "
+              >
+                <div class="report-card recommended-menu-card">
+                  <header class="report-card-header">
+                    <h4
+                      v-if="
+                        salesResponseDto.hdong &&
+                          salesResponseDto.hdong.hdongName
+                      "
+                    >
+                      {{ salesResponseDto.hdong.hdongName }} 추천메뉴
+                    </h4>
+                    <p>
+                      픽쿡에서는 상권의 입지, 인구, 매출, 소비패턴 등 다양한
+                      요인을 종합하여 최적의 메뉴를 추천합니다.
+                    </p>
+                  </header>
+                  <div class="report-card-content">
+                    <b-row>
+                      <b-col
+                        cols="4"
+                        v-for="(menu,
+                        index) in salesResponseDto.recommendedMenu"
+                        :key="index"
+                      >
+                        <div class="recommended-menu-box my-2">
+                          <div class="recommended-menu-img">
+                            <b-img-lazy
+                              :src="
+                                `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/${menu.sSmallCategoryCode}.jpg`
+                              "
+                            ></b-img-lazy>
+                          </div>
+                          <div class="recommended-menu-info">
+                            <p>
+                              추천지수
+                              <strong class="text-blue"
+                                >{{ menu.averageScore }}%</strong
+                              >
+                            </p>
+                            <h5>{{ menu.pkMenuName }}</h5>
+                            <div>
+                              <span class="badge bg-blue" v-if="index === 0"
+                                >최고적합률</span
+                              >
+                              <span class="badge">{{
+                                menu.pkMediumCategoryName
+                              }}</span>
+                              <span class="badge">{{
+                                menu.pkSmallCategoryName
+                              }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </b-col>
+                    </b-row>
+                  </div>
+                </div>
+              </b-col>
+            </b-row>
+            <b-row class="row-box">
+              <b-col cols="12" v-if="salesResponseDto.recommendMenuHdong">
+                <div class="report-card">
+                  <header class="report-card-header">
+                    <h4>반경 3km이내의 추천 메뉴</h4>
+                    <p>
+                      해당 행정동에서는 전체적으로
+                      <strong class="text-blue">{{
+                        salesResponseDto.mainHourHdong | hourTransformer
+                      }}</strong
+                      >시간대
+                      <strong class="text-blue">{{
+                        salesResponseDto.mainGenderHdong
+                          | genderNumberTransformer
+                      }}</strong
+                      >의
+                      <strong class="text-blue">{{
+                        salesResponseDto.mainAgeHdong
+                      }}</strong
+                      >매출이 높습니다. <br />
+                      이와 반경 3KM내에서 해당 소비층은
+                      <strong class="text-blue">
+                        {{
+                          Object.values(
+                            salesResponseDto.recommendMenuHdong,
+                          ).join(',')
+                        }} </strong
+                      >를 주로 소비합니다.
+                    </p>
+                  </header>
+                  <div class="report-card-content">
+                    <div class="pickcook-menu-list">
+                      <div
+                        v-for="(menu, index) in recommendMenuHdong"
+                        :key="index"
+                      >
+                        <div class="pickcook-menu-box">
+                          <div class="pickcook-menu-img text-center">
+                            <b-img-lazy
+                              :src="
+                                `https://kr.object.ncloudstorage.com/common-storage-pickcook/menu/pickcook_${menu}.png`
+                              "
+                            ></b-img-lazy>
+                          </div>
+                          <div>
+                            <div class="text-center">
+                              <span class="badge">{{ index + 1 }}위</span>
+                              <p class="text-value mt-2">{{ menu }}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </b-col>
+            </b-row>
+          </article>
+        </div>
+        <footer>
+          <p>PICKCOOK ANALYSIS ⓒ{{ year }}</p>
+        </footer>
+      </div>
+    </div>
+    <div class="page">
+      <div class="page-inner">
+        <div>
+          <!-- <header>
+            <h1>매출 비중</h1>
+          </header> -->
+          <article>
+            <b-row v-if="consultBaeminReport" class="row-box">
+              <b-col cols="12">
+                <div class="report-card">
+                  <div class="report-card-header" v-if="salesResponseDto.hdong">
+                    <h4>{{ salesResponseDto.hdong.hdongName }} 배달현황</h4>
+                  </div>
+                  <div class="report-card-content">
+                    <p>
+                      <template v-if="consultBaeminReport.baeminCategoryCode">
+                        <strong class="text-blue">{{
+                          consultBaeminReport.baeminCategoryCode
+                            | baeminCategoryTransformer
+                        }}</strong>
+                        업종의 경우
+                      </template>
+                      <strong class="text-blue">{{ computedMainGagu }}</strong>
+                      에서 주로 주문하며, 6개월
+                      <strong class="text-blue"
+                        >평균
+                        {{
+                          consultBaeminReport.averageOrderRate
+                            | numeralTransformer
+                        }}
+                        건의 주문수</strong
+                      >를 보입니다. 상권 내
+                      <strong class="text-blue"
+                        >배달팁의 적정 금액은
+                        {{
+                          consultBaeminReport.averageDeliveryTip
+                            | numeralTransformer
+                        }}원</strong
+                      >이며, 맛집 랭킹에 들어가기 위해서는
+                      <strong class="text-blue"
+                        >최소
+                        {{
+                          consultBaeminReport.averageLikeRate
+                            | numeralTransformer
+                        }}개 이상의 찜</strong
+                      >이 필요합니다.
+                    </p>
+                    <b-row class="mt-4">
+                      <b-col cols="4">
+                        <div class="baemin-info-box average-score">
+                          <div>
+                            <h5 class="baemin-info-label">
+                              평점
+                            </h5>
+                            <p class="baemin-info-value">
+                              <strong>{{
+                                consultBaeminReport.averageScore
+                                  ? consultBaeminReport.averageScore
+                                  : 0
+                              }}</strong>
+                            </p>
+                          </div>
+                        </div>
+                      </b-col>
+                      <b-col cols="4">
+                        <div class="baemin-info-box average-order-rate">
+                          <div>
+                            <h5 class="baemin-info-label">
+                              평균 주문수 <span>6개월 합산</span>
+                            </h5>
+                            <p class="baemin-info-value">
+                              <strong>{{
+                                consultBaeminReport.averageOrderRate
+                                  | numeralTransformer
+                              }}</strong>
+                            </p>
+                          </div>
+                        </div>
+                      </b-col>
+                      <b-col cols="4">
+                        <div class="baemin-info-box average-monthly-order-rate">
+                          <div>
+                            <h5 class="baemin-info-label">
+                              월 평균 주문수
+                            </h5>
+                            <p class="baemin-info-value">
+                              <strong>{{
+                                consultBaeminReport.averageMonthlyOrderRate
+                                  | numeralTransformer
+                              }}</strong>
+                            </p>
+                          </div>
+                        </div>
+                      </b-col>
+                      <b-col cols="4">
+                        <div class="baemin-info-box minimum-order-price">
+                          <div>
+                            <h5 class="baemin-info-label">
+                              최소 주문금액
+                            </h5>
+                            <p class="baemin-info-value">
+                              <strong>{{
+                                consultBaeminReport.minimumOrderPrice
+                                  | numeralTransformer
+                              }}</strong>
+                            </p>
+                          </div>
+                        </div>
+                      </b-col>
+                      <b-col cols="4">
+                        <div class="baemin-info-box average-delivery-tip">
+                          <div>
+                            <h5 class="baemin-info-label">
+                              배달팁
+                            </h5>
+                            <p class="baemin-info-value">
+                              <strong>{{
+                                consultBaeminReport.averageDeliveryTip
+                                  | numeralTransformer
+                              }}</strong>
+                            </p>
+                          </div>
+                        </div>
+                      </b-col>
+                      <b-col cols="4">
+                        <div class="baemin-info-box average-like-count">
+                          <div>
+                            <h5 class="baemin-info-label">
+                              찜 수
+                            </h5>
+                            <p class="baemin-info-value">
+                              <strong>{{
+                                consultBaeminReport.averageLikeRate
+                                  | numeralTransformer
+                              }}</strong>
+                            </p>
+                          </div>
+                        </div>
+                      </b-col>
+                    </b-row>
+                  </div>
+                </div>
+              </b-col>
+            </b-row>
+            <div class="row-box">
+              <div class="report-card">
+                <div class="report-card-header">
+                  <h4 contenteditable>종합 의견</h4>
+                </div>
+                <div class="report-card-content">
+                  <div class="bg-light p-3" contenteditable></div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+        <footer>
+          <p>PICKCOOK ANALYSIS ⓒ{{ year }}</p>
+        </footer>
+      </div>
+    </div>
+    <!-- <div class="text-center mb-4 d-print-none">
+      <b-btn
+        variant="dark"
+        size="lg"
+        @click="generateReport()"
+        class="d-print-none txt-white"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-printer"
+          viewBox="0 0 16 16"
+        >
+          <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z" />
+          <path
+            d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"
+          />
+        </svg>
+        <span class="ml-2">프린트</span>
+      </b-btn>
+    </div> -->
   </div>
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
+import {
+  BaeminReportDto,
+  ConsultResponseV3Dto,
+  SalesRequestDto,
+  SalesResponseDto,
+} from '@/dto';
+import {
+  CONST_KB_MEDIUM_CATEGORY,
+  CONST_STORE_TYPE,
+  KB_MEDIUM_CATEGORY,
+  KB_MEDIUM_CATEGORY_KOREAN,
+  STORE_TYPE,
+} from '@/services/shared';
 import { Component } from 'vue-property-decorator';
+import RevenueChart from '../add-on/RevenueChart.vue';
+import DoughnutChart from '../add-on/DoughnutChart.vue';
+import BarChart from '../add-on/BarChart.vue';
+import ProformaCalculator from '../add-on/ProformaCalculator.vue';
+
 import ConsultResponseV3Service from '@/services/pickcook/consult-response-v3.service';
-import { ConsultResponseV3Dto, SalesRequestDto, SalesResponseDto } from '@/dto';
-import ApexLineChart from '../add-on/LineChart.vue';
-import ApexMixedChart from '../add-on/MixedChart.vue';
-import ApexPieChart from '../add-on/PieChart.vue';
+import toast from '../../../../../resources/assets/js/services/toast.js';
 
 @Component({
   name: 'ConsultReportPrint',
   components: {
-    ApexLineChart,
-    ApexMixedChart,
-    ApexPieChart,
+    RevenueChart,
+    DoughnutChart,
+    BarChart,
+    ProformaCalculator,
   },
 })
 export default class ConsultReportPrint extends BaseComponent {
-  declare $refs: any;
+  generateReport() {
+    window.print();
+  }
 
-  private plotlyLayout = {
-    margin: {
-      l: 50,
-      r: 50,
-      b: 50,
-      t: 50,
-      pad: 4,
-    },
-    showtitle: false,
-    showlegend: true,
-    legend: {
-      orientation: 'h',
-    },
-  };
+  private today = new Date();
+  private year: number = this.today.getFullYear();
+  private month: number = this.today.getMonth() + 1;
+  private day: number = this.today.getDate();
 
-  private plotlyData = [
+  // 사이드 탭
+  private activeTab = 'chart';
+  private sideNavTabs = [
     {
-      x: [0, 1, 2, 3, 4],
-      y: [1, 5, 3, 7, 5],
-      mode: 'lines+markers',
-      type: 'scatter',
+      id: 'chart',
+      name: '상권분석',
+      icon: 'chart',
+      active: true,
     },
     {
-      x: [1, 2, 3, 4, 5],
-      y: [4, 0, 4, 6, 8],
-      mode: 'lines+markers',
-      type: 'scatter',
+      id: 'delivery',
+      name: '배달현황분석',
+      icon: 'delivery',
+      active: false,
+    },
+    {
+      id: 'files01',
+      name: '신규창업자',
+      icon: 'files',
+      active: false,
+    },
+    {
+      id: 'files02',
+      name: '기창업자',
+      icon: 'files',
+      active: false,
+    },
+    {
+      id: 'calculator',
+      name: '상품안내',
+      icon: 'calculator',
+      active: false,
     },
   ];
 
-  private plotlyOptions = {
-    editable: false,
-    displayModeBar: false,
-    showEditInChartStudio: false,
-    staticPlot: true,
-    responsive: true,
-  };
+  private isLoading = false;
 
-  private mixedSeries = [
-    {
-      name: '여성',
-      type: 'column',
-      data: [20, 30, 60, 70, 40, 10],
-    },
-    {
-      name: '남성',
-      type: 'column',
-      data: [15, 20, 40, 60, 70, 30],
-    },
-    {
-      name: '전체',
-      type: 'line',
-      data: [20, 29, 60, 80, 35, 20],
-    },
-  ];
+  onSideTabClick(tabId: string): void {
+    this.isLoading = true;
+    this.activeTab = tabId;
+    if (tabId === 'delivery') this.getBaeminData();
+    this.goTop();
+  }
 
-  private mixedOptions = {
-    xaxis: {
-      categories: ['10대', '20대', '30대', '40대', '50대', '60대 이상'],
-    },
-    yaxis: {},
-    fill: {
-      colors: ['#f26360', '#0080c6', '#f9a74a'],
-    },
-    stroke: {
-      colors: ['#f26360', '#0080c6', '#f9a74a'],
-      width: [0, 0, 4],
-    },
-    markers: {
-      size: 6,
-      colors: '#f9a74a',
-      strokeColors: '#fff',
-      strokeWidth: 3,
-    },
-
-    legend: {
-      markers: {
-        fillColors: ['#f26360', '#0080c6', '#f9a74a'],
-      },
-    },
-    dataLabels: {
-      enabled: true,
-      enabledOnSeries: [0, 1],
-      background: false,
-      style: {
-        colors: ['#fff'],
-      },
-      formatter: function(val, opts) {
-        return val;
-      },
-    },
-    plotOptions: {
-      bar: {
-        dataLabels: {
-          position: 'bottom',
+  // 픽쿡 상품
+  private pickcookLite = [
+    {
+      title: '레시피',
+      name: 'recipe',
+      items: [
+        {
+          id: 'recipe01',
+          name: '레시피 및 조리영상 제공&물류연결',
+          price: 1188000,
         },
-      },
-    },
-  };
-
-  private lineSeries = [
-    {
-      name: '여성',
-      data: [20, 30, 60, 70, 40, 10],
+      ],
     },
     {
-      name: '남성',
-      data: [15, 20, 40, 60, 70, 30],
+      title: '메뉴교육',
+      name: 'menu',
+      // type: 'radio',
+      items: [
+        {
+          id: 'menu01',
+          name: '현장실습',
+          price: 300000,
+        },
+        {
+          id: 'menu02',
+          name: '방문교육 (교통비 실비 별도)',
+          price: 300000,
+        },
+      ],
     },
     {
-      name: '전체',
-      data: [20, 29, 60, 80, 35, 20],
+      title: '배달앱관리',
+      name: 'delivery_app',
+      items: [
+        {
+          id: 'deliveryApp01',
+          name: '배달 앱 등록 (배민, 쿠팡, 요기요 등)',
+          price: 100000,
+        },
+        {
+          id: 'deliveryApp02',
+          name: '로고, 사진, 브랜드 제공',
+          price: 0,
+        },
+        {
+          id: 'deliveryApp03',
+          name: '배달앱 컨설팅 (리뷰이벤트, 깃발 등)',
+          price: 200000,
+        },
+      ],
+    },
+    {
+      title: '디자인물',
+      name: 'design',
+      items: [
+        {
+          id: 'designApp01',
+          name: '스티커, 메모지, 자석전단지',
+          price: 100000,
+        },
+      ],
     },
   ];
 
-  private lineOptions = {
-    xaxis: {
-      categories: ['10대', '20대', '30대', '40대', '50대', '60대 이상'],
+  private pickcookPremium = [
+    {
+      title: '레시피',
+      name: 'recipe',
+      items: [
+        {
+          id: 'premium-recipe01',
+          name: '레시피 및 조리영상 제공&물류연결',
+          price: 1188000,
+        },
+      ],
     },
-  };
-
-  private donutSeries = [44, 55, 41, 17, 15];
-  private donutOptions = {
-    labels: ['Apple', 'Mango', 'Orange', 'Watermelon'],
-    plotOptions: {
-      pie: {
-        customScale: 0.8,
-      },
+    {
+      title: '메뉴교육',
+      name: 'menu',
+      // type: 'radio',
+      items: [
+        {
+          id: 'premium-menu01',
+          name: '현장실습',
+          price: 300000,
+        },
+        {
+          id: 'premium-menu02',
+          name: '방문교육 (교통비 실비 별도)',
+          price: 300000,
+        },
+      ],
     },
-  };
+    {
+      title: '배달앱관리',
+      name: 'delivery_app',
+      items: [
+        {
+          id: 'premium-deliveryApp01',
+          name: '배달 앱 등록 (배민, 쿠팡, 요기요 등)',
+          price: 100000,
+        },
+        {
+          id: 'premium-deliveryApp02',
+          name: '로고, 사진, 브랜드 제공',
+          price: 0,
+        },
+        {
+          id: 'premium-deliveryApp03',
+          name: '배달앱 컨설팅 (리뷰이벤트, 깃발 등)',
+          price: 200000,
+        },
+      ],
+    },
+    {
+      title: '디자인물',
+      name: 'design',
+      items: [
+        {
+          id: 'premium-designApp01',
+          name: '스티커, 메모지, 자석전단지',
+          price: 100000,
+        },
+        {
+          id: 'premium-designApp02',
+          name: '간판',
+          price: 500000,
+        },
+        {
+          id: 'premium-designApp03',
+          name: '외벽시트지',
+          price: 200000,
+        },
+        {
+          id: 'premium-designApp04',
+          name: 'X 배너',
+          price: 100000,
+        },
+      ],
+    },
+  ];
 
+  // sales data
   private salesRequestDto = new SalesRequestDto();
   private salesResponseDto: any = new SalesResponseDto();
-  private consultResponseV3Dto = new ConsultResponseV3Dto();
-  private map;
-  private reportAddress = '서울시 노원구 공릉1동';
 
-  // 상권매출현황 차트
-  private revenueData = [];
-  // 매출 분석 차트
-  private revenueChartData = {
-    labels: ['', '최저매출', '평균매출', '최고매출', ''],
+  // 반경내 추천메뉴
+  private recommendMenuHdong = [];
+
+  // 창업 업종
+  private kbMediumCategories: KB_MEDIUM_CATEGORY[] = [
+    ...CONST_KB_MEDIUM_CATEGORY,
+  ];
+
+  // 창업 유형
+  private storeTypes: STORE_TYPE[] = [...CONST_STORE_TYPE];
+
+  // 업종별 매출 비율
+  private mediumCategoryRank = 0;
+  private kbCategoryRevenueChartData = {
     datasets: [
       {
-        pointRadius: [0, 5, 10, 5, 0],
-        pointHoverRadius: [0, 5, 20, 5, 0],
-        pointBackgroundColor: [
-          'rgba(50,127,227,1)',
-          'rgba(50,127,227,1)',
-          'rgba(255,255,255,1)',
-          'rgba(50,127,227,1)',
-          'rgba(50,127,227,1)',
+        backgroundColor: [
+          '#00B1FF',
+          '#79FEDD',
+          '#4FD0E4',
+          '#E4EBF2',
+          '#C9D7E4',
+          '#AFC3D7',
+          '#AFC3D7',
+          '#AFC3D7',
+          '#AFC3D7',
+          '#AFC3D7',
+          '#AFC3D7',
         ],
-        borderWidth: 3,
       },
     ],
   };
+  // 연령별
+  get computedAgeRatio() {
+    const obj = this.salesResponseDto.ageRatio;
+    const arr = [];
+    let newObj = {};
+    for (const prop in obj) arr.push([prop, obj[prop]]);
+    const temp = arr[4];
+    arr.unshift(temp);
+    const entries = new Map(arr);
+    newObj = Object.fromEntries(entries);
+    return newObj;
+  }
+
+  // 시갠대별
+  get computedHourRevenueRatio() {
+    const obj = this.salesResponseDto.hourRevenueRatio;
+    const arr = [];
+    let newObj = {};
+    for (const prop in obj) arr.push([prop, obj[prop]]);
+    const temp = arr[2];
+    arr.unshift(temp);
+    const entries = new Map(arr);
+    newObj = Object.fromEntries(entries);
+    return newObj;
+  }
+
+  // 주 소비층
+  get computedMainGagu() {
+    if (this.salesResponseDto.mainGagu === 1) {
+      return '1~2인 가구';
+    } else {
+      return '3~4인 가구';
+    }
+  }
+
+  // 주 연령대
+  get computedMainAgeGroup() {
+    if (this.salesResponseDto.mainAgeGroup === 2) {
+      return '20~40대';
+    } else {
+      return '30~50대';
+    }
+  }
 
   // 주 소비층 차트
   private mainGaguChartData = {
@@ -452,6 +1578,186 @@ export default class ConsultReportPrint extends BaseComponent {
     return colorData;
   }
 
+  // 주 연령대 차트
+  private mainAgeGroupChartData = {
+    datasets: [
+      {
+        backgroundColor: [],
+      },
+    ],
+  };
+
+  get computedMainAgeGroupBackgroundColor() {
+    const arr = [];
+    Object.values(this.salesResponseDto.ageRatio).map((e, index) => {
+      arr.push(
+        `rgba(100,132,163, ${(index + 1) /
+          Object.values(this.salesResponseDto.ageRatio).length})`,
+      );
+    });
+    return arr;
+  }
+
+  get computedMainAgeGroupLabelColor() {
+    const rankColorArr = ['#00B1FF', '#79FEDD', '#4FD0E4'];
+    let colorData = [];
+    let rankData = [];
+    colorData = [...this.computedMainAgeGroupBackgroundColor];
+    if (this.salesResponseDto.mainAgeGroup === 2) {
+      rankData = [2, 3, 4];
+    } else {
+      rankData = [3, 4, 5];
+    }
+    colorData.map((e, index) => {
+      colorData[rankData[index] - 1] = rankColorArr[index];
+    });
+    return colorData;
+  }
+
+  // 요일별 매출 비율 차트
+  private maxRevenueWeekday: any = '';
+
+  // 시간대별 매출 비율 차트
+  private maxRevenueHour: any = '';
+
+  // 매출 분석 차트
+  private revenueChartData = {
+    labels: ['', '최저매출', '평균매출', '최고매출', ''],
+    datasets: [
+      {
+        pointRadius: [0, 5, 10, 5, 0],
+        pointHoverRadius: [0, 5, 20, 5, 0],
+        pointBackgroundColor: [
+          'rgba(50,127,227,1)',
+          'rgba(50,127,227,1)',
+          'rgba(255,255,255,1)',
+          'rgba(50,127,227,1)',
+          'rgba(50,127,227,1)',
+        ],
+        borderWidth: 3,
+      },
+    ],
+  };
+
+  // 상권매출현황 차트
+  private revenueData = [];
+
+  // 성별 매출비중
+  private mainGender: any = 0;
+
+  // 배달의민족 상세현황
+  private consultBaeminReport = new BaeminReportDto();
+
+  // 지도 가져오기
+  private map;
+  private reportAddress = '';
+  private consultResponseV3Dto = new ConsultResponseV3Dto();
+  private mediumCategoryRevenueLabel = [];
+  private mediumCategoryRevenueValue = [];
+
+  getSalesData() {
+    ConsultResponseV3Service.getSalesData(this.salesRequestDto).subscribe(
+      res => {
+        if (res) {
+          this.salesResponseDto = res.data;
+
+          if (this.salesResponseDto) {
+            // 행정동 주소
+            this.reportAddress = `${this.salesResponseDto.hdong.sidoName} ${this.salesResponseDto.hdong.guName} ${this.salesResponseDto.hdong.hdongName}`;
+
+            // 행정동 추천 메뉴
+            this.recommendMenuHdong = [
+              ...Object.values(res.data.recommendMenuHdong),
+            ];
+
+            //상권매출현황 차트 데이터
+            this.revenueData = [
+              0,
+              +this.salesResponseDto.minRevenue,
+              +this.salesResponseDto.medianRevenue,
+              +this.salesResponseDto.maxRevenue,
+              parseInt(this.salesResponseDto.maxRevenue) +
+                parseInt(this.salesResponseDto.maxRevenue) / 2,
+            ];
+
+            // 요일별 매출 분석
+            const weekDayRatioObj = this.salesResponseDto.weekDayRevenueRatio;
+            this.maxRevenueWeekday = Object.keys(weekDayRatioObj).reduce(
+              (a: string, b: string) => {
+                return weekDayRatioObj[a] > weekDayRatioObj[b] ? a : b;
+              },
+            );
+
+            // 시간대별 매출 분석
+            const maxHourRatioObj = this.salesResponseDto.hourRevenueRatio;
+            this.maxRevenueHour = Object.keys(maxHourRatioObj).reduce(
+              (a: string, b: string) => {
+                return maxHourRatioObj[a] > maxHourRatioObj[b] ? a : b;
+              },
+            );
+
+            // 성별 매출 분석
+            const maxGenderRatioObj = this.salesResponseDto
+              .mediumCategoryGenderRevenueRatio;
+            this.mainGender = Object.keys(maxGenderRatioObj).reduce(
+              (a: string, b: string) => {
+                return maxGenderRatioObj[a] > maxGenderRatioObj[b] ? a : b;
+              },
+            );
+
+            // 업종 매출 순위
+
+            const mediumCategoryRevenueRatio = this.salesResponseDto
+              .mediumCategoryRevenueRatio;
+
+            let sortArr: any[] = [...Object.values(mediumCategoryRevenueRatio)];
+            const keysArr = [...Object.keys(mediumCategoryRevenueRatio)];
+            const findIdx = keysArr.findIndex(
+              e => e === this.salesResponseDto.mediumCategoryCode,
+            );
+            const sorted = sortArr.slice().sort((a: number, b: number) => {
+              return b - a;
+            });
+            sortArr = sortArr.slice().map(e => {
+              return sorted.indexOf(e) + 1;
+            });
+            this.mediumCategoryRank = parseInt(sortArr[findIdx]);
+
+            //kb 중분류 코드에서 한글로 변경
+            const tempObj = {};
+            const tempArr = [];
+            Object.keys(mediumCategoryRevenueRatio).map(e => {
+              tempObj[KB_MEDIUM_CATEGORY_KOREAN[e]] =
+                mediumCategoryRevenueRatio[e];
+            });
+
+            Object.keys(tempObj).map(e => {
+              tempArr.push({ categoryName: e, value: tempObj[e] });
+            });
+
+            tempArr.sort((a, b) => {
+              return b.value - a.value;
+            });
+            this.mediumCategoryRevenueLabel = [];
+            this.mediumCategoryRevenueValue = [];
+            tempArr.map(e => {
+              this.mediumCategoryRevenueLabel.push(e.categoryName);
+            });
+            tempArr.map(e => {
+              this.mediumCategoryRevenueValue.push(e.value);
+            });
+            this.$set(
+              this.salesResponseDto,
+              'mediumCategoryRevenueRatio',
+              tempObj,
+            );
+          }
+          this.setMap();
+        }
+      },
+    );
+  }
+
   getConsultData(id) {
     ConsultResponseV3Service.findOne(id).subscribe(res => {
       if (res) {
@@ -462,31 +1768,18 @@ export default class ConsultReportPrint extends BaseComponent {
           this.salesRequestDto.mediumCategoryCode =
             res.data.consultBaeminReport.mediumCategoryCode;
           this.getSalesData();
+          this.getBaeminData();
         }
       }
     });
   }
 
-  getSalesData() {
-    ConsultResponseV3Service.getSalesData(this.salesRequestDto).subscribe(
-      res => {
-        if (res) {
-          this.salesResponseDto = res.data;
-
-          if (this.salesResponseDto) {
-            //상권매출현황 차트 데이터
-            this.revenueData = [
-              0,
-              +this.salesResponseDto.minRevenue,
-              +this.salesResponseDto.medianRevenue,
-              +this.salesResponseDto.maxRevenue,
-              parseInt(this.salesResponseDto.maxRevenue) +
-                parseInt(this.salesResponseDto.maxRevenue) / 2,
-            ];
-          }
-        }
-      },
-    );
+  getBaeminData() {
+    ConsultResponseV3Service.findOne(this.$route.params.id).subscribe(res => {
+      if (res) {
+        this.consultBaeminReport = res.data.consultBaeminReport;
+      }
+    });
   }
 
   // 지도 가져오기
@@ -496,7 +1789,6 @@ export default class ConsultReportPrint extends BaseComponent {
     const callback = function(result, status) {
       if (status === window.kakao.maps.services.Status.OK) {
         const mapContainer = document.getElementById('map');
-        if (!mapContainer) return;
         const mapOption = {
           center: new window.kakao.maps.LatLng(result[0].y, result[0].x),
           level: 5,
@@ -527,7 +1819,7 @@ export default class ConsultReportPrint extends BaseComponent {
           fillColor: '#4CB0F8',
           fillOpacity: 0.3,
         });
-        circle.setRadius(700);
+        circle.setRadius(800);
         circle.setMap(map);
         customOverlay.setMap(map);
       }
@@ -545,35 +1837,32 @@ export default class ConsultReportPrint extends BaseComponent {
           this.salesRequestDto.hdongCode = +results[0].address.h_code;
         }
       } else {
-        // toast.error('다른 주소로 선택해주세요');
+        toast.error('다른 주소로 선택해주세요');
       }
     };
     geocoder.addressSearch(res.address, callback);
     this.$bvModal.hide('postcode');
   }
 
-  generateReport() {
-    window.print();
+  showAddressModal() {
+    this.$bvModal.show('postcode');
+  }
+
+  goTop() {
+    this.$nextTick(() => {
+      // this.$refs.report.scrollTop = 0;
+      const top = this.$refs.report.getBoundingClientRect().top;
+      window.scrollTo(0, top);
+    });
   }
 
   created() {
-    this.getConsultData(this.$route.params.id);
-    this.setMap();
+    const id = this.$route.params.id;
+    this.getConsultData(id);
   }
 }
 </script>
 <style lang="scss">
-/* reset */
-.chart-container {
-  max-width: 100%;
-  canvas {
-    min-height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    height: auto !important;
-    width: auto !important;
-  }
-}
 * {
   border: 0;
   box-sizing: border-box;
@@ -605,15 +1894,19 @@ export default class ConsultReportPrint extends BaseComponent {
 
 /* heading */
 
-header {
-  text-align: left;
-  border-bottom: 2px solid #004d8a;
-  color: #004d8a;
-  padding-bottom: 1em;
-  margin-bottom: 1em;
-  h1 {
-    font-weight: bold;
-    font-size: 16pt;
+.page-inner {
+  > div {
+    > header {
+      text-align: left;
+      border-bottom: 2px solid #004d8a;
+      color: #004d8a;
+      padding-bottom: 1em;
+      margin-bottom: 1em;
+      h1 {
+        font-weight: bold;
+        font-size: 16pt;
+      }
+    }
   }
 }
 
@@ -677,12 +1970,13 @@ body {
   }
 
   &.cover {
-    background-color: #004d8a;
+    background-color: #fff;
 
     header {
       margin-top: 1.25in;
-      color: #fff;
+      color: #004d8a;
       text-align: center;
+      border: 0;
       h1 {
         font-size: 24pt;
         background: transparent;
@@ -698,19 +1992,20 @@ body {
         text-align: center;
         padding-top: 1em;
         font-size: 12px;
-        border-top: 1px solid rgba(255, 255, 255, 0.5);
-        color: #fff;
+        border-top: 1px solid #6c8fb7;
+        color: #004d8a;
         letter-spacing: 2em;
         padding-left: 2em;
       }
     }
     address {
       margin-top: 0.25in;
-      color: #fff;
+      color: #004d8a;
       text-align: center;
       p {
         font-size: 16pt;
         line-height: 1.8;
+        font-weight: bold;
         span {
           position: relative;
           display: inline-block;
@@ -725,20 +2020,21 @@ body {
             content: '';
             width: 2px;
             height: 0.5em;
-            background: rgba(255, 255, 255, 0.5);
+            background: #6c8fb7;
           }
         }
       }
     }
     footer {
-      color: #fff;
+      color: #004d8a;
       bottom: 0.25in;
+      font-weight: bold;
       .date {
         font-size: 16pt;
       }
     }
     .page-inner {
-      border: 2px solid #fff;
+      border: 2px solid #004d8a;
     }
   }
 
@@ -774,6 +2070,511 @@ article address {
 section {
   + section {
     margin-top: 3em;
+  }
+}
+
+/* reset */
+.chart-container {
+  max-width: 100%;
+  canvas {
+    min-height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    height: auto !important;
+    width: auto !important;
+  }
+}
+
+#print {
+  color: #707070;
+  * {
+    word-break: keep-all;
+  }
+
+  #map {
+    width: 100%;
+    min-height: 300px;
+    height: calc(100%);
+  }
+  .map-hdong-name {
+    display: inline-block;
+    padding: 6px 12px;
+    position: absolute;
+    left: 32px;
+    top: 32px;
+    background: #007eeb;
+    border-radius: 60px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 7px 9px rgba(195, 195, 195, 0.16);
+  }
+
+  .report-card {
+    background-color: #fff;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    &.no-body {
+      padding: 0;
+    }
+    + .report-card {
+      margin-top: 32px;
+    }
+    &.h-half {
+      height: calc(50% - 16px);
+    }
+    .report-card-header {
+      h4 {
+        font-size: 18px;
+        color: #000000;
+        font-weight: 700;
+        line-height: 1;
+        span {
+          display: inline-block;
+          font-size: 12px;
+          color: #707070;
+          margin-left: 8px;
+        }
+        + p {
+          margin-top: 12px;
+        }
+      }
+      + .report-card-content {
+        margin-top: 24px;
+      }
+    }
+
+    .report-card-content {
+      .badge {
+        display: inline-block;
+        border: 0;
+        background: #e4ebf2;
+        border-radius: 20px;
+        font-size: 12px;
+        padding: 8px 16px;
+        color: #000;
+        font-weight: 400;
+      }
+      .text-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: #707070;
+      }
+      .col-form-label {
+        font-size: 12px;
+      }
+      .form-control,
+      .custom-select {
+        border: 0;
+        border-bottom: 2px solid #004d8a;
+        border-radius: 0;
+        background: none;
+      }
+    }
+  }
+  //
+  .baemin-info-box {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 32px;
+    margin: 14px 0;
+    > div {
+      background-repeat: no-repeat;
+      background-position: right center;
+      background-size: auto 80px;
+    }
+
+    &.average-score > div {
+      background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_baemin_score.svg');
+    }
+
+    &.average-order-rate > div {
+      background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_baemin_order.svg');
+    }
+
+    &.average-monthly-order-rate > div {
+      background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_baemin_order.svg');
+    }
+
+    &.minimum-order-price > div {
+      background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_baemin_tip.svg');
+    }
+
+    &.average-delivery-tip > div {
+      background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_baemin_delivery.svg');
+    }
+
+    &.average-like-count > div {
+      background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_baemin_like.svg');
+    }
+
+    .baemin-info-label {
+      font-size: 16px;
+      color: #000;
+      font-weight: 500;
+      span {
+        font-size: 12px;
+      }
+    }
+    .baemin-info-value {
+      margin-top: 32px;
+      strong {
+        font-size: 24px;
+        font-weight: 700;
+        color: #007eeb;
+      }
+    }
+  }
+
+  //
+  .recommended-menu-card {
+    [class*='col-'] {
+      &:nth-child(1) {
+        .recommended-menu-info {
+          &:after {
+            background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_rank_01.svg');
+          }
+        }
+      }
+      &:nth-child(2) {
+        .recommended-menu-info {
+          &:after {
+            background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_rank_02.svg');
+          }
+        }
+      }
+      &:nth-child(3) {
+        .recommended-menu-info {
+          &:after {
+            background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_rank_03.svg');
+          }
+        }
+      }
+    }
+  }
+  .recommended-menu-box {
+    position: relative;
+    display: flex;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    overflow: hidden;
+    .recommended-menu-img {
+      position: relative;
+      width: 40%;
+      padding-bottom: 46.25%;
+
+      img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    .recommended-menu-info {
+      position: relative;
+      width: 60%;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 16px 0 16px 16px;
+      &:after {
+        display: block;
+        content: '';
+        width: 42px;
+        height: 46px;
+        background-repeat: no-repeat;
+        background-position: right top;
+        background-size: contain;
+        position: absolute;
+        right: 16px;
+        top: 0;
+      }
+      .badge {
+        background-color: #c9d7e4;
+        margin-right: 0.5em;
+        margin-bottom: 0.25em;
+        font-size: 12px;
+        padding: 0.5em 0.75em;
+      }
+      h5 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #000;
+        margin: 8px 0 16px;
+        line-height: 1;
+      }
+      p {
+        font-size: 14px;
+        color: #000;
+        line-height: 1;
+      }
+    }
+  }
+  //
+  .pickcook-menu-list {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    .pickcook-menu-box {
+      display: flex;
+      align-items: center;
+      .pickcook-menu-img {
+        max-width: 180px;
+      }
+    }
+  }
+
+  //
+  .store-status-list {
+    height: 100%;
+    .report-card-content {
+      height: inherit;
+      > .row {
+        height: inherit;
+        > [class*='col-'] {
+          .report-card-content {
+            height: inherit;
+          }
+        }
+      }
+    }
+  }
+
+  .store-status-box {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .store-status-title {
+      h5 {
+        color: #000000;
+        font-weight: 500;
+        font-size: 16px;
+      }
+    }
+    .store-status-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100px;
+      border-radius: 8px;
+      background-color: #f0f7fc;
+      img {
+        max-height: 40px;
+      }
+    }
+    .store-status-info {
+      display: flex;
+      flex-wrap: wrap;
+      .store-status-info-label {
+        font-size: 12px;
+      }
+      > p {
+        text-align: left;
+        width: 50%;
+        + p {
+          border-left: 1px solid #c9c9c9;
+          padding-left: 10px;
+          text-align: right;
+        }
+      }
+    }
+  }
+
+  //
+  .horizontal-stacked-bar-charts {
+    display: flex;
+    height: 40px;
+    .horizontal-stacked-bar {
+      width: 100%;
+      height: 100%;
+      &.bar-restaurant {
+        background: #79fedd;
+      }
+      &.bar-delivery {
+        background: #00b1ff;
+      }
+    }
+  }
+  //
+  .consumption-pattern-labels {
+    text-align: center;
+    padding: 0 0.5em;
+    &.label-restaurant {
+      text-align: left;
+    }
+    &.label-delivery {
+      text-align: right;
+    }
+    .consumption-pattern-label {
+      display: block;
+      font-size: 14px;
+    }
+    .consumption-pattern-value {
+      font-size: 24px;
+      &.value-restaurant {
+        color: #79fedd;
+      }
+      &.value-delivery {
+        color: #00b1ff;
+      }
+    }
+  }
+  //
+  .legend-label-list {
+    > p {
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      margin-right: 8px;
+    }
+    .legend-label-point {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .legend-label-text {
+      font-size: 12px;
+      margin-left: 8px;
+    }
+
+    .legend-label-value {
+      font-size: 13px;
+      margin-left: 10px;
+      font-weight: 500;
+    }
+  }
+  //
+  .consumption-pattern-delivery {
+    .consumption-pattern-delivery-icon {
+      text-align: center;
+      img {
+        max-width: 180px;
+      }
+    }
+    .consumption-pattern-delivery-text {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-left: 1px solid #c9c9c9;
+      text-align: center;
+      height: 100%;
+      h5 {
+        color: #000000;
+        font-size: 18px;
+      }
+      p {
+        color: #007eeb;
+        font-size: 48px;
+        font-weight: 800;
+      }
+    }
+  }
+
+  // gender graph
+  .gender-graph-list {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .gender-graph-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin: 0 auto;
+    .gender-graph {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      width: 80px;
+      height: 170px;
+      margin: 0 12px;
+      background-color: #e4ebf2;
+      &:after {
+        display: block;
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        z-index: 1;
+      }
+      .graph-value {
+        width: 100%;
+      }
+      &.gender-female {
+        .graph-value {
+          background-color: #79fedd;
+        }
+        &:after {
+          background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_gender_female.svg');
+        }
+      }
+      &.gender-male {
+        .graph-value {
+          background-color: #00b1ff;
+        }
+        &:after {
+          background-image: url('https://kr.object.ncloudstorage.com/common-storage-pickcook/common/icon_gender_male.svg');
+        }
+      }
+    }
+  }
+  //
+  .doughnut-chart-container {
+    display: flex;
+    align-items: center;
+    .doughnut-chart-wrapper {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      margin-top: 1em;
+      margin-left: auto;
+      margin-right: auto;
+      .chartjs-render-monitor {
+        height: 280px !important;
+      }
+      .doughnut-chart-text {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        p {
+          font-size: 24px;
+          color: #007eeb;
+          margin-top: 16px;
+          line-height: 1;
+          font-weight: bold;
+        }
+      }
+    }
+    .doughnut-chart-legend {
+      .legend-label-list {
+        display: block;
+        > p {
+          display: block;
+        }
+        .legend-label-text {
+          font-size: 12px;
+        }
+      }
+    }
   }
 }
 

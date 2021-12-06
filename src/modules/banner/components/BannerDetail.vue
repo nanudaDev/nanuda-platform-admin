@@ -352,7 +352,7 @@ export default class BannerDetail extends BaseComponent {
       endedDate.getFullYear(),
       endedDate.getMonth(),
       endedDate.getDate(),
-      11,
+      23,
       59,
       59,
     );

@@ -318,7 +318,7 @@ export default class PopupDetail extends BaseComponent {
       endedDate.getFullYear(),
       endedDate.getMonth(),
       endedDate.getDate(),
-      11,
+      23,
       59,
       59,
     );

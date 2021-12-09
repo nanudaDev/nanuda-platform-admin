@@ -31,6 +31,7 @@ export * from './nanuda-user';
 export * from './nanuda-kitchen-master';
 export * from './nanuda-kitchen-menu';
 export * from './payment-list';
+export * from './popup';
 export * from './presentation-event';
 export * from './product-consult';
 export * from './notice-board';

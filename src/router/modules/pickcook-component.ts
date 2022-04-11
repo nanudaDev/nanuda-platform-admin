@@ -41,6 +41,38 @@ const pickcookComponentRouter: RouteConfig[] = [
       },
     ],
   },
+  {
+    path: '/pickcook/popup',
+    name: '팝업',
+    component: () => import('../../modules/pickcook/popup/Popup.vue'),
+    children: [
+      {
+        path: '/pickcook/popup',
+        name: 'PopupList',
+        component: () =>
+          import('../../modules/pickcook/popup/components/PopupList.vue'),
+        meta: {
+          authRequired: true,
+          layout: 'PickcookLayout',
+          roles: [...CONST_ADMIN_USER],
+          title: '팝업 관리',
+        },
+      },
+      {
+        path: '/pickcook/popup/:id([0-9]+)',
+        name: 'PopupDetail',
+        component: () =>
+          import('../../modules/pickcook/popup/components/PopupDetail.vue'),
+        meta: {
+          authRequired: true,
+          layout: 'PickcookLayout',
+          roles: [...CONST_ADMIN_USER],
+          detailPage: true,
+          title: '팝업 관리',
+        },
+      },
+    ],
+  },
 ];
 
 export default pickcookComponentRouter;

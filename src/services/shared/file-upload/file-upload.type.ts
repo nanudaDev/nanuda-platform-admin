@@ -23,10 +23,6 @@ export interface UploadOption {
   sizeLimit: number;
   fileType: FileType;
   mimeType: FileType;
-  // imageSizeArray?: [[number, number], [number, number]?];
-  // resized?: boolean;
-  // squared?: boolean;
-  // cropped?: boolean;
   accessType: FileAccessType;
   acl: ACL;
 }

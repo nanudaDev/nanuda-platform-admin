@@ -2,7 +2,7 @@
   <section v-if="popupDto">
     <SectionTitle title="팝업 관리" divider>
       <template v-slot:rightArea>
-        <router-link to="/popup" class="btn btn-secondary"
+        <router-link to="/pickcook/popup" class="btn btn-secondary"
           >목록으로</router-link
         >
       </template>
@@ -11,7 +11,7 @@
       <b-col cols="12" lg="4">
         <b-card no-body>
           <b-tabs card fill>
-            <b-tab title="이미지" active v-if="popupDto.popupType === 'IMAGE'">
+            <b-tab title="이미지" active v-if="popupDto.popupType === 'EVENT'">
               <template v-if="!imageChanged">
                 <b-img-lazy
                   :src="popupDto.images[0].endpoint"
@@ -53,11 +53,8 @@
               <h3>
                 {{ popupUpdateDto.title }}
               </h3>
-              <h4 class="my-3">
-                {{ popupUpdateDto.subTitle }}
-              </h4>
-              <div v-html="popupUpdateDto.content">
-                {{ popupUpdateDto.content }}
+              <div v-html="popupUpdateDto.description">
+                {{ popupUpdateDto.description }}
               </div>
             </b-tab>
           </b-tabs>
@@ -74,7 +71,7 @@
             <b-form-checkbox
               switch
               size="lg"
-              v-model="popupUpdateDto.showYn"
+              v-model="popupUpdateDto.inUse"
               :value="showYn[0]"
               :unchecked-value="showYn[1]"
             ></b-form-checkbox>
@@ -106,18 +103,18 @@
             </label>
             <b-form-input v-model="popupUpdateDto.title"></b-form-input>
           </b-col>
-          <template v-if="popupUpdateDto.popupType === 'NOTIFICATION'">
-            <b-col cols="12" class="mb-3">
+          <template v-if="popupUpdateDto.popupType === 'REG_SERVICE_UPDATE'">
+            <!-- <b-col cols="12" class="mb-3">
               <b-form-group label="서브 타이틀">
                 <b-form-input v-model="popupUpdateDto.subTitle"></b-form-input>
               </b-form-group>
-            </b-col>
+            </b-col> -->
             <b-col cols="12" class="mb-3">
               <b-form-group label="내용">
                 <vue-editor
                   id="update_content"
                   class="bg-white"
-                  v-model="popupUpdateDto.content"
+                  v-model="popupUpdateDto.description"
                   :editorToolbar="editorToolbar"
                 ></vue-editor>
               </b-form-group>
@@ -209,30 +206,31 @@
 </template>
 <script lang="ts">
 import BaseComponent from '@/core/base.component';
-import { Component, Watch } from 'vue-property-decorator';
-import { PopupDto } from '@/dto';
-import PopupService from '../../../services/popup.service';
-import { FileAttachmentDto } from '@/services/shared/file-upload';
-import FileUploadService from '../../../services/shared/file-upload/file-upload.service';
-import { UPLOAD_TYPE } from '../../../services/shared/file-upload/file-upload.service';
+import { Component } from 'vue-property-decorator';
+import { PickcookPopupDto } from '@/dto';
+import PickcookPopupService from '@/services/pickcook/pickcook-popup.service';
+import {
+  FileAttachmentDto,
+  PICKCOOK_UPLOAD_TYPE,
+} from '@/services/shared/file-upload';
+import PickcookFileUploadService from '../../../../services/shared/file-upload/pickcook-upload.service';
 import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 import { CONST_YN, YN } from '@/common';
 import { CodeManagementDto } from '@/services/init/dto';
-import CodeManagementService from '../../../services/code-management.service';
-import { LINK_TYPE } from '@/services/shared';
+import CodeManagementService from '../../../../services/code-management.service';
 import { EditorConfig } from '@/config';
 import { VueEditor } from 'vue2-editor';
-import toast from '../../../../resources/assets/js/services/toast.js';
+import toast from '../../../../../resources/assets/js/services/toast.js';
 
 @Component({
-  name: 'PopupDetail',
+  name: 'PickcookPopupDetail',
   components: {
     VueEditor,
   },
 })
-export default class PopupDetail extends BaseComponent {
-  private popupDto = new PopupDto();
-  private popupUpdateDto = new PopupDto();
+export default class PickcookPopupDetail extends BaseComponent {
+  private popupDto = new PickcookPopupDto();
+  private popupUpdateDto = new PickcookPopupDto();
 
   private showYn: YN[] = [...CONST_YN];
   private popupTypeSelect: CodeManagementDto[] = [];
@@ -259,7 +257,7 @@ export default class PopupDetail extends BaseComponent {
   }
 
   findOne(id) {
-    PopupService.findOne(id).subscribe(res => {
+    PickcookPopupService.findOne(id).subscribe(res => {
       if (res) {
         this.popupDto = res.data;
         this.popupUpdateDto = this.popupDto;
@@ -269,17 +267,13 @@ export default class PopupDetail extends BaseComponent {
     });
   }
 
-  showUpdateModal() {
-    this.popupUpdateDto = this.popupDto;
-    this.findOne(this.$route.params.id);
-  }
-
   // upload popup image
   async uploadPopup(file: File) {
     if (file) {
-      const attachments = await FileUploadService.upload(UPLOAD_TYPE.POPUP, [
-        file,
-      ]);
+      const attachments = await PickcookFileUploadService.upload(
+        PICKCOOK_UPLOAD_TYPE.POPUP,
+        [file],
+      );
       this.newPopupImage = [];
       this.newPopupImage.push(
         ...attachments.filter(
@@ -288,7 +282,6 @@ export default class PopupDetail extends BaseComponent {
         ),
       );
       this.imageChanged = true;
-      console.log(this.newPopupImage);
     }
   }
 
@@ -323,21 +316,22 @@ export default class PopupDetail extends BaseComponent {
       59,
     );
 
-    PopupService.update(this.$route.params.id, this.popupUpdateDto).subscribe(
-      res => {
-        if (res) {
-          toast.success('수정완료');
-          this.findOne(this.$route.params.id);
-        }
-      },
-    );
+    PickcookPopupService.update(
+      this.$route.params.id,
+      this.popupUpdateDto,
+    ).subscribe(res => {
+      if (res) {
+        toast.success('수정완료');
+        this.findOne(this.$route.params.id);
+      }
+    });
   }
 
   deleteOne() {
-    PopupService.deleteOne(this.$route.params.id).subscribe(res => {
+    PickcookPopupService.deleteOne(this.$route.params.id).subscribe(res => {
       if (res) {
         toast.success('삭제완료');
-        this.$router.push('/popup');
+        this.$router.push('/pickcook/popup');
       }
     });
   }

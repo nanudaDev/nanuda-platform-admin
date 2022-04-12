@@ -8,6 +8,8 @@ export const DevelopmentEnvironment: Environment = {
   clientName: packageInfo.name,
   productionTip: false,
   s3BaseUrl: 'https://kr.object.ncloudstorage.com/staging-storage-nanuda',
+  s3PickcookBaseUrl:
+    'https://kr.object.ncloudstorage.com/staging-storage-pickcook',
   siteUrl: 'http://localhost:4301/',
   homepageBaseUrl: 'http://localhost:8185/',
   homepageSiteUrl: 'http://localhost:3000/',

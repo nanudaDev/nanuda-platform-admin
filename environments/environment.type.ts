@@ -5,6 +5,7 @@ export class Environment {
   clientName?: string;
   productionTip?: boolean;
   s3BaseUrl: string;
+  s3PickcookBaseUrl?: string;
   siteUrl?: string;
   homepageBaseUrl?: string;
   homepageSiteUrl?: string;

@@ -14,23 +14,42 @@ import {
   EnvironmentType,
   ProductionEnvironment,
   DevelopmentEnvironment,
+  ApiUrlType,
 } from '../../../../environments';
 
-export enum UPLOAD_TYPE {
+export enum PICKCOOK_UPLOAD_TYPE {
+  LOCATION_ANALYSIS = 'location-analysis',
+  RESOURCE = 'resource',
   POPUP = 'popup',
 }
 
 type UploadOptionConfig = {
-  [key in UPLOAD_TYPE]: UploadOption;
+  [key in PICKCOOK_UPLOAD_TYPE]: UploadOption;
 };
 
 // TODO: Image resize
-class FileUploadService extends BaseService {
+class PickcookFileUploadService extends BaseService {
   private static UPLOAD_OPTIONS: UploadOptionConfig = {
-    [UPLOAD_TYPE.POPUP]: {
+    [PICKCOOK_UPLOAD_TYPE.POPUP]: {
       path: 'popup',
       sizeLimit: 1024 * 1024 * 10,
       fileType: FileType.IMAGE,
+      mimeType: FileType.IMAGE,
+      accessType: FileAccessType.PUBLIC,
+      acl: ACL.PUBLIC,
+    },
+    [PICKCOOK_UPLOAD_TYPE.LOCATION_ANALYSIS]: {
+      path: 'location-analysis',
+      sizeLimit: 1024 * 1024 * 10,
+      fileType: FileType.DOCUMENT,
+      mimeType: FileType.IMAGE,
+      accessType: FileAccessType.PUBLIC,
+      acl: ACL.PUBLIC,
+    },
+    [PICKCOOK_UPLOAD_TYPE.RESOURCE]: {
+      path: 'resource',
+      sizeLimit: 1024 * 1024 * 10,
+      fileType: FileType.DOCUMENT,
       mimeType: FileType.IMAGE,
       accessType: FileAccessType.PUBLIC,
       acl: ACL.PUBLIC,
@@ -68,14 +87,14 @@ class FileUploadService extends BaseService {
    * @param uploadType
    * @param files
    */
-  async upload(uploadType: UPLOAD_TYPE, files: FileList | File[]) {
+  async upload(uploadType: PICKCOOK_UPLOAD_TYPE, files: FileList | File[]) {
     console.log(uploadType, files);
     const attachments: FileAttachmentDto[] = [];
-    const uploadOption = FileUploadService.UPLOAD_OPTIONS[uploadType];
+    const uploadOption = PickcookFileUploadService.UPLOAD_OPTIONS[uploadType];
     const endpointUrl =
       process.env.NODE_ENV === EnvironmentType.production
-        ? ProductionEnvironment.s3BaseUrl
-        : DevelopmentEnvironment.s3BaseUrl;
+        ? ProductionEnvironment.s3PickcookBaseUrl
+        : DevelopmentEnvironment.s3PickcookBaseUrl;
     // tslint:disable-next-line: prefer-for-of
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -110,6 +129,7 @@ class FileUploadService extends BaseService {
           filename: file.name,
           mimetype: file.type,
         },
+        ApiUrlType.PICKCOOK,
       );
 
       if (!presigned || !presigned.data.url) {
@@ -144,4 +164,4 @@ class FileUploadService extends BaseService {
   }
 }
 
-export default new FileUploadService();
+export default new PickcookFileUploadService();

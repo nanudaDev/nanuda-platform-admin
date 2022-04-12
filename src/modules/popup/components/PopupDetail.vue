@@ -277,7 +277,7 @@ export default class PopupDetail extends BaseComponent {
   // upload popup image
   async uploadPopup(file: File) {
     if (file) {
-      const attachments = await FileUploadService.upload(UPLOAD_TYPE.BANNER, [
+      const attachments = await FileUploadService.upload(UPLOAD_TYPE.POPUP, [
         file,
       ]);
       this.newPopupImage = [];

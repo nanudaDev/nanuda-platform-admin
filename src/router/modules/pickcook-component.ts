@@ -48,7 +48,7 @@ const pickcookComponentRouter: RouteConfig[] = [
     children: [
       {
         path: '/pickcook/popup',
-        name: 'PopupList',
+        name: 'PickcookPopupList',
         component: () =>
           import('../../modules/pickcook/popup/components/PopupList.vue'),
         meta: {
@@ -60,7 +60,7 @@ const pickcookComponentRouter: RouteConfig[] = [
       },
       {
         path: '/pickcook/popup/:id([0-9]+)',
-        name: 'PopupDetail',
+        name: 'PickcookPopupDetail',
         component: () =>
           import('../../modules/pickcook/popup/components/PopupDetail.vue'),
         meta: {

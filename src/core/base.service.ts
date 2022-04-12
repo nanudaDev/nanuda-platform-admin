@@ -193,8 +193,25 @@ export class BaseService extends Vue {
     }
   }
 
-  public fileGet(path: string, params?: any) {
-    let baseUrl;
+  public fileGet(path: string, params?: any, apiUrlType?: ApiUrlType) {
+    let baseUrl: string;
+    let pickcookUrl: string;
+    if (process.env.NODE_ENV === EnvironmentType.development) {
+      baseUrl = DevelopmentEnvironment.baseURL;
+      pickcookUrl = DevelopmentEnvironment.pickcookUrl;
+    }
+    if (process.env.NODE_ENV === EnvironmentType.staging) {
+      baseUrl = StagingEnvironment.baseURL;
+      pickcookUrl = StagingEnvironment.pickcookUrl;
+    }
+    if (process.env.NODE_ENV === EnvironmentType.production) {
+      baseUrl = ProductionEnvironment.baseURL;
+      pickcookUrl = ProductionEnvironment.pickcookUrl;
+    }
+    if (apiUrlType === ApiUrlType.PICKCOOK) {
+      baseUrl = pickcookUrl;
+    }
+
     if (process.env.NODE_ENV === EnvironmentType.development) {
       baseUrl = DevelopmentEnvironment.baseURL;
     }
@@ -210,16 +227,23 @@ export class BaseService extends Vue {
     return axios.get(path, params);
   }
 
-  public filePost(path: string, params?: any) {
-    let baseUrl;
+  public filePost(path: string, params?: any, apiUrlType?: ApiUrlType) {
+    let baseUrl: string;
+    let pickcookUrl: string;
     if (process.env.NODE_ENV === EnvironmentType.development) {
       baseUrl = DevelopmentEnvironment.baseURL;
+      pickcookUrl = DevelopmentEnvironment.pickcookUrl;
     }
     if (process.env.NODE_ENV === EnvironmentType.staging) {
       baseUrl = StagingEnvironment.baseURL;
+      pickcookUrl = StagingEnvironment.pickcookUrl;
     }
     if (process.env.NODE_ENV === EnvironmentType.production) {
       baseUrl = ProductionEnvironment.baseURL;
+      pickcookUrl = ProductionEnvironment.pickcookUrl;
+    }
+    if (apiUrlType === ApiUrlType.PICKCOOK) {
+      baseUrl = pickcookUrl;
     }
     if (path.indexOf('http') !== 0) {
       path = baseUrl + path;

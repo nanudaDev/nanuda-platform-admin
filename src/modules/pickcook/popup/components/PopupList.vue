@@ -105,18 +105,18 @@
               :key="popup.key"
               @click="
                 $router.push({
-                  name: 'PopupDetail',
+                  name: 'PickcookPopupDetail',
                   params: {
-                    id: popup.no,
+                    id: popup.id,
                   },
                 })
               "
               style="cursor:pointer"
             >
-              <td>{{ popup.no }}</td>
+              <td>{{ popup.id }}</td>
               <td>
-                <template v-if="popup.codeManagement">
-                  {{ popup.codeManagement.value }}
+                <template v-if="popup.popupType">
+                  {{ popup.popupType }}
                 </template>
               </td>
               <td>
@@ -260,20 +260,20 @@
               required
             ></b-form-file>
           </b-col>
-          <template v-if="popupCreateDto.popupType === 'NOTIFICATION'">
-            <b-col cols="12" class="mb-3">
+          <template v-if="popupCreateDto.popupType === 'REG_SERVICE_UPDATE'">
+            <!-- <b-col cols="12" class="mb-3">
               <label>
                 서브 타이틀
               </label>
-              <b-form-input v-model="popupCreateDto.subTitle"></b-form-input>
-            </b-col>
+              <b-form-input v-model="popupCreateDto.description"></b-form-input>
+            </b-col> -->
             <b-col cols="12" class="mb-3">
               <label>
                 내용
                 <span class="red-text">*</span>
               </label>
               <b-form-textarea
-                v-model="popupCreateDto.content"
+                v-model="popupCreateDto.description"
                 style="height:200px;"
                 required
               ></b-form-textarea>
@@ -356,8 +356,8 @@ import { PickcookPopupDto } from '@/dto';
 import { CONST_YN, Pagination, YN } from '@/common';
 import toast from '../../../../../resources/assets/js/services/toast.js';
 import { FileAttachmentDto } from '@/services/shared/file-upload';
-import FileUploadService from '../../../../services/shared/file-upload/file-upload.service';
-import { UPLOAD_TYPE } from '../../../../services/shared/file-upload/file-upload.service';
+import PickcookFileUploadService from '../../../../services/shared/file-upload/pickcook-upload.service';
+import { PICKCOOK_UPLOAD_TYPE } from '@/services/shared/file-upload/pickcook-upload.service';
 import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
 import {
   ClearOutQueryParamMapper,
@@ -366,7 +366,7 @@ import {
 } from '@/core';
 import { PickcookCodeManagementDto } from '@/services/init/dto';
 import CommonCodeService from '@/services/pickcook/common-code.service';
-import { POPUP } from '@/services/shared';
+import { PICKCOOK_POPUP, POPUP } from '@/services/shared';
 
 @Component
 export default class PickcookPopupList extends BaseComponent {
@@ -447,7 +447,7 @@ export default class PickcookPopupList extends BaseComponent {
 
   // create popup
   createPopup() {
-    if (this.popupCreateDto.popupType === POPUP.IMAGE) {
+    if (this.popupCreateDto.popupType === PICKCOOK_POPUP.EVENT) {
       if (this.popupImage.length > 0) {
         this.popupCreateDto.images = this.popupImage;
       } else {
@@ -462,8 +462,9 @@ export default class PickcookPopupList extends BaseComponent {
     PickcookPopupService.create(this.popupCreateDto).subscribe(res => {
       if (res) {
         toast.success('추가완료');
-        this.clearOut();
+        this.clearOutPopupCreateDto();
         this.$bvModal.hide('add_popup');
+        this.clearOut();
       }
     });
   }
@@ -471,9 +472,10 @@ export default class PickcookPopupList extends BaseComponent {
   // upload popup image
   async upload(file: File) {
     if (file) {
-      const attachments = await FileUploadService.upload(UPLOAD_TYPE.POPUP, [
-        file,
-      ]);
+      const attachments = await PickcookFileUploadService.upload(
+        PICKCOOK_UPLOAD_TYPE.POPUP,
+        [file],
+      );
       this.popupImage = [];
       this.popupImage.push(
         ...attachments.filter(

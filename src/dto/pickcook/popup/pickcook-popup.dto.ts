@@ -1,19 +1,17 @@
 import { YN } from '@/common';
 import { BaseDto } from '@/core';
-import { LINK_TYPE, POPUP } from '@/services/shared';
+import { AdminDto } from '@/dto/platform';
+import { LINK_TYPE, PICKCOOK_POPUP, POPUP } from '@/services/shared';
 import { FileAttachmentDto } from '@/services/shared/file-upload';
-import { InquiryUpdateClosedDto } from './../../platform/inquiry/inquiry-update-closed.dto';
-
 export class PickcookPopupDto extends BaseDto<PickcookPopupDto> {
   id?: number;
   title?: string;
-  desscription?: string;
+  description?: string;
   started?: Date;
   ended?: Date;
   link?: string;
   linkType?: LINK_TYPE;
   images?: FileAttachmentDto[];
-  popupType?: POPUP;
-  InquiryUpdateClosedDto?: YN;
-  delYn?: YN;
+  popupType?: PICKCOOK_POPUP;
+  inUse?: YN;
 }

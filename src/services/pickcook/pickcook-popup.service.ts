@@ -1,7 +1,6 @@
 import { Pagination } from '@/common';
 import { BaseService } from '@/core';
 import { PickcookPopupDto } from '@/dto';
-import { PopupDto } from '@/dto/platform';
 import { ApiUrlType } from '../../../environments';
 
 export class PickcookPopupService extends BaseService {
@@ -16,7 +15,7 @@ export class PickcookPopupService extends BaseService {
    * @returns
    */
   findAll(adminPickcookPopupListDto: PickcookPopupDto, pagination: Pagination) {
-    return super.paginate<PopupDto>(
+    return super.paginate<PickcookPopupDto>(
       'admin/popup',
       adminPickcookPopupListDto,
       pagination,
@@ -30,15 +29,19 @@ export class PickcookPopupService extends BaseService {
    * @returns
    */
   findOne(id) {
-    return super.get<PopupDto>(`admin/popup/${id}`, ApiUrlType.PICKCOOK);
+    return super.get<PickcookPopupDto>(
+      `admin/popup/${id}`,
+      null,
+      ApiUrlType.PICKCOOK,
+    );
   }
 
   /**
    * create for admin
    * @param adminPickcookPopupCreateDto
    */
-  create(adminPickcookPopupCreateDto: PopupDto) {
-    return super.post<PopupDto>(
+  create(adminPickcookPopupCreateDto: PickcookPopupDto) {
+    return super.post<PickcookPopupDto>(
       'admin/popup',
       adminPickcookPopupCreateDto,
       ApiUrlType.PICKCOOK,
@@ -51,8 +54,8 @@ export class PickcookPopupService extends BaseService {
    * @param adminPickcookPopupUpdateDto
    * @returns
    */
-  update(id, adminPickcookPopupUpdateDto: PopupDto) {
-    return super.patch<PopupDto>(
+  update(id, adminPickcookPopupUpdateDto: PickcookPopupDto) {
+    return super.patch<PickcookPopupDto>(
       `admin/popup/${id}`,
       adminPickcookPopupUpdateDto,
       ApiUrlType.PICKCOOK,
@@ -65,7 +68,11 @@ export class PickcookPopupService extends BaseService {
    * @returns
    */
   deleteOne(id) {
-    return super.delete<PopupDto>(`admin/popup/${id}`, ApiUrlType.PICKCOOK);
+    return super.delete<PickcookPopupDto>(
+      `admin/popup/${id}`,
+      null,
+      ApiUrlType.PICKCOOK,
+    );
   }
 }
 

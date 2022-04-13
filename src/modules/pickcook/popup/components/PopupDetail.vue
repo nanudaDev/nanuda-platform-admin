@@ -215,9 +215,9 @@ import {
 } from '@/services/shared/file-upload';
 import PickcookFileUploadService from '../../../../services/shared/file-upload/pickcook-upload.service';
 import { ATTACHMENT_REASON_TYPE } from '@/services/shared/file-upload';
-import { CONST_YN, YN } from '@/common';
-import { CodeManagementDto } from '@/services/init/dto';
-import CodeManagementService from '../../../../services/code-management.service';
+import { CONST_YN, Pagination, YN } from '@/common';
+import { PickcookCodeManagementDto } from '@/services/init/dto';
+import CommonCodeService from '@/services/pickcook/common-code.service';
 import { EditorConfig } from '@/config';
 import { VueEditor } from 'vue2-editor';
 import toast from '../../../../../resources/assets/js/services/toast.js';
@@ -233,13 +233,15 @@ export default class PickcookPopupDetail extends BaseComponent {
   private popupUpdateDto = new PickcookPopupDto();
 
   private showYn: YN[] = [...CONST_YN];
-  private popupTypeSelect: CodeManagementDto[] = [];
-  private linkTypeSelect: CodeManagementDto[] = [];
+  private popupTypeSelect: PickcookCodeManagementDto[] = [];
+  private linkTypeSelect: PickcookCodeManagementDto[] = [];
   private imageChanged = false;
   private newPopupImage: FileAttachmentDto[] = [];
   private newPopupMobileImage: FileAttachmentDto[] = [];
 
   private editorToolbar = EditorConfig;
+  private codeManagementDto = new PickcookCodeManagementDto();
+  private paginationCode = new Pagination();
 
   getLinkUrl(linkUrl: string) {
     if (linkUrl) {
@@ -248,11 +250,20 @@ export default class PickcookPopupDetail extends BaseComponent {
   }
 
   getTypeCodes() {
-    CodeManagementService.findAnyCode('POPUP').subscribe(res => {
-      this.popupTypeSelect = res.data;
+    this.codeManagementDto.category = 'POPUP';
+    CommonCodeService.findAll(
+      this.codeManagementDto,
+      this.paginationCode,
+    ).subscribe(res => {
+      this.popupTypeSelect = res.data.items;
     });
-    CodeManagementService.findAnyCode('LINK_TYPE').subscribe(res => {
-      this.linkTypeSelect = res.data;
+
+    this.codeManagementDto.category = 'LINK_TYPE';
+    CommonCodeService.findAll(
+      this.codeManagementDto,
+      this.paginationCode,
+    ).subscribe(res => {
+      this.linkTypeSelect = res.data.items;
     });
   }
 

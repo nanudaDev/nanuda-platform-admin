@@ -1,5 +1,6 @@
 import { BaseDto } from '@/core';
 import { UPLOAD_TYPE } from '../file-upload.service';
+import { PICKCOOK_UPLOAD_TYPE } from '../pickcook-upload.service';
 
 export enum ATTACHMENT_REASON_TYPE {
   SUCCESS = 'SUCCESS',
@@ -18,7 +19,7 @@ export class FileAttachmentDto extends BaseDto<FileAttachmentDto> {
   source?: string;
   key?: string;
   endpoint?: string;
-  uploadType?: UPLOAD_TYPE;
+  uploadType?: UPLOAD_TYPE | PICKCOOK_UPLOAD_TYPE;
   mimetype?: string;
 }
 
